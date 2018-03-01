@@ -1,0 +1,99 @@
+PODS:
+  - AFNetworking (2.6.3):
+    - AFNetworking/NSURLConnection (= 2.6.3)
+    - AFNetworking/NSURLSession (= 2.6.3)
+    - AFNetworking/Reachability (= 2.6.3)
+    - AFNetworking/Security (= 2.6.3)
+    - AFNetworking/Serialization (= 2.6.3)
+    - AFNetworking/UIKit (= 2.6.3)
+  - AFNetworking/NSURLConnection (2.6.3):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/NSURLSession (2.6.3):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (2.6.3)
+  - AFNetworking/Security (2.6.3)
+  - AFNetworking/Serialization (2.6.3)
+  - AFNetworking/UIKit (2.6.3):
+    - AFNetworking/NSURLConnection
+    - AFNetworking/NSURLSession
+  - BlockAlertsAnd-ActionSheets (1.0.6):
+    - BlockAlertsAnd-ActionSheets/TableAlertView (= 1.0.6)
+  - BlockAlertsAnd-ActionSheets/TableAlertView (1.0.6)
+  - CBZSplashView (1.0.0)
+  - DTKDropdownMenu (0.0.4):
+    - Masonry (~> 0.6)
+  - FLAnimatedImage (1.0.12)
+  - FMDB (2.6.2):
+    - FMDB/standard (= 2.6.2)
+  - FMDB/standard (2.6.2)
+  - HexColors (2.2.1)
+  - JazzHands (2.0.8)
+  - JSONKit (1.5pre)
+  - JSONModel (1.7.0)
+  - Masonry (0.6.4)
+  - MAThemeKit (1.0)
+  - MBProgressHUD (1.0.0)
+  - MJRefresh (3.1.13)
+  - QIYU_iOS_SDK (3.11.2)
+  - RDVTabBarController (1.1.9)
+  - RKNotificationHub (2.0.4)
+  - SCLAlertView-Objective-C (1.0.6)
+  - SDAutoLayout (2.1.9)
+  - SDWebImage (3.8.2):
+    - SDWebImage/Core (= 3.8.2)
+  - SDWebImage/Core (3.8.2)
+  - TSMessages (0.9.12):
+    - HexColors (~> 2.2.0)
+
+DEPENDENCIES:
+  - AFNetworking (~> 2.6.3)
+  - BlockAlertsAnd-ActionSheets (~> 1.0.6)
+  - CBZSplashView (~> 1.0.0)
+  - DTKDropdownMenu (~> 0.0.4)
+  - FLAnimatedImage (~> 1.0.12)
+  - FMDB (~> 2.6.2)
+  - JazzHands (~> 2.0.8)
+  - JSONKit (~> 1.5pre)
+  - JSONModel (~> 1.7.0)
+  - Masonry
+  - MAThemeKit (~> 1.0)
+  - MBProgressHUD
+  - MJRefresh (~> 3.1.12)
+  - QIYU_iOS_SDK (~> 3.11.0)
+  - RDVTabBarController (~> 1.1.9)
+  - RKNotificationHub (~> 2.0.4)
+  - SCLAlertView-Objective-C (~> 1.0.6)
+  - SDAutoLayout (~> 2.1.7)
+  - SDWebImage (~> 3.8.1)
+  - TSMessages (~> 0.9.12)
+
+SPEC CHECKSUMS:
+  AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
+  BlockAlertsAnd-ActionSheets: 15be37bd381afaae85c2d4229db102c2cac742fa
+  CBZSplashView: 9ce4cba22024476ff4a97d6433e7347da6376016
+  DTKDropdownMenu: 3a3d8afc4f70fab50a5a8131aadc8b383ef54891
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
+  FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
+  HexColors: abfd172e329dab59888614ccba6f216cec59289d
+  JazzHands: 355dc5c2b6fc38ee460d0ed7836c69539263f477
+  JSONKit: bae313ce6a6c444f40489a6c0b023f399888871f
+  JSONModel: 840bc0fcffb24b8454d2c026bf26fea454b8e98d
+  Masonry: 281802d04d787ea2973179ee8bcb50500579ede2
+  MAThemeKit: 559acc98ceadc051cccb1b6bb0c4ca28475eb021
+  MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
+  MJRefresh: 56a28aa628c9895e97a518dabaecf70b18f92f32
+  QIYU_iOS_SDK: b8b94211d6b9bd66132dd546f3afd7da30e8e60c
+  RDVTabBarController: 67794f7a7a37f8e32f046f85ac67d06ab92d624a
+  RKNotificationHub: 3765424499139c3d3885b681bb0837f072d12ae6
+  SCLAlertView-Objective-C: ca78280817e66e74366b78579350dee2ff277e23
+  SDAutoLayout: 6b6f4db0d009dfc46cef14ef710dbb164e86616c
+  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
+  TSMessages: c8cc7b80f2a833af533872cd02010cac061532cc
+
+PODFILE CHECKSUM: 588b3d7e3217c29b93740f55c8e928ba98792934
+
+COCOAPODS: 1.1.1

@@ -1,0 +1,52 @@
+//
+//  customPch.pch
+//  CategaryShow
+//
+//  Created by APPLE on 16/8/9.
+//  Copyright © 2016年 Mr.huang. All rights reserved.
+//
+
+#ifndef customPch_pch
+#define customPch_pch
+#ifdef __OBJC__
+#import "Constant.h"
+#import "NSObject+LZSwipeCategory.h"
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
+#import "Masonry.h"
+#import "BaseDomain.h"
+#import "UrlManager.h"
+#import "userInfoModel.h"
+#import "SelfPersonInfo.h"
+#import "JYHColor.h"
+#import "XHImageViewer.h"
+#import "XHBottomToolBar.h"
+#import "UIImageView+WebCache.h"
+#import "UIImage+MultiFormat.h"
+#import "NSDictionary+EmptyString.h"
+#import "CommonFunction.h"
+#import "RDVTabBarController.h"
+#import "EnterViewController.h"
+#import "MyHomeViewController.h"
+#import "QYSDK.h"
+#import "getTheIconTitle.h"
+#import "UIView+SDAutoLayout.h"
+#import "UITableView+SDAutoTableViewCellHeight.h"
+#import "ATDatePicker.h"
+#import "zySheetPickerView.h"
+#import "STAlertView.h"
+#import "paySuccessViewController.h"
+#import "sharePaySuccessViewController.h"
+#import "MBProgressHUD.h"
+#import "ShareCustom.h"
+#import "QYSource.h"
+#import "QYCommodityInfo.h"
+#import "QYCustomUIConfig.h"
+#import <MJRefresh.h>
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+
+#endif
+#endif /* customPch_pch */

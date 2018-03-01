@@ -1,0 +1,15 @@
+//
+//  BaseTextField.h
+//  TakeAuto
+//
+//  Created by apple on 15/7/7.
+//  Copyright (c) 2015年 黄 梦炜. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface BaseTextField : UIView
+@property (nonatomic, retain) UIView *topLine;
+@property (nonatomic, retain) UITextField *detailField;
+@property (nonatomic, retain) UIView *bottomLine;
+@end

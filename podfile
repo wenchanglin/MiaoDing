@@ -1,0 +1,25 @@
+platform:ios,’9.0’
+target ‘CategaryShow’ do
+pod 'IQKeyboardManager'
+pod 'AFNetworking', '~>2.6.3'
+pod 'FMDB', '~> 2.6.2'
+pod 'MAThemeKit', '~> 1.0'
+pod 'JSONModel', '~> 1.7.0'
+pod 'RDVTabBarController', '~> 1.1.9'
+pod 'CBZSplashView', '~> 1.0.0'
+pod 'RKNotificationHub', '~> 2.0.4'
+pod 'FLAnimatedImage', '~> 1.0.12'
+pod 'TSMessages', '~> 0.9.12'
+pod 'JazzHands', '~> 2.0.8'
+pod 'JSONKit', '~> 1.5pre'
+pod 'SCLAlertView-Objective-C', '~> 1.0.6'
+pod 'BlockAlertsAnd-ActionSheets', '~> 1.0.6'
+pod 'Masonry'
+pod 'MJRefresh', '~> 3.1.13'
+pod 'QIYU_iOS_SDK', '~> 3.11.0’
+pod 'SDWebImage', '~> 3.8.1'
+pod 'SDAutoLayout', '~> 2.1.7'
+pod 'DTKDropdownMenu','~> 0.0.4'
+pod ‘MBProgressHUD’
+
+end
