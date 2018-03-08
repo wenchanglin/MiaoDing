@@ -22,7 +22,7 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"用户信息";
+    [self settabTitle:@"用户信息"];
     params = [NSMutableDictionary dictionary];
     [self.view setBackgroundColor:getUIColor(Color_background)];
     titleArray = [NSMutableArray arrayWithObjects:[NSArray arrayWithObjects:@"姓   名：", @"手机号：",@"身   高：",@"体   重：", nil],[NSArray arrayWithObjects:@"店铺号：", @"胸   围：",@"腰   围：",@"臀   围：", nil], nil];
@@ -42,7 +42,12 @@
 
 -(void)CreateTableViewForInfo
 {
-    infoTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 49)];
+    infoTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 49)];
+    if (@available(iOS 11.0, *)) {
+        infoTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     infoTable.dataSource = self;
     infoTable.delegate = self;
     [self.view addSubview:infoTable];
@@ -52,7 +57,7 @@
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(endEditingAction)];
     [infoTable addGestureRecognizer:tap];
     
-    UIButton *buttonTake = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - 49, SCREEN_WIDTH, 49)];
+    UIButton *buttonTake = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
     [buttonTake setBackgroundColor:getUIColor(Color_TKClolor)];
     [buttonTake.titleLabel setFont:[UIFont systemFontOfSize:16]];
     [buttonTake addTarget:self action:@selector(takePhoto) forControlEvents:UIControlEventTouchUpInside];

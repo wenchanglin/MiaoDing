@@ -22,7 +22,7 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"礼品卡";
+    [self settabTitle:@"礼品卡"];
     getData  = [BaseDomain getInstance:NO];
     postData  = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
@@ -64,7 +64,7 @@
     
     if ([[giftDic stringForKey:@"gift_card"] integerValue] > 0) {
         [nocard setHidden:YES];
-        UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64 + 165.0 /  667.0 * SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT  - (49.0 / 667.0 * SCREEN_HEIGHT + 64 + 165.0 /  667.0 * SCREEN_HEIGHT))];
+        UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, NavHeight + 165.0 /  667.0 * SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT  - (49.0 / 667.0 * SCREEN_HEIGHT + 64 + 165.0 /  667.0 * SCREEN_HEIGHT))];
         [self.view addSubview:scroller];
         UIImageView *imageDetailDes = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
         [imageDetailDes sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [giftDic stringForKey:@"card_rule"]]] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
@@ -82,7 +82,7 @@
 
 -(void)createView
 {
-    UIImageView *headImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, 165.0 /  667.0 * SCREEN_HEIGHT)];
+    UIImageView *headImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, 165.0 /  667.0 * SCREEN_HEIGHT)];
     [self.view addSubview:headImage];
     [headImage setImage:[UIImage imageNamed:@"saleCardHead"]];
     moneyLabel = [UILabel new];
@@ -131,7 +131,7 @@
     .widthIs(130);
     [nocard setImage:[UIImage imageNamed:@"haveNoCard"]];
     
-    UIButton *addCard = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT  - 49.0 / 667.0 * SCREEN_HEIGHT, SCREEN_WIDTH, 49.0 / 667.0 * SCREEN_HEIGHT)];
+    UIButton *addCard = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT  - 50-64, SCREEN_WIDTH, 49.0 / 667.0 * SCREEN_HEIGHT)];
     [addCard setImage:[UIImage imageNamed:@"addCard"] forState:UIControlStateNormal];
     [addCard addTarget:self action:@selector(clickAddAction) forControlEvents:UIControlEventTouchUpInside];
     

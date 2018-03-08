@@ -124,7 +124,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"我的购物袋";
+    [self settabTitle:@"我的购物袋"];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
     getData = [BaseDomain getInstance:NO];
@@ -261,10 +261,10 @@
             if ([[getData.dataRoot arrayForKey:@"data"] count] == 0) {
                 
                 
-                 [self.view setBackgroundColor:[UIColor whiteColor]];
+//                 [self.view setBackgroundColor:[UIColor whiteColor]];
                 [self createViewNoDD];
             } else {
-                 [self.view setBackgroundColor:getUIColor(Color_myOrderBack)];
+//                 [self.view setBackgroundColor:getUIColor(Color_myOrderBack)];
                 for (NSDictionary *dic in [getData.dataRoot arrayForKey:@"data"]) {
                     [chooseOrNot addObject:@"yes"];
                     
@@ -349,7 +349,12 @@
     [flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
     flowLayout.minimumLineSpacing = 0;
     //        flowLayout.headerReferenceSize = CGSizeMake(self.frame.size.width, 0);//头部
-    suggestCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(10, SCREEN_HEIGHT - (SCREEN_HEIGHT - 100) / 3, SCREEN_WIDTH - 20, (SCREEN_HEIGHT - 100) / 3) collectionViewLayout:flowLayout];
+    suggestCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(10, SCREEN_HEIGHT - (SCREEN_HEIGHT - 100) / 3-64, SCREEN_WIDTH - 20, (SCREEN_HEIGHT - 100) / 3) collectionViewLayout:flowLayout];
+    if (@available(iOS 11.0, *)) {
+        suggestCollection.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     
     //设置代理
     suggestCollection.delegate = self;
@@ -453,12 +458,12 @@
     
     rightBarBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     [rightBarBtn setTitle:@"编辑" forState:UIControlStateNormal];
-    [rightBarBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [rightBarBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [rightBarBtn.titleLabel setFont:[UIFont systemFontOfSize:14]];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBarBtn];
     [rightBarBtn addTarget:self action:@selector(rightBtnClick) forControlEvents:UIControlEventTouchUpInside];
     
-    hadClothesView = [[UITableView alloc] initWithFrame:CGRectMake(0, 64 + 9, SCREEN_WIDTH , SCREEN_HEIGHT - 64 - 9 - 49) style:UITableViewStylePlain];
+    hadClothesView = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight + 9, SCREEN_WIDTH , SCREEN_HEIGHT - 64 - 9 - 49) style:UITableViewStylePlain];
     hadClothesView.delegate = self;
     hadClothesView.dataSource = self;
     [hadClothesView registerClass:[myBagTableViewCell class] forCellReuseIdentifier:@"clothesList"];

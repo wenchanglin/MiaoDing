@@ -180,7 +180,7 @@
     UIViewController *main = [[NewMainTabViewController alloc] init];
     UIViewController * custom = [[changeDiyFirstViewController alloc] init];
     UIViewController *myHome = [[homeNewViewController alloc] init];
-    UIViewController *desig = [[DesignerAlsoViewController alloc] init];
+    UIViewController *desig = [[DesignerAlsoViewController alloc] init];//DesignerAndClothesViewController
     self.viewControllers = [[NSArray alloc] initWithObjects:main,custom,desig,myHome,nil];
     RDVTabBarItem *aTabBarItem = [self.tabBar.items objectAtIndex:0];
     // Set Title

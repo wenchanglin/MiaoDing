@@ -33,13 +33,12 @@
     modelArray = [NSMutableArray array];
     designerArray = [NSMutableArray array];
     [self getDatas];
-    
-    // Do any additional setup after loading the view.
 }
 
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [params setObject:@(1) forKey:@"page"];
     [getData getData:URL_GetDesigner PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:domain]) {
             designerArray = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"data"]];

@@ -32,23 +32,21 @@
     flogNomal = @"0";
     postData = [BaseDomain getInstance:NO];
     params = [NSMutableDictionary dictionary];
-    self.title = @"新建地址";
+    [self settabTitle:@"新建地址"];
     modelArray = [NSMutableArray array];
     [self.view setBackgroundColor:getUIColor(Color_background)];
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     [button setTitle:@"保存" forState:UIControlStateNormal];
     [button.titleLabel setFont:[UIFont systemFontOfSize:14]];
-    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
     [button addTarget:self action:@selector(handOnClick) forControlEvents:UIControlEventTouchUpInside];
     
-    UIView *linview = [[UIView alloc] initWithFrame:CGRectMake(0, 63, SCREEN_WIDTH, 1)];
+    UIView *linview = [[UIView alloc] initWithFrame:CGRectMake(0, NavHeight-1, SCREEN_WIDTH, 1)];
     [linview setBackgroundColor:getUIColor(Color_background)];
     [self.view addSubview:linview];
     
     NSArray *arrayTitle = [NSArray arrayWithObjects:@"收货人", @"手机号码",@"所在地址", nil];
-    
-    
     
     NSArray *arrayDetail = [NSArray arrayWithObjects:@"请输入收货人姓名", @"请输入收货人的手机号码",  @"请输入详细地址", nil];
     
@@ -67,7 +65,6 @@
     }
     
     [self createAddressTable];
-    // Do any additional setup after loading the view.
 }
 
 -(void)handOnClick
@@ -116,7 +113,12 @@
 
 -(void)createAddressTable
 {
-    addressTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64)];
+    addressTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64)];
+    if (@available(iOS 11.0, *)) {
+        addressTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     [addressTable registerClass:[MeasureLabelAndTextField class] forCellReuseIdentifier:NSStringFromClass([MeasureLabelAndTextField class])];
     [addressTable registerClass:[MeasurePlaceTableViewCell class] forCellReuseIdentifier:NSStringFromClass([MeasurePlaceTableViewCell class])];
     [addressTable registerClass:[LabelAndBoyOrGirl class] forCellReuseIdentifier:NSStringFromClass([LabelAndBoyOrGirl class])];

@@ -24,9 +24,6 @@
     [super viewDidLoad];
     getData = [BaseDomain getInstance:NO];
     modelArray = [NSMutableArray array];
-    [self.view setBackgroundColor:[UIColor whiteColor]];
-    // Do any additional setup after loading the view.
-    
     
     [self createGetData];
 }
@@ -112,61 +109,19 @@
 
 -(void)createView
 {
-    mainTabTable = [[UITableView alloc] initWithFrame:CGRectMake(0,3, SCREEN_WIDTH, SCREEN_HEIGHT  - 64 - 43) style:UITableViewStyleGrouped];
+    mainTabTable = [[UITableView alloc] initWithFrame:CGRectMake(0,NavHeight+3, SCREEN_WIDTH, SCREEN_HEIGHT  - 64 - 43) style:UITableViewStyleGrouped];
+    if (@available(iOS 11.0, *)) {
+        mainTabTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+    [mainTabTable setBackgroundColor:[UIColor whiteColor]];
+
     mainTabTable.delegate = self;
     mainTabTable.dataSource = self;
     [mainTabTable registerClass:[NewMainTabListTableViewCell class] forCellReuseIdentifier:NSStringFromClass([NewMainTabListTableViewCell class])];
     [self.view addSubview:mainTabTable];
-    
-//    NSMutableArray *headerImages = [NSMutableArray array];
-//    
-//    for (int i = 1; i < 60; i++) {
-//        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"load%d",i]];
-//        [headerImages addObject:[self scaleToSize:image size:CGSizeMake(60, 60)]];
-//    }
-//    MJRefreshGifHeader *gifHeader = [MJRefreshGifHeader headerWithRefreshingBlock:^{
-//        
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            [self reloadData];
-//        });
-//        
-//        //下拉刷新要做的操作.
-//        
-//    }];
-//    
-//    gifHeader.stateLabel.hidden = YES;
-//    
-//    gifHeader.lastUpdatedTimeLabel.hidden = YES;
-//    
-//    
-//    
-//    [gifHeader setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
-//    
-//    [gifHeader setImages:headerImages forState:MJRefreshStateRefreshing];
-//    
-//    mainTabTable.mj_header = gifHeader;
-//    // mainTabTable.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-//    
-//    
-//    // 这个地方是网络请求的处理
-//    // }];
-//    
-//    
-//    mainTabTable.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
-//        // 模拟延迟加载数据，因此2秒后才调用（真实开发中，可以移除这段gcd代码）
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            [self reloadAddData];
-//            [mainTabTable.mj_footer endRefreshing];
-//        });
-//        
-//        // 结束刷新
-//        
-//        
-//    }];
-    
     [mainTabTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-    [mainTabTable setBackgroundColor:[UIColor whiteColor]];
-    //    [_mainTabTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
 }
 
 -(void)createNoSave
@@ -209,9 +164,8 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    
+
     return 1;
-    
     
 }
 
@@ -224,8 +178,7 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    return 270;
+    return 321;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -235,10 +188,20 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 0.0001;
+    return 38;
 }
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    return [[UIView alloc] init];
+    
+        UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 38)];
+        UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(12, 12, 80, 18)];
+        [titleLabel setBackgroundColor:[UIColor whiteColor]];
+        
+        titleLabel.text = @"店铺活动";
+        titleLabel.textColor = [UIColor colorWithHexString:@"#222222"];
+        titleLabel.font =[UIFont fontWithName:@"PingFangSC-Light" size:15];
+        [titleView addSubview:titleLabel];
+        return titleView;
+   
 }
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
     return [[UIView alloc] init];
@@ -255,7 +218,7 @@
     
     Class currentClass = [NewMainTabListTableViewCell class];
     NewMainTabListTableViewCell *cell = nil;
-    [cell setBackgroundColor:[UIColor whiteColor]];
+//    [cell setBackgroundColor:[UIColor whiteColor]];
     cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass(currentClass)];
     cell.model = model;
     cell.tag = indexPath.section * 10000 + indexPath.row;
@@ -278,7 +241,7 @@
     MainTabDetailViewController *MainDetail = [[MainTabDetailViewController alloc] init];
     MainDetail.webId = model.LinkId;
     MainDetail.imageUrl = model.ImageUrl;
-    MainDetail.titleContent = model.name;
+    MainDetail.titleName = model.name;
     MainDetail.tagName = model.tagName;
 //    [self getDateBegin:datBegin currentView:model.tagName fatherView:@"首页"];
     [self.navigationController pushViewController:MainDetail animated:YES];

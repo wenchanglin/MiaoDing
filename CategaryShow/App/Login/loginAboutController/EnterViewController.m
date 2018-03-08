@@ -39,14 +39,15 @@
 }
 -(void)viewDidDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    [self.view.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        [obj removeFromSuperview];
-    }];
+//    [self.view.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//        [obj removeFromSuperview];
+//    }];
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    self.navigationController.navigationBarHidden = YES;
+    self.navigationController.navigationBarHidden = NO;
     [self setUp];
+
 }
 
 -(void)quitClick
@@ -57,56 +58,49 @@
 }
 
 -(void)setUp{
-    NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-    UIImageView *backImage= [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
-//    [backImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [userd stringForKey:@"loginImage"]]]];
-    [backImage setImage:[UIImage imageNamed:@"loginBackImg"]];
-    [backImage setContentMode:UIViewContentModeScaleAspectFill];
-    [self.view addSubview:backImage];
-    
-    
-    UIButton *buttonQuit = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 50, 34, 30, 30)];
-    [buttonQuit setImage:[UIImage imageNamed:@"X"] forState:UIControlStateNormal];
-    
-    [buttonQuit addTarget:self action:@selector(quitClick) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:buttonQuit];
-    
-    
-
+   
+    UIImageView * mainImageView = [UIImageView new];
+    mainImageView.userInteractionEnabled = YES;
+    mainImageView.image = [UIImage imageNamed:@"loginBackImg"];
+    [self.view addSubview:mainImageView];
+    [mainImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    UIButton *buttonClose = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 50, 40, 40, 40)];
+    [buttonClose addTarget:self action:@selector(quitClick) forControlEvents:UIControlEventTouchUpInside];
+    [buttonClose setImage:[UIImage imageNamed:@"X"] forState:UIControlStateNormal];
+    [self.view addSubview:buttonClose];
     username = [UITextField new];
-     [self.view addSubview:username];
-    username.sd_layout
-    .leftSpaceToView(self.view, 60)
-    .rightSpaceToView(self.view, 60)
-    .topSpaceToView(self.view, (317.0 / 667.0) * SCREEN_HEIGHT)
-    .heightIs(30);         // userName Create (phone number)
+    [self.view addSubview:username];
+    [username mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(SCREEN_HEIGHT/2-64);
+        make.left.mas_equalTo(60);
+        make.right.mas_equalTo(-60);
+        make.height.mas_equalTo(30);
+    }];
+//    username.sd_layout
+//    .leftSpaceToView(self.view, 60)
+//    .rightSpaceToView(self.view, 60)
+//    .topSpaceToView(self.view, (95 / 667.0) * SCREEN_HEIGHT)
+//    .heightIs(30);新版本
     
     username.placeholder = @"请输入11位手机号码";
     username.keyboardType = UIKeyboardTypeNumberPad;
-    [username setTextColor:getUIColor(Color_loginHaveName)];
-    [username setFont:[UIFont systemFontOfSize:14]];
-    UIImageView *imageViewUserName = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 140 / 2, 36 / 2)];
-    imageViewUserName.image=[UIImage imageNamed:@"userName"];
-    username.leftView=imageViewUserName;
+    [username setTextColor:[UIColor colorWithHexString:@"#222222"]];
+    [username setFont:[UIFont fontWithName:@"PingFangSC-Light" size:16]];
     username.leftViewMode=UITextFieldViewModeAlways; //此处用来设置leftview现实时机
     username.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     username.delegate = self;
-
-    [username setValue:getUIColor(Color_loginNoUserName) forKeyPath:@"_placeholderLabel.textColor"];
+    [username setValue:[UIColor colorWithHexString:@"#A6A6A6"] forKeyPath:@"_placeholderLabel.textColor"];
     
-    
-    
-//    UIView *lineUserName = [[UIView alloc] initWithFrame:CGRectMake(30, 270, SCREEN_WIDTH - 60, 1)];
     UIView *lineUserName = [UIView new];
-    [lineUserName setBackgroundColor:getUIColor(Color_TKClolor)];
+    [lineUserName setBackgroundColor:[UIColor colorWithHexString:@"#979797"]];
     [self.view addSubview:lineUserName];
     lineUserName.sd_layout
     .leftSpaceToView(self.view, 60)
     .rightSpaceToView(self.view, 60)
     .topSpaceToView(username, 0)
     .heightIs(1);
-    
-    
     
     checkCount = [UITextField new];
     [self.view addSubview:checkCount];
@@ -115,25 +109,23 @@
     .rightSpaceToView(self.view, 60)
     .topSpaceToView(lineUserName, 30)
     .heightIs(30);
-    // checkNumber (system will send you a checkNumber when you touch this button)
-    
-    [checkCount setFont:[UIFont systemFontOfSize:14]];
+    [checkCount setFont:[UIFont fontWithName:@"PingFangSC-Light" size:16]];
+    [checkCount setTextColor:[UIColor colorWithHexString:@"#222222"]];
     checkCount.placeholder = @"请输入验证码";
     [checkCount setSecureTextEntry:YES];
     checkCount.keyboardType = UIKeyboardTypeNumberPad;
-    [checkCount setValue:getUIColor(Color_loginNoUserName) forKeyPath:@"_placeholderLabel.textColor"];
-    UIImageView *imageViewCheck = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 140 / 2, 36 / 2)];
-    imageViewCheck.image=[UIImage imageNamed:@"Check"];
-    checkCount.leftView=imageViewCheck;
+    [checkCount setValue:[UIColor colorWithHexString:@"#A6A6A6"] forKeyPath:@"_placeholderLabel.textColor"];
+//    UIImageView *imageViewCheck = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 140 / 2, 36 / 2)];
+//    imageViewCheck.image=[UIImage imageNamed:@"Check"];
+//    checkCount.leftView=imageViewCheck;
     checkCount.leftViewMode=UITextFieldViewModeAlways; //此处用来设置leftview现实时机
     checkCount.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     checkCount.delegate = self;
     
-    
 //    UIView *lineCheck = [[UIView alloc] initWithFrame:CGRectMake(30, 340, SCREEN_WIDTH - 60, 1)];
     
     UIView *lineCheck = [UIView new];
-    [lineCheck setBackgroundColor:getUIColor(Color_TKClolor)];
+    [lineCheck setBackgroundColor:[UIColor colorWithHexString:@"#979797"]];
     [self.view addSubview:lineCheck];
     lineCheck.sd_layout
     .leftSpaceToView(self.view, 60)
@@ -150,15 +142,14 @@
     .bottomSpaceToView(lineCheck, 4)
     .heightIs(30)
     .widthIs(90);
-    [sendButton.layer setCornerRadius:15];
+    [sendButton.layer setCornerRadius:3];
     [sendButton.layer setMasksToBounds:YES];
-    [sendButton.titleLabel setFont:[UIFont systemFontOfSize:12]];
+    [sendButton.titleLabel setFont:[UIFont systemFontOfSize:16]];
     [sendButton setTitle:@"获取验证码" forState:UIControlStateNormal];
     [sendButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [sendButton setUserInteractionEnabled:NO];
     [sendButton addTarget:self action:@selector(sendClick:) forControlEvents:UIControlEventTouchUpInside];
     [sendButton setBackgroundColor:[UIColor lightGrayColor]];
-    //    sendButton.enabled = NO;
     [sendButton didChange:^NSString *(JKCountDownButton *countDownButton,int second) {
         NSString *title = [NSString stringWithFormat:@"重发(%d)",second];
         return title;
@@ -167,54 +158,48 @@
         countDownButton.enabled = YES;
         return @"重新获取";
     }];
-   
-    // sender CheckNumber , control system to send checkNumber
-    
-    
     
     login = [UIButton new];
-     [self.view addSubview:login];
+    [login setTitle:@"进入妙定" forState:(UIControlStateNormal)];
+    login.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
+    [self.view addSubview:login];
     
     login.sd_layout
-    .centerXEqualToView(self.view)
     .topSpaceToView(lineCheck, 57)
-    .heightIs(98 / 2)
-    .widthIs(560 / 2);
-    
-    [login.layer setCornerRadius:22];
+    .leftSpaceToView(self.view, 42)
+    .rightSpaceToView(self.view, 42)
+    .heightIs(44);
+    [login setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:UIControlStateNormal];
+    [login.layer setCornerRadius:3];
     [login.layer setMasksToBounds:YES];
-    [login setImage:[UIImage imageNamed:@"CantLogin"] forState:UIControlStateNormal];
     [login addTarget:self action:@selector(LoginClick) forControlEvents:UIControlEventTouchUpInside];
-    [login.layer setCornerRadius:1];
-    [login.layer setMasksToBounds:YES];
+
    
-   
-    
-    
-    NSString *label_text2 = @"温馨提示:未注册的手机号将自动注册为妙定用户,且代表已阅读并同意《妙定用户协议》";
-    NSMutableAttributedString *attributedString2 = [[NSMutableAttributedString alloc]initWithString:label_text2];
-    [attributedString2 addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:8] range:NSMakeRange(0, label_text2.length)];
-    [attributedString2 addAttribute:NSForegroundColorAttributeName value:getUIColor(Color_TKClolor) range:NSMakeRange(32, 7)];
-    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyle setLineSpacing:3];
-    [attributedString2 addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [label_text2 length])];
-    
-    UILabel *ybLabel2 = [UILabel new];
-    [self.view addSubview:ybLabel2];
-    ybLabel2.sd_layout
-    .leftSpaceToView(self.view, 10)
-    .rightSpaceToView(self.view, 10)
-    .bottomSpaceToView(self.view, 10)
-    .heightIs(15);
-    [ybLabel2 setTextColor:getUIColor(Color_loginNoUserName)];
-    [ybLabel2 setFont:[UIFont systemFontOfSize:8]];
-    ybLabel2.numberOfLines = 2;
-    [ybLabel2 setText:label_text2];
-    ybLabel2.attributedText = attributedString2;
-    [ybLabel2 setTextAlignment:NSTextAlignmentCenter];
-   
-    
-     [ybLabel2 yb_addAttributeTapActionWithStrings:@[@"妙定用户协议"] delegate:self];
+
+//    NSString *label_text2 = @"温馨提示:未注册的手机号将自动注册为妙定用户,且代表已阅读并同意《妙定用户协议》";
+//    NSMutableAttributedString *attributedString2 = [[NSMutableAttributedString alloc]initWithString:label_text2];
+//    [attributedString2 addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:8] range:NSMakeRange(0, label_text2.length)];
+//    [attributedString2 addAttribute:NSForegroundColorAttributeName value:getUIColor(Color_TKClolor) range:NSMakeRange(32, 7)];
+//    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+//    [paragraphStyle setLineSpacing:3];
+//    [attributedString2 addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [label_text2 length])];
+//
+//    UILabel *ybLabel2 = [UILabel new];
+//    [self.view addSubview:ybLabel2];
+//    ybLabel2.sd_layout
+//    .leftSpaceToView(self.view, 10)
+//    .rightSpaceToView(self.view, 10)
+//    .bottomSpaceToView(self.view, 10)
+//    .heightIs(15);
+//    [ybLabel2 setTextColor:getUIColor(Color_loginNoUserName)];
+//    [ybLabel2 setFont:[UIFont systemFontOfSize:8]];
+//    ybLabel2.numberOfLines = 2;
+//    [ybLabel2 setText:label_text2];
+//    ybLabel2.attributedText = attributedString2;
+//    [ybLabel2 setTextAlignment:NSTextAlignmentCenter];
+//
+//
+//     [ybLabel2 yb_addAttributeTapActionWithStrings:@[@"妙定用户协议"] delegate:self];
     //设置是否有点击效果，默认是YES
     
 }
@@ -224,14 +209,12 @@
 -(void)textFieldDidBeginEditing:(UITextField *)textField
 {
     
-    
     if (isViewYFisrt) {
         initViewY = self.view.frame.origin.y;
         isViewYFisrt = NO;
     }
     
     int offset = [self getControlFrameOriginY:textField] + 75 - (self.view.frame.size.height - 216.0);//键盘高度216
-    
     NSTimeInterval animationDuration = 0.30f;
     [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
     [UIView setAnimationDuration:animationDuration];
@@ -359,10 +342,10 @@
         NSString *toBeString = textField.text;
         if ([toBeString length] > 0 && [username.text length] > 0) {
             [login setUserInteractionEnabled:YES];
-            [login setImage:[UIImage imageNamed:@"canLogin"] forState:UIControlStateNormal];
+            login.backgroundColor = [UIColor colorWithHexString:@"#151515"];
         } else {
             [login setUserInteractionEnabled:NO];
-            [login setImage:[UIImage imageNamed:@"cantLogin"] forState:UIControlStateNormal];
+            login.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
         }
     }
     
@@ -382,6 +365,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self settabTitle:@"手机登录"];
     isViewYFisrt = YES;
     [self.view.layer addSublayer: [self backgroundLayer]];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(textFiledEditChanged:)name:@"UITextFieldTextDidChangeNotification" object:username];
@@ -429,6 +413,7 @@
         if (success) {
 //            [[AppDelegate getInstance] runMainViewController : self];
             [self dismissViewControllerAnimated:YES completion:nil];
+//            [self.navigationController popViewControllerAnimated:YES];
             [[NSNotificationCenter defaultCenter] postNotificationName:@"loginSuccess" object:nil];
             
         } else {

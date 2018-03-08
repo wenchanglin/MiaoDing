@@ -37,25 +37,21 @@
     getData = [BaseDomain getInstance:NO];
     postData = [BaseDomain getInstance:NO];
     clickNum = 0;
+    [self settabTitle:@"预约量体"];
     if ([[SelfPersonInfo getInstance].personYuYue integerValue] == 1) {
         [self.view setBackgroundColor:getUIColor(Color_background)];
-        
-        
         [self getYuYueData];
-        
-        self.title = @"预约结果";
-        
     } else {
         
         [self initMapView];
         [self configLocationManager];
         [self locateAction];
-        self.title = @"预约量体";
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 64)];
-        [view setBackgroundColor:[UIColor whiteColor]];
-        [self.view addSubview:view];
         
-        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 63, SCREEN_WIDTH, 1)];
+//        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 64)];
+//        [view setBackgroundColor:[UIColor whiteColor]];
+//        [self.view addSubview:view];
+        
+        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, NavHeight-1, SCREEN_WIDTH, 1)];
         [line setBackgroundColor:getUIColor(Color_background)];
         [self.view addSubview:line];
     }
@@ -135,7 +131,7 @@
         
     }
     
-    AddressText = [[UITextField alloc] initWithFrame:CGRectMake(20, 95, self.view.frame.size.width - 40, 50)];
+    AddressText = [[UITextField alloc] initWithFrame:CGRectMake(20, NavHeight+31, self.view.frame.size.width - 40, 50)];
     [AddressText.layer setCornerRadius:5];
     [AddressText.layer setMasksToBounds:YES];
     [AddressText.layer setBorderWidth:1];
@@ -152,7 +148,7 @@
     [self.view addSubview:image];
     
     
-    UIButton *BtnYuYue = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 / 2, self.view.frame.size.height - 100, self.view.frame.size.width / 2, 40)];
+    UIButton *BtnYuYue = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 / 2, self.view.frame.size.height -60-100, self.view.frame.size.width / 2, 40)];
     [BtnYuYue setBackgroundColor:[UIColor blackColor]];
     [BtnYuYue.layer setCornerRadius:1];
     [BtnYuYue.layer setMasksToBounds:YES];

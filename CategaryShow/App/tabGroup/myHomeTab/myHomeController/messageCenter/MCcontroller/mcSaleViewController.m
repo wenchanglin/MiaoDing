@@ -23,15 +23,7 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.title = @"活动精选";
-    
-    UIView *topView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 64)];
-    [topView setBackgroundColor:[UIColor whiteColor]];
-    [self.view addSubview:topView];
-    
-   
-    
+    [self settabTitle:@"活动精选"];
     modelArray = [NSMutableArray array];
     getData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:getUIColor(Color_background)];
@@ -79,7 +71,12 @@
 
 -(void)createTable
 {
-    MCListTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    MCListTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    if (@available(iOS 11.0, *)) {
+        MCListTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     MCListTable.dataSource = self;
     MCListTable.delegate = self;
     [MCListTable registerClass:[mcSaleTableViewCell class] forCellReuseIdentifier:@"mcListSale"];

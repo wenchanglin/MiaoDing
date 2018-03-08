@@ -33,25 +33,15 @@
     [super viewDidLoad];
     postData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, 63, SCREEN_WIDTH, 1)];
-    [lineView setBackgroundColor:getUIColor(Color_background)];
-    [self.view addSubview:lineView];
-    self.title = @"申请入驻";
+    [self settabTitle:@"申请入驻"];
     params = [NSMutableDictionary dictionary];
-    
     UIImage *image = [UIImage imageNamed:@"add"];
-    
     NSMutableArray *array = [NSMutableArray arrayWithObjects:image, nil];
     NSMutableArray *array1 = [NSMutableArray arrayWithObjects:image, nil];
     photoArray  = [NSMutableArray arrayWithObjects:array,array1, nil];
-    
-    
-    
     modelArray = [NSMutableArray array];
     NSArray *arrayTitle = [NSArray arrayWithObjects:@"姓名", @"手机号",@"微信号",@"邮箱", nil];
-    
     NSArray *arrayDetail = [NSArray arrayWithObjects:@"请输入您的真实姓名", @"请输入您的手机号码",  @"请输入您的微信号", @"请输入您的常用邮箱", nil];
-    
     for (int i = 0; i < [arrayTitle count]; i ++) {
         MeasureLabelAndTextFieldModel *model = [[MeasureLabelAndTextFieldModel alloc] init];
         model.titleName = arrayTitle[i];
@@ -59,13 +49,11 @@
         [modelArray addObject:model];
     }
     [self createTable];
-    
-    // Do any additional setup after loading the view.
 }
 
 -(void)createTable
 {
-    applyTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    applyTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
     applyTable.dataSource = self;
     applyTable.delegate = self;
     [applyTable setBackgroundColor:[UIColor whiteColor]];
@@ -75,7 +63,7 @@
     [applyTable registerClass:[joinDesTableViewCell class] forCellReuseIdentifier:NSStringFromClass([joinDesTableViewCell class])];
     [self.view addSubview:applyTable];
     
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(20, SCREEN_HEIGHT - 50, SCREEN_WIDTH - 40, 40)];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(20, SCREEN_HEIGHT -64- 50, SCREEN_WIDTH - 40, 40)];
     [button setBackgroundColor:getUIColor(Color_measureTableTitle)];
     [self.view addSubview:button];
     [button.layer setCornerRadius:1];

@@ -15,14 +15,14 @@
     UILabel *messageContent;
     UILabel *messageTime;
     UILabel *labelCount;
+    UIView * fenGeView;
+    UIImageView * rightImageView;
 }
 
 -(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
         [self setUp];
-        
-        
     }
     return self;
 }
@@ -55,13 +55,31 @@
 //    [labelCount setTextColor:[UIColor whiteColor]];
 //    
     messageName = [UILabel new];
+    [messageName setFont:[UIFont fontWithName:@"PingFangSC-Light" size:16]];
+    messageName.textColor = [UIColor colorWithHexString:@"#222222"];
      [contentView addSubview:messageName];
     messageName.sd_layout
     .leftSpaceToView(messageHead, 9)
     .centerYEqualToView(contentView)
-    .heightIs (15)
+    .heightIs (22)
     .widthIs(100);
-    [messageName setFont:[UIFont boldSystemFontOfSize:14]];
+    
+    fenGeView = [UIView new];
+    fenGeView.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
+    [contentView addSubview:fenGeView];
+    [fenGeView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(messageName.mas_bottom).offset(12);
+        make.left.right.equalTo(self.contentView);
+        make.height.mas_equalTo(9);
+    }];
+    rightImageView = [UIImageView new];
+    rightImageView.backgroundColor = [UIColor blueColor];
+    rightImageView.image = [UIImage imageNamed:@"rightDes"];
+    [contentView addSubview:rightImageView];
+    [rightImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(-12.6);
+        make.centerY.equalTo(messageName.mas_centerY);
+    }];
 //
 //    messageTime = [UILabel new];
 //    [contentView addSubview:messageTime];

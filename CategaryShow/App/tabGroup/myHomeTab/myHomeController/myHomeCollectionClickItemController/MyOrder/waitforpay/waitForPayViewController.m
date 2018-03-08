@@ -40,7 +40,6 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableData) name:@"cancelOrderAll" object:nil];
     [self getDatas];
-    // Do any additional setup after loading the view.
 }
 
 
@@ -210,7 +209,7 @@
 
 -(void)createHaveOrderView
 {
-    haveDingTable = [[UITableView alloc] initWithFrame:CGRectMake(13, 0, SCREEN_WIDTH - 26, SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
+    haveDingTable = [[UITableView alloc] initWithFrame:CGRectMake(13, NavHeight, SCREEN_WIDTH - 26, SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
     haveDingTable.dataSource = self;
     haveDingTable.delegate = self;
     [haveDingTable setBackgroundColor:getUIColor(Color_myOrderBack)];

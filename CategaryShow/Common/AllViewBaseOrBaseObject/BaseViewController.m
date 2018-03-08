@@ -8,8 +8,8 @@
 
 #import "BaseViewController.h"
 #import "EnterViewController.h"
-
-
+#import "NewLoginViewController.h"
+#import "JYHNavigationController.h"
 #import "RDVTabBarController.h"
 #import "UrlManager.h"
 
@@ -95,7 +95,11 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
     
 }
 
-
+- (void)onSpaceViewClickToCloseKeyboard:(id)sender{
+    if (self.view != nil) {
+        [self.view endEditing:YES];
+    }
+}
 
 
 -(void)messageNoti:(NSNotification *)noti
@@ -223,15 +227,12 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
 
 -(void)settabTitle:(NSString *)title
 {
-    
-
-    
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 120, 30)];
     [titleLabel setText:title];
     [titleLabel setTextAlignment:NSTextAlignmentCenter];
     titleLabel.font = Font_16;
     [titleLabel setTextColor:[UIColor colorWithHexString:@"#FFFFFF"]];
-    self.rdv_tabBarController.navigationItem.titleView = titleLabel;
+    self.navigationItem.titleView = titleLabel;
 }
 
 -(void)settabImg:(NSString *)Img
@@ -473,11 +474,7 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
     return newImage;
 }
 
-- (IBAction)onSpaceViewClickToCloseKeyboard:(id)sender{
-    if (self.view != nil) {
-        [self.view endEditing:YES];
-    }
-}
+
 
 
 -(void )getDateBegin:(NSDate *)dateBegin currentView:(NSString *)view1 fatherView:(NSString *)view2
@@ -492,7 +489,7 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
     [params setObject:view2 forKey:@"p_module_name"];
     [timePostData postData:URL_USerActionMain PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:timePostData]) {
-            NSLog(@"%@", domain.dataRoot);
+            WCLLog(@"%@", domain.dataRoot);
         }
     }];
     
@@ -511,7 +508,11 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
     [params setObject:view2 forKey:@"p_module_name"];
     [timePostData postData:URL_UserActionLogin PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:timePostData]) {
-            NSLog(@"%@", domain.dataRoot);
+            WCLLog(@"%@", domain.dataRoot);
+//            NewLoginViewController * new = [[NewLoginViewController alloc]init];
+//            new.loginID = [domain.dataRoot stringForKey:@"id"];
+//            JYHNavigationController * navs = [[JYHNavigationController alloc]initWithRootViewController:new];
+//            [self presentViewController:navs animated:YES completion:nil];
             EnterViewController *enter = [[EnterViewController alloc] init];
             enter.loginId = [domain.dataRoot stringForKey:@"id"];
             [self presentViewController:enter animated:YES completion:nil];

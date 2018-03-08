@@ -22,13 +22,12 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"量体数据";
+    [self settabTitle:@"量体数据"];
     getDate = [BaseDomain getInstance:NO];
     
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self createTable];
     
-    // Do any additional setup after loading the view.
 }
 
 
@@ -49,7 +48,7 @@
 
 -(void)createTable
 {
-    nameTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStylePlain];
+    nameTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStylePlain];
     nameTable.delegate = self;
     nameTable.dataSource = self;
     [nameTable registerClass:[dateForBodyTableViewCell class] forCellReuseIdentifier:@"name"];

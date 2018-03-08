@@ -26,7 +26,7 @@
     NSArray *arrayTitle;
     UITableView *setTable;
     BaseDomain *postData;
-//    AwAlertView *alertView;
+    //    AwAlertView *alertView;
     UITextField *nickName;
     BaseDomain *getData;
     UIView *nickBgName;
@@ -38,7 +38,7 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"设置";
+    [self settabTitle:@"设置"];
     
     postData = [BaseDomain getInstance:NO];
     getData = [BaseDomain getInstance:NO];
@@ -47,15 +47,19 @@
     arrayTitle = [NSArray arrayWithObjects:array,@"量体数据", @"收货地址", @"清除缓存",@"意见反馈", @"关于妙定", nil];
     [self createTable];
     [self createNickName];
-    // Do any additional setup after loading the view.
 }
 
 
 -(void)createTable
 {
-   
-    setTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
-    [setTable setSeparatorColor : getUIColor(Color_myTabIconLineColor)];
+    if (@available(iOS 11.0, *)) {
+        setTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    }
+    else{
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+    setTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    [setTable setSeparatorColor :[UIColor colorWithHexString:@"#EDEDED"]];
     setTable.dataSource = self;
     setTable.delegate = self;
     [setTable registerClass:[MyHomeSetTableViewCell class] forCellReuseIdentifier:@"setList"];
@@ -64,13 +68,11 @@
     
     
     
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - 49, SCREEN_WIDTH, 49)];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-64- 49, SCREEN_WIDTH, 49)];
     [button setTitle:@"退出登录" forState:UIControlStateNormal];
-    
-    [button.layer setCornerRadius:1];
-    [button.titleLabel setFont:[UIFont systemFontOfSize:16]];
-    [button.layer setMasksToBounds:YES];
-    [button setBackgroundColor:getUIColor(Color_DZClolor)];
+    [button setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:UIControlStateNormal];
+    [button.titleLabel setFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14]];
+    [button setBackgroundColor:[UIColor colorWithHexString:@"#151515"]];
     [button addTarget:self action:@selector(exitLoginClick) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button];
     
@@ -91,7 +93,7 @@
             [userd setObject:@"" forKey:@"token"];
         }
     }];
-   
+    
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -103,13 +105,13 @@
 {
     if (section == 0) {
         return 3;
-    } else 
-    return 1;
+    } else
+        return 1;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-   
+    
     return 0.001;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -120,7 +122,7 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 0 && indexPath.row == 0) {
-        return 45;
+        return 92;
     }
     return 45;
 }
@@ -131,7 +133,16 @@
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
     return [[UIView alloc] init];
 }
-
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell
+forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([cell respondsToSelector:@selector(setSeparatorInset:)]) {
+        [cell setSeparatorInset:UIEdgeInsetsZero];
+    }
+    if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
+        [cell setLayoutMargins:UIEdgeInsetsZero];
+    }
+}
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
@@ -142,9 +153,10 @@
             [cell.titleLabel setText:[[arrayTitle objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]];
             [cell.headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]] placeholderImage:[UIImage imageNamed:@"headImage"]];
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            
             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
             reCell = cell;
-
+            
         } else {
             MyHomeSetTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"setList" forIndexPath:indexPath];
             [cell.titleLabel setText:[[arrayTitle objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]];
@@ -158,7 +170,6 @@
                 [cell.detaiLabel setText:[SelfPersonInfo getInstance].personAge];
             }
             
-             [cell.detaiLabel setFont:Font_14];
             
             reCell = cell;
         }
@@ -166,15 +177,14 @@
     } else {
         MyHomeSetTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"setList" forIndexPath:indexPath];
         [cell.titleLabel setText:[arrayTitle objectAtIndex:indexPath.section]];
-
+        
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         
         if ([[arrayTitle objectAtIndex:indexPath.section] isEqualToString:@"清除缓存"]) {
             [cell.detaiLabel setText:[NSString stringWithFormat:@"%.2fM", [self filePath]  / 2]];
         }
-        
-        [cell.detaiLabel setFont:[UIFont systemFontOfSize:12]];
+    
         reCell = cell;
     }
     
@@ -211,12 +221,12 @@
                 }];
                 
             } else if(indexPath.row == 1){
-            
                 
-                    [UIView beginAnimations:nil context:nil];
-                    [UIView setAnimationDuration:0.4];
-                    [alphaImage setAlpha:1];
-                    [UIView commitAnimations];
+                
+                [UIView beginAnimations:nil context:nil];
+                [UIView setAnimationDuration:0.4];
+                [alphaImage setAlpha:1];
+                [UIView commitAnimations];
                 
             } else {
                 LTSDateChoose *dateChoose =  [[LTSDateChoose alloc]initWithType:UIDatePickerModeDate title:@"日期选择"];
@@ -232,9 +242,9 @@
             
             
         }
-           
             
-        
+            
+            
             
             break;
         case 1:
@@ -248,11 +258,11 @@
         {
             addressSetFirstViewViewController *address = [[addressSetFirstViewViewController alloc] init];
             [self.navigationController pushViewController:address animated:YES];
-
+            
         }
             break;
         case 3:
-             [self clearFile];
+            [self clearFile];
             break;
             
         case 4:
@@ -260,7 +270,7 @@
             SuggestViewController *suggest = [[SuggestViewController alloc] init];
             [self.navigationController pushViewController:suggest animated:YES];
         }
-             break;
+            break;
         case 5:
         {
             AboutCloudFactoryViewController *about = [[AboutCloudFactoryViewController alloc] init];
@@ -305,7 +315,7 @@
 - (NSString*)stringFromDate:(NSDate*)date{
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-   
+    
     [dateFormatter setDateFormat:@"yyyy-MM-dd"];
     
     NSString *destDateString = [dateFormatter stringFromDate:date];
@@ -315,7 +325,7 @@
 -(void)createNickName
 {
     
-//    [setTable setAlpha:0];
+    //    [setTable setAlpha:0];
     
     alphaImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
     
@@ -366,7 +376,7 @@
     [nickName setTextAlignment:NSTextAlignmentCenter];
     [nickName setFont:[UIFont systemFontOfSize:14]];
     [nickName setReturnKeyType:UIReturnKeyDone];
-
+    
     
     UIButton *cancelButton = [UIButton new];
     [nickBgName addSubview:cancelButton];
@@ -531,13 +541,13 @@
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end

@@ -26,7 +26,7 @@
 @synthesize mainTableView;
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"我的收藏";
+    [self settabTitle:@"我的收藏"];
     [self.view addSubview:self.mainTableView];
     
     [self.view setBackgroundColor:[UIColor whiteColor]];
@@ -52,7 +52,7 @@
     //获取滚动视图y值的偏移量
     
     
-    CGFloat tabOffsetY = [mainTableView rectForSection:0].origin.y - 64;
+    CGFloat tabOffsetY = [mainTableView rectForSection:0].origin.y - NavHeight;
     CGFloat offsetY = scrollView.contentOffset.y;
     
     _isTopIsCanNotMoveTabViewPre = _isTopIsCanNotMoveTabView;
@@ -85,11 +85,16 @@
 {
     if (mainTableView == nil)
     {
-        mainTableView= [[MainTouchTableTableView alloc]initWithFrame:CGRectMake(0,0,Main_Screen_Width,Main_Screen_Height)];
+        
+        mainTableView= [[MainTouchTableTableView alloc]initWithFrame:CGRectMake(0,NavHeight,Main_Screen_Width,Main_Screen_Height)];
+        if (@available(iOS 11.0, *)) {
+            mainTableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        } else {
+            self.automaticallyAdjustsScrollViewInsets = NO;
+        }
         mainTableView.delegate=self;
         mainTableView.dataSource=self;
         mainTableView.showsVerticalScrollIndicator = NO;
-        mainTableView.contentInset = UIEdgeInsetsMake(64,0, 0, 0);
         mainTableView.backgroundColor = [UIColor whiteColor];
     }
     return mainTableView;
@@ -139,7 +144,7 @@
         
 //         MySegMentViewNew * rcs=[[MySegMentViewNew alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, Main_Screen_Height) controllers:controllers titleArray:titleArray ParentController:self lineWidth:25 lineHeight:3. butHeight:40 viewHeight:50 showLine:YES];
         
-    MYSegmentView * rcs=[[MYSegmentView alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, Main_Screen_Height-64) controllers:controllers titleArray:titleArray ParentController:self lineWidth:40 lineHeight:2.];
+    MYSegmentView * rcs=[[MYSegmentView alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, Main_Screen_Height-64) controllers:controllers titleArray:titleArray ParentController:self lineWidth:40 lineHeight:2.1];
         
         _RCSegView = rcs;
     }

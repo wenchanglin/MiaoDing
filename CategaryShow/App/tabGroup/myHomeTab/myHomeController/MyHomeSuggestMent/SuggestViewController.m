@@ -27,7 +27,7 @@
     [self createSuggestView];
     getData = [BaseDomain getInstance:NO];
     arrayClassId = [NSMutableArray array];
-    self.title = @"意见反馈";
+    [self settabTitle:@"意见反馈"];
     NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     NSMutableArray *array1 = [NSMutableArray arrayWithObjects:@"相关问题", nil];
@@ -58,7 +58,7 @@
 
 -(void)createSuggestView
 {
-    suggestTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    suggestTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
     suggestTable.dataSource = self;
     suggestTable.delegate = self;
     [suggestTable setSeparatorColor : getUIColor(Color_myTabIconLineColor)];

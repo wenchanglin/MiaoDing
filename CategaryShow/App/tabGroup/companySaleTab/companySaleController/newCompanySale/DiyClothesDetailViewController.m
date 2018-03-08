@@ -724,7 +724,7 @@
     NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
     if ([[userd stringForKey:@"token"] length] > 0) {
         
-         datDingBegin = [NSDate dateWithTimeIntervalSinceNow:0];
+        datDingBegin = [NSDate dateWithTimeIntervalSinceNow:0];
         
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:0.5];

@@ -19,13 +19,10 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"会员制度";
+    [self settabTitle:@"会员制度"];
     getData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    
     listArray = [NSMutableArray array];
-    // Do any additional setup after loading the view.
-    
     [self getDatas];
 }
 
@@ -43,7 +40,13 @@
 
 -(void)createTable{
     
-    UITableView *tableRule = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    UITableView *tableRule = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    if (@available(iOS 11.0, *)) {
+        tableRule.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+
     tableRule.delegate = self;
     tableRule.dataSource = self;
     [tableRule setBackgroundColor:getUIColor(Color_background)];

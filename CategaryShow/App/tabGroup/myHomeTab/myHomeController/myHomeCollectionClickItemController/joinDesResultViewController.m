@@ -20,14 +20,12 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     UIButton *Btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:Btn];
-    // Do any additional setup after loading the view.
-    self.title = @"入驻反馈";
+    [self settabTitle:@"入驻反馈"];
     [self createView];
 }
 
 -(void)createView
 {
-    
     UIImageView *success = [UIImageView new];
     [self.view addSubview:success];
     success.sd_layout
@@ -36,7 +34,6 @@
     .heightIs(75)
     .widthIs(75);
     [success setImage:[UIImage imageNamed:@"yuyuesuccess"]];
-    
     
     UILabel *worningLabel = [UILabel new];
     [self.view addSubview:worningLabel];

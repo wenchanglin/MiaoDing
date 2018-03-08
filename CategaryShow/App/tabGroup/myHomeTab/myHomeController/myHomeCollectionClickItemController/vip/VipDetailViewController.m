@@ -32,9 +32,8 @@
     
     [buttonRight addTarget:self action:@selector(rightClick) forControlEvents:UIControlEventTouchUpInside];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    self.title = @"会员俱乐部";
+    [self settabTitle:@"会员俱乐部"];
     [self getDatas];
-    // Do any additional setup after loading the view.
 }
 
 -(void)rightClick
@@ -65,7 +64,12 @@
 
 -(void)createTable
 {
-    growTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    growTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    if (@available(iOS 11.0, *)) {
+        growTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     growTable.dataSource = self;
     growTable.delegate = self;
     [growTable registerClass:[FirstSectionTableViewCell class] forCellReuseIdentifier:@"firstSection"];

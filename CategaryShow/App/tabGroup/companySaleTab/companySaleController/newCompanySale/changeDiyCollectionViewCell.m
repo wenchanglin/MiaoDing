@@ -11,20 +11,15 @@
 @implementation changeDiyCollectionViewCell
 {
     UIImageView *bgView;
-    
     UIImageView *imgView;
     UILabel *titleLabel;
     UILabel *tagLabel;
+    UILabel * priceLabel;
 }
 -(instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-        
-        
         [self setUI];
-        
-        
-        
     }
     return self;
 }
@@ -34,53 +29,59 @@
     UIView *contentView = self.contentView;
     bgView = [UIImageView new];
     [contentView addSubview:bgView];
-    
-    bgView.sd_layout
-    .leftEqualToView(contentView)
-    .rightEqualToView(contentView)
-    .topEqualToView(contentView)
-    .bottomEqualToView(contentView);
-
-    [bgView setImage:[UIImage imageNamed:@"kapian"]];
+    // [bgView setImage:[UIImage imageNamed:@"kapian"]];
+    bgView.backgroundColor = [UIColor colorWithHexString:@"#FFFFFF"];
+    [bgView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.left.right.equalTo(contentView);
+        make.bottom.equalTo(contentView.mas_bottom).offset(-9.2);
+    }];
     
     imgView = [UIImageView new];
-    [bgView addSubview:imgView];
-    imgView.sd_layout
-    .leftSpaceToView(bgView,5)
-    .topSpaceToView(bgView, 5)
-    .rightSpaceToView(bgView, 5)
-    .bottomSpaceToView(bgView, 60);
     [imgView setContentMode:UIViewContentModeScaleAspectFill];
     [imgView.layer setMasksToBounds:YES];
+    [bgView addSubview:imgView];
+    [imgView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.top.right.equalTo(bgView);
+        make.bottom.equalTo(bgView.mas_bottom).offset(-73.8);
+    }];
     
     titleLabel = [UILabel new];
+    titleLabel.numberOfLines = 0;
     [bgView addSubview:titleLabel];
-    titleLabel.sd_layout
-    .leftSpaceToView(bgView, 12)
-    .topSpaceToView(imgView, 15)
-    .heightIs(15)
-    .rightSpaceToView(bgView, 12);
-    [titleLabel setFont:Font_13];
-    
+    titleLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:14];
+    titleLabel.textColor = [UIColor colorWithHexString:@"#3D3D3D"];
+    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(imgView.mas_bottom).offset(12);
+        make.left.mas_equalTo(9);
+        make.height.mas_equalTo(20);
+    }];
     
     tagLabel = [UILabel new];
+    tagLabel.textColor = [UIColor colorWithHexString:@"#3D3D3D"];
+    tagLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:12];
     [bgView addSubview:tagLabel];
-    tagLabel.sd_layout
-    .leftSpaceToView(bgView, 12)
-    .topSpaceToView(titleLabel, 7)
-    .heightIs(12)
-    .rightSpaceToView(bgView, 12);
-    [tagLabel setFont:[UIFont systemFontOfSize:10]];
-    [tagLabel setTextColor:[UIColor lightGrayColor]];
+    [tagLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(titleLabel.mas_bottom).offset(10);
+        make.left.equalTo(titleLabel);
+        make.height.mas_equalTo(17);
+    }];
+    priceLabel = [UILabel new];
+    priceLabel.textColor = [UIColor colorWithHexString:@"#3D3D3D"];
+    priceLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:12];
+    [bgView addSubview:priceLabel];
+    [priceLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(-9);
+        make.centerY.equalTo(tagLabel.mas_centerY);
+    }];
 }
 
 -(void)setModel:(chageDiyModel *)model
 {
-     UIView *contentView = self.contentView;
     
-    [imgView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.imageAvater]]];
+    [imgView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.thumb]]];
     [titleLabel setText:model.name];
     [tagLabel setText:model.sub_name];
+    priceLabel.text = model.price;
 }
 
 
@@ -90,9 +91,7 @@
     
     
     
-   
-   
-    
+
 }
 
 

@@ -29,25 +29,15 @@
 @synthesize mainTableView;
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"优惠券";
+    [self settabTitle:@"优惠券"];
     [self.view addSubview:self.mainTableView];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
-    UIButton *buttonRight = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-    [buttonRight setImage:[UIImage imageNamed:@"RuleImg"] forState:UIControlStateNormal];
-   
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRight];
-    
-    [buttonRight addTarget:self action:@selector(rightClick) forControlEvents:UIControlEventTouchUpInside];
+  
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(acceptMsg:) name:@"leaveTop" object:nil];
-    // Do any additional setup after loading the view.
 }
 
--(void)rightClick
-{
-    couPonRulerViewController *cpRuler = [[couPonRulerViewController alloc] init];
-    [self.navigationController pushViewController:cpRuler animated:YES];
-}
+
 
 -(void)viewWillAppear:(BOOL)animated
 {
@@ -72,7 +62,7 @@
     //获取滚动视图y值的偏移量
     
     
-    CGFloat tabOffsetY = [mainTableView rectForSection:0].origin.y - 64;
+    CGFloat tabOffsetY = [mainTableView rectForSection:0].origin.y - NavHeight;
     CGFloat offsetY = scrollView.contentOffset.y;
     
     _isTopIsCanNotMoveTabViewPre = _isTopIsCanNotMoveTabView;
@@ -105,11 +95,10 @@
 {
     if (mainTableView == nil)
     {
-        mainTableView= [[MainTouchTableTableView alloc]initWithFrame:CGRectMake(0,0,Main_Screen_Width,Main_Screen_Height)];
+        mainTableView= [[MainTouchTableTableView alloc]initWithFrame:CGRectMake(0,0,Main_Screen_Width,Main_Screen_Height-64)];
         mainTableView.delegate=self;
         mainTableView.dataSource=self;
         mainTableView.showsVerticalScrollIndicator = NO;
-        mainTableView.contentInset = UIEdgeInsetsMake(64,0, 0, 0);
         mainTableView.backgroundColor = [UIColor whiteColor];
     }
     return mainTableView;
@@ -150,13 +139,13 @@
         
         //        SecondViewTableViewController * Second=[[SecondViewTableViewController alloc]init];
         
-        canUseViewController * canUse =[[canUseViewController alloc]init];
+//        canUseViewController * canUse =[[canUseViewController alloc]init];
         haveUsedViewController * haveUsed =[[haveUsedViewController alloc]init];
         haveOverduedViewController * hvaeOverdued =[[haveOverduedViewController alloc]init];
         
-        NSArray *controllers=@[canUse,haveUsed,hvaeOverdued];
+        NSArray *controllers=@[haveUsed,hvaeOverdued];//canUse
         
-        NSArray *titleArray =@[@"未使用",@"已使用",@"已过期"];
+        NSArray *titleArray =@[@"已使用",@"已过期"];//@"未使用",
         
         MYSegmentView * rcs=[[MYSegmentView alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, Main_Screen_Height-64) controllers:controllers titleArray:titleArray ParentController:self lineWidth:40 lineHeight:2.];
         

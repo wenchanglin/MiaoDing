@@ -17,7 +17,6 @@
 
 //static NSString * const URL_Server_String = @"https://www.c2mbay.cn/index.php";
 //static NSString * const URL_Server_String = @"http://192.168.1.156/index.php";
-static NSString * const URL_Server_String = @"http://www.cloudworkshop.cn/index.php";
 @interface BaseDomain ()
 
 @property (nonatomic,assign) Boolean isJson;
@@ -127,7 +126,7 @@ static NSString * const URL_Server_String = @"http://www.cloudworkshop.cn/index.
     
     NSString * urlString;
     if (isAppendHostUrl) {
-        urlString = [NSString stringWithFormat:@"%@%@",URL_Server_String,url];
+        urlString = [NSString stringWithFormat:@"%@%@",URL_Server_String,url];//URL_Server_String
     }
     else {
         urlString = url;
@@ -138,14 +137,11 @@ static NSString * const URL_Server_String = @"http://www.cloudworkshop.cn/index.
         [parameters setObject:[userd stringForKey:@"token"] forKey:@"token"];
     }
     
-    
     self.httpTask = [self.httpManager GET:urlString parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+       // NSLog(@"143:%@::%@",responseObject,urlString);
         // 整合数据
         self.data = responseObject;
-        
-        
-        
-        
+    
         [self parsDataWithDictionary:self.data];
         
         // 传递结果
@@ -155,6 +151,7 @@ static NSString * const URL_Server_String = @"http://www.cloudworkshop.cn/index.
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+       // NSLog(@"155:%@:::%@",error,urlString);
         // 整合数据
         self.result = -99;
         self.resultMessage = NSLocalizedString(@"baseform_progress_NetErrorMessage", nil);

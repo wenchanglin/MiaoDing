@@ -83,7 +83,7 @@
     [super viewDidLoad];
     postData= [BaseDomain getInstance:NO];
     couPonRemark = @"请选择优惠券";
-    self.title = @"确认订单";
+    [self settabTitle:@"确认订单"];
     ZFB = YES;
     choose =YES;
     payPriceAndCon = [NSMutableArray array];
@@ -323,7 +323,12 @@
 
 -(void)createTableView
 {
-    clothesToPay = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 42) style:UITableViewStyleGrouped];
+    if (@available(iOS 11.0, *)) {
+        clothesToPay.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+    clothesToPay = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 42) style:UITableViewStyleGrouped];
     
     clothesToPay.dataSource = self;
     clothesToPay.delegate = self;

@@ -420,31 +420,31 @@ NSInteger flog;
 
 
 
--(CGFloat)max:(CGFloat)r G:(CGFloat)g B:(CGFloat)b
-{
-    CGFloat re;
-    if (r > g && r > b) {
-        re = r;
-    } else if (g > r && g > b) {
-        re = g;
-    } else if (b > r && b > g) {
-        re = b;
-    }
-    return  re;
-}
-
--(CGFloat)min:(CGFloat)r G:(CGFloat)g B:(CGFloat)b
-{
-    CGFloat re;
-    if (r < g && r < b) {
-        re = r;
-    } else if (g < r && g < b) {
-        re = g;
-    } else if (b < r && b < g) {
-        re = b;
-    }
-    return  re;
-}
+//-(CGFloat)max:(CGFloat)r G:(CGFloat)g B:(CGFloat)b
+//{
+//    CGFloat re;
+//    if (r > g && r > b) {
+//        re = r;
+//    } else if (g > r && g > b) {
+//        re = g;
+//    } else if (b > r && b > g) {
+//        re = b;
+//    }
+//    return  re;
+//}
+//
+//-(CGFloat)min:(CGFloat)r G:(CGFloat)g B:(CGFloat)b
+//{
+//    CGFloat re;
+//    if (r < g && r < b) {
+//        re = r;
+//    } else if (g < r && g < b) {
+//        re = g;
+//    } else if (b < r && b < g) {
+//        re = b;
+//    }
+//    return  re;
+//}
 
 - (NSString*)deviceVersion
 {
@@ -650,9 +650,9 @@ NSInteger flog;
     //首先判断当前设备的版本(主要是iOS9修改了camera界面底层的实现)
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 9.0) {
         //在相机界面中进行循环遍历出shutterButton
-        NSLog(@"1:  %@", viewController.view.subviews);
+       // NSLog(@"1:  %@", viewController.view.subviews);
         for (UIView *tmpView in viewController.view.subviews) {
-            NSLog(@"2:   %@", tmpView.subviews);
+         //   NSLog(@"2:   %@", tmpView.subviews);
             
             //删除拍照界面顶部的工具条 (iOS9之后设置topBar隐藏属性是不能够隐藏掉那个前置摄像头)
             
@@ -725,7 +725,7 @@ NSInteger flog;
     [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
     flowLayout.minimumLineSpacing = 0;
     //        flowLayout.headerReferenceSize = CGSizeMake(self.frame.size.width, 0);//头部
-    photoCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT  - 64) collectionViewLayout:flowLayout];
+    photoCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT  - 64) collectionViewLayout:flowLayout];
     
     //设置代理
     photoCollection.delegate = self;
@@ -789,7 +789,7 @@ NSInteger flog;
 
 -(void)createPhotoTable
 {
-    photoTable = [[UITableView alloc] initWithFrame:CGRectMake(0,64, SCREEN_WIDTH, SCREEN_HEIGHT - 64)];
+    photoTable = [[UITableView alloc] initWithFrame:CGRectMake(0,NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64)];
     photoTable.dataSource = self;
     photoTable.delegate = self;
     
@@ -1156,7 +1156,7 @@ NSInteger flog;
         if (area > 2) {
             model.photo = [self MatToUIImage:img];
         }
-        NSLog(@"%f", area);
+        WCLLog(@"%f", area);
         
 
     } else if ([[self deviceVersion] integerValue] == 7) {

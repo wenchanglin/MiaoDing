@@ -69,21 +69,21 @@
     self.view.backgroundColor = [UIColor whiteColor];
     self.aView = [[UIView alloc]init];
     _aView.backgroundColor = [UIColor whiteColor];
-    _aView.frame = CGRectMake(10, 84, self.view.frame.size.width - 20, 225);
+    _aView.frame = CGRectMake(10, 24+NavHeight, self.view.frame.size.width - 20, 225);
     [_aView.layer setBorderWidth:1];
     [_aView.layer setBorderColor:getUIColor(Color_loginBackViewColor).CGColor];
     [self.view addSubview:_aView];
-    self.navigationItem.title = @"意见反馈";
+    [self settabTitle:@"意见反馈"];
     
 
-    self.wordCountLabel = [[UILabel alloc]initWithFrame:CGRectMake(self.textView.frame.origin.x + 20,  self.textView.frame.size.height + 84 - 1, [UIScreen mainScreen].bounds.size.width - 40, 20)];
+    self.wordCountLabel = [[UILabel alloc]initWithFrame:CGRectMake(self.textView.frame.origin.x + 20,  self.textView.frame.size.height + 24+NavHeight - 1, [UIScreen mainScreen].bounds.size.width - 40, 20)];
     _wordCountLabel.font = [UIFont systemFontOfSize:14.f];
     _wordCountLabel.textColor = [UIColor lightGrayColor];
     
     self.wordCountLabel.text = @"0/300";
     self.wordCountLabel.backgroundColor = [UIColor whiteColor];
     self.wordCountLabel.textAlignment = NSTextAlignmentRight;
-    UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(self.textView.frame.origin.x + 20,  self.textView.frame.size.height + 84 - 1 + 23, [UIScreen mainScreen].bounds.size.width - 40, 1)];
+    UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(self.textView.frame.origin.x + 20,  self.textView.frame.size.height + 24+NavHeight - 1 + 23, [UIScreen mainScreen].bounds.size.width - 40, 1)];
     lineView.backgroundColor = [UIColor lightGrayColor];
     [self.view addSubview:lineView];
     
@@ -223,7 +223,7 @@
 
 ///添加联系方式
 -(void)addContactInformation{
-    _textField = [[UITextField alloc]initWithFrame:CGRectMake(10, 324, [UIScreen mainScreen].bounds.size.width - 20, 40)];
+    _textField = [[UITextField alloc]initWithFrame:CGRectMake(10, CGRectGetMaxY(_aView.frame)+5, [UIScreen mainScreen].bounds.size.width - 20, 40)];
     _textField.backgroundColor = [UIColor whiteColor];
     [_textField.layer setBorderColor:getUIColor(Color_background).CGColor];
     [_textField.layer setBorderWidth:1];
@@ -282,7 +282,7 @@
     if (!_sendButton) {
         _sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _sendButton.layer.cornerRadius = 2.0f;
-        _sendButton.frame = CGRectMake(10, 384, self.view.frame.size.width - 20, 40);
+        _sendButton.frame = CGRectMake(10, CGRectGetMaxY(_aView.frame)+50, self.view.frame.size.width - 20, 40);
         _sendButton.backgroundColor = [UIColor blackColor];
         [_sendButton setTitle:@"提交" forState:UIControlStateNormal];
         [_sendButton.titleLabel setFont:[UIFont systemFontOfSize:14]];

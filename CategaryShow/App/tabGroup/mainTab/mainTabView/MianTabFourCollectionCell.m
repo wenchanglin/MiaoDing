@@ -42,7 +42,6 @@
         [self.contentView addSubview:_bowView];
         [self.contentView addSubview:_YJXImage];
         [_YJXImage setHidden:YES];
-        // the frame should be seted in layoutsubviews,but should set cgrectzero to subview
     }
     
     return self;
@@ -56,7 +55,7 @@
         make.centerX.equalTo(self.mas_centerX);
         make.centerY.equalTo(self.mas_centerY).with.offset(-10);
         make.width.equalTo(@35);
-        make.height.equalTo(@31);
+        make.height.equalTo(@35);
         
     }];
     

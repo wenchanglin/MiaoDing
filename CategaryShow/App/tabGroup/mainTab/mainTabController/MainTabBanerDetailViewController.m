@@ -43,28 +43,23 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = _titleContent;
+    [self settabTitle:_titleContent];
     
     
     UIButton *buttonLeft = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 25)];
-    [buttonLeft setImage:[UIImage imageNamed:@"backLeft"] forState:UIControlStateNormal];
+    [buttonLeft setImage:[UIImage imageNamed:@"backLeftWhite"] forState:UIControlStateNormal];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonLeft];
     [buttonLeft setImageEdgeInsets:UIEdgeInsetsMake(0, -15, 0, 15)];
     [buttonLeft addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *buttonRight = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-    [buttonRight setImage:[UIImage imageNamed:@"share"] forState:UIControlStateNormal];
+    [buttonRight setImage:[UIImage imageNamed:@"shareRight"] forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRight];
     [buttonRight addTarget:self action:@selector(shareClick) forControlEvents:UIControlEventTouchUpInside];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loginSuccessAction) name:@"loginSuccess" object:nil];
     
- 
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 64)];
-    [view setBackgroundColor:[UIColor whiteColor]];
-    [self.view addSubview:view];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self createScrollerView];
-    // Do any additional setup after loading the view.
 }
 
 
@@ -74,7 +69,9 @@
         [web goBack];
         
     }else{
-        [self.view resignFirstResponder];
+        web.delegate = nil;
+        [web removeFromSuperview];
+        web = nil;
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
@@ -107,9 +104,7 @@
     
     NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
     
-    
-    
-    web = [[UIWebView alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64)];
+    web = [[UIWebView alloc] initWithFrame:CGRectMake(0, NavHeight, self.view.frame.size.width, self.view.frame.size.height - 64)];
     [self.view addSubview:web];
     
     web.scrollView.scrollsToTop = YES;

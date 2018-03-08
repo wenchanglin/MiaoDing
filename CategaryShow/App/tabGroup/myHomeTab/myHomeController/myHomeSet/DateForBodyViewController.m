@@ -25,7 +25,7 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"量体数据";
+    [self settabTitle:@"量体数据"];
     getDate = [BaseDomain getInstance:NO];
     arrayData = [NSMutableArray array];
     [self.view setBackgroundColor:[UIColor whiteColor]];
@@ -97,7 +97,12 @@
 
 -(void)createTable
 {
-    nameTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    nameTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    if (@available(iOS 11.0, *)) {
+        nameTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     nameTable.delegate = self;
     nameTable.dataSource = self;
     [nameTable registerClass:[dateForBodyTableViewCell class] forCellReuseIdentifier:@"name"];

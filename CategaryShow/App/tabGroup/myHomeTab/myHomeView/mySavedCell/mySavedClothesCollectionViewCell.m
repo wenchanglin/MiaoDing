@@ -10,9 +10,11 @@
 
 @implementation mySavedClothesCollectionViewCell
 {
-    UIImageView *clothesImg;
-    UILabel *clothesName;
-    UILabel *clothesPrice;
+    UIImageView *bgView;
+    UIImageView *imgView;
+    UILabel *titleLabel;
+    UILabel *tagLabel;
+    UILabel * priceLabel;
 }
 -(instancetype)initWithFrame:(CGRect)frame
 {
@@ -25,24 +27,52 @@
 -(void)setUp
 {
     UIView *contentView = self.contentView;
-    clothesImg = [UIImageView new];
-    [contentView addSubview:clothesImg];
-    clothesImg.sd_layout
-    .leftEqualToView(contentView)
-    .topEqualToView(contentView)
-    .rightEqualToView(contentView)
-    .bottomSpaceToView(contentView, 10);
-    [clothesImg setContentMode:UIViewContentModeScaleAspectFill];
-    [clothesImg.layer setMasksToBounds:YES];
-    clothesName = [UILabel new];
-    [contentView addSubview:clothesName];
+    bgView = [UIImageView new];
+    [contentView addSubview:bgView];
+    // [bgView setImage:[UIImage imageNamed:@"kapian"]];
+    bgView.backgroundColor = [UIColor colorWithHexString:@"#FFFFFF"];
+    [bgView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.left.right.equalTo(contentView);
+        make.bottom.equalTo(contentView.mas_bottom).offset(-9.2);
+    }];
     
-//    clothesName.sd_layout
-//    .leftSpaceToView(contentView, 12)
-//    .topSpaceToView(clothesImg, 0)
-//    .bottomEqualToView(contentView)
-//    .rightSpaceToView(contentView,16);
-//    [clothesName setFont:[UIFont systemFontOfSize:15]];
+    imgView = [UIImageView new];
+    [imgView setContentMode:UIViewContentModeScaleAspectFill];
+    [imgView.layer setMasksToBounds:YES];
+    [bgView addSubview:imgView];
+    [imgView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.top.right.equalTo(bgView);
+        make.bottom.equalTo(bgView.mas_bottom).offset(-73.8);
+    }];
+    
+    titleLabel = [UILabel new];
+    titleLabel.numberOfLines = 0;
+    [bgView addSubview:titleLabel];
+    titleLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:14];
+    titleLabel.textColor = [UIColor colorWithHexString:@"#3D3D3D"];
+    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(imgView.mas_bottom).offset(12);
+        make.left.mas_equalTo(9);
+        make.height.mas_equalTo(20);
+    }];
+    
+    tagLabel = [UILabel new];
+    tagLabel.textColor = [UIColor colorWithHexString:@"#3D3D3D"];
+    tagLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:12];
+    [bgView addSubview:tagLabel];
+    [tagLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(titleLabel.mas_bottom).offset(10);
+        make.left.mas_equalTo(titleLabel);
+        make.height.mas_equalTo(17);
+    }];
+    priceLabel = [UILabel new];
+    priceLabel.textColor = [UIColor colorWithHexString:@"#3D3D3D"];
+    priceLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:12];
+    [bgView addSubview:priceLabel];
+    [priceLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(-9);
+        make.centerY.equalTo(tagLabel.mas_centerY);
+    }];
     
    
     
@@ -52,9 +82,10 @@
 -(void)setModel:(mySavedModel *)model
 {
     _model = model;
-    [clothesImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.clothesImg]]];
-    [clothesName setText:model.clothesName];
-    [clothesPrice setText:[NSString stringWithFormat:@"¥%@", model.clothesPrice]];
+    [imgView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.clothesImg]]];
+    [titleLabel setText:model.clothesName];
+    tagLabel.text = model.subName;
+    [priceLabel setText:[NSString stringWithFormat:@"%@", model.clothesPrice]];
 }
 
 @end

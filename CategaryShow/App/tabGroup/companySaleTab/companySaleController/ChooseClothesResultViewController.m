@@ -30,7 +30,7 @@
     [super viewDidLoad];
     postData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    self.title = @"订单详情";
+    [self settabTitle:@"订单详情"];
     [self createTableView];
     [self createTableViewHead];
     modelArray = [NSMutableArray array];
@@ -38,7 +38,7 @@
     rightButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
     [rightButton setImage:[UIImage imageNamed:@"bagRight"] forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightButton];
-    [rightButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [rightButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [rightButton addTarget:self action:@selector(goInBag) forControlEvents:UIControlEventTouchUpInside];
     
     
@@ -100,14 +100,19 @@
 
 -(void)createTableView    //createtable
 {
-    clothesDetailTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64  - 50) style:UITableViewStylePlain];
+    if (@available(iOS 11.0, *)) {
+       clothesDetailTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+    clothesDetailTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64  - 50) style:UITableViewStylePlain];
     clothesDetailTable.delegate = self;
     clothesDetailTable.dataSource = self;
     [clothesDetailTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [clothesDetailTable registerClass:[ComoanySaleDDDtailViewCell class] forCellReuseIdentifier:NSStringFromClass([ComoanySaleDDDtailViewCell class])];
     [self.view addSubview:clothesDetailTable];
     
-    UIView *priceLowView = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - 50, SCREEN_WIDTH / 3, 50)];
+    UIView *priceLowView = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT -64-50, SCREEN_WIDTH / 3, 50)];
     [priceLowView setBackgroundColor:[UIColor whiteColor]];
     [self.view addSubview:priceLowView];
     
@@ -115,11 +120,9 @@
     UILabel *priceDetail = [UILabel new];
     [priceLowView addSubview:priceDetail];
     [priceDetail mas_makeConstraints:^(MASConstraintMaker *make) {
-        
         make.centerX.equalTo(priceLowView.mas_centerX).with.offset(20);
         make.centerY.equalTo(priceLowView.mas_centerY);
         make.height.equalTo(@20);
-        
     }];
     [priceDetail setText:[NSString stringWithFormat:@"¥%.2f", [_price floatValue]]];
     
@@ -136,10 +139,8 @@
     [priceTitle setText:@"合计:"];
     [priceTitle setFont:[UIFont systemFontOfSize:14]];
     
-    
-    
-    
-    UIButton *buttonSave = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3, SCREEN_HEIGHT - 50, SCREEN_WIDTH / 3 , 50)];
+
+    UIButton *buttonSave = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3, SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
     [buttonSave setBackgroundColor:getUIColor(Color_DZClolor)];
     [self.view addSubview:buttonSave];
     [buttonSave addTarget:self action:@selector(saveTheClothes) forControlEvents:UIControlEventTouchUpInside];
@@ -147,7 +148,7 @@
     [buttonSave setTitle:@"加入购物袋" forState:UIControlStateNormal];
     
     
-    UIButton *buttonBuy = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3 * 2, SCREEN_HEIGHT - 50, SCREEN_WIDTH / 3 , 50)];
+    UIButton *buttonBuy = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3 * 2, SCREEN_HEIGHT-64 - 50, SCREEN_WIDTH / 3 , 50)];
     [buttonBuy setBackgroundColor:getUIColor(Color_TKClolor)];
     [self.view addSubview:buttonBuy];
     [buttonBuy addTarget:self action:@selector(payForClothes) forControlEvents:UIControlEventTouchUpInside];

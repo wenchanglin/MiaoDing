@@ -19,7 +19,7 @@
 
 //#define URL_ExitLogin @"/index/index/login_out"
 #define URL_ExitLogin [NSString stringWithFormat:@"/index%@/login_out",BanBenHao]
-
+#define URL_Server_String  @"http://www.cloudworkshop.cn/index.php"
 #define URL_HEADURL @"http://www.cloudworkshop.cn/"
 #define PIC_HEADURL @"http://source.cloudworkshop.cn/"
 //#define URL_HEADURL @"http://192.168.1.156/"

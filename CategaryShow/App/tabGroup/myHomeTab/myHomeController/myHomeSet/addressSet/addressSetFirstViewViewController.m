@@ -36,12 +36,11 @@
     detailArray = [NSMutableArray array];
     getData =[BaseDomain getInstance:NO];
     postData = [BaseDomain getInstance:NO];
-    self.title = @"收货地址";
+    [self settabTitle:@"收货地址"];
     [self reloadAddress];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadAddress) name:@"createAddress" object:nil];
-    // Do any additional setup after loading the view.
 }
 
 -(void)reloadAddress
@@ -122,12 +121,12 @@
 
 -(void)createTable
 {
-    
-    
-    
-    
-    addressTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 49) style:UITableViewStyleGrouped];
-    
+    addressTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 49) style:UITableViewStyleGrouped];
+    if (@available(iOS 11.0, *)) {
+        addressTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     addressTable.dataSource = self;
     addressTable.delegate = self;
     [addressTable registerClass:[addressAddTableViewCell class] forCellReuseIdentifier:@"clothesToPayAddress"];
@@ -135,7 +134,7 @@
     [self.view addSubview:addressTable];
 
     
-    buttonAdd = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - 49, SCREEN_WIDTH, 49)];
+    buttonAdd = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
     [self.view addSubview:buttonAdd];
     [buttonAdd setBackgroundColor:getUIColor(Color_DZClolor)];
     [buttonAdd setTitle:@"新增地址" forState:UIControlStateNormal];

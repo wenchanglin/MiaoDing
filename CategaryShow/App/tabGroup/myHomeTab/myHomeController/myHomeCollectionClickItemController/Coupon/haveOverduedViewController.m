@@ -62,7 +62,7 @@
 {
     
     
-    canUse = [[UITableView alloc] initWithFrame:CGRectMake(8, 0, SCREEN_WIDTH - 16, SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
+    canUse = [[UITableView alloc] initWithFrame:CGRectMake(12, 0, SCREEN_WIDTH - 24, SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
     canUse.delegate = self;
     canUse.dataSource = self;
     canUse.showsVerticalScrollIndicator =NO;
@@ -106,7 +106,7 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 87;
+    return 94;//87;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

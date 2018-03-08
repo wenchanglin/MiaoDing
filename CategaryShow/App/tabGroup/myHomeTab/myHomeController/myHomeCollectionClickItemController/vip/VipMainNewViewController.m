@@ -48,11 +48,10 @@
     userGrade = [NSMutableArray array];
     userPrivilege = [NSMutableArray array];
     showArray = [NSMutableArray array];
-    self.title = @"会员俱乐部";
+    [self settabTitle:@"会员俱乐部"];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
     [self getData];
-    // Do any additional setup after loading the view.
 }
 
 
@@ -241,7 +240,7 @@
     firstBack.sd_layout
     .leftSpaceToView(self.view, 13)
     .rightSpaceToView(self.view, 13)
-    .topSpaceToView(self.view, 64 + 48)
+    .topSpaceToView(self.view, NavHeight + 48)
     .heightIs(176.0 / 667.0 * SCREEN_HEIGHT);
     firstBack.backgroundColor = [UIColor whiteColor];
     firstBack.layer.masksToBounds = NO;
@@ -545,11 +544,11 @@
     [self.navigationController pushViewController:vipDetail animated:YES];
 }
 
--(void)QYClick
-{
-    moreVipQYViewController *moreV = [[moreVipQYViewController alloc] init];
-    [self.navigationController pushViewController:moreV animated:YES];
-}
+//-(void)QYClick
+//{
+//    moreVipQYViewController *moreV = [[moreVipQYViewController alloc] init];
+//    [self.navigationController pushViewController:moreV animated:YES];
+//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

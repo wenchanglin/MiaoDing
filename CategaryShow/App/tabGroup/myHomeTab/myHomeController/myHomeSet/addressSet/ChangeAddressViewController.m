@@ -35,16 +35,15 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"更改地址";
+    [self settabTitle:@"更改地址"];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     [button setTitle:@"管理" forState:UIControlStateNormal];
     [button.titleLabel setFont:[UIFont systemFontOfSize:16]];
-    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
     [button addTarget:self action:@selector(managerClick) forControlEvents:UIControlEventTouchUpInside];
-    // Do any additional setup after loading the view.
 }
 
 -(void)managerClick
@@ -111,8 +110,12 @@
 -(void)createTable
 {
     
-    addressTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
-    
+    addressTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    if (@available(iOS 11.0, *)) {
+        addressTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     addressTable.dataSource = self;
     addressTable.delegate = self;
     [addressTable registerClass:[ClothesForPayAddressTableViewCell class] forCellReuseIdentifier:@"clothesToPayAddress"];

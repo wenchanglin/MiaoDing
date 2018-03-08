@@ -16,9 +16,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = [_ruleDic stringForKey:@"name"];
+    [self settabTitle:[_ruleDic stringForKey:@"name"]];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    // Do any additional setup after loading the view.
     [self createScrollerView];
 }
 
@@ -26,7 +25,7 @@
 {
     
     
-    UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64)];
+    UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64)];
     [self.view addSubview:scroller];
     
     

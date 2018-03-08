@@ -10,4 +10,9 @@
 #import "designerModel.h"
 @interface designerinfoNewTableViewCell : UITableViewCell
 @property (nonatomic, retain) designerModel *model;
+@property(nonatomic,strong)UIView * desinerView;
+@property(nonatomic,strong)UIButton * zhuanFaBtn;
+@property(nonatomic,strong)UIButton * shouChangBtn;
+@property(nonatomic,strong)UIButton * loveBtn;
+@property(nonatomic,strong)UIButton * commentBtn;
 @end

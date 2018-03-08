@@ -21,11 +21,9 @@
     [super viewDidLoad];
     getData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    self.title = @"使用规则";
+    [self settabTitle:@"使用规则"];
     [self getDatas];
-   
-    // Do any additional setup after loading the view.
-}
+   }
 
 -(void)getDatas
 {
@@ -44,7 +42,7 @@
 {
     
     
-    UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT  - 64)];
+    UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT  - 64)];
     [self.view addSubview:scroller];
     
     

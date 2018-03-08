@@ -30,23 +30,24 @@
 {
     UIView *contentView = self.contentView;
     _titleLabel = [UILabel new];
+    _titleLabel.textColor = [UIColor colorWithHexString:@"#222222"];
     [contentView addSubview:_titleLabel];
     _titleLabel.sd_layout
-    .leftSpaceToView (contentView, 15)
+    .leftSpaceToView (contentView, 12)
     .centerYEqualToView(contentView)
     .widthIs(80)
     .heightIs(20);
-    [_titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+    [_titleLabel setFont:[UIFont fontWithName:@"PingFangSC-Light" size:16]];
     
     _detaiLabel = [UILabel new];
     [contentView addSubview:_detaiLabel];
     _detaiLabel.sd_layout
-    .rightSpaceToView (contentView, 15)
+    .rightSpaceToView (contentView, 12)
     .centerYEqualToView(contentView)
     .widthIs(120)
     .heightIs(20);
     [_detaiLabel setTextAlignment:NSTextAlignmentRight];
-   
+    _detaiLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:16];
         
 }
 

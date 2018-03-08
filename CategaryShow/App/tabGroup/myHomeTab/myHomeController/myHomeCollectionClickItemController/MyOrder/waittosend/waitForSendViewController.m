@@ -164,7 +164,7 @@
 
 -(void)createViewNoDD    // 创建没有订单界面
 {
-    bgNoDingView = [[UIView alloc] initWithFrame:CGRectMake(0,0, SCREEN_WIDTH, SCREEN_HEIGHT  - 41 - 64)];
+    bgNoDingView = [[UIView alloc] initWithFrame:CGRectMake(0,NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT  - 41 - 64)];
     [bgNoDingView setBackgroundColor:[UIColor whiteColor]];
     [self.view addSubview:bgNoDingView];
     

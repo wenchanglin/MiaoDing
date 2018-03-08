@@ -8,6 +8,10 @@ RESOURCES_TO_COPY=${PODS_ROOT}/resources-to-copy-${TARGETNAME}.txt
 
 XCASSET_FILES=()
 
+# This protects against multiple targets copying the same framework dependency at the same time. The solution
+# was originally proposed here: https://lists.samba.org/archive/rsync/2008-February/020158.html
+RSYNC_PROTECT_TMP_FILES=(--filter "P .*.??????")
+
 case "${TARGETED_DEVICE_FAMILY}" in
   1,2)
     TARGET_DEVICE_ARGS="--target-device ipad --target-device iphone"
@@ -17,6 +21,12 @@ case "${TARGETED_DEVICE_FAMILY}" in
     ;;
   2)
     TARGET_DEVICE_ARGS="--target-device ipad"
+    ;;
+  3)
+    TARGET_DEVICE_ARGS="--target-device tv"
+    ;;
+  4)
+    TARGET_DEVICE_ARGS="--target-device watch"
     ;;
   *)
     TARGET_DEVICE_ARGS="--target-device mac"
@@ -38,29 +48,29 @@ EOM
   fi
   case $RESOURCE_PATH in
     *.storyboard)
-      echo "ibtool --reference-external-strings-file --errors --warnings --notices --minimum-deployment-target ${!DEPLOYMENT_TARGET_SETTING_NAME} --output-format human-readable-text --compile ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename \"$RESOURCE_PATH\" .storyboard`.storyboardc $RESOURCE_PATH --sdk ${SDKROOT} ${TARGET_DEVICE_ARGS}"
+      echo "ibtool --reference-external-strings-file --errors --warnings --notices --minimum-deployment-target ${!DEPLOYMENT_TARGET_SETTING_NAME} --output-format human-readable-text --compile ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename \"$RESOURCE_PATH\" .storyboard`.storyboardc $RESOURCE_PATH --sdk ${SDKROOT} ${TARGET_DEVICE_ARGS}" || true
       ibtool --reference-external-strings-file --errors --warnings --notices --minimum-deployment-target ${!DEPLOYMENT_TARGET_SETTING_NAME} --output-format human-readable-text --compile "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename \"$RESOURCE_PATH\" .storyboard`.storyboardc" "$RESOURCE_PATH" --sdk "${SDKROOT}" ${TARGET_DEVICE_ARGS}
       ;;
     *.xib)
-      echo "ibtool --reference-external-strings-file --errors --warnings --notices --minimum-deployment-target ${!DEPLOYMENT_TARGET_SETTING_NAME} --output-format human-readable-text --compile ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename \"$RESOURCE_PATH\" .xib`.nib $RESOURCE_PATH --sdk ${SDKROOT} ${TARGET_DEVICE_ARGS}"
+      echo "ibtool --reference-external-strings-file --errors --warnings --notices --minimum-deployment-target ${!DEPLOYMENT_TARGET_SETTING_NAME} --output-format human-readable-text --compile ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename \"$RESOURCE_PATH\" .xib`.nib $RESOURCE_PATH --sdk ${SDKROOT} ${TARGET_DEVICE_ARGS}" || true
       ibtool --reference-external-strings-file --errors --warnings --notices --minimum-deployment-target ${!DEPLOYMENT_TARGET_SETTING_NAME} --output-format human-readable-text --compile "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename \"$RESOURCE_PATH\" .xib`.nib" "$RESOURCE_PATH" --sdk "${SDKROOT}" ${TARGET_DEVICE_ARGS}
       ;;
     *.framework)
-      echo "mkdir -p ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
+      echo "mkdir -p ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}" || true
       mkdir -p "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
-      echo "rsync -av $RESOURCE_PATH ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
-      rsync -av "$RESOURCE_PATH" "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
+      echo "rsync --delete -av "${RSYNC_PROTECT_TMP_FILES[@]}" $RESOURCE_PATH ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}" || true
+      rsync --delete -av "${RSYNC_PROTECT_TMP_FILES[@]}" "$RESOURCE_PATH" "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
       ;;
     *.xcdatamodel)
-      echo "xcrun momc \"$RESOURCE_PATH\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$RESOURCE_PATH"`.mom\""
+      echo "xcrun momc \"$RESOURCE_PATH\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$RESOURCE_PATH"`.mom\"" || true
       xcrun momc "$RESOURCE_PATH" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$RESOURCE_PATH" .xcdatamodel`.mom"
       ;;
     *.xcdatamodeld)
-      echo "xcrun momc \"$RESOURCE_PATH\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$RESOURCE_PATH" .xcdatamodeld`.momd\""
+      echo "xcrun momc \"$RESOURCE_PATH\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$RESOURCE_PATH" .xcdatamodeld`.momd\"" || true
       xcrun momc "$RESOURCE_PATH" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$RESOURCE_PATH" .xcdatamodeld`.momd"
       ;;
     *.xcmappingmodel)
-      echo "xcrun mapc \"$RESOURCE_PATH\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$RESOURCE_PATH" .xcmappingmodel`.cdm\""
+      echo "xcrun mapc \"$RESOURCE_PATH\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$RESOURCE_PATH" .xcmappingmodel`.cdm\"" || true
       xcrun mapc "$RESOURCE_PATH" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$RESOURCE_PATH" .xcmappingmodel`.cdm"
       ;;
     *.xcassets)
@@ -68,118 +78,120 @@ EOM
       XCASSET_FILES+=("$ABSOLUTE_XCASSET_FILE")
       ;;
     *)
-      echo "$RESOURCE_PATH"
+      echo "$RESOURCE_PATH" || true
       echo "$RESOURCE_PATH" >> "$RESOURCES_TO_COPY"
       ;;
   esac
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_grey.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_grey@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_red.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_red@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button-selected.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button-selected@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button-selected.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button-selected@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button-selected.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button-selected@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-sheet-panel.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-sheet-panel@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-black-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-black-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-gray-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-gray-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-green-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-green-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-red-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-red-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window-landscape.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window-landscape@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-yellow-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-yellow-button@2x.png"
-  install_resource "DTKDropdownMenu/DTKDropdownMenuView/DTKDropdownMenuView.bundle"
-  install_resource "MJRefresh/MJRefresh/MJRefresh.bundle"
-  install_resource "QIYU_iOS_SDK/SDK/QYResource.bundle"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundError.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundError@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundErrorIcon.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundErrorIcon@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundMessage.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundMessage@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundSuccess.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundSuccess@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundSuccessIcon.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundSuccessIcon@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundWarning.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundWarning@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundWarningIcon.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundWarningIcon@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationButtonBackground.png"
-  install_resource "TSMessages/Pod/Assets/NotificationButtonBackground@2x.png"
-  install_resource "TSMessages/Pod/Assets/TSMessagesDefaultDesign.json"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_grey.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_grey@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_red.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_red@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button-selected.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button-selected@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button-selected.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button-selected@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button-selected.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button-selected@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-sheet-panel.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-sheet-panel@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-black-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-black-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-gray-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-gray-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-green-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-green-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-red-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-red-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window-landscape.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window-landscape@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-yellow-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-yellow-button@2x.png"
+  install_resource "${PODS_ROOT}/DTKDropdownMenu/DTKDropdownMenuView/DTKDropdownMenuView.bundle"
+  install_resource "${PODS_ROOT}/IQKeyboardManager/IQKeyboardManager/Resources/IQKeyboardManager.bundle"
+  install_resource "${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle"
+  install_resource "${PODS_ROOT}/QIYU_iOS_SDK/SDK/QYResource.bundle"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundError.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundError@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundErrorIcon.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundErrorIcon@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundMessage.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundMessage@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundSuccess.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundSuccess@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundSuccessIcon.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundSuccessIcon@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundWarning.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundWarning@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundWarningIcon.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundWarningIcon@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationButtonBackground.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationButtonBackground@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/TSMessagesDefaultDesign.json"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_grey.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_grey@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_red.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_red@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button-selected.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button-selected@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button-selected.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button-selected@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button-selected.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button-selected@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-sheet-panel.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-sheet-panel@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-black-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-black-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-gray-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-gray-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-green-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-green-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-red-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-red-button@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window-landscape.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window-landscape@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window@2x.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-yellow-button.png"
-  install_resource "BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-yellow-button@2x.png"
-  install_resource "DTKDropdownMenu/DTKDropdownMenuView/DTKDropdownMenuView.bundle"
-  install_resource "MJRefresh/MJRefresh/MJRefresh.bundle"
-  install_resource "QIYU_iOS_SDK/SDK/QYResource.bundle"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundError.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundError@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundErrorIcon.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundErrorIcon@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundMessage.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundMessage@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundSuccess.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundSuccess@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundSuccessIcon.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundSuccessIcon@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundWarning.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundWarning@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundWarningIcon.png"
-  install_resource "TSMessages/Pod/Assets/NotificationBackgroundWarningIcon@2x.png"
-  install_resource "TSMessages/Pod/Assets/NotificationButtonBackground.png"
-  install_resource "TSMessages/Pod/Assets/NotificationButtonBackground@2x.png"
-  install_resource "TSMessages/Pod/Assets/TSMessagesDefaultDesign.json"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_grey.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_grey@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_red.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_red@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button-selected.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button-selected@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button-selected.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button-selected@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button-selected.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button-selected@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-sheet-panel.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-sheet-panel@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-black-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-black-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-gray-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-gray-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-green-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-green-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-red-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-red-button@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window-landscape.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window-landscape@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window@2x.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-yellow-button.png"
+  install_resource "${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-yellow-button@2x.png"
+  install_resource "${PODS_ROOT}/DTKDropdownMenu/DTKDropdownMenuView/DTKDropdownMenuView.bundle"
+  install_resource "${PODS_ROOT}/IQKeyboardManager/IQKeyboardManager/Resources/IQKeyboardManager.bundle"
+  install_resource "${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle"
+  install_resource "${PODS_ROOT}/QIYU_iOS_SDK/SDK/QYResource.bundle"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundError.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundError@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundErrorIcon.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundErrorIcon@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundMessage.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundMessage@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundSuccess.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundSuccess@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundSuccessIcon.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundSuccessIcon@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundWarning.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundWarning@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundWarningIcon.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundWarningIcon@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationButtonBackground.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/NotificationButtonBackground@2x.png"
+  install_resource "${PODS_ROOT}/TSMessages/Pod/Assets/TSMessagesDefaultDesign.json"
 fi
 
 mkdir -p "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"

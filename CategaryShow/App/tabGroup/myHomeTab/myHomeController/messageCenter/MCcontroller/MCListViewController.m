@@ -22,13 +22,7 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"系统通知";
-    
-    UIView *topView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 64)];
-    [topView setBackgroundColor:[UIColor whiteColor]];
-    [self.view addSubview:topView];
-    
-    
+    [self settabTitle:@"系统通知"];
     modelArray = [NSMutableArray array];
     getData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:getUIColor(Color_background)];
@@ -74,7 +68,12 @@
 
 -(void)createTable
 {
-    MCListTable = [[UITableView alloc] initWithFrame:CGRectMake(9, 64, SCREEN_WIDTH - 18, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    MCListTable = [[UITableView alloc] initWithFrame:CGRectMake(9, NavHeight, SCREEN_WIDTH - 18, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    if (@available(iOS 11.0, *)) {
+       MCListTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     MCListTable.dataSource = self;
     MCListTable.delegate = self;
     MCListTable.showsVerticalScrollIndicator = NO;

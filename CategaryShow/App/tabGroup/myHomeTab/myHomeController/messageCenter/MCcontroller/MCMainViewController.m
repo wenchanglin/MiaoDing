@@ -24,22 +24,12 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"系统通知";
+    [self settabTitle:@"系统通知"];
     modelArray = [NSMutableArray array];
     getData = [BaseDomain getInstance:NO];
-    
-    UIView *topView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 63)];
-    [topView setBackgroundColor:[UIColor whiteColor]];
-    [self.view addSubview:topView];
-    
-    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, 63, SCREEN_WIDTH, 1)];
-    [lineView setBackgroundColor:[UIColor lightGrayColor]];
-    [lineView setAlpha:.5];
-    [self.view addSubview:lineView];
-    [self.view setBackgroundColor:getUIColor(Color_background)];
+    [self.view setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
     [self createTableMc];
     [self getDatas];
-    // Do any additional setup after loading the view.
 }
 
 -(void)getDatas
@@ -68,12 +58,18 @@
 
 -(void)createTableMc
 {
-    messageTypeTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT) style:UITableViewStyleGrouped];
+    messageTypeTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT-64) style:UITableViewStyleGrouped];
+    if (@available(iOS 11.0, *)) {
+        messageTypeTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+
     messageTypeTable.dataSource = self;
     messageTypeTable.delegate = self;
     [messageTypeTable registerClass:[messageTypeTableViewCell class] forCellReuseIdentifier:@"messageType"];
     [messageTypeTable setBackgroundColor:[UIColor clearColor]];
-    [messageTypeTable setSeparatorColor:getUIColor(Color_background)];
+    messageTypeTable.separatorStyle = UITableViewCellSeparatorStyleNone;
     messageTypeTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
     [self.view addSubview:messageTypeTable];
@@ -108,8 +104,6 @@
 {
     messageTypeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"messageType" forIndexPath:indexPath];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    
-    [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
     messageTypeModel *model = modelArray[indexPath.row];
     cell.model = model;
     return cell;

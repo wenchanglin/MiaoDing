@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface UserFeedBackViewController : UIViewController
+#import "BaseViewController.h"
+@interface UserFeedBackViewController : BaseViewController
 
 @end

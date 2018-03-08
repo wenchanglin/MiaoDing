@@ -132,8 +132,8 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
         
     }
     [self runMainViewController : nil];
-    NSString *url = [[NSString alloc] initWithFormat:@"http://itunes.apple.com/lookup?id=%@",@"1159191582"];
-    [self Postpath:url];
+    
+    //[self checkAppUpdate];
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"everLaunched"]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"everLaunched"];
@@ -164,7 +164,6 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
                              appName:@"云工场"];
     [WXApi registerApp:@"wx07c2173e7686741e" withDescription:@"demo 2.0"];
     
-    
     getDataIcon = [BaseDomain getInstance:NO];
     NSMutableDictionary *parmas = [NSMutableDictionary dictionary];
     [parmas setObject:@"2" forKey:@"type"];
@@ -174,7 +173,43 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     
     return YES;
 }
-
+-(void)checkAppUpdate
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+        NSString * URL = @"http://itunes.apple.com/lookup?id=1159191582";
+        
+        NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:URL]];
+        if (!data) {
+            return ;
+        }
+        NSError *error;
+        NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+       // NSLog(@"jsonDic%@",jsonDict);
+        jsonDict = [jsonDict[@"results"] firstObject];
+        
+        if (!error && jsonDict) {
+            NSString *newVersion =jsonDict[@"version"];
+            NSString *nowVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
+            
+            NSString *dot = @".";
+            NSString *whiteSpace = @"";
+            int newV = [newVersion stringByReplacingOccurrencesOfString:dot withString:whiteSpace].intValue;
+            int nowV = [nowVersion stringByReplacingOccurrencesOfString:dot withString:whiteSpace].intValue;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if(newV > nowV)
+                {
+                    NSString * title = @"版本更新";
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:jsonDict[@"releaseNotes"] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"更新",nil];
+                    [alert show];
+                    
+                }
+                
+            });
+        }
+    });
+}
 /** 注册 APNs */
 - (void)registerRemoteNotification {
     /*
@@ -302,45 +337,6 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
 }
 
 - (void) runMainViewController : (UIViewController *) childViewController{
-    
-    
-//    if (childViewController) {
-//        [childViewController.navigationController popToRootViewControllerAnimated:YES];
-//    }
-//    
-//    if (self.mainViewController)
-//        [self.mainViewController removeFromParentViewController];
-//    
-//    MainTabBarController * viewController = [[MainTabBarController alloc] init];
-//    viewController.delegate = self;
-//    self.mainViewController = [[JYHNavigationController alloc] initWithRootViewController:viewController];
-//    
-//    //        self.drawerController = [[MainTabBarController alloc] init];
-//    
-//    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-//    [params setObject:@"2" forKey:@"type"];
-//    [getDataIcon getData:URL_getIcon PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-//       
-//        NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-//        [userd setObject:[domain.dataRoot arrayForKey:@"data"] forKey:@"tabIcon"];
-//        
-//        if (self.mainViewController)
-//            [self.mainViewController removeFromParentViewController];
-//        
-//        MainTabBarController * viewController = [[MainTabBarController alloc] init];
-//        viewController.delegate = self;
-//        self.mainViewController = [[JYHNavigationController alloc] initWithRootViewController:viewController];
-//        [self.window setRootViewController:self.mainViewController];
-//        
-//        [self.window makeKeyAndVisible];
-//
-//        
-//    }];
-//    
-//    [self.window setRootViewController:self.mainViewController];
-//    
-//    [self.window makeKeyAndVisible];
-    
     if (childViewController) {
         [childViewController.navigationController popToRootViewControllerAnimated:YES];
     }
@@ -499,57 +495,9 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
-
-
-#pragma mark -- 获取数据
--(void)Postpath:(NSString *)path
-{
-    NSURL *url = [NSURL URLWithString:path];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
-                                                           cachePolicy:NSURLRequestReloadIgnoringCacheData
-                                                       timeoutInterval:10];
-    [request setHTTPMethod:@"POST"];
-    NSOperationQueue *queue = [NSOperationQueue new];
-    [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response,NSData *data,NSError *error){
-        NSMutableDictionary *receiveStatusDic=[[NSMutableDictionary alloc]init];
-        if (data) {
-            
-            NSDictionary *receiveDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-            if ([[receiveDic valueForKey:@"resultCount"] intValue]>0) {
-                
-                [receiveStatusDic setValue:@"1" forKey:@"status"];
-                [receiveStatusDic setValue:[[[receiveDic valueForKey:@"results"] objectAtIndex:0] valueForKey:@"version"] forKey:@"version"];
-            }else{
-                
-                [receiveStatusDic setValue:@"-1" forKey:@"status"];
-            }
-        }else{
-            [receiveStatusDic setValue:@"-1" forKey:@"status"];
-        }
-        
-        [self performSelectorOnMainThread:@selector(receiveData:) withObject:receiveStatusDic waitUntilDone:NO];
-    }];
-    
-}
-
--(void)receiveData:(id)sender
-{
-    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
-    NSString *currentVersion = [infoDict objectForKey:@"CFBundleVersion"];
-    
-    double doubleCurrentVersion = [currentVersion doubleValue];
-    double doubleUpdateVersion = [[sender stringForKey:@"version"] doubleValue];
-    NSString *string= [NSString stringWithFormat:@"发现新版本(%@), 是否更新?", [sender stringForKey:@"version"]];
-    if (doubleCurrentVersion < doubleUpdateVersion) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示更新" message:string delegate:self cancelButtonTitle:@"去更新" otherButtonTitles:@"取消", nil];
-        [alert show];
-    }
-    
-}
-
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex == 0) {
+    if (buttonIndex == 1) {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/us/app/yun-gong-chang/id1159191582?l=zh&ls=1&mt=8"]];
     }
     

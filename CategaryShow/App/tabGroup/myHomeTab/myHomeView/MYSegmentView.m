@@ -19,10 +19,11 @@
         self.controllers=controllers;
         self.nameArray=titleArray;
         
-        self.segmentView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, frame.size.width, 35)];
+        self.segmentView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, frame.size.width, 43)];
         self.segmentView.tag=50;
+        self.segmentView.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
         [self addSubview:self.segmentView];
-        self.segmentScrollV=[[UIScrollView alloc]initWithFrame:CGRectMake(0, 35, frame.size.width, frame.size.height -35)];
+        self.segmentScrollV=[[UIScrollView alloc]initWithFrame:CGRectMake(0, 43, frame.size.width, frame.size.height -43)];
         self.segmentScrollV.contentSize=CGSizeMake(frame.size.width*self.controllers.count, 0);
         self.segmentScrollV.delegate=self;
         self.segmentScrollV.showsHorizontalScrollIndicator=NO;
@@ -41,13 +42,13 @@
         for (int i=0;i<self.controllers.count;i++)
         {
             UIButton * btn=[ UIButton buttonWithType:UIButtonTypeCustom];
-            btn.frame=CGRectMake(i*(frame.size.width/self.controllers.count), 0, frame.size.width/self.controllers.count, 35);
+            btn.frame=CGRectMake(i*(frame.size.width/self.controllers.count), 0, frame.size.width/self.controllers.count, 40);
             btn.tag=i;
             [btn setTitle:self.nameArray[i] forState:(UIControlStateNormal)];
-            [btn setTitleColor:[UIColor colorWithRed:77/255. green:77/255. blue:77/255. alpha:1] forState:(UIControlStateNormal)];
-            [btn setTitleColor:[UIColor colorWithRed:77/255. green:77/255. blue:77/255. alpha:1] forState:(UIControlStateSelected)];
+            [btn setTitleColor:[UIColor colorWithHexString:@"#222222"] forState:(UIControlStateNormal)];
+            [btn setTitleColor:[UIColor colorWithHexString:@"#222222"] forState:(UIControlStateSelected)];
             [btn addTarget:self action:@selector(Click:) forControlEvents:(UIControlEventTouchUpInside)];
-            [btn.titleLabel setFont:Font_14];
+            btn.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:16];
             
             //            if (i==0)
             //            {btn.selected=YES ;self.seleBtn=btn;
@@ -61,8 +62,8 @@
 //        self.down.backgroundColor = getUIColor(Color_background);
 //        [self.segmentView addSubview:self.down];
         
-        self.line=[[UILabel alloc]initWithFrame:CGRectMake((avgWidth-lineW)/2,30-lineH, lineW, lineH)];
-        self.line.backgroundColor = [UIColor colorWithRed:26/255. green:27/255. blue:30/255. alpha:1];
+        self.line=[[UILabel alloc]initWithFrame:CGRectMake((avgWidth-lineW)/2,35-lineH, lineW, lineH)];
+        self.line.backgroundColor = [UIColor colorWithHexString:@"#222222"];
         self.line.tag=100;
         [self.segmentView addSubview:self.line];
     }
@@ -73,11 +74,11 @@
 
 - (void)Click:(UIButton*)sender
 {
-    self.seleBtn.titleLabel.font= Font_14;
+    self.seleBtn.titleLabel.font= [UIFont fontWithName:@"PingFangSC-Light" size:16];
     self.seleBtn.selected=NO;
     self.seleBtn=sender;
     self.seleBtn.selected=YES;
-    self.seleBtn.titleLabel.font= Font_14;
+    self.seleBtn.titleLabel.font= [UIFont fontWithName:@"PingFangSC-Light" size:16];
     [UIView animateWithDuration:0.2 animations:^{
         CGPoint  frame=self.line.center;
         frame.x=self.frame.size.width/(self.controllers.count*2) +(self.frame.size.width/self.controllers.count)* (sender.tag);

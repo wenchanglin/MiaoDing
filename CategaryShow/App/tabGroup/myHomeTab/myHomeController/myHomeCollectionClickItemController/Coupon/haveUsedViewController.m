@@ -26,7 +26,6 @@
     modelArray = [NSMutableArray array];
     getData = [BaseDomain getInstance:NO];
     postData = [BaseDomain getInstance:NO];
-    // Do any additional setup after loading the view.
     [self getDatas];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     

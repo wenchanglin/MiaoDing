@@ -49,11 +49,11 @@
     isViewYFisrt = YES;
     textFildString = [NSMutableDictionary dictionary];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    self.title = @"个性绣花";
+    [self settabTitle:@"个性绣花"];
     UIButton *rightBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     [rightBtn setTitle:@"跳过" forState:UIControlStateNormal];
     [rightBtn.titleLabel setFont:[UIFont systemFontOfSize:14]];
-    [rightBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [rightBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
     [rightBtn addTarget:self action:@selector(nextStepNoDiy) forControlEvents:UIControlEventTouchUpInside];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeClothes:) name:@"change" object:nil];
@@ -127,7 +127,12 @@
 
 -(void)createDiyView
 {
-    diyTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 40) style:UITableViewStyleGrouped];
+    if (@available(iOS 11.0, *)) {
+        diyTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+    diyTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 40) style:UITableViewStyleGrouped];
     diyTable.dataSource = self;
     diyTable.delegate = self;
     [diyTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -140,7 +145,7 @@
     
 
    
-    UIButton *button2 = [[UIButton alloc] initWithFrame:CGRectMake(0,SCREEN_HEIGHT - 40, SCREEN_WIDTH , 40)];
+    UIButton *button2 = [[UIButton alloc] initWithFrame:CGRectMake(0,SCREEN_HEIGHT-64-40, SCREEN_WIDTH , 40)];
     [button2 setBackgroundColor:getUIColor(Color_buyColor)];
     [button2 addTarget:self action:@selector(nextStep) forControlEvents:UIControlEventTouchUpInside];
     [button2.layer setCornerRadius:1];

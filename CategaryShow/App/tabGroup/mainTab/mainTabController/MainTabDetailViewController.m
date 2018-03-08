@@ -64,7 +64,6 @@
    
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self createScrollerView];
-    // Do any additional setup after loading the view.
 }
 
 - (void)back:(UIBarButtonItem *)btn
@@ -155,7 +154,13 @@
     if ([[[request URL] scheme] isEqualToString:@"onlogin"]) {
        
         if ([[[request URL] resourceSpecifier] isEqualToString:@"//tocommend"]) {
+            if ([self userHaveLogin]) {
+                return 0;
+            }
+            else
+            {
             [self getDateBeginHaveReturn:datBegin fatherView:@"评论"];
+            }
             
         } else {
             [self getDateBeginHaveReturn:datBegin fatherView:@"收藏"];

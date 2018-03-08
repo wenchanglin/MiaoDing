@@ -223,6 +223,8 @@
 		18D9AF831D88F1530003073C /* SuggestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18D9AF821D88F1530003073C /* SuggestViewController.m */; };
 		18F940301D952F7D00F3B5D8 /* rightCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F9402F1D952F7D00F3B5D8 /* rightCollectionViewCell.m */; };
 		400B388278565BC1A627FDA2 /* libPods-CategaryShow.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F53B1E8D261BA3AE3A66B6FB /* libPods-CategaryShow.a */; };
+		9EEB300E204E62DB00BE6967 /* NewLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9EEB300D204E62DB00BE6967 /* NewLoginViewController.m */; };
+		9EEF7A15204D27F400DDD014 /* wclNetTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 9EEF7A13204D27F400DDD014 /* wclNetTool.m */; };
 		9EF808112046ACC7001E64B2 /* StoresRecommendVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9EF808102046ACC7001E64B2 /* StoresRecommendVC.m */; };
 		C20050511DEBC3D600B86F2E /* SuggestClassListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C20050501DEBC3D600B86F2E /* SuggestClassListViewController.m */; };
 		C20050541DEBCB0900B86F2E /* SuggestDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C20050531DEBCB0900B86F2E /* SuggestDetailViewController.m */; };
@@ -899,6 +901,10 @@
 		18F9402E1D952F7D00F3B5D8 /* rightCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rightCollectionViewCell.h; sourceTree = "<group>"; };
 		18F9402F1D952F7D00F3B5D8 /* rightCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = rightCollectionViewCell.m; sourceTree = "<group>"; };
 		875E9E5DAE77D819AB7AEA04 /* Pods-CategaryShow.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CategaryShow.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CategaryShow/Pods-CategaryShow.debug.xcconfig"; sourceTree = "<group>"; };
+		9EEB300C204E62DB00BE6967 /* NewLoginViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewLoginViewController.h; sourceTree = "<group>"; };
+		9EEB300D204E62DB00BE6967 /* NewLoginViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewLoginViewController.m; sourceTree = "<group>"; };
+		9EEF7A13204D27F400DDD014 /* wclNetTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = wclNetTool.m; sourceTree = "<group>"; };
+		9EEF7A14204D27F400DDD014 /* wclNetTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wclNetTool.h; sourceTree = "<group>"; };
 		9EF8080620469831001E64B2 /* Constant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constant.h; sourceTree = "<group>"; };
 		9EF8080F2046ACC7001E64B2 /* StoresRecommendVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoresRecommendVC.h; sourceTree = "<group>"; };
 		9EF808102046ACC7001E64B2 /* StoresRecommendVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoresRecommendVC.m; sourceTree = "<group>"; };
@@ -1561,8 +1567,6 @@
 				C2E82F541EA8C3C400C10FFE /* newDesignerController */,
 				1817DF3D1D5C187E00F42E8A /* designerViewController.h */,
 				1817DF3E1D5C187E00F42E8A /* designerViewController.m */,
-				1855051C1D767ED500A8557A /* DesignerAlsoViewController.h */,
-				1855051D1D767ED500A8557A /* DesignerAlsoViewController.m */,
 				18798E621D93DAB40065C4A9 /* DesignerForCollectionViewController.h */,
 				18798E631D93DAB40065C4A9 /* DesignerForCollectionViewController.m */,
 				185505281D76A7A700A8557A /* DesignerDetailIntroduce.h */,
@@ -1735,8 +1739,6 @@
 				182B63371D597B0B007BB5C4 /* MyHomeViewController.m */,
 				18C44D6D1D6ECDE3009E72F6 /* MyHomeViewControllerOtherBan.h */,
 				18C44D6E1D6ECDE3009E72F6 /* MyHomeViewControllerOtherBan.m */,
-				C2E82F511EA89E2000C10FFE /* homeNewViewController.h */,
-				C2E82F521EA89E2000C10FFE /* homeNewViewController.m */,
 			);
 			path = myHomeController;
 			sourceTree = "<group>";
@@ -2028,8 +2030,15 @@
 				1871275B1CF2A48800D7710D /* Common */,
 				187127111CE44CE700D7710D /* AppDelegate.h */,
 				187127121CE44CE700D7710D /* AppDelegate.m */,
+				18C44D361D6E89BE009E72F6 /* JYHNavigationController.h */,
+				18C44D371D6E89BE009E72F6 /* JYHNavigationController.m */,
+				9EEF7A12204D27DA00DDD014 /* NetTools */,
 				18C44D3A1D6E89BE009E72F6 /* MainTabBarController.h */,
 				18C44D3B1D6E89BE009E72F6 /* MainTabBarController.m */,
+				9EEB300A204E626D00BE6967 /* 我的 */,
+				9EEB3002204E46BA00BE6967 /* 腔调 */,
+				9E74B5FE2048FB6300BEDDF5 /* 定制 */,
+				9EF808072046AAB1001E64B2 /* 首页 */,
 				C2912BB11E94C78B0080944A /* unicode.futurab.ttf */,
 				1871271A1CE44CE700D7710D /* Main.storyboard */,
 				1871271D1CE44CE700D7710D /* Assets.xcassets */,
@@ -2399,10 +2408,8 @@
 			children = (
 				18C44CF31D6BE87A009E72F6 /* MainTabViewController.h */,
 				18C44CF41D6BE87A009E72F6 /* MainTabViewController.m */,
-				9EF808072046AAB1001E64B2 /* 首页 */,
 				C2E82F641EB19A3C00C10FFE /* NewMainTabOtherFlogViewController.h */,
 				C2E82F651EB19A3C00C10FFE /* NewMainTabOtherFlogViewController.m */,
-				9EF8080B2046AB07001E64B2 /* 门店推荐 */,
 				C2E82F671EB19A5800C10FFE /* NewMainParentViewController.h */,
 				C2E82F681EB19A5800C10FFE /* NewMainParentViewController.m */,
 				C208FC541DF68F7100B6D59A /* MainTabBanerDetailViewController.h */,
@@ -2527,8 +2534,6 @@
 				18C44D331D6E89BE009E72F6 /* FSDropDownMenu.m */,
 				18C44D341D6E89BE009E72F6 /* JsonColumnsDefine.h */,
 				18C44D351D6E89BE009E72F6 /* JYHColor.h */,
-				18C44D361D6E89BE009E72F6 /* JYHNavigationController.h */,
-				18C44D371D6E89BE009E72F6 /* JYHNavigationController.m */,
 				18C44D381D6E89BE009E72F6 /* JYHTabBarItem.h */,
 				18C44D391D6E89BE009E72F6 /* JYHTabBarItem.m */,
 				18C44D3C1D6E89BE009E72F6 /* MessageCount.h */,
@@ -2817,9 +2822,138 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		9E74B5FE2048FB6300BEDDF5 /* 定制 */ = {
+			isa = PBXGroup;
+			children = (
+				9E74B6012048FB8200BEDDF5 /* VC */,
+				9E74B6002048FB7C00BEDDF5 /* M */,
+				9E74B5FF2048FB7400BEDDF5 /* V */,
+			);
+			path = "定制";
+			sourceTree = "<group>";
+		};
+		9E74B5FF2048FB7400BEDDF5 /* V */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = V;
+			sourceTree = "<group>";
+		};
+		9E74B6002048FB7C00BEDDF5 /* M */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = M;
+			sourceTree = "<group>";
+		};
+		9E74B6012048FB8200BEDDF5 /* VC */ = {
+			isa = PBXGroup;
+			children = (
+				C249062B1F79E497009EDD8F /* changeDiyFirstViewController.h */,
+				C249062C1F79E497009EDD8F /* changeDiyFirstViewController.m */,
+			);
+			path = VC;
+			sourceTree = "<group>";
+		};
+		9EEB3002204E46BA00BE6967 /* 腔调 */ = {
+			isa = PBXGroup;
+			children = (
+				9EEB3005204E46D300BE6967 /* M */,
+				9EEB3004204E46CA00BE6967 /* V */,
+				9EEB3003204E46C400BE6967 /* VC */,
+			);
+			path = "腔调";
+			sourceTree = "<group>";
+		};
+		9EEB3003204E46C400BE6967 /* VC */ = {
+			isa = PBXGroup;
+			children = (
+				1855051C1D767ED500A8557A /* DesignerAlsoViewController.h */,
+				1855051D1D767ED500A8557A /* DesignerAlsoViewController.m */,
+				C21BE60A1EEFDDA40087ED62 /* DesignerAndClothesViewController.h */,
+				C21BE60B1EEFDDA40087ED62 /* DesignerAndClothesViewController.m */,
+			);
+			path = VC;
+			sourceTree = "<group>";
+		};
+		9EEB3004204E46CA00BE6967 /* V */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = V;
+			sourceTree = "<group>";
+		};
+		9EEB3005204E46D300BE6967 /* M */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = M;
+			sourceTree = "<group>";
+		};
+		9EEB3006204E47D000BE6967 /* 登录 */ = {
+			isa = PBXGroup;
+			children = (
+				9EEB3009204E47E000BE6967 /* M */,
+				9EEB3008204E47DB00BE6967 /* V */,
+				9EEB3007204E47D700BE6967 /* VC */,
+			);
+			path = "登录";
+			sourceTree = "<group>";
+		};
+		9EEB3007204E47D700BE6967 /* VC */ = {
+			isa = PBXGroup;
+			children = (
+				9EEB300C204E62DB00BE6967 /* NewLoginViewController.h */,
+				9EEB300D204E62DB00BE6967 /* NewLoginViewController.m */,
+			);
+			path = VC;
+			sourceTree = "<group>";
+		};
+		9EEB3008204E47DB00BE6967 /* V */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = V;
+			sourceTree = "<group>";
+		};
+		9EEB3009204E47E000BE6967 /* M */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = M;
+			sourceTree = "<group>";
+		};
+		9EEB300A204E626D00BE6967 /* 我的 */ = {
+			isa = PBXGroup;
+			children = (
+				9EEB300B204E628800BE6967 /* VC */,
+				9EEB3006204E47D000BE6967 /* 登录 */,
+			);
+			path = "我的";
+			sourceTree = "<group>";
+		};
+		9EEB300B204E628800BE6967 /* VC */ = {
+			isa = PBXGroup;
+			children = (
+				C2E82F511EA89E2000C10FFE /* homeNewViewController.h */,
+				C2E82F521EA89E2000C10FFE /* homeNewViewController.m */,
+			);
+			path = VC;
+			sourceTree = "<group>";
+		};
+		9EEF7A12204D27DA00DDD014 /* NetTools */ = {
+			isa = PBXGroup;
+			children = (
+				9EEF7A14204D27F400DDD014 /* wclNetTool.h */,
+				9EEF7A13204D27F400DDD014 /* wclNetTool.m */,
+			);
+			path = NetTools;
+			sourceTree = "<group>";
+		};
 		9EF808072046AAB1001E64B2 /* 首页 */ = {
 			isa = PBXGroup;
 			children = (
+				9EF8080B2046AB07001E64B2 /* 门店推荐 */,
 				9EF8080A2046AACC001E64B2 /* M */,
 				9EF808092046AAC4001E64B2 /* V */,
 				9EF808082046AABB001E64B2 /* VC */,
@@ -3045,8 +3179,6 @@
 				C21509A41E6D123500E68BF4 /* ChooseStyleNewViewController.m */,
 				C221343D1F6BE0EB009F2468 /* clothesDetailScrollerViewController.h */,
 				C221343E1F6BE0EB009F2468 /* clothesDetailScrollerViewController.m */,
-				C249062B1F79E497009EDD8F /* changeDiyFirstViewController.h */,
-				C249062C1F79E497009EDD8F /* changeDiyFirstViewController.m */,
 				C249062E1F79EBD4009EDD8F /* changeDiyCollectionViewCell.h */,
 				C249062F1F79EBD4009EDD8F /* changeDiyCollectionViewCell.m */,
 				C24906311F7A06B1009EDD8F /* chageDiyModel.h */,
@@ -3649,8 +3781,6 @@
 				C22EAF441EB976F900018050 /* JCFlipPageViewClass */,
 				C2E82F551EA8C3E000C10FFE /* newDesignerViewController.h */,
 				C2E82F561EA8C3E000C10FFE /* newDesignerViewController.m */,
-				C21BE60A1EEFDDA40087ED62 /* DesignerAndClothesViewController.h */,
-				C21BE60B1EEFDDA40087ED62 /* DesignerAndClothesViewController.m */,
 				C22EAF521EB97CC500018050 /* DesignerViewShow.h */,
 				C22EAF531EB97CC500018050 /* DesignerViewShow.m */,
 			);
@@ -3808,13 +3938,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CategaryShow-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		DFD36D0629DE44F36E59F776 /* [CP] Copy Pods Resources */ = {
@@ -3823,9 +3956,116 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-CategaryShow/Pods-CategaryShow-resources.sh",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_grey.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_grey@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_red.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/button_red@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button-selected.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button-selected@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-black-button@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button-selected.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button-selected@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-gray-button@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button-selected.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button-selected@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-red-button@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-sheet-panel.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/ActionSheet/action-sheet-panel@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-black-button.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-black-button@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-gray-button.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-gray-button@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-green-button.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-green-button@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-red-button.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-red-button@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window-landscape.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window-landscape@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-window@2x.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-yellow-button.png",
+				"${PODS_ROOT}/BlockAlertsAnd-ActionSheets/BlockAlertsDemo/images/AlertView/alert-yellow-button@2x.png",
+				"${PODS_ROOT}/DTKDropdownMenu/DTKDropdownMenuView/DTKDropdownMenuView.bundle",
+				"${PODS_ROOT}/IQKeyboardManager/IQKeyboardManager/Resources/IQKeyboardManager.bundle",
+				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
+				"${PODS_ROOT}/QIYU_iOS_SDK/SDK/QYResource.bundle",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundError.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundError@2x.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundErrorIcon.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundErrorIcon@2x.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundMessage.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundMessage@2x.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundSuccess.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundSuccess@2x.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundSuccessIcon.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundSuccessIcon@2x.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundWarning.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundWarning@2x.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundWarningIcon.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundWarningIcon@2x.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationButtonBackground.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationButtonBackground@2x.png",
+				"${PODS_ROOT}/TSMessages/Pod/Assets/TSMessagesDefaultDesign.json",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/button_grey.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/button_grey@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/button_red.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/button_red@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-black-button-selected.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-black-button-selected@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-black-button.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-black-button@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-gray-button-selected.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-gray-button-selected@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-gray-button.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-gray-button@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-red-button-selected.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-red-button-selected@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-red-button.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-red-button@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-sheet-panel.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/action-sheet-panel@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-black-button.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-black-button@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-gray-button.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-gray-button@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-green-button.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-green-button@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-red-button.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-red-button@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-window-landscape.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-window-landscape@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-window.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-window@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-yellow-button.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/alert-yellow-button@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/DTKDropdownMenuView.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/IQKeyboardManager.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/QYResource.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundError.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundError@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundErrorIcon.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundErrorIcon@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundMessage.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundMessage@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundSuccess.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundSuccess@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundSuccessIcon.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundSuccessIcon@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundWarning.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundWarning@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundWarningIcon.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationBackgroundWarningIcon@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationButtonBackground.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NotificationButtonBackground@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TSMessagesDefaultDesign.json",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3885,6 +4125,7 @@
 				C22EAF511EB976F900018050 /* SBGradientOverlayLayer.m in Sources */,
 				18913AAE1D5B070100A93C9E /* UserDelegateViewController.m in Sources */,
 				C200505D1DED0F7100B86F2E /* CustomMainDetailViewController.m in Sources */,
+				9EEB300E204E62DB00BE6967 /* NewLoginViewController.m in Sources */,
 				183EF73E1D8D070300E129F6 /* orderModel.m in Sources */,
 				C2233EEB1EE6985A008D10DE /* MySegMentViewNew.m in Sources */,
 				183EF7891D9121AA00E129F6 /* LeavesView.m in Sources */,
@@ -4145,6 +4386,7 @@
 				18D9AF491D8155710003073C /* myHomeSetViewController.m in Sources */,
 				187129131CF3000100D7710D /* UIImage+Utility.m in Sources */,
 				18D9AF421D8130FA0003073C /* AVCardInfo.m in Sources */,
+				9EEF7A15204D27F400DDD014 /* wclNetTool.m in Sources */,
 				18D9AF4D1D83A4450003073C /* addressSetFirstViewViewController.m in Sources */,
 				C215093C1E55409800E68BF4 /* growListTableViewCell.m in Sources */,
 				C2175F091F1F0D1F0043BE85 /* saveTableViewCell.m in Sources */,
@@ -4384,7 +4626,7 @@
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = /Users/wenchanglin/Desktop/workshop/CategaryShow/customPch.pch;
+				GCC_PREFIX_HEADER = /Users/wenchanglin/MiaoDing/customPch.pch;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/Headers/Public\"",
@@ -4471,7 +4713,7 @@
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = /Users/wenchanglin/Desktop/workshop/CategaryShow/customPch.pch;
+				GCC_PREFIX_HEADER = /Users/wenchanglin/MiaoDing/customPch.pch;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/Headers/Public\"",

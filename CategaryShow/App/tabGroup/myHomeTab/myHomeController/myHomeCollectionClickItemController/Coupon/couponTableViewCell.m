@@ -39,60 +39,43 @@
     .rightEqualToView(contentView)
     .topEqualToView(contentView)
     .bottomEqualToView(contentView);
-    
-    
-    
-//    UILabel *label = [UILabel new];
-//    [contentView addSubview:label];
-//    label.sd_layout
-//    .leftSpaceToView(contentView,20)
-//    .widthIs(15)
-//    .heightIs(20)
-//    .topSpaceToView(contentView,27);
-//    [label setFont:[UIFont systemFontOfSize:12]];
-//    [label setText:@"￥"];
-    
-    
-    
-    
-    priceLabel = [UILabel new];
-    [contentView addSubview:priceLabel];
-    priceLabel.sd_layout
-    .rightSpaceToView(contentView, 15)
-    .widthIs(80)
-    .bottomSpaceToView(contentView, 30)
-    .topSpaceToView(contentView,25);
-    [priceLabel setFont:Font_16];
-    [priceLabel setTextAlignment:NSTextAlignmentCenter];
-    
-    
+
     useTypeLabel = [UILabel new];
+    useTypeLabel.font= [UIFont fontWithName:@"PingFangSC-Semibold" size:18];
+    useTypeLabel.textColor = [UIColor colorWithHexString:@"#4F4F4F"];
     [contentView addSubview:useTypeLabel];
-    useTypeLabel.sd_layout
-    .leftSpaceToView(contentView, 20)
-    .rightSpaceToView(contentView, 80)
-    .topSpaceToView(contentView, 20)
-    .heightIs(15);
-    [typeRemarkLabel setFont:Font_18];
+    [useTypeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(12);
+        make.left.mas_equalTo(17);
+        make.height.mas_equalTo(25);
+    }];
     
     typeRemarkLabel = [UILabel new];
+    typeRemarkLabel.textColor = [UIColor colorWithHexString:@"#505050"];
+    [typeRemarkLabel setFont:[UIFont fontWithName:@"PingFangSC-Regular" size:12]];
     [contentView addSubview:typeRemarkLabel];
-    typeRemarkLabel.sd_layout
-    .leftSpaceToView(contentView, 20)
-    .rightSpaceToView(contentView, 80)
-    .topSpaceToView(useTypeLabel, 3)
-    .heightIs(15);
-    [typeRemarkLabel setFont:[UIFont systemFontOfSize:12]];
-    
+    [typeRemarkLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(useTypeLabel.mas_bottom).offset(2);
+        make.left.equalTo(useTypeLabel);
+        make.height.mas_equalTo(17);
+    }];
     timeLabel = [UILabel new];
+    [timeLabel setFont:[UIFont fontWithName:@"PingFangSC-Regular" size:10]];
     [contentView addSubview:timeLabel];
-    timeLabel.sd_layout
-    .leftSpaceToView(contentView, 20)
-    .rightSpaceToView(contentView, 80)
-    .topSpaceToView(typeRemarkLabel, 4)
-    .heightIs(15);
-    [timeLabel setFont:[UIFont systemFontOfSize:10]];
+    [timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(typeRemarkLabel.mas_bottom).offset(3);
+        make.left.equalTo(typeRemarkLabel);
+        make.height.mas_equalTo(14);
+    }];
     
+    priceLabel = [UILabel new];
+    priceLabel.textColor = [UIColor colorWithHexString:@"#3D3D3D"];
+    [priceLabel setFont:[UIFont fontWithName:@"Futura-CondensedExtraBold" size:20]];
+    [contentView addSubview:priceLabel];
+    [priceLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(typeRemarkLabel.mas_centerY);
+        make.right.mas_equalTo(-25);
+    }];
     
     rightImg = [UIImageView new];
     [contentView addSubview:rightImg];

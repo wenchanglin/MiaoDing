@@ -55,41 +55,31 @@
 }
 
 
-
+-(void)viewWillAppear:(BOOL)animated
+{
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     getData = [BaseDomain getInstance:NO];
     inviteDic = [NSMutableDictionary dictionary];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    self.title = @"邀请有礼";
-    
-//    inviteBackImg = [UIImageView new];
-//    [self.view addSubview:inviteBackImg];
-//    inviteBackImg.sd_layout
-//    .leftSpaceToView(self.view, 16)
-//    .topSpaceToView(self.view, 16 + 64)
-//    .rightSpaceToView(self.view, 16)
-//    .bottomSpaceToView(self.view, 16);
-//    [inviteBackImg setImage:[UIImage imageNamed:@"inviteBack"]];
-//     [inviteBackImg setUserInteractionEnabled:YES];
-    
-    
+    [self settabTitle:@"邀请有礼"];
     
     UIButton *buttonLeft = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
-    [buttonLeft setImage:[UIImage imageNamed:@"backLeft"] forState:UIControlStateNormal];
+    [buttonLeft setImage:[UIImage imageNamed:@"backLeftWhite"] forState:UIControlStateNormal];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonLeft];
     [buttonLeft setImageEdgeInsets:UIEdgeInsetsMake(0, -10, 0, 10)];
     [buttonLeft addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
     
     
     UIButton *buttonRight = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-    [buttonRight setImage:[UIImage imageNamed:@"share"] forState:UIControlStateNormal];
+    [buttonRight setImage:[UIImage imageNamed:@"shareRight"] forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRight];
     [buttonRight addTarget:self action:@selector(shareClick) forControlEvents:UIControlEventTouchUpInside];
     
     [self getDatas];
     
-    // Do any additional setup after loading the view.
 }
 
 -(void)getDatas
@@ -108,133 +98,14 @@
 
 -(void)createView
 {
-   
-       web = [[UIWebView alloc] initWithFrame:CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height - 64)];
+       web = [[UIWebView alloc] initWithFrame:CGRectMake(0, NavHeight, self.view.frame.size.width, self.view.frame.size.height - 64)];
         [self.view addSubview:web];
         UIScrollView *tempView = (UIScrollView *)[web.subviews objectAtIndex:0];
         tempView.scrollEnabled = NO;
         NSURLRequest *request;
         request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", URL_HEADURL, imgShare,uId]]];
         [web loadRequest:request];
-//    EWMImg = [UIImageView new];
-//    [inviteBackImg addSubview:EWMImg];
-//    EWMImg.sd_layout
-//    .topSpaceToView(inviteBackImg, 42)
-//    .centerXEqualToView(inviteBackImg)
-//    .heightIs(110.0 / 375.0 * SCREEN_WIDTH)
-//    .widthIs(110.0 / 375.0 * SCREEN_WIDTH);
-//    [EWMImg sd_setImageWithURL:[NSURL URLWithString:[inviteDic stringForKey:@"ewm"]]];
-//   
-//    
-//    
-//    UILabel *FirstTitle = [UILabel new];
-//    [inviteBackImg addSubview:FirstTitle];
-//    
-//    FirstTitle.sd_layout
-//    .topSpaceToView(EWMImg, 77)
-//    .leftSpaceToView(inviteBackImg, 30)
-//    .heightIs(15)
-//    .rightSpaceToView(inviteBackImg, 16);
-//    [FirstTitle setText:@"分享二维码给好友"];
-//    [FirstTitle setFont:[UIFont systemFontOfSize:12]];
-//    [FirstTitle setTextColor:[UIColor lightGrayColor]];
-//    
-//    UILabel *FirstDetail = [UILabel new];
-//    [inviteBackImg addSubview:FirstDetail];
-//    
-//    FirstDetail.sd_layout
-//    .topSpaceToView(FirstTitle, 10)
-//    .leftSpaceToView(inviteBackImg, 30)
-//    .heightIs(15)
-//    .rightSpaceToView(inviteBackImg, 16);
-//    [FirstDetail setText:@"TA得优惠，您得奖励"];
-//    [FirstDetail setFont:[UIFont systemFontOfSize:24]];
-//    [FirstDetail setTextColor:[UIColor blackColor]];
-//    
-//    
-//    UILabel *SecondTitle = [UILabel new];
-//    [inviteBackImg addSubview:SecondTitle];
-//    
-//    SecondTitle.sd_layout
-//    .topSpaceToView(FirstDetail, 14)
-//    .leftSpaceToView(inviteBackImg, 30)
-//    .heightIs(15)
-//    .rightSpaceToView(inviteBackImg, 16);
-//    [SecondTitle setText:@"奖励介绍"];
-//    [SecondTitle setFont:[UIFont systemFontOfSize:12]];
-//    [SecondTitle setTextColor:[UIColor lightGrayColor]];
-//
-//    UILabel *SecondDetail = [UILabel new];
-//    [inviteBackImg addSubview:SecondDetail];
-//    SecondDetail.sd_layout
-//    .topSpaceToView(SecondTitle, 10)
-//    .leftSpaceToView(inviteBackImg, 30)
-//    .heightIs(20)
-//    .rightSpaceToView(inviteBackImg, 16);
-//    [SecondDetail setText:@"您可获得订单实付金额的1%作为奖励"];
-//    [SecondDetail setFont:[UIFont systemFontOfSize:16]];
-//    [SecondDetail setTextColor:getUIColor(Color_DZClolor)];
-//
-//    UILabel *ThirdTitle = [UILabel new];
-//    [inviteBackImg addSubview:ThirdTitle];
-//    
-//    ThirdTitle.sd_layout
-//    .topSpaceToView(SecondDetail, 14)
-//    .leftSpaceToView(inviteBackImg, 30)
-//    .heightIs(15)
-//    .rightSpaceToView(inviteBackImg, 16);
-//    [ThirdTitle setText:@"已经邀请好友"];
-//    [ThirdTitle setFont:[UIFont systemFontOfSize:12]];
-//    [ThirdTitle setTextColor:[UIColor lightGrayColor]];
-//    
-//    
-//    UILabel *ThirdDetail = [UILabel new];
-//    [inviteBackImg addSubview:ThirdDetail];
-//    ThirdDetail.sd_layout
-//    .topSpaceToView(ThirdTitle, 10)
-//    .leftSpaceToView(inviteBackImg, 30)
-//    .heightIs(20)
-//    .rightSpaceToView(inviteBackImg, 16);
-//    [ThirdDetail setText:[NSString stringWithFormat:@"您已邀请 %@ 人", [inviteDic stringForKey:@"invite_num"]]];
-//    [ThirdDetail setFont:[UIFont systemFontOfSize:16]];
-//    [ThirdDetail setTextColor:getUIColor(Color_DZClolor)];
-//   
-//    UILabel *FourthTitle = [UILabel new];
-//    [inviteBackImg addSubview:FourthTitle];
-//    
-//    FourthTitle.sd_layout
-//    .topSpaceToView(ThirdDetail, 14)
-//    .leftSpaceToView(inviteBackImg, 30)
-//    .heightIs(15)
-//    .rightSpaceToView(inviteBackImg, 16);
-//    [FourthTitle setText:@"已获得奖励"];
-//    [FourthTitle setFont:[UIFont systemFontOfSize:12]];
-//    [FourthTitle setTextColor:[UIColor lightGrayColor]];
-//    
-//    UILabel *FourthDetail = [UILabel new];
-//    [inviteBackImg addSubview:FourthDetail];
-//    FourthDetail.sd_layout
-//    .topSpaceToView(FourthTitle, 10)
-//    .leftSpaceToView(inviteBackImg, 30)
-//    .heightIs(20)
-//    .rightSpaceToView(inviteBackImg, 16);
-//    [FourthDetail setText:[NSString stringWithFormat:@"您已获得奖励RMB %@ 元", [inviteDic stringForKey:@"money"]]];
-//    [FourthDetail setFont:[UIFont systemFontOfSize:16]];
-//    [FourthDetail setTextColor:getUIColor(Color_DZClolor)];
-//    
-//    UIButton *RuleEnter = [UIButton new];
-//    [inviteBackImg addSubview:RuleEnter];
-//    
-//    RuleEnter.sd_layout
-//    .topSpaceToView(FourthDetail, 38)
-//    .centerXEqualToView(inviteBackImg)
-//    .heightIs(20)
-//    .widthIs(60);
-//    [RuleEnter setTitle:@"活动规则 >>" forState:UIControlStateNormal];
-//    [RuleEnter setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-//    [RuleEnter.titleLabel setFont:[UIFont systemFontOfSize:10]];
-//    [RuleEnter addTarget:self action:@selector(ruleAction) forControlEvents:UIControlEventTouchUpInside];
-//    
+
     
 }
 
@@ -245,7 +116,11 @@
         [web goBack];
         
     }else{
-        [self.view resignFirstResponder];
+        [[NSUserDefaults standardUserDefaults]setObject:0 forKey:@"WebKitCacheModelPreferenceKey"];
+        [[NSUserDefaults standardUserDefaults]synchronize];
+        web.delegate = nil;
+        [web removeFromSuperview];
+        web = nil;
         [self.navigationController popViewControllerAnimated:YES];
     }
 }

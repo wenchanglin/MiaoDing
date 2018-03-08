@@ -25,23 +25,11 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"设计师入驻";
+    [self settabTitle:@"设计师入驻"];
     getData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    // Do any additional setup after loading the view.
-//    if ([SelfPersonInfo getInstance].personPhone) {
-//       [self getDatas];
-//        UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(20, SCREEN_HEIGHT - 50, SCREEN_WIDTH - 40, 40)];
-//        [button setBackgroundColor:getUIColor(Color_measureTableTitle)];
-//        [self.view addSubview:button];
-//        [button.layer setCornerRadius:1];
-//        [button.layer setMasksToBounds:YES];
-//        [button addTarget:self action:@selector(getInToClick) forControlEvents:UIControlEventTouchUpInside];
-//        [button setTitle:@"我要申请入驻" forState:UIControlStateNormal];
-//    }
-    
     [self getDatas];
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(20, SCREEN_HEIGHT - 50, SCREEN_WIDTH - 40, 40)];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(20, SCREEN_HEIGHT -64-50, SCREEN_WIDTH - 40, 40)];
     [button setBackgroundColor:getUIColor(Color_measureTableTitle)];
     [self.view addSubview:button];
     [button.layer setCornerRadius:1];
@@ -71,15 +59,11 @@
 
 -(void)createScrollerView
 {
-    
-   
-    UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 60 - 64)];
+    UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 60 - 64)];
     [self.view addSubview:scroller];
-    
-    
+
     UIImageView *imageDetailDes = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
     [imageDetailDes sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [[[dataDic objectForKey:@"img_list"] firstObject] stringForKey:@"img"]]] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-        
          CGFloat scan = image.size.width / image.size.height;
          scroller.contentSize=CGSizeMake(SCREEN_WIDTH,SCREEN_WIDTH / scan);
         [imageDetailDes setFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_WIDTH / scan)];
@@ -87,8 +71,6 @@
     }];
     [scroller addSubview:imageDetailDes];
     
-    
-
 }
 
 -(void)getInToClick

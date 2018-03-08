@@ -37,7 +37,6 @@
 
 - (void)setExtraCellLineHidden: (UITableView *)tableView;
 
-- (IBAction)onSpaceViewClickToCloseKeyboard:(id)sender;
 - (Boolean)checkCompanyResultStatus;
 - (CGFloat) calculateTextHeight:(UIFont *)font givenText:(NSString *)text givenWidth:(CGFloat)width;
 - (Boolean)checkCOmpanyRenZhengOrNot:(NSString *)string;
@@ -54,7 +53,7 @@
 
 -(void)getDateDingZhi:(NSMutableDictionary *)dic beginDate:(NSDate *)date ifDing:(BOOL)ding;
 
-
+- (void)onSpaceViewClickToCloseKeyboard:(id)sender;
 - (CGFloat)cellContentViewWith;
 -(Boolean)userHaveLogin;
 

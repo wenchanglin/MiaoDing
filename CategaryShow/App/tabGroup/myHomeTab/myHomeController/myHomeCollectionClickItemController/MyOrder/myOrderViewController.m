@@ -51,7 +51,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableData) name:@"orderDelete" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableData) name:@"cancelOrder" object:nil];
     [self getDatas];
-    // Do any additional setup after loading the view.
 }
 
 -(void)getDatas
@@ -261,7 +260,7 @@
 
 -(void)createHaveOrderView
 {
-    haveDingTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
+    haveDingTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
     haveDingTable.dataSource = self;
     haveDingTable.delegate = self;
     [haveDingTable setBackgroundColor:getUIColor(Color_myOrderBack)];

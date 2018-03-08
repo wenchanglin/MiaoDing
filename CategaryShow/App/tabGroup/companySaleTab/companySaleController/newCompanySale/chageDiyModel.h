@@ -9,7 +9,9 @@
 #import <Foundation/Foundation.h>
 
 @interface chageDiyModel : NSObject
-@property (nonatomic, retain) NSString *imageAvater;
+@property (nonatomic, retain) NSString *thumb;
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSString *sub_name;
+@property(nonatomic,strong)NSString * price;
+@property(nonatomic,strong)NSNumber * type;
 @end

@@ -94,7 +94,7 @@
     [super viewDidLoad];
     
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    self.title = @"私人定制";
+    [self settabTitle:@"私人定制"];
     flogXiuxi = NO;
     getYingDao = [BaseDomain getInstance:NO];
     getData = [BaseDomain getInstance:NO];
@@ -118,12 +118,12 @@
     [buttonRightBarButton.titleLabel setFont:[UIFont systemFontOfSize:14]];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRightBarButton];
     [buttonRightBarButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 15, 0, -15)];
-    [buttonRightBarButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [buttonRightBarButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [buttonRightBarButton addTarget:self action:@selector(nextStepClick) forControlEvents:UIControlEventTouchUpInside];
     [buttonRightBarButton setHidden:YES];
     
     
-    resetButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 60, SCREEN_HEIGHT - 175, 40, 40)];
+    resetButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 60, SCREEN_HEIGHT -64-175, 40, 40)];
     [resetButton setImage:[UIImage imageNamed:@"resetButton"] forState:UIControlStateNormal];;
     [resetButton setHidden:YES];
     [self.view addSubview:resetButton];
@@ -139,7 +139,6 @@
     }
 
     [self getDatas];
-    // Do any additional setup after loading the view.
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -338,19 +337,6 @@
     [getData getData:[NSString stringWithFormat:@"%@%@",URL_HEADURL, URL_GetDingZhiPic] appendHostUrl:NO PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:getData]) {
             LowImageArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"spec_list"]];
-            
-//            for (int i = 0; i < [partArray count]; i ++) {
-//                for (NSDictionary *dic in [partArray[i] arrayForKey:@"spec_list"]) {
-//                    if ([dic integerForKey:@"mianliao_id"] == [mianId integerValue]) {
-//                        [contentIdArray addObject:[dic stringForKey:@"id"]];
-//                        [contentArray addObject:[NSString stringWithFormat:@"%@:%@", [partArray[i] stringForKey:@"name"], [dic objectForKey:@"name"]]];
-//                        [goodArray addObject:dic];
-//                        break;
-//                    }
-//                }
-//                
-//            }
-            
             for (NSDictionary *dic in LowImageArray) {
                 [contentIdArray addObject: [[[dic arrayForKey:@"list"] firstObject] stringForKey:@"id"]];
                 [contentArray addObject:[NSString stringWithFormat:@"%@:%@", [dic stringForKey:@"spec_name"], [[[dic arrayForKey:@"list"] firstObject] stringForKey:@"name"]]];
@@ -377,7 +363,7 @@
             }
             
             [self createCloteesPic];
-            [self createGif];
+            //[self createGif];
             [self createLowCollection];
             
             
@@ -504,21 +490,21 @@
 {
 
     if ([_class_id integerValue] != 15) {
-        buttonFront = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 - 50, 90, 40, 20)];
+        buttonFront = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 - 50, 26+NavHeight, 40, 20)];
         [buttonFront addTarget:self action:@selector(FrontClick) forControlEvents:UIControlEventTouchUpInside];
         [buttonFront.titleLabel setFont:[UIFont systemFontOfSize:14]];
         [buttonFront setTitle:@"正面" forState:UIControlStateNormal];
         [self.view addSubview:buttonFront];
         [buttonFront setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         
-        buttonBehind = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 + 10, 90, 40, 20)];
+        buttonBehind = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 + 10, 26+NavHeight, 40, 20)];
         [buttonBehind.titleLabel setFont:[UIFont systemFontOfSize:14]];
         [buttonBehind addTarget:self action:@selector(behindClick) forControlEvents:UIControlEventTouchUpInside];
         [buttonBehind setTitle:@"反面" forState:UIControlStateNormal];
         [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
         [self.view addSubview:buttonBehind];
     } else {
-        buttonFront = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 -80, 90, 40, 20)];
+        buttonFront = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 -80, 26+NavHeight, 40, 20)];
         [self.view addSubview:buttonFront];
         [buttonFront addTarget:self action:@selector(FrontClick) forControlEvents:UIControlEventTouchUpInside];
         [buttonFront.titleLabel setFont:[UIFont systemFontOfSize:14]];
@@ -526,14 +512,14 @@
         
         [buttonFront setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     
-        buttonBehind = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 - 20, 90, 40, 20)];
+        buttonBehind = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 - 20, 26+NavHeight, 40, 20)];
         [buttonBehind.titleLabel setFont:[UIFont systemFontOfSize:14]];
         [buttonBehind addTarget:self action:@selector(behindClick) forControlEvents:UIControlEventTouchUpInside];
         [buttonBehind setTitle:@"反面" forState:UIControlStateNormal];
         [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
         [self.view addSubview:buttonBehind];
         
-        buttonIn = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 + 40, 90, 40, 20)];
+        buttonIn = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 + 40, 26+NavHeight, 40, 20)];
         [buttonIn.titleLabel setFont:[UIFont systemFontOfSize:14]];
         [buttonIn addTarget:self action:@selector(InClick) forControlEvents:UIControlEventTouchUpInside];
         [buttonIn setTitle:@"里子" forState:UIControlStateNormal];
@@ -563,7 +549,7 @@
         [image setContentMode:UIViewContentModeScaleAspectFill];
         [image.layer setMasksToBounds:YES];
         [image sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [[[LowImageArray[i] arrayForKey:@"list"] firstObject] stringForKey:@"img_c"]]]];
-        image.center = CGPointMake(self.view.centerX, self.view.centerY - 20);
+        image.center = CGPointMake(self.view.centerX, self.view.centerY - 20-64);
         
         
         [self.view addSubview:image];
@@ -723,6 +709,11 @@
 
 -(void)createLowCollection
 {
+    if (@available(iOS 11.0, *)) {
+        lowCollection.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     UICollectionViewFlowLayout *flowLayout=[[UICollectionViewFlowLayout alloc] init];
     [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
     flowLayout.minimumLineSpacing = 0;
@@ -759,7 +750,11 @@
     [lowCollection registerClass:[lowCollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
     [lowCollection registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"ReusableView"];
     
-    
+    if (@available(iOS 11.0, *)) {
+        rightCollection.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     UICollectionViewFlowLayout *flowLayout1=[[UICollectionViewFlowLayout alloc] init];
     [flowLayout1 setScrollDirection:UICollectionViewScrollDirectionHorizontal];
     flowLayout1.minimumLineSpacing = 0;
@@ -768,7 +763,7 @@
     [self.view addSubview:rightCollection];
     
     rightCollection.sd_layout
-    .bottomSpaceToView(lowCollection, 5)
+    .bottomSpaceToView(lowCollection, 20)
     .centerXEqualToView(self.view)
     .heightIs(65)
     .widthIs(SCREEN_WIDTH);
@@ -1197,10 +1192,10 @@
         rightPicArray = [NSMutableArray arrayWithArray:array];
         
         if (60 * [rightPicArray count] > SCREEN_WIDTH) {
-             [rightCollection setFrame:CGRectMake(10, SCREEN_HEIGHT - 64 - 65 - 5, SCREEN_WIDTH, 65)];
+             [rightCollection setFrame:CGRectMake(10, SCREEN_HEIGHT - 64 - 65-55 - 5, SCREEN_WIDTH, 65)];
         } else {
             
-            [rightCollection setFrame:CGRectMake(SCREEN_WIDTH / 2 - (60 * [rightPicArray count] / 2), SCREEN_HEIGHT - 64 - 65 - 5, 60 * [rightPicArray count], 65)];
+            [rightCollection setFrame:CGRectMake(SCREEN_WIDTH / 2 - (60 * [rightPicArray count] / 2), SCREEN_HEIGHT - 64 - 65-55-5, 60 * [rightPicArray count], 65)];
             
         }
         

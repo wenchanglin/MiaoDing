@@ -618,8 +618,12 @@
 {
     [self hiddenBuyChoose];
     //
-    
-    
+    if (_marketId==nil) {
+        _marketId = @"";
+    }
+    if (_shopId==nil) {
+        _shopId = @"";
+    }
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:designer.good_Id forKey:@"goods_id"];
     [params setObject:@"2" forKey:@"goods_type"];
@@ -658,7 +662,12 @@
 -(void)buyClickAction
 {
     [self hiddenBuyChoose];
-    
+    if (_marketId==nil) {
+        _marketId = @"";
+    }
+    if (_shopId==nil) {
+        _shopId = @"";
+    }
     
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:designer.good_Id forKey:@"goods_id"];
