@@ -438,9 +438,12 @@
 }
 
 
--(void)nextStepClick   //下一步
+-(void)nextStepClick   //完成
 {
-    
+    //停止下载所有图片
+    [[SDWebImageManager sharedManager] cancelAll];
+    //清除内存中的图片
+    [[SDWebImageManager sharedManager].imageCache clearMemory];
     NSMutableDictionary *goodParams = [NSMutableDictionary dictionary];
     [goodParams setObject:[_goodDic stringForKey:@"id"] forKey:@"goods_id"];
     [goodParams setObject:[_goodDic stringForKey:@"name"] forKey:@"goods_name"];
@@ -460,17 +463,33 @@
 //    
     [goodParams setObject:idString forKey:@"spec_ids"];
     [goodParams setObject:[NSString stringWithFormat:@"%@", contentString] forKey:@"spec_content"];
-//    ChooseClothesResultViewController *result = [[ChooseClothesResultViewController alloc] init];
-//    [self.navigationController pushViewController:result animated:YES];
+    ChooseClothesResultViewController *result = [[ChooseClothesResultViewController alloc] init];
+        result.paramsClothes = _paramsClothes;
+        result.goodArray = goodArray;
+        result.goodDic = _goodDic;
+        result.paramsDic = goodParams;
+        result.dataDic =_dataDic;
+        result.price = _price;
+        result.mianliaoprice = _mianliaoprice;
+        result.xiuZiDic = _xiuZiDic;
+        result.dateId = _dateId;
+        result.dingDate = _dingDate;
+        result.banxingid = [_banxing objectForKey:@"id"];
+        result.ifTK = NO;
+//        result.defaultImg = _defaultImg;
+        result.diyArray = _diyArray;
+    //    result.diyDetailArray = diydetailArray;
+    [self.navigationController pushViewController:result animated:YES];
     
-    DiyWordInClothesViewController *diyClothes = [[DiyWordInClothesViewController alloc] init];
-    diyClothes.goodDic = _goodDic;
-    diyClothes.goodArray = goodArray;
-    diyClothes.price = _price;
-    diyClothes.xiuZiDic = xiuxiDic;
-    diyClothes.class_id = _class_id;
-    diyClothes.paramsDic = goodParams;
-    [self.navigationController pushViewController:diyClothes animated:YES];
+    //    [self.navigationController pushViewController:result animated:YES];
+//    DiyWordInClothesViewController *diyClothes = [[DiyWordInClothesViewController alloc] init];
+//    diyClothes.goodDic = _goodDic;
+//    diyClothes.goodArray = goodArray;
+//    diyClothes.price = _price;
+//    diyClothes.xiuZiDic = xiuxiDic;
+//    diyClothes.class_id = _class_id;
+//    diyClothes.paramsDic = goodParams;
+//    [self.navigationController pushViewController:diyClothes animated:YES];
     
 //    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
 //    if (xiuxiDic) {

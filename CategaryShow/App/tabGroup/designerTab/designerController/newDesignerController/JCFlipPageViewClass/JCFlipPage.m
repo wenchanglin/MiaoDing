@@ -136,14 +136,14 @@
 -(void)setModel:(designerModel *)model
 {
     _model = model;
-    [imageForClothes sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.clothesImage]]];
+    [imageForClothes sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.img]]];
     imageForClothes.contentMode = UIViewContentModeScaleAspectFill;
     [imageForClothes.layer setMasksToBounds:YES];
 
-    if (![model.good_Id isEqualToString:@""]) {
-        [title setText:model.titlename];
-        if ([model.designerName length] > 0) {
-            [name setText:model.designerName];
+    if (![model.goods_id isEqualToString:@""]) {
+        [title setText:model.name];
+        if ([model.uname length] > 0) {
+            [name setText:model.uname];
         }
         NSMutableAttributedString * attributedString1 = [[NSMutableAttributedString alloc] initWithString:model.p_time];
         NSMutableParagraphStyle * paragraphStyle1 = [[NSMutableParagraphStyle alloc] init];
@@ -152,7 +152,7 @@
         [descript setAttributedText:attributedString1];
         [descript sizeToFit];
         
-        [headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.designerHead]]];
+        [headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.avatar]]];
     }
     
     

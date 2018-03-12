@@ -138,7 +138,7 @@
     }
     
     self.httpTask = [self.httpManager GET:urlString parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-       // NSLog(@"143:%@::%@",responseObject,urlString);
+     //   NSLog(@"143:%@::%@",responseObject,urlString);
         // 整合数据
         self.data = responseObject;
     
@@ -151,7 +151,7 @@
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-       // NSLog(@"155:%@:::%@",error,urlString);
+        //NSLog(@"155:%@:::%@",error,urlString);
         // 整合数据
         self.result = -99;
         self.resultMessage = NSLocalizedString(@"baseform_progress_NetErrorMessage", nil);

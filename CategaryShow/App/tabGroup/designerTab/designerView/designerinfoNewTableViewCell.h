@@ -15,4 +15,6 @@
 @property(nonatomic,strong)UIButton * shouChangBtn;
 @property(nonatomic,strong)UIButton * loveBtn;
 @property(nonatomic,strong)UIButton * commentBtn;
+@property(nonatomic) void(^FourBtns)(UIButton * buttons);
+@property(nonatomic)void(^DesignerInfo)(UITapGestureRecognizer * tap);
 @end

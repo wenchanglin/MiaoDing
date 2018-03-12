@@ -154,7 +154,6 @@
     
     [self createSuggestGet];
     [self getDataS];
-    // Do any additional setup after loading the view.
 }
 
 -(void)realToOrder

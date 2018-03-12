@@ -48,5 +48,5 @@
 
 @property (nonatomic,strong)NSString *title;
 
-@property (assign,nonatomic)id<LTSDateChooseDelegate>delegate;
+@property (weak,nonatomic)id<LTSDateChooseDelegate>delegate;
 @end

@@ -25,6 +25,15 @@
 #import "DiyClothesDetailViewController.h"
 #import "DesignerClothesDetailViewController.h"
 #import "StoresRecommendVC.h"
+#import <ShareSDK/ShareSDK.h>
+#import <ShareSDKExtension/SSEShareHelper.h>
+#import <ShareSDKUI/ShareSDK+SSUI.h>
+#import <ShareSDKUI/SSUIShareActionSheetStyle.h>
+#import <ShareSDKUI/SSUIShareActionSheetCustomItem.h>
+#import <ShareSDK/ShareSDK+Base.h>
+#import <ShareSDKUI/SSUIEditorViewStyle.h>
+#import <ShareSDKExtension/ShareSDK+Extension.h>
+#define URLShare @"/web/jquery-obj/static/fx/html/designer.html"
 @interface NewMainTabViewController ()<UITableViewDataSource, UITableViewDelegate, CellForBanerDownDelegate, MainTableDelegate, DesignerTableViewCellDelegate>
 @property (nonatomic, retain) UITableView *mainTabTable;  //首页的table
 @property (nonatomic, retain) NSMutableArray *ListArray;  //list content array
@@ -47,7 +56,8 @@
     BaseDomain *getFenLei;
     NSDate *datBegin;
     BaseDomain *postData;
-    
+    BaseDomain * shouCangDomain;
+    BaseDomain * loveDomain;
     UIAlertView *alert;
     NSTimer *timer;
     
@@ -107,6 +117,8 @@
     getYingDao = [BaseDomain getInstance:NO];
     getFenLei = [BaseDomain getInstance:NO];
     postData = [BaseDomain getInstance:NO];
+    shouCangDomain = [BaseDomain getInstance:NO];
+    loveDomain =[BaseDomain getInstance:NO];
     designerArray = [NSMutableArray array];
     _modelArray = [NSMutableArray array];
     detailArray = [NSMutableArray array];
@@ -352,7 +364,12 @@
                     model.ImageUrl = [arrayJ[j] stringForKey:@"img"];
                     model.linkUrl = [arrayJ[j] stringForKey:@"link"];
                     model.LinkId = [arrayJ[j] stringForKey:@"id"];
-                    //                    model.titleContent = [arrayJ[j] stringForKey:@"title"];
+                    model.is_love = [[arrayJ[j] objectForKey:@"is_love"]integerValue];
+                    model.is_collect = [[arrayJ[j] objectForKey:@"is_collect"]integerValue];
+                    model.commentnum = [[arrayJ[j] objectForKey:@"commentnum"]integerValue];
+                    model.lovenum = [[arrayJ[j] objectForKey:@"lovenum"]integerValue];
+                    model.is_type = [[arrayJ[j] objectForKey:@"is_type"] integerValue];
+                    
                     model.fenLei = [arrayJ[j] stringForKey:@"name"];
                     model.name = [arrayJ[j] stringForKey:@"title"];
                     model.tagName = [arrayJ[j] stringForKey:@"tag_name"];
@@ -441,7 +458,12 @@
                         model.ImageUrl = [arrayJ[j] stringForKey:@"img"];
                         model.linkUrl = [arrayJ[j] stringForKey:@"link"];
                         model.LinkId = [arrayJ[j] stringForKey:@"id"];
-                        //                    model.titleContent = [arrayJ[j] stringForKey:@"title"];
+                        model.is_type = [[arrayJ[j] objectForKey:@"is_type"] integerValue];
+                        
+                        model.is_love = [[arrayJ[j] objectForKey:@"is_love"]integerValue];
+                        model.is_collect = [[arrayJ[j] objectForKey:@"is_collect"]integerValue];
+                        model.commentnum = [[arrayJ[j] objectForKey:@"commentnum"]integerValue];
+                        model.lovenum = [[arrayJ[j] objectForKey:@"lovenum"]integerValue];
                         model.fenLei = [arrayJ[j] stringForKey:@"name"];
                         model.name = [arrayJ[j] stringForKey:@"title"];
                         model.tagName = [arrayJ[j] stringForKey:@"tag_name"];
@@ -499,7 +521,11 @@
                     model.ImageUrl = [arrayJ[j] stringForKey:@"img"];
                     model.linkUrl = [arrayJ[j] stringForKey:@"link"];
                     model.LinkId = [arrayJ[j] stringForKey:@"id"];
-                    //                    model.titleContent = [arrayJ[j] stringForKey:@"title"];
+                    model.is_type = [[arrayJ[j] objectForKey:@"is_type"] integerValue];
+                    model.is_love = [[arrayJ[j] objectForKey:@"is_love"] integerValue];
+                    model.is_collect = [[arrayJ[j] objectForKey:@"is_collect"] integerValue];
+                    model.commentnum = [[arrayJ[j] objectForKey:@"commentnum"]integerValue];
+                    model.lovenum = [[arrayJ[j] objectForKey:@"lovenum"]integerValue];
                     model.fenLei = [arrayJ[j] stringForKey:@"name"];
                     model.name = [arrayJ[j] stringForKey:@"title"];
                     model.tagName = [arrayJ[j] stringForKey:@"tag_name"];
@@ -605,20 +631,89 @@
         
         Class currentClass = [NewMainTabListTableViewCell class];
         NewMainTabListTableViewCell *cell = nil;
+        cell.VC = self;
         [cell setBackgroundColor:[UIColor whiteColor]];
         cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass(currentClass)];
         cell.model = model;
         cell.tag = indexPath.section * 10000 + indexPath.row;
+        __weak __typeof(*&cell) weakCell = cell;
+        NSMutableDictionary *params = [NSMutableDictionary dictionary];
         
-        ////// 此步设置用于实现cell的frame缓存，可以让tableview滑动更加流畅 //////
+        [cell setFourBtn:^(UIButton *buttons) {
+            switch (buttons.tag) {
+                case 21:
+                {
+                    //1、创建分享参数（必要）
+                    NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
+                    NSArray* imageArray = @[[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.ImageUrl]]];
+                    [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
+                    [shareParams SSDKSetupShareParamsByText:model.titleContent
+                                                     images:imageArray
+                                                        url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@&type=1&ios=true",URL_HEADURL, URLShare, model.LinkId]]
+                                                      title:model.name
+                                                       type:SSDKContentTypeWebPage];
+                    [ShareCustom shareWithContent:shareParams];
+                }
+                    break;
+                case 22:
+                {
+                    [params setObject:model.LinkId forKey:@"cid"];
+                    [params setObject:@(model.is_type) forKey:@"type"];
+                    [shouCangDomain getData:URL_AddSave PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+                        if ([self checkHttpResponseResultStatus:shouCangDomain]) {
+//                            WCLLog(@"%@",domain.dataRoot);
+                            if ([[domain.dataRoot objectForKey:@"code"]integerValue]==1) {
+                                [weakCell.shouCangBtn setImage:[UIImage imageNamed:@"收藏选中"] forState:UIControlStateNormal];
+                                
+                            }
+                            else if ([[domain.dataRoot objectForKey:@"code"]integerValue]==2)
+                            {
+                                [weakCell.shouCangBtn setImage:[UIImage imageNamed:@"收藏"] forState:UIControlStateNormal];
+                            }
+                        }
+                    }];
+                }break;
+                case 23:
+                {
+                    [params setObject:model.LinkId forKey:@"news_id"];
+                    [params setObject:@(model.is_type) forKey:@"is_type"];
+                    [loveDomain getData:URL_Love_Main PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+                        if ([self checkHttpResponseResultStatus:loveDomain]) {
+                            //WCLLog(@"%@",domain.dataRoot);
+                            if ([[domain.dataRoot objectForKey:@"data"]integerValue]==1) {
+                                [weakCell.xiHuanBtn setImage:[UIImage imageNamed:@"喜欢选中"] forState:UIControlStateNormal];
+                                [weakCell.xiHuanBtn setTitle:[NSString stringWithFormat:@"%@",[domain.dataRoot objectForKey:@"lovenum"]] forState:UIControlStateNormal];
+                            }
+                            else if ([[domain.dataRoot objectForKey:@"data"]integerValue]==2)
+                            {
+                                [weakCell.xiHuanBtn setImage:[UIImage imageNamed:@"喜欢"] forState:UIControlStateNormal];
+                                [weakCell.xiHuanBtn setTitle:[NSString stringWithFormat:@"%@",[domain.dataRoot objectForKey:@"lovenum"]] forState:UIControlStateNormal];
+                            }
+                        }
+                        
+                    }];
+                }break;
+                case 24:
+                {
+                
+                    MainTabDetailViewController *MainDetail = [[MainTabDetailViewController alloc] init];
+                    MainDetail.webId = model.LinkId;
+                    MainDetail.imageUrl = model.ImageUrl;
+                    MainDetail.linkUrl = model.linkUrl;
+                    MainDetail.titleContent =model.subTitle;
+                    MainDetail.tagName = model.tagName;
+                    MainDetail.titleName =  model.name;
+                    [self getDateBegin:datBegin currentView:model.tagName fatherView:@"首页"];
+                    [self.navigationController pushViewController:MainDetail animated:YES];
+                }break;
+                default:
+                    break;
+            }
+        }];
         reCell = cell;
         
     }
-    
-    
-    [reCell useCellFrameCacheWithIndexPath:indexPath tableView:tableView];
     [reCell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    ///////////////////////////////////////////////////////////////////////
     return reCell;
 }
 
@@ -637,8 +732,6 @@
 }
 
 -(void)clickCollectionItem:(NSInteger)item {
-    
-    
     
     if ([[designerArray[item] stringForKey:@"name"] isEqualToString:@"虚位以待"]) {
         alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"妙定期待您的加入～" delegate:nil cancelButtonTitle:nil otherButtonTitles:nil, nil];

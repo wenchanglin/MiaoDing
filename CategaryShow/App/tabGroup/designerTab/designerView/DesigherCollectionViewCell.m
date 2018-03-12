@@ -139,9 +139,9 @@
     
     clothesImage.image = pic;
     
-    [designerHead setImage:[UIImage imageNamed:model.designerHead]];
-    [designerLabel setText:model.designerName];
-    [designerInto setText:model.designerSimpleIntd];
+    [designerHead setImage:[UIImage imageNamed:model.avatar]];
+    [designerLabel setText:model.uname];
+    [designerInto setText:model.introduce];
     
     
     

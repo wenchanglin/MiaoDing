@@ -14,11 +14,15 @@
 @property (nonatomic, retain) NSString *linkUrl;
 @property (nonatomic, retain) NSString *time;
 @property (nonatomic, retain) NSString *LinkId;
+@property(nonatomic)NSInteger is_type;
 @property (nonatomic, retain) NSString *titleContent;
 @property (nonatomic, retain) NSString *fenLei;
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSString *detail;
 @property (nonatomic, retain) NSString *tagName;
-
+@property(nonatomic)NSInteger  is_love;
+@property(nonatomic)NSInteger is_collect;
+@property(nonatomic)NSInteger commentnum;
+@property(nonatomic)NSInteger lovenum;
 @property (nonatomic, retain) NSString *subTitle;
 @end

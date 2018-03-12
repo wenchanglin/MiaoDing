@@ -68,7 +68,7 @@
 {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     getData = [BaseDomain getInstance:NO];
-
+    
     
     if (!model) {
         [self getDatas];
@@ -82,7 +82,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     postData= [BaseDomain getInstance:NO];
-    couPonRemark = @"请选择优惠券";
+    couPonRemark = @"选择优惠券";
     [self settabTitle:@"确认订单"];
     ZFB = YES;
     choose =YES;
@@ -98,6 +98,7 @@
     [payPriceAndCon addObject:dic1];
     
     [self.view setBackgroundColor:[UIColor whiteColor]];
+     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadAddress) name:@"deleteAddress" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadAddressTable:) name:@"AddressChange" object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cardSuccessAction:) name:@"cardSuccess" object:nil];
@@ -108,26 +109,28 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(chooseCoupon:) name:@"chooseCoupon" object:nil];
     
-    // Do any additional setup after loading the view.
 }
-
+-(void)reloadAddress
+{
+     [self getDatas];
+}
 -(void)reloadAddressTable:(NSNotification *)noti
 {
     
-//
-    if ([[addressDic stringForKey:@"address"] isEqualToString:@""]) {
-         [self getDatas];
-    } else {
+    //
+//    if ([[addressDic stringForKey:@"address"] isEqualToString:@""]) {
+//        [self getDatas];
+//    } else {
         model = [noti.userInfo objectForKey:@"model"];
         [addressDic setObject:model.detaiArea forKey:@"address"];
         [addressDic setObject:model.city forKey:@"city"];
         [addressDic setObject:model.area forKey:@"area"];
         [addressDic setObject:model.province forKey:@"province"];
         [clothesToPay reloadData];
-    }
+   // }
     
     
-   
+    
 }
 
 -(void)payFlaseAction
@@ -171,7 +174,7 @@
         [clothesPrice setText:_allPrice];
         [payPriceAndCon[1] setObject:@"-￥0.00" forKey:@"detail"];
         couponPrice = @"0.00";
-        couPonRemark = @"请选择优惠券";
+        couPonRemark = @"选择优惠券";
         couponId = nil;
         
         
@@ -221,7 +224,7 @@
         [self getDateDingZhi:params beginDate:_dingDate ifDing:YES];
     }
     
-   
+    
     
     for (UIViewController * controller in self.navigationController.viewControllers) { //遍历
         if ([controller isKindOfClass:[toBuy class]] || [controller isKindOfClass:[buyDesigner class]]||[controller isKindOfClass:[bag class]]) { //这里判断是否为你想要跳转的页面
@@ -243,7 +246,7 @@
     
     [getData getData:URL_GetColthesAndAddress PostParams:parms finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:domain]) {
-           
+            
             [_arrayForClothes removeAllObjects];
             
             
@@ -259,6 +262,7 @@
                 model.clothesName = [dic stringForKey:@"goods_name"];
                 model.clothesPrice = [dic stringForKey:@"price"];
                 model.carId = [dic stringForKey:@"id"];
+                model.sizeContent = [dic stringForKey:@"size_content"];
                 model.clotheMaxCount = @"100";
                 [_arrayForClothes addObject:model];
             }
@@ -275,7 +279,7 @@
             }
             
             if ([[addressDic stringForKey:@"address"] isEqualToString:@""]) {
-               
+                
                 model = [AddressModel new];
                 model.userAddress = @"您还没有收货地址，点击添加";
                 model.userPhone = @"";
@@ -292,7 +296,7 @@
                 model.addressId = [addressDic stringForKey:@"id"];
                 model.addressDefault = [addressDic stringForKey:@"is_default"];
                 
-               
+                
                 
             }
             
@@ -329,7 +333,7 @@
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
     clothesToPay = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 42) style:UITableViewStyleGrouped];
-    
+    clothesToPay.separatorStyle = UITableViewCellSeparatorStyleNone;
     clothesToPay.dataSource = self;
     clothesToPay.delegate = self;
     [clothesToPay registerClass:[OrderAddressTableViewCell class] forCellReuseIdentifier:@"clothesToPayAddress"];
@@ -339,7 +343,7 @@
     [clothesToPay registerClass:[payConponTableViewCell class] forCellReuseIdentifier:@"payConpon"];
     [clothesToPay registerClass:[paySectionThreeTableViewCell class] forCellReuseIdentifier:@"payThree"];
     [self.view addSubview:clothesToPay];
-
+    
     UIView *lowView = [UIView new];
     [self.view addSubview:lowView];
     lowView.sd_layout
@@ -358,7 +362,7 @@
     .heightIs(1);
     [lineView setBackgroundColor:getUIColor(Color_myOrderLine)];
     
-
+    
     UIView *leftView = [UILabel new];
     [lowView addSubview:leftView];
     leftView.sd_layout
@@ -367,27 +371,6 @@
     .widthIs(SCREEN_WIDTH / 3 * 2)
     .heightIs(50);
     
-    
-    
-    UILabel *Heji = [UILabel new];
-    [leftView addSubview:Heji];
-    Heji.sd_layout
-    .leftSpaceToView(leftView, 10)
-    .centerYEqualToView(leftView)
-    .widthIs(40)
-    .heightIs(20);
-    [Heji setFont:[UIFont systemFontOfSize:14]];
-    [Heji setTextColor:[UIColor blackColor]];
-    [Heji setText:@"合计:"];
-    
-    
-    
-   
-    
-    
-    
-    
-   
     UIButton *buyButton = [UIButton new];
     [lowView addSubview:buyButton];
     buyButton.sd_layout
@@ -398,22 +381,30 @@
     [buyButton addTarget:self action:@selector(DownOrderClick) forControlEvents:UIControlEventTouchUpInside];
     [buyButton setTitle:@"付款" forState:UIControlStateNormal];
     [buyButton setBackgroundColor:getUIColor(Color_myBagToPayButton)];
-    [buyButton.titleLabel setFont:[UIFont systemFontOfSize:16]];
+    [buyButton.titleLabel setFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14]];
     
     
     clothesPrice = [UILabel new];
     [leftView addSubview:clothesPrice];
     
-    clothesPrice.sd_layout
-    .leftSpaceToView(Heji, 3)
-    .rightSpaceToView(leftView, 3)
-    .topEqualToView(leftView)
-    .bottomEqualToView(leftView);
+    [clothesPrice mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(buyButton.mas_left).offset(-10);
+        make.centerY.equalTo(lowView.mas_centerY);
+    }];
     
-//  [clothesPrice setTextColor:getUIColor(Color_ClothesPayPrice)];
-    [clothesPrice setFont:Font_16];
+    clothesPrice.textColor= [UIColor colorWithHexString:@"#222222"];
+    [clothesPrice setFont:[UIFont fontWithName:@"SanFranciscoDisplay-Regular" size:16]];
     [clothesPrice setTextAlignment:NSTextAlignmentLeft];
     [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f", [_allPrice floatValue]]];
+    UILabel *Heji = [UILabel new];
+    [leftView addSubview:Heji];
+    [Heji mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(clothesPrice.mas_left);
+        make.centerY.equalTo(lowView.mas_centerY);
+    }];
+    [Heji setFont:[UIFont fontWithName:@"PingFangSC-Light" size:13]];
+    [Heji setTextColor:[UIColor colorWithHexString:@"#222222"]];
+    [Heji setText:@"合计:"];
     
 }
 
@@ -481,13 +472,13 @@
     if (canChooseCard) {
         CGFloat canUseCard = 0;
         for (ClothesFroPay *clothesMo in _arrayForClothes) {
-           
+            
             if (clothesMo.can_use_card == 1) {
                 canUseCard = canUseCard + [clothesMo.clothesPrice floatValue] * [clothesMo.clothesCount integerValue];
             }
             
         }
- 
+        
         if (canUseCard - [lastMoney floatValue] <= 0) {
             
             if (canUseCard - [_allPrice floatValue] == 0) {
@@ -526,8 +517,13 @@
     if (section == 0) {
         re = 1;
     }else if (section == 1) {
-        re = 2;
-    }else if(section == 2) {
+        re = 1;
+    }
+    else if (section==2)
+    {
+        re =1;
+    }
+    else if(section == 3) {
         re = [_arrayForClothes count];
     } else {
         re = 2;
@@ -541,17 +537,21 @@
     if (indexPath.section == 0) {
         
         if ([[addressDic stringForKey:@"address"] isEqualToString:@""]) {
-            x = 40;
+            x = 53;
         } else {
-            x = 70;
-            
+            x = 83;
         }
     }else if (indexPath.section == 1) {
-        x = 40;
+        x = 53;
     } else if(indexPath.section == 2) {
-        x = 115;
-    } else {
-        x = 40;
+        x = 53;
+    }
+    else if (indexPath.section==3)
+    {
+        x=99;
+    }
+    else {
+        x = 44;
     }
     
     return x;
@@ -559,12 +559,15 @@
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 4;
+    return 5;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 7;
+    if (section==4) {
+        return 3;
+    }
+    return 9;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -585,63 +588,57 @@
     
     if (indexPath.section == 0) {
         
-            if ([[addressDic stringForKey:@"address"] isEqualToString:@""]) {
-                ClothesForPayNoAddressTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"noaddress" forIndexPath:indexPath];
-                cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
-                cell.model = model;
-                reCell = cell;
-            } else {
-                OrderAddressTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"clothesToPayAddress" forIndexPath:indexPath];
-                cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
-                [cell.userName setText:model.userName];
-                [cell.userPhone setText:model.userPhone];
-                [cell.userAddress setText:model.userAddress];
-                reCell = cell;
-            }
-        
-     
-    } else if(indexPath.section == 1) {
-        if (indexPath.row == 0) {
-            payConponTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"payConpon" forIndexPath:indexPath];
-            [cell.chooseCon setText:couPonRemark];
-            if ([couPonRemark isEqualToString:@"请选择优惠券"]) {
-                [cell.chooseCon setTextColor:[UIColor blackColor]];
-                
-            } else {
-                [cell.chooseCon setTextColor:[UIColor redColor]];
-            }
+        if ([[addressDic stringForKey:@"address"] isEqualToString:@""]) {
+            ClothesForPayNoAddressTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"noaddress" forIndexPath:indexPath];
             cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
+            cell.model = model;
             reCell = cell;
         } else {
-            giftCardTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"giftCard" forIndexPath:indexPath];
-            [cell.lastMoney setText:[NSString stringWithFormat:@"礼品卡余额（¥%.2f）", [lastMoney floatValue]]];
-            if (choose) {
-                
-                
-                [cell.chooseImage setImage:[UIImage imageNamed:@"giftCardChoose"] forState:UIControlStateNormal];
-            } else {
-               
-                [cell.chooseImage setImage:[UIImage imageNamed:@"giftCardNoChoose"] forState:UIControlStateNormal];
-            }
-            if (canChooseCard) {
-                [cell.lastMoney setTextColor:[UIColor blackColor]];
-                
-                
-            } else {
-                [cell.lastMoney setTextColor:[UIColor lightGrayColor]];
-                [cell.chooseImage setImage:[UIImage imageNamed:@"addressNoChoose"] forState:UIControlStateNormal];
-                
-            }
-            [cell.chooseImage addTarget:self action:@selector(chooseGift) forControlEvents:UIControlEventTouchUpInside];
-            
-            
-            cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
+            OrderAddressTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"clothesToPayAddress" forIndexPath:indexPath];
+            [cell.userName setText:model.userName];
+            [cell.userPhone setText:model.userPhone];
+            [cell.userAddress setText:model.userAddress];
             reCell = cell;
         }
         
         
-        
-    } else if(indexPath.section == 2) {
+    } else if(indexPath.section == 1) {
+        payConponTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"payConpon" forIndexPath:indexPath];
+        [cell.chooseCon setText:couPonRemark];
+        if ([couPonRemark isEqualToString:@"选择优惠券"]) {
+            [cell.chooseCon setTextColor:[UIColor blackColor]];
+            
+        } else {
+            [cell.chooseCon setTextColor:[UIColor redColor]];
+        }
+        cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
+        reCell = cell;
+    }
+    else if(indexPath.section==2){
+        giftCardTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"giftCard" forIndexPath:indexPath];
+        [cell.lastMoney setText:[NSString stringWithFormat:@"礼品卡余额（¥%.2f）", [lastMoney floatValue]]];
+        if (choose) {
+            
+            
+            [cell.chooseImage setImage:[UIImage imageNamed:@"giftCardChoose"] forState:UIControlStateNormal];
+        } else {
+            
+            [cell.chooseImage setImage:[UIImage imageNamed:@"giftCardNoChoose"] forState:UIControlStateNormal];
+        }
+        if (canChooseCard) {
+            [cell.lastMoney setTextColor:[UIColor blackColor]];
+            
+            
+        } else {
+            [cell.lastMoney setTextColor:[UIColor lightGrayColor]];
+            [cell.chooseImage setImage:[UIImage imageNamed:@"addressNoChoose"] forState:UIControlStateNormal];
+            
+        }
+        [cell.chooseImage addTarget:self action:@selector(chooseGift) forControlEvents:UIControlEventTouchUpInside];
+        cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
+        reCell = cell;
+    }
+    else if(indexPath.section == 3) {
         ClothesForPayTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"clothesList" forIndexPath:indexPath];
         cell.model = [_arrayForClothes objectAtIndex:indexPath.row];
         [cell.upButton addTarget:self action:@selector(upClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -650,9 +647,6 @@
         [cell.cutButton setTag:1000 + indexPath.row];
         reCell = cell;
     } else {
-        
-        
-        
         paySectionThreeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"payThree" forIndexPath:indexPath];
         [cell.titlePay setText:[payPriceAndCon[indexPath.row] stringForKey:@"title"]];
         [cell.detailPay setText:[payPriceAndCon[indexPath.row] stringForKey:@"detail"]];
@@ -665,7 +659,7 @@
 -(void)chooseGift
 {
     if (canChooseCard) {
-        if ([couPonRemark isEqualToString:@"请选择优惠券"]) {
+        if ([couPonRemark isEqualToString:@"选择优惠券"]) {
             if (choose) {
                 choose = NO;
                 
@@ -738,7 +732,7 @@
     [self reloadAllView:sender.tag - 100];
     
     
-   
+    
 }
 
 -(void)cutClick:(UIButton *)sender
@@ -754,7 +748,7 @@
 
 -(void)reloadAllView:(NSInteger)item
 {
-   
+    
     CGFloat price = 0;
     CGFloat canUseCard = 0;
     for (ClothesFroPay *clothesMo in _arrayForClothes) {
@@ -780,7 +774,7 @@
     if ([_allPrice floatValue] < [minCouponPrice floatValue]) {
         [payPriceAndCon[1] setObject:@"-￥0.00" forKey:@"detail"];
         couponPrice = @"0.00";
-        couPonRemark = @"请选择优惠券";
+        couPonRemark = @"选择优惠券";
         couponId = nil;
     }
     
@@ -803,7 +797,7 @@
         }
     }
     [payView reloadView];
-   [clothesToPay reloadData];
+    [clothesToPay reloadData];
     
     ClothesFroPay *clothesCount = _arrayForClothes[item];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
@@ -852,7 +846,7 @@
             }
             
         }];
-
+        
     } else {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您还没有输入地址" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"马上添加", nil];
         [alert show];
@@ -860,7 +854,7 @@
     
     
     
-   
+    
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -889,8 +883,8 @@
         [params setObject:@"0" forKey:@"click_pay"];
         [self getDateDingZhi:params beginDate:_dingDate ifDing:YES];
     }
-   
-   
+    
+    
     
     UIViewController *target = nil;
     for (UIViewController * controller in self.navigationController.viewControllers) { //遍历
@@ -904,7 +898,7 @@
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"realToOrder" object:nil];
-
+    
 }
 
 -(void)payClick
@@ -977,10 +971,9 @@
     if (indexPath.section == 0) {
         ChangeAddressViewController *addFirst = [[ChangeAddressViewController alloc] init];
         [self.navigationController pushViewController:addFirst animated:YES];
-
+        
     } else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
-            
             if (choose) {
                 [self alertViewShowOfTime:@"礼品卡与优惠券不能同时使用哦" time:1];
             } else {
@@ -1002,7 +995,7 @@
                 sale.ifPayContrller = YES;
                 [self.navigationController pushViewController:sale animated:YES];
             } else {
-                 [self alertViewShowOfTime:@"该产品不能使用礼品卡哦" time:1];
+                [self alertViewShowOfTime:@"该产品不能使用礼品卡哦" time:1];
             }
             
         }
@@ -1016,13 +1009,13 @@
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end

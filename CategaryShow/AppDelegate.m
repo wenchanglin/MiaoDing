@@ -118,9 +118,8 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     self.threadIsPause = NO;
     self.Noti = NO;
     self.threadIsRun = YES;
-    self.threadRefreshData = [[NSThread alloc] initWithTarget:self selector:@selector(checkServerDataThread) object:nil];
-    [self.threadRefreshData start];
-    // Override point for customization after application launch.
+//    self.threadRefreshData = [[NSThread alloc] initWithTarget:self selector:@selector(checkServerDataThread) object:nil];
+//    [self.threadRefreshData start];
     appDelegate = self;
     NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024 diskCapacity:20 * 1024 * 1024 diskPath:nil];
     [NSURLCache setSharedURLCache:URLCache];
@@ -132,7 +131,17 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
         
     }
     [self runMainViewController : nil];
+    IQKeyboardManager *keyboardManager = [IQKeyboardManager sharedManager]; // 获取类库的单例变量
     
+    keyboardManager.enable = YES; // 控制整个功能是否启用
+    
+    keyboardManager.shouldResignOnTouchOutside = YES; // 控制点击背景是否收起键盘
+    
+    keyboardManager.shouldToolbarUsesTextFieldTintColor = YES; // 控制键盘上的工具条文字颜色是否用户自定义
+    keyboardManager.enableAutoToolbar = NO; // 控制是否显示键盘上的工具条
+    
+    keyboardManager.shouldShowToolbarPlaceholder = YES; // 是否显示占位文字
+
     //[self checkAppUpdate];
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"everLaunched"]) {

@@ -19,6 +19,6 @@
 
 @property (nonatomic, strong)MeasureLabelAndTextFieldModel *model;
 
-@property (nonatomic, retain)id<MeasureTextViewDelegate>delegata;
+@property (nonatomic, weak)id<MeasureTextViewDelegate>delegata;
 
 @end

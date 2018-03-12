@@ -65,18 +65,7 @@
             NSLog(@"%@", getData.dataRoot);
             collectionItem = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
             for (NSDictionary *dic in [[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]) {
-                designerModel *model = [[designerModel alloc] init];
-                model.clothesImage = [dic stringForKey:@"img"];
-                model.titlename = [dic stringForKey:@"name"];
-                model.good_Id = [dic stringForKey:@"goods_id"];
-                model.desginer_Id = [dic stringForKey:@"uid"];
-                model.detailClothesImg = [dic stringForKey:@"thumb"];
-                model.designerHead = [dic stringForKey:@"avatar"];
-                model.remark = [dic stringForKey:@"remark"];
-                model.designerName = [dic stringForKey:@"username"];
-                model.p_time = [dic stringForKey:@"p_time"];
-                model.tag = [dic stringForKey:@"tag"];
-                model.introduce = [dic stringForKey:@"introduce"];                
+                designerModel *model = [designerModel mj_objectWithKeyValues:dic];
                 [modelArray addObject:model];
             }
             
@@ -173,10 +162,10 @@
     if (sender.tag - 1000 != [modelArray count] - 1) {
         designerModel *model = modelArray[sender.tag - 1000];
         DesignerDetailIntroduce *introduce = [[DesignerDetailIntroduce alloc] init];
-        introduce.desginerId = model.desginer_Id;
-        introduce.designerImage = model.designerHead;
-        introduce.designerName = model.designerName;
-        introduce.remark = model.remark;
+        introduce.desginerId = [NSString stringWithFormat:@"%zd",model.des_uid];
+        introduce.designerImage = model.avatar;
+        introduce.designerName = model.uname;
+        introduce.remark = model.recommend_goods_ids;
         [self.navigationController pushViewController:introduce animated:YES];
     }
     

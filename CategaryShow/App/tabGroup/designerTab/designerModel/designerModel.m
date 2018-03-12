@@ -9,5 +9,8 @@
 #import "designerModel.h"
 
 @implementation designerModel
-
++(NSDictionary *)mj_replacedKeyFromPropertyName
+{
+    return @{@"designerID":@"id"};
+}
 @end

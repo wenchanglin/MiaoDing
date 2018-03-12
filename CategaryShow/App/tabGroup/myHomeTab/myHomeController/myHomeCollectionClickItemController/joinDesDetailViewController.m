@@ -129,8 +129,7 @@
     if (indexPath.section == 0) {
         MeasureLabelAndTextFieldModel *model = modelArray[indexPath.row];
         Class currentClass = [MeasureLabelAndTextField class];
-        MeasureLabelAndTextField *cell = nil;
-        cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass(currentClass)];
+        MeasureLabelAndTextField * cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass(currentClass)];
         cell.model = model;
         cell.delegate = self;
         cell.tag = indexPath.row +5;

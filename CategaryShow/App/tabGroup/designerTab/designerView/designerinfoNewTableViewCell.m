@@ -44,7 +44,7 @@
         make.height.mas_equalTo(18);
     }];
     zuoPinMoreLabel = [UILabel new];
-    zuoPinMoreLabel.text = @"more >";
+    zuoPinMoreLabel.text = @"更多 >";
     zuoPinMoreLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:12];
     zuoPinMoreLabel.textColor = [UIColor colorWithHexString:@"#222222"];
     [contentView addSubview:zuoPinMoreLabel];
@@ -110,7 +110,7 @@
 
     designerJieShao = [UILabel new];
     designerJieShao.numberOfLines =0;
-    designerJieShao.text = @"国内顶级服饰设计师作品发布平台每一件独具匠心的作品都值得被世人传颂在这里。";
+   // designerJieShao.text = @"国内顶级服饰设计师作品发布平台每一件独具匠心的作品都值得被世人传颂在这里。";
     designerJieShao.font = [UIFont fontWithName:@"PingFangSC-Light" size:12];
     designerJieShao.textColor = [UIColor colorWithHexString:@"#4F4F4F"];
     [contentView addSubview:designerJieShao];
@@ -123,47 +123,57 @@
     designerCard.font = [UIFont fontWithName:@"PingFangSC-Light" size:12];
     designerCard.textColor = [UIColor colorWithHexString:@"#4F4F4F"];
     [contentView addSubview:designerCard];
-    NSMutableAttributedString * attrStr = [[NSMutableAttributedString alloc]initWithString:@"陈振富/方言设计工作室"];
-    [attrStr addAttribute:NSFontAttributeName
-                    value:[UIFont systemFontOfSize:15]
-                    range:NSMakeRange(0, 3)];
-    designerCard.attributedText = attrStr;
+  
     [designerCard mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(designerJieShao.mas_bottom).offset(9);
         make.left.equalTo(designerJieShao);
     }];
     _zhuanFaBtn = [UIButton new];
+    _zhuanFaBtn.tag = 31;
+    [_zhuanFaBtn addTarget:self action:@selector(fourBtns:) forControlEvents:UIControlEventTouchUpInside];
     [_zhuanFaBtn setImage:[UIImage imageNamed:@"转发"] forState:(UIControlStateNormal)];
     [contentView addSubview:_zhuanFaBtn];
     [_zhuanFaBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(designerHead.mas_bottom).offset(23);
+        make.top.equalTo(designerHead.mas_bottom).offset(20);
         make.left.equalTo(designerHead);
         make.width.height.mas_equalTo(20);
     }];
     _shouChangBtn = [UIButton new];
+    _shouChangBtn.tag = 32;
+
+    [_shouChangBtn addTarget:self action:@selector(fourBtns:) forControlEvents:UIControlEventTouchUpInside];
+
     [_shouChangBtn setImage:[UIImage imageNamed:@"收藏"] forState:(UIControlStateNormal)];
     [contentView addSubview:_shouChangBtn];
     [_shouChangBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_zhuanFaBtn);
-        make.left.equalTo(_zhuanFaBtn.mas_right).offset(24);
+        make.centerY.equalTo(_zhuanFaBtn.mas_centerY);
+        make.left.equalTo(_zhuanFaBtn.mas_right).offset(20);
         make.width.height.mas_equalTo(20);
     }];
     _loveBtn = [UIButton new];
+    [_loveBtn setTitleColor:[UIColor colorWithHexString:@"#A6A6A6"] forState:UIControlStateNormal];
+    _loveBtn.titleLabel.font = [UIFont systemFontOfSize:10];
+    [_loveBtn addTarget:self action:@selector(fourBtns:) forControlEvents:UIControlEventTouchUpInside];
+    _loveBtn.tag =33;
+    _loveBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+    _loveBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 0);
     [_loveBtn setImage:[UIImage imageNamed:@"喜欢"] forState:(UIControlStateNormal)];
     [contentView addSubview:_loveBtn];
     [_loveBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_zhuanFaBtn);
-        make.left.equalTo(_shouChangBtn.mas_right).offset(24);
-        make.width.height.mas_equalTo(20);
+        make.centerY.equalTo(_zhuanFaBtn.mas_centerY);
+        make.left.equalTo(_shouChangBtn.mas_right).offset(20);
+        make.width.mas_equalTo(80);
     }];
-    _commentBtn = [UIButton new];
-    [_commentBtn setImage:[UIImage imageNamed:@"评论"] forState:(UIControlStateNormal)];
-    [contentView addSubview:_commentBtn];
-    [_commentBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_zhuanFaBtn);
-        make.left.equalTo(_loveBtn.mas_right).offset(24);
-        make.width.height.mas_equalTo(20);
-    }];
+//    _commentBtn = [UIButton new];
+//    _commentBtn.tag =34;
+//    [_commentBtn addTarget:self action:@selector(fourBtns:) forControlEvents:UIControlEventTouchUpInside];
+//    [_commentBtn setImage:[UIImage imageNamed:@"评论"] forState:(UIControlStateNormal)];
+//    [contentView addSubview:_commentBtn];
+//    [_commentBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.equalTo(_zhuanFaBtn);
+//        make.left.equalTo(_loveBtn.mas_right).offset(24);
+//        make.width.height.mas_equalTo(20);
+//    }];
     UIView * fengeView = [UIView new];
     [contentView addSubview:fengeView];
     fengeView.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
@@ -174,19 +184,48 @@
     }];
     
 }
+-(void)fourBtns:(UIButton *)button
+{
+    _FourBtns(button);
+}
 -(void)tap:(UITapGestureRecognizer *)tap
 {
-    NSLog(@"你点击了我");
+    _DesignerInfo(tap);
+//    NSLog(@"你点击了我");
+    
 }
 -(void)setModel:(designerModel *)model
 {
-    
     _model = model;
-//    [designerHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.designerHead]]];
-   // [designerName setText:model.designerName];
-//    [time setText:model.p_time];
-   // [clothesName setText:model.titlename];
-    [clothesImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.clothesImage]]];
+    if(model.is_love ==0)
+    {
+        [_loveBtn setImage:[UIImage imageNamed:@"喜欢"] forState:UIControlStateNormal];
+    }
+    else if(model.is_love  == 1)
+    {
+        [_loveBtn setImage:[UIImage imageNamed:@"喜欢选中"] forState:UIControlStateNormal];
+    }
+    
+    if(model.is_collect  ==0)
+    {
+        [_shouChangBtn setImage:[UIImage imageNamed:@"收藏"] forState:UIControlStateNormal];
+        
+    }
+    else if(model.is_collect ==1)
+    {
+        [_shouChangBtn setImage:[UIImage imageNamed:@"收藏选中"] forState:UIControlStateNormal];
+        
+    }
+    [_loveBtn setTitle:[NSString stringWithFormat:@"%zd",model.love_num] forState:UIControlStateNormal];
+    NSMutableAttributedString * attrStr = [[NSMutableAttributedString alloc]initWithString:[NSString stringWithFormat:@"%@%@",model.uname,model.tag]];
+    [attrStr addAttribute:NSFontAttributeName
+                    value:[UIFont systemFontOfSize:15]
+                    range:NSMakeRange(0, model.uname.length)];
+    designerCard.attributedText = attrStr;
+    [clothesImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.img]]];
+    [designerHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL,model.avatar]]];
+    designerJieShao.text = model.introduce;
+    
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

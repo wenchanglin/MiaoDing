@@ -37,7 +37,7 @@
     [super viewDidLoad];
     [self settabTitle:@"更改地址"];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadAddress) name:@"deleteAddress" object:nil];
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     [button setTitle:@"管理" forState:UIControlStateNormal];
     [button.titleLabel setFont:[UIFont systemFontOfSize:16]];
@@ -91,6 +91,7 @@
                 }
                 
             } else {
+                [addressTable removeFromSuperview];
                 [self createAddressView];
             }
             

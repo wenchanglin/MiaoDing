@@ -56,24 +56,25 @@
     [super viewDidLoad];
     getBaner = [BaseDomain getInstance:NO];
     [self.view addSubview:self.mainTableView];
-    [self getDataBaner];
+   // [self getDataBaner];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(acceptMsg:) name:@"leaveTop" object:nil];
 }
 
--(void)getDataBaner
-{
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [getBaner getData:URL_getDesignerBaner PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-       
-        if ([self checkHttpResponseResultStatus:domain]) {
-            
-            banerDic = [NSMutableDictionary dictionaryWithDictionary:[domain.dataRoot dictionaryForKey:@"data"]];
-            [self.mainTableView addSubview:self.headImageView];
-        }
-    }];
-    
-}
+//-(void)getDataBaner
+//{
+//    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+//    [params setObject:@(1) forKey:@"page"];
+//    [getBaner getData:URL_getDesignerBaner PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+//
+//        if ([self checkHttpResponseResultStatus:domain]) {
+//
+//            banerDic = [NSMutableDictionary dictionaryWithDictionary:[domain.dataRoot dictionaryForKey:@"data"]];
+//            [self.mainTableView addSubview:self.headImageView];
+//        }
+//    }];
+//
+//}
 
 -(void)acceptMsg : (NSNotification *)notification{
     

@@ -16,7 +16,7 @@
 #import "NSDictionary+EmptyString.h"
 #import "CommonFunction.h"
 #import "userInfoModel.h"
-@interface BaseViewController : UIViewController<UITextFieldDelegate,UIAlertViewDelegate>
+@interface BaseViewController : UIViewController //<UITextFieldDelegate,UIAlertViewDelegate>
 
 @property (retain,nonatomic) UIBarButtonItem *buttonBarLeft;
 

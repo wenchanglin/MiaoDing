@@ -26,64 +26,71 @@
    
     UILabel *nameTitle = [UILabel new];
     [contentView addSubview:nameTitle];
-    nameTitle.sd_layout
-    .leftSpaceToView(contentView, 15)
-    .topSpaceToView(contentView, 10)
-    .widthIs(60)
-    .heightIs(15);
-    [nameTitle setFont:[UIFont systemFontOfSize:14]];
+    [nameTitle mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(11);
+        make.top.mas_equalTo(12);
+        make.height.mas_equalTo(20);
+    }];
+    [nameTitle setFont:[UIFont fontWithName:@"PingFangSC-Light" size:14]];
+    nameTitle.textColor = [UIColor colorWithHexString:@"#222222"];
     [nameTitle setText:@"收货人："];
     
     _userName = [UILabel new];
     [contentView addSubview:_userName];
-    _userName.sd_layout
-    .leftSpaceToView(nameTitle, 5)
-    .topSpaceToView(contentView, 10)
-    .widthIs(120)
-    .heightIs(15);
-    [_userName setTextColor:getUIColor(ColorOrderGray)];
-    [_userName setFont:[UIFont systemFontOfSize:14]];
-    
+    [_userName mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(nameTitle.mas_right).offset(5);
+        make.top.equalTo(nameTitle);
+        make.height.mas_equalTo(20);
+    }];
+    [_userName setFont:[UIFont fontWithName:@"PingFangSC-Light" size:14]];
+    _userName.textColor = [UIColor colorWithHexString:@"#222222"];
+
 
     _userPhone = [UILabel new];
     [contentView addSubview:_userPhone];
-    _userPhone.sd_layout
-    .rightSpaceToView(contentView, 15)
-    .topSpaceToView(contentView, 10)
-    .widthIs(SCREEN_WIDTH - 165)
-    .heightIs(15);
+    [_userPhone mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_userName);
+        make.right.mas_equalTo(-14);
+        make.height.mas_equalTo(20);
+    }];
     [_userPhone setTextAlignment:NSTextAlignmentRight];
-    [_userPhone setFont:Font_12];
-    
+    [_userPhone setFont:[UIFont fontWithName:@"PingFangSC-Light" size:14]];
+    _userPhone.textColor = [UIColor colorWithHexString:@"#222222"];
     
     UILabel *addTitle = [UILabel new];
     [contentView addSubview:addTitle];
-    addTitle.sd_layout
-    .leftSpaceToView(contentView, 15)
-    .bottomSpaceToView(contentView, 10)
-    .widthIs(60)
-    .heightIs(15);
+    [addTitle mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_userName.mas_bottom).offset(15);
+        make.left.mas_equalTo(11);
+        make.height.mas_equalTo(20);
+    }];
     [addTitle setFont:[UIFont systemFontOfSize:14]];
     [addTitle setText:@"地   址："];
     
     _userAddress = [UILabel new];
     [contentView addSubview:_userAddress];
-    _userAddress.sd_layout
-    .leftSpaceToView(addTitle, 5)
-    .bottomSpaceToView(contentView, 10)
-    .rightSpaceToView(contentView, 15)
-    .heightIs(15);
-    [_userAddress setFont:[UIFont systemFontOfSize:12]];
-    [_userAddress setTextColor:getUIColor(ColorOrderGray)];
-    
-    _lineView = [UILabel new];
-    [contentView addSubview:_lineView];
-    _lineView.sd_layout
-    .leftSpaceToView(contentView, 15)
-    .bottomEqualToView(contentView)
-    .widthIs(SCREEN_WIDTH - 30)
-    .heightIs(1);
-    [_lineView setBackgroundColor:getUIColor(Color_myOrderBack)];
+    [_userAddress mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(addTitle);
+        make.left.equalTo(addTitle.mas_right);
+        make.height.mas_equalTo(20);
+    }];
+    [_userAddress setFont:[UIFont fontWithName:@"PingFangSC-Light" size:14]];
+    _userAddress.textColor = [UIColor colorWithHexString:@"#222222"];
+    UIImageView * rightImageView = [UIImageView new];
+    rightImageView.image = [UIImage imageNamed:@"rightDes"];
+    [contentView addSubview:rightImageView];
+    [rightImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(-11.6);
+        make.centerY.equalTo(addTitle.mas_centerY);
+    }];
+//    _lineView = [UILabel new];
+//    [contentView addSubview:_lineView];
+//    _lineView.sd_layout
+//    .leftSpaceToView(contentView, 15)
+//    .bottomEqualToView(contentView)
+//    .widthIs(SCREEN_WIDTH - 30)
+//    .heightIs(1);
+//    [_lineView setBackgroundColor:getUIColor(Color_myOrderBack)];
     
     
 }

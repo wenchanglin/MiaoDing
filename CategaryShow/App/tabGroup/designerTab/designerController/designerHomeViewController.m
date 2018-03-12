@@ -9,14 +9,14 @@
 #import "SecondViewTableViewController.h"
 #import "ThirdViewCollectionViewController.h"
 #import "MainTouchTableTableView.h"
-#import "MySegMentViewNew.h"
+#import "MYSegmentViewWhite.h"
 #import "designerProductViewController.h"
 #define Main_Screen_Height      [[UIScreen mainScreen] bounds].size.height
 #define Main_Screen_Width       [[UIScreen mainScreen] bounds].size.width
 static CGFloat const headViewHeight = 320;
 #import "designerHomeViewController.h"
 
-
+#import "NewDesignerModel.h"
 #define URL_DESIGNERWEB @"html/jiangxin.html"
 #import <ShareSDK/ShareSDK.h>
 #import <ShareSDKExtension/SSEShareHelper.h>
@@ -32,12 +32,14 @@ static CGFloat const headViewHeight = 320;
 @interface designerHomeViewController ()<UITableViewDelegate,UITableViewDataSource>
 
 @property(nonatomic ,strong)MainTouchTableTableView * mainTableView;
-@property (nonatomic, strong) MySegMentViewNew * RCSegView;
+@property (nonatomic, strong) MYSegmentViewWhite * RCSegView;
 @property(nonatomic,strong)UIImageView *headImageView;//头部图片
 @property(nonatomic,strong)UIImageView * avatarImage;
 @property(nonatomic,strong)UILabel *countentLabel;
+@property(nonatomic,strong)NSMutableArray * storyArr;
+@property(nonatomic,strong)NSMutableArray * bgViewArr;
+@property(nonatomic,strong)NSMutableArray * zuoPinArr;
 @property (nonatomic, retain) UIView *alpha;
-
 @property (nonatomic, assign) BOOL canScroll;
 @property (nonatomic, assign) BOOL isTopIsCanNotMoveTabView;
 @property (nonatomic, assign) BOOL isTopIsCanNotMoveTabViewPre;
@@ -45,6 +47,9 @@ static CGFloat const headViewHeight = 320;
 @end
 
 @implementation designerHomeViewController
+{
+    BaseDomain * designerDomain;
+}
 @synthesize mainTableView;
 
 -(void)viewWillAppear:(BOOL)animated
@@ -55,34 +60,26 @@ static CGFloat const headViewHeight = 320;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    _storyArr = [NSMutableArray array];
+    _zuoPinArr = [NSMutableArray array];
+    _bgViewArr = [NSMutableArray array];
+    designerDomain = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    [self.view addSubview:self.mainTableView];
-    [self.mainTableView addSubview:self.headImageView];
+    NSMutableDictionary * parma = [NSMutableDictionary dictionary];
+    [parma setObject:_desginerId forKey:@"uid"];
+    [designerDomain getData:URL_GetDesignerDeetail PostParams:parma finish:^(BaseDomain *domain, Boolean success) {
+       // WCLLog(@"%@",[[domain.dataRoot objectForKey:@"data"] stringForKey:@"story"]);
+        [_storyArr addObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"story"]];
+        [_bgViewArr addObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"bg_img"]];
+        [self.view addSubview:self.mainTableView];
+        [self.mainTableView addSubview:self.headImageView];
+       
+    }];
+   
     
-    UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(12, 26, 33, 33)];
-    
-    [buttonBack.layer setCornerRadius:33 / 2];
-    [buttonBack.layer setMasksToBounds:YES];
-    [buttonBack setImage:[UIImage imageNamed:@"baiBack"] forState:UIControlStateNormal];
-    [buttonBack addTarget:self action:@selector(backClick) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:buttonBack];
-    
-    [self.view bringSubviewToFront:buttonBack];
-    
-    
-    
-    UIButton *rightShare = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 45, 26, 33, 33)];
-    
-    [rightShare.layer setCornerRadius:33 / 2];
-    [rightShare.layer setMasksToBounds:YES];
-    [rightShare setImage:[UIImage imageNamed:@"shareRight"] forState:UIControlStateNormal];
-    [rightShare addTarget:self action:@selector(shareClick) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:rightShare];
-     
-    [self.view bringSubviewToFront:rightShare];
+   
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(acceptMsg:) name:@"leaveTop" object:nil];
-    // Do any additional setup after loading the view.
 }
 
 -(void)shareClick
@@ -125,7 +122,7 @@ static CGFloat const headViewHeight = 320;
     //获取滚动视图y值的偏移量
     CGFloat yOffset  = scrollView.contentOffset.y;
     
-    CGFloat tabOffsetY = [mainTableView rectForSection:0].origin.y;
+    CGFloat tabOffsetY = [mainTableView rectForSection:0].origin.y-22;
     CGFloat offsetY = scrollView.contentOffset.y;
     
     _isTopIsCanNotMoveTabViewPre = _isTopIsCanNotMoveTabView;
@@ -162,10 +159,10 @@ static CGFloat const headViewHeight = 320;
         
         //改变头部视图的fram
         self.headImageView.frame= f;
-//        self.alpha.frame = CGRectMake(0, 0, f.size.width, f.size.height);
-//        CGRect avatarF = CGRectMake(f.size.width/2-25, (f.size.height-headViewHeight)+69, 50, 50);
-//        _avatarImage.frame = avatarF;
-//        _countentLabel.frame = CGRectMake((f.size.width-Main_Screen_Width)/2+40, (f.size.height-headViewHeight)+172, Main_Screen_Width-80, 36);
+        //        self.alpha.frame = CGRectMake(0, 0, f.size.width, f.size.height);
+        //        CGRect avatarF = CGRectMake(f.size.width/2-25, (f.size.height-headViewHeight)+69, 50, 50);
+        //        _avatarImage.frame = avatarF;
+        //        _countentLabel.frame = CGRectMake((f.size.width-Main_Screen_Width)/2+40, (f.size.height-headViewHeight)+172, Main_Screen_Width-80, 36);
     }
     
 }
@@ -177,97 +174,85 @@ static CGFloat const headViewHeight = 320;
         _headImageView= [[UIImageView alloc]initWithImage:[UIImage imageNamed:@""]];
         _headImageView.frame=CGRectMake(0, -headViewHeight ,Main_Screen_Width,headViewHeight);
         _headImageView.userInteractionEnabled = YES;
+//        _headImageView.backgroundColor = [UIColor cyanColor];
         [_headImageView setContentMode:UIViewContentModeScaleAspectFill];
         [_headImageView.layer setMasksToBounds:YES];
-
         
-        _avatarImage = [[UIImageView alloc] initWithFrame:CGRectMake(Main_Screen_Width/2-(65 / 2), 69, 65, 65)];
+        UIImageView * bgview = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 203)];
+        bgview.userInteractionEnabled = YES;
+        bgview.backgroundColor = [UIColor cyanColor];
+        [bgview sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL,_bgViewArr[0]]]];
+        [bgview setContentMode:UIViewContentModeScaleAspectFill];
+        [_headImageView addSubview:bgview];
+        _avatarImage = [[UIImageView alloc] initWithFrame:CGRectMake(Main_Screen_Width/2-(81 / 2), 163, 81, 81)];
         [_headImageView addSubview:_avatarImage];
         _avatarImage.userInteractionEnabled = YES;
         _avatarImage.layer.masksToBounds = YES;
         _avatarImage.layer.borderWidth = 3;
         _avatarImage.layer.borderColor =[[UIColor blackColor] CGColor];
-        _avatarImage.layer.cornerRadius = 65 / 2;
+        _avatarImage.layer.cornerRadius = 1;
         [_avatarImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, _designerImage]]];
-        
-    
-        _countentLabel = [UILabel new];
-         [_headImageView addSubview:_countentLabel];
-        
-        [_countentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(_headImageView.mas_centerX);
-            make.top.equalTo(_avatarImage.mas_bottom).with.offset(14);
-            make.height.equalTo(@20);
-            
-        }];
-        _countentLabel.font = Font_18;
-        _countentLabel.textColor = [UIColor blackColor];
+        _countentLabel = [[UILabel alloc]initWithFrame:CGRectMake((SCREEN_WIDTH-80)/2, CGRectGetMaxY(_avatarImage.frame)+17, 80, 25)];
+        [_headImageView addSubview:_countentLabel];
+        _countentLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:18];
+        _countentLabel.textColor = [UIColor colorWithHexString:@"#222222"];
         _countentLabel.textAlignment = NSTextAlignmentCenter;
-        _countentLabel.lineBreakMode = NSLineBreakByWordWrapping;
         _countentLabel.numberOfLines = 0;
         _countentLabel.text = _designerName;
-       
         
-        UIImageView *DWImg = [UIImageView new];
-        [_headImageView addSubview:DWImg];
-        DWImg.sd_layout
-        .rightSpaceToView(_countentLabel, 7)
-        .topSpaceToView(_avatarImage, 17)
-        .heightIs(21 * 4 / 5)
-        .widthIs(15 * 4 / 5);
-        [DWImg setImage:[UIImage imageNamed:@"DWImg"]];
+        
+//        UIImageView *DWImg = [UIImageView new];
+//        [_headImageView addSubview:DWImg];
+//        DWImg.sd_layout
+//        .rightSpaceToView(_countentLabel, 7)
+//        .topSpaceToView(_avatarImage, 17)
+//        .heightIs(21 * 4 / 5)
+//        .widthIs(15 * 4 / 5);
+//        [DWImg setImage:[UIImage imageNamed:@"DWImg"]];
         
         
         
         UILabel *tagLable = [UILabel new];
         [_headImageView addSubview:tagLable];
-        
         [tagLable mas_makeConstraints:^(MASConstraintMaker *make) {
-           
             make.centerX.equalTo(_headImageView.mas_centerX);
             make.top.equalTo(_countentLabel.mas_bottom).with.offset(10);
-            make.height.equalTo(@15);
+            make.height.equalTo(@17);
         }];
-        [tagLable setFont:[UIFont systemFontOfSize:12]];
-        [tagLable setTextColor:getUIColor(Color_grayColorForDesigner)];
-        [tagLable setText:[_designerDic stringForKey:@"tag"]];
-        
-        
-        UILabel *me = [UILabel new];
-        [_headImageView addSubview:me];
-        me.sd_layout
-        .leftSpaceToView(_headImageView, 30)
-        .topSpaceToView(tagLable, 36)
-        .autoHeightRatio(0)
-        .widthIs(40);
-        [me setText:@"Me"];
-        [me setFont:Font_20];
-        
-        UILabel *introduce = [UILabel new];
-        [_headImageView addSubview:introduce];
-        [introduce mas_makeConstraints:^(MASConstraintMaker *make) {
-           
-            make.left.equalTo(me.mas_right).with.offset(13);
-            make.top.equalTo(tagLable.mas_bottom).with.offset(36);
-            make.right.equalTo(_headImageView.mas_right).with.offset(-83);
-            make.bottom.lessThanOrEqualTo(_headImageView.mas_bottom).with.offset(-5);
-            
-        }];
-        [introduce setNumberOfLines:0];
-        [introduce setTextAlignment:NSTextAlignmentCenter];
-        [introduce setFont:[UIFont systemFontOfSize:15]];
-        [introduce setText:[_designerDic stringForKey:@"introduce"]];
-        [introduce setTextColor:getUIColor(Color_introduce)];
-        
+        [tagLable setFont:[UIFont fontWithName:@"PingFangSC-Thin" size:12]];
+        [tagLable setTextColor:[UIColor colorWithHexString:@"#222222"]];
+        [tagLable setText:_remark];
         
         UIView *lineGray = [UIView new];
         [_headImageView addSubview:lineGray];
-        [lineGray setBackgroundColor:getUIColor(Color_background)];
+        [lineGray setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
         lineGray.sd_layout
         .leftEqualToView(_headImageView)
         .rightEqualToView(_headImageView)
         .bottomEqualToView(_headImageView)
-        .heightIs(1);
+        .heightIs(10);
+        
+        UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(12, 26, 33, 33)];
+        
+        [buttonBack.layer setCornerRadius:33 / 2];
+        [buttonBack.layer setMasksToBounds:YES];
+        [buttonBack setImage:[UIImage imageNamed:@"baiBack"] forState:UIControlStateNormal];
+        [buttonBack addTarget:self action:@selector(backClick) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:buttonBack];
+        
+        [self.view bringSubviewToFront:buttonBack];
+        
+        
+        
+        UIButton *rightShare = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 45, 26, 33, 33)];
+        
+        [rightShare.layer setCornerRadius:33 / 2];
+        [rightShare.layer setMasksToBounds:YES];
+        [rightShare setImage:[UIImage imageNamed:@"shareRight"] forState:UIControlStateNormal];
+        [rightShare addTarget:self action:@selector(shareClick) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:rightShare];
+        
+        [self.view bringSubviewToFront:rightShare];
         
     }
     return _headImageView;
@@ -324,21 +309,20 @@ static CGFloat const headViewHeight = 320;
         
         designerProductViewController *introduce = [[designerProductViewController alloc] init];
         introduce.desginerId = _desginerId;
-        introduce.designerImage = _designerImage;
-        introduce.designerName = _designerName;
-        introduce.remark = _remark;
+//        introduce.designerImage = _designerImage;
+//        introduce.designerName = _designerName;
+//        introduce.remark = _remark;
         
         
         //        SecondViewTableViewController * Second=[[SecondViewTableViewController alloc]init];
         
         ThirdViewCollectionViewController * Third=[[ThirdViewCollectionViewController alloc]init];
-        Third.designerStory = _designerStory;
-        
+        Third.designerStory = _storyArr[0];
         NSArray *controllers=@[Third,introduce];
         
         NSArray *titleArray =@[@"故事",@"作品"];
         
-        MySegMentViewNew * rcs=[[MySegMentViewNew alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, Main_Screen_Height) controllers:controllers titleArray:titleArray ParentController:self lineWidth:25 lineHeight:2.0 butHeight:40 viewHeight:64 showLine:YES];
+        MYSegmentViewWhite * rcs=[[MYSegmentViewWhite alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, Main_Screen_Height) controllers:controllers titleArray:titleArray ParentController:self lineWidth:25 lineHeight:2.0];
         
         _RCSegView = rcs;
     }
@@ -351,13 +335,14 @@ static CGFloat const headViewHeight = 320;
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end
+

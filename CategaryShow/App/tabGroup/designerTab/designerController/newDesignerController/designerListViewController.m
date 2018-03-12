@@ -39,11 +39,7 @@
         if ([self checkHttpResponseResultStatus:domain]) {
             designerArray = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"data"]];
             for (NSDictionary *dic  in designerArray) {
-                designerModel *model = [designerModel new];
-                model.designerHead = [dic stringForKey:@"avatar"];
-                model.designerName = [dic stringForKey:@"name"];
-                model.designerSimpleIntd = [dic stringForKey:@"tag"];
-                model.desginer_Id = [dic stringForKey:@"id"];
+                designerModel *model = [designerModel mj_objectWithKeyValues:dic];
                 [modelArray addObject:model];
             }
             [designerCollect reloadData];

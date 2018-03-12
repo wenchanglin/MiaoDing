@@ -68,13 +68,11 @@
 
 - (void)back:(UIBarButtonItem *)btn
 {
-    if ([web canGoBack]) {
-        [web goBack];
-        
-    }else{
         [self.view resignFirstResponder];
         [self.navigationController popViewControllerAnimated:YES];
-    }
+        web.delegate = nil;
+        [web removeFromSuperview];
+        web = nil;
 }
 
 -(void)createScrollerView

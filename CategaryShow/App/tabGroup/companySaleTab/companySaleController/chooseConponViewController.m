@@ -24,12 +24,11 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"选择优惠券";
+    [self settabTitle:@"选择优惠券"];
     modelArray = [NSMutableArray array];
     canUseModelArray = [NSMutableArray array];
     getData = [BaseDomain getInstance:NO];
     postData = [BaseDomain getInstance:NO];
-    // Do any additional setup after loading the view.
     [self getDatas];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
@@ -81,7 +80,7 @@
 
 -(void)createTable
 {
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(8, 64, SCREEN_WIDTH - 16, 60)];
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(8, NavHeight, SCREEN_WIDTH - 16, 60)];
     CouponNumber = [[UITextField alloc] initWithFrame:CGRectMake(10, 10, view.frame.size.width - 100, 40)];
     [view addSubview:CouponNumber];
     [CouponNumber setFont:[UIFont systemFontOfSize:16]];
@@ -106,7 +105,12 @@
     [self.view addSubview:view];
     
     
-    canUse = [[UITableView alloc] initWithFrame:CGRectMake(8, 124, SCREEN_WIDTH - 16, SCREEN_HEIGHT  - 64) style:UITableViewStyleGrouped];
+    canUse = [[UITableView alloc] initWithFrame:CGRectMake(8, 60+NavHeight, SCREEN_WIDTH - 16, SCREEN_HEIGHT  - 64) style:UITableViewStyleGrouped];
+    if (@available(iOS 11.0, *)) {
+        canUse.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     canUse.delegate = self;
     canUse.dataSource = self;
     canUse.showsVerticalScrollIndicator =NO;
@@ -142,7 +146,7 @@
     [postData postData:URL_GetCoupon PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         
         if ([self checkHttpResponseResultStatus:domain]) {
-            [self reloadData];
+            [self getDatas];
         }
     }];
     

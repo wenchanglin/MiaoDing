@@ -244,6 +244,7 @@
         
         [getData postData:URL_AddressDelete PostParams:params finish:^(BaseDomain *domain, Boolean success) {
             if ([self checkHttpResponseResultStatus:getData]) {
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"deleteAddress" object:nil];
                 [self reloadAddress];
             }
         }];

@@ -181,15 +181,15 @@
             prctureIntro = [NSMutableArray arrayWithArray:[dataDictionary arrayForKey:@"img_introduce"]];
             
             lt_data = [domain.dataRoot stringForKey:@"lt_data"];
-            designer.remark = [dataDictionary stringForKey:@"content"];
-            designer.clothesImage = [dataDictionary stringForKey:@"thumb"];
-            designer.designerName = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"name"];
-            designer.designerHead = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"avatar"];
-            designer.designerSimpleIntd = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"tag"];
-            designer.titlename = [dataDictionary stringForKey:@"sub_name"];
+            designer.content = [dataDictionary stringForKey:@"content"];
+            designer.img = [dataDictionary stringForKey:@"thumb"];
+            designer.name = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"name"];
+            designer.avatar = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"avatar"];
+            designer.tag = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"tag"];
+            designer.name = [dataDictionary stringForKey:@"sub_name"];
 //            _model.good_Id = [dataDictionary stringForKey:@"uid"];
             designer.detailClothesImg = [dataDictionary arrayForKey:@"img_list"][0];
-            designer.desginer_Id = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"id"];
+            designer.deginerID = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"id"];
             designer.introduce = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"introduce"];
             
             new_comment = [NSMutableDictionary dictionaryWithDictionary:[dataDictionary dictionaryForKey:@"new_comment"]];
@@ -202,9 +202,9 @@
             
             
             if (_good_id) {
-                designer.good_Id = _good_id;
+                designer.goods_id = _good_id;
             } else {
-                designer.good_Id = [_goodDic stringForKey:@"goods_id"];
+                designer.goods_id = [_goodDic stringForKey:@"goods_id"];
                 
             }
             
@@ -625,7 +625,7 @@
         _shopId = @"";
     }
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:designer.good_Id forKey:@"goods_id"];
+    [params setObject:designer.goods_id forKey:@"goods_id"];
     [params setObject:@"2" forKey:@"goods_type"];
     [params setObject:clothesPrice forKey:@"price"];
     [params setObject:[dataDictionary stringForKey:@"name"] forKey:@"goods_name"];
@@ -670,7 +670,7 @@
     }
     
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:designer.good_Id forKey:@"goods_id"];
+    [params setObject:designer.goods_id forKey:@"goods_id"];
     [params setObject:@"2" forKey:@"goods_type"];
     [params setObject:clothesPrice forKey:@"price"];
     [params setObject:[dataDictionary stringForKey:@"name"] forKey:@"goods_name"];
@@ -770,7 +770,7 @@
     //    [self showAlertWithTitle:@"提示" message:@"分享成功"];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"2" forKey:@"type"];
-    [params setObject:designer.good_Id forKey:@"cid"];
+    [params setObject:designer.goods_id forKey:@"cid"];
     [getData postData:URL_AddSave PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         
         
@@ -872,10 +872,10 @@
 -(void)designerClick
 {
     DesignerDetailIntroduce *introduce = [[DesignerDetailIntroduce alloc] init];
-    introduce.desginerId = designer.desginer_Id;
-    introduce.designerImage = designer.designerHead;
-    introduce.designerName = designer.designerName;
-    introduce.remark = designer.remark;
+    introduce.desginerId = [NSString stringWithFormat:@"%zd",designer.des_uid] ;
+    introduce.designerImage = designer.avatar;
+    introduce.designerName = designer.uname;
+    introduce.remark = designer.recommend_goods_ids;
     [self.navigationController pushViewController:introduce animated:YES];
 }
 

@@ -20,8 +20,9 @@
 //#define URL_ExitLogin @"/index/index/login_out"
 #define URL_ExitLogin [NSString stringWithFormat:@"/index%@/login_out",BanBenHao]
 #define URL_Server_String  @"http://www.cloudworkshop.cn/index.php"
-#define URL_HEADURL @"http://www.cloudworkshop.cn/"
+#define URL_HEADURL @"http://www.cloudworkshop.cn/"//www
 #define PIC_HEADURL @"http://source.cloudworkshop.cn/"
+#define Share_ChengPin @"/web/jquery-obj/static/fx/html/chengping.html"
 //#define URL_HEADURL @"http://192.168.1.156/"
 
 //#define URL_WEBHEADURL @"http://192.168.1.156/web/jquery-obj/static/web/"
@@ -55,7 +56,8 @@
 //首页新
 //#define URL_GetMain @"/index/index/new_index_news"
 #define URL_GetMain [NSString stringWithFormat:@"/index%@/new_index_news",BanBenHao]
-
+//首页收藏
+#define URL_Love_Main [NSString stringWithFormat:@"/index%@/userlove",BanBenHao]
 //#define URL_OtherMain @"/index/index/index_tab_list"
 #define URL_OtherMain [NSString stringWithFormat:@"/index%@/index_tab_list",BanBenHao]
 
@@ -65,7 +67,7 @@
 #define URL_GetYouPingList [NSString stringWithFormat:@"/index%@/goods_list",BanBenHao]
 
 //#define URL_GetYouPingDetailNew @"/index/index/new_goods_detail"
-#define URL_GetYouPingDetailNew [NSString stringWithFormat:@"/index%@/new_goods_detail",BanBenHao]
+#define URL_GetYouPingDetailNew [NSString stringWithFormat:@"/index%@/new_goods_detailNew",BanBenHao]
 
 //#define URL_GetYouPingDetail @"/index/index/goods_detail"
 #define URL_GetYouPingDetail [NSString stringWithFormat:@"/index%@/goods_detail",BanBenHao]

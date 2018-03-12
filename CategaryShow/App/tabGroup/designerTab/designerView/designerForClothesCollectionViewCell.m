@@ -146,8 +146,8 @@
 {
     _model = model;
     [backImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, _pictureUrl]]];
-    [headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.designerHead]]];
-    [nameLabel setText:model.designerName];
+    [headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.avatar]]];
+    [nameLabel setText:model.uname];
     [descripLabel setText:model.tag];
       
 }

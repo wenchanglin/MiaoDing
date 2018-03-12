@@ -1,5 +1,6 @@
 platform:ios,’9.0’
 target ‘CategaryShow’ do
+#pod 'MLeaksFinder'
 pod 'MJExtension'
 pod 'IQKeyboardManager'
 pod 'AFNetworking', '~>2.6.3'
@@ -22,5 +23,4 @@ pod 'SDWebImage', '~> 3.8.1'
 pod 'SDAutoLayout', '~> 2.1.7'
 pod 'DTKDropdownMenu','~> 0.0.4'
 pod ‘MBProgressHUD’
-
 end

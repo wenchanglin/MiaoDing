@@ -427,16 +427,16 @@
     }
     
     [lowView addSubview:buttonLike];
-    UIButton *DZButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 113, 0, 113, 50)];
-    [DZButton setBackgroundColor:getUIColor(Color_TKClolor)];
-    [DZButton setTitle:@"个性定制" forState:UIControlStateNormal];
-    [DZButton setTitleColor:getUIColor(Color_shadow) forState:UIControlStateNormal];
-    [DZButton addTarget:self action:@selector(ClickToBuyBut) forControlEvents:UIControlEventTouchUpInside];
-    [DZButton.titleLabel setFont:[UIFont systemFontOfSize:14]];
-    [lowView addSubview:DZButton];
+//    UIButton *DZButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 113, 0, 113, 50)];
+//    [DZButton setBackgroundColor:getUIColor(Color_TKClolor)];
+//    [DZButton setTitle:@"个性定制" forState:UIControlStateNormal];
+//    [DZButton setTitleColor:getUIColor(Color_shadow) forState:UIControlStateNormal];
+//    [DZButton addTarget:self action:@selector(ClickToBuyBut) forControlEvents:UIControlEventTouchUpInside];
+//    [DZButton.titleLabel setFont:[UIFont systemFontOfSize:14]];
+//    [lowView addSubview:DZButton];
     
     
-    UIButton *TKButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 113 * 2, 0, 113, 50)];
+    UIButton *TKButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - (113*2) , 0, 113*2, 50)];
     [TKButton setBackgroundColor:getUIColor(Color_DZClolor)];
     [TKButton setTitle:@"购买同款" forState:UIControlStateNormal];
     [TKButton setTitleColor:getUIColor(Color_shadow) forState:UIControlStateNormal];
@@ -472,14 +472,21 @@
     
     NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
     if ([[userd stringForKey:@"token"] length] > 0) {
+        DiyWordInClothesViewController *diy = [[DiyWordInClothesViewController alloc] init];
+        diy.class_id = _class_id;
         
-        datDingBegin = [NSDate dateWithTimeIntervalSinceNow:0];
-        
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:0.5];
-        [chooseStyle setAlpha:1];
-        [alphaView setAlpha:1];
-        [UIView commitAnimations];
+        diy.goodDic = _goodDic;
+        diy.ifTK = YES;
+        diy.paramsDic = goodParams;
+        diy.defaultImg = goodDufaultImg;
+        [self.navigationController pushViewController:diy animated:YES];
+//        datDingBegin = [NSDate dateWithTimeIntervalSinceNow:0];
+//
+//        [UIView beginAnimations:nil context:nil];
+//        [UIView setAnimationDuration:0.5];
+//        [chooseStyle setAlpha:1];
+//        [alphaView setAlpha:1];
+//        [UIView commitAnimations];
         
         
         
@@ -717,28 +724,28 @@
 }
 
 
--(void)ClickToBuyBut {
-    
-
-    
-    NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-    if ([[userd stringForKey:@"token"] length] > 0) {
-        
-        datDingBegin = [NSDate dateWithTimeIntervalSinceNow:0];
-        
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:0.5];
-        [viewPiceChoose setAlpha:1];
-        [alphaView setAlpha:1];
-        [UIView commitAnimations];
-            
-       
-        
-    } else {
-        [self getDateBeginHaveReturn:datBegin fatherView:@"立即购买"];
-    }
-    
-}
+//-(void)ClickToBuyBut {
+//
+//
+//
+//    NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
+//    if ([[userd stringForKey:@"token"] length] > 0) {
+//
+//        datDingBegin = [NSDate dateWithTimeIntervalSinceNow:0];
+//
+//        [UIView beginAnimations:nil context:nil];
+//        [UIView setAnimationDuration:0.5];
+//        [viewPiceChoose setAlpha:1];
+//        [alphaView setAlpha:1];
+//        [UIView commitAnimations];
+//
+//
+//
+//    } else {
+//        [self getDateBeginHaveReturn:datBegin fatherView:@"立即购买"];
+//    }
+//
+//}
 
 #pragma mark --UICollectionViewDelegateFlowLayout
 //定义每个UICollectionView 的大小

@@ -12,6 +12,7 @@
 {
     UIImageView *clothesImage;
     UILabel *clothesName;
+    UILabel * clothesContent;
     UILabel *clothesPrice;
     UILabel *clotesCount;
 }
@@ -33,39 +34,46 @@
     clothesImage = [UIImageView new];
     [contentView addSubview:clothesImage];
     clothesImage.sd_layout
-    .leftSpaceToView(contentView,15)
-    .topSpaceToView(contentView,19)
-    .bottomSpaceToView(contentView,19.5)
-    .widthIs(147 / 2);
-    [clothesImage setContentMode:UIViewContentModeScaleAspectFit];
+    .leftSpaceToView(contentView,12)
+    .topSpaceToView(contentView,12)
+    .bottomSpaceToView(contentView,12)
+    .widthIs(75);
+    [clothesImage setContentMode:UIViewContentModeScaleAspectFill];
     [clothesImage.layer setMasksToBounds:YES];
     
     
     clothesName = [UILabel new];
+    clothesName.textColor = [UIColor colorWithHexString:@"#3D3D3D"];
     [contentView addSubview:clothesName];
     clothesName.sd_layout
-    .leftSpaceToView(clothesImage,13)
-    .topSpaceToView(contentView,19)
+    .leftSpaceToView(clothesImage,12)
+    .topSpaceToView(contentView,12)
     .heightIs(20)
     .rightSpaceToView(contentView,20);
-    [clothesName setFont:Font_14];
+    [clothesName setFont:[UIFont fontWithName:@"PingFangSC-Light" size:14]];
     
+    clothesContent = [UILabel new];
+    clothesContent.font = [UIFont fontWithName:@"PingFangSC-Light" size:12];
+    clothesContent.textColor = [UIColor colorWithHexString:@"#6A6A6A"];
+    [contentView addSubview:clothesContent];
+    clothesContent.sd_layout.leftSpaceToView(clothesImage, 12).topSpaceToView(clothesName, 5).heightIs(17).rightSpaceToView(contentView, 20);
     
     clothesPrice = [UILabel new];
+    clothesPrice.textColor = [UIColor colorWithHexString:@"#3D3D3D"];
     [contentView addSubview:clothesPrice];
     clothesPrice.sd_layout
-    .leftSpaceToView(clothesImage,13)
-    .bottomSpaceToView(contentView, 19.5)
+    .leftSpaceToView(clothesImage,12)
+    .bottomSpaceToView(contentView, 14)
     .heightIs(15)
-    .widthIs(100);
-    [clothesPrice setFont:Font_12];
+    .widthIs(120);
+    [clothesPrice setFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14]];
     
     
     _upButton = [UIButton new];
     [contentView addSubview:_upButton];
     _upButton.sd_layout
     .rightSpaceToView(contentView, 15)
-    .bottomSpaceToView(contentView, 19.5)
+    .bottomSpaceToView(contentView, 14)
     .heightIs(25)
     .widthIs(40);
     [_upButton setTitle:@"+" forState:UIControlStateNormal];
@@ -79,7 +87,7 @@
     [contentView addSubview:clotesCount];
     clotesCount.sd_layout
     .rightSpaceToView(_upButton, 0)
-    .bottomSpaceToView(contentView, 19.5)
+    .bottomSpaceToView(contentView, 14)
     .heightIs(25)
     .widthIs(40);
     [clotesCount setFont:Font_14];
@@ -90,7 +98,7 @@
     [contentView addSubview:_cutButton];
     _cutButton.sd_layout
     .rightSpaceToView(clotesCount,0)
-    .bottomSpaceToView(contentView, 19.5)
+    .bottomSpaceToView(contentView, 14)
     .heightIs(25)
     .widthIs(40);
     [_cutButton setTitle:@"-" forState:UIControlStateNormal];
@@ -110,6 +118,14 @@
     _model = model;
     [clothesImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,model.clothesImage]]];
     [clothesName setText:model.clothesName];
+    if([model.clotheType integerValue]==1)
+    {
+        clothesContent.text = @"定制款";
+    }
+    else if ([model.clotheType integerValue]==2)
+    {
+        clothesContent.text = model.sizeContent;
+    }
     [clothesPrice setText:[NSString stringWithFormat:@"￥%@",model.clothesPrice]];
     [clotesCount setText:[NSString stringWithFormat:@"%@",model.clothesCount]];
 }

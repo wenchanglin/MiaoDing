@@ -46,8 +46,6 @@
     if ([SelfPersonInfo getInstance].personPhone) {
         [parms setObject:[SelfPersonInfo getInstance].personPhone forKey:@"phone"];
     }
-//
-    
     [getData getData:URL_GetIntoDesignerImg PostParams:parms finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:getData]) {
             dataDic = [NSMutableDictionary dictionaryWithDictionary:[getData.dataRoot objectForKey:@"data"]];

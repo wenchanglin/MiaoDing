@@ -14,14 +14,26 @@
 {
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
         
-        _titlePay = [[UILabel alloc] initWithFrame:CGRectMake(15, 10, 60, 20)];
-        [_titlePay setFont:Font_14];
+        _titlePay = [[UILabel alloc] init];
+        [_titlePay setFont:[UIFont fontWithName:@"PingFangSC-Light" size:14]];
+        _titlePay.textColor = [UIColor colorWithHexString:@"#222222"];
         [self.contentView addSubview:_titlePay];
+        [_titlePay mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(12);
+            make.centerY.equalTo(self.contentView.mas_centerY);
+            make.height.mas_equalTo(20);
+        }];
         
-        _detailPay = [[UILabel alloc] initWithFrame:CGRectMake(100, 10, SCREEN_WIDTH - 115, 20)];
-        [_detailPay setFont:Font_14];
+        _detailPay = [[UILabel alloc] init];
+        [_detailPay setFont:[UIFont fontWithName:@"SanFranciscoDisplay-Regular" size:16]];
+        _detailPay.textColor = [UIColor colorWithHexString:@"#222222"];
         [_detailPay setTextAlignment:NSTextAlignmentRight];
         [self.contentView addSubview:_detailPay];
+        [_detailPay mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.mas_equalTo(-14);
+            make.centerY.equalTo(self.contentView.mas_centerY);
+            make.height.mas_equalTo(20);
+        }];
         
         
         

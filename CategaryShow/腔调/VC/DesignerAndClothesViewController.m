@@ -9,6 +9,16 @@
 #import "DesignerAndClothesViewController.h"
 #import "designerinfoNewTableViewCell.h"
 #import "DesignerClothesDetailViewController.h"
+#import <ShareSDK/ShareSDK.h>
+#import <ShareSDKExtension/SSEShareHelper.h>
+#import <ShareSDKUI/ShareSDK+SSUI.h>
+#import <ShareSDKUI/SSUIShareActionSheetStyle.h>
+#import <ShareSDKUI/SSUIShareActionSheetCustomItem.h>
+#import <ShareSDK/ShareSDK+Base.h>
+#import <ShareSDKUI/SSUIEditorViewStyle.h>
+#import <ShareSDKExtension/ShareSDK+Extension.h>
+#define URLShare @"/web/jquery-obj/static/fx/html/designer.html"
+#import "designerHomeViewController.h"
 @interface DesignerAndClothesViewController ()<UITableViewDelegate, UITableViewDataSource>
 
 @end
@@ -16,6 +26,8 @@
 @implementation DesignerAndClothesViewController
 {
     BaseDomain *getData;
+    BaseDomain * shouCangDomain;
+    BaseDomain * loveDomain;
     NSMutableArray *modelArray;
     UITableView *detailTable;
     NSMutableArray * designerArray;
@@ -27,6 +39,8 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     page = 1;
     getData = [BaseDomain getInstance:NO];
+    shouCangDomain = [BaseDomain getInstance:NO];
+    loveDomain = [BaseDomain getInstance:NO];
     [self getDatas];
     [self createTable];
 }
@@ -38,11 +52,7 @@
     [[wclNetTool sharedTools]request:GET urlString:URL_designerChengP parameters:params finished:^(id responseObject, NSError *error) {
         designerArray = [NSMutableArray arrayWithArray:[[responseObject objectForKey:@"data"] arrayForKey:@"data"]];
         for (NSDictionary *dic in designerArray) {
-            designerModel *model = [designerModel new];
-            model.clothesImage = [dic stringForKey:@"img"];
-            model.titlename = [dic stringForKey:@"name"];
-            model.p_time = [dic stringForKey:@"c_time_format"];
-            model.good_Id = [dic stringForKey:@"recommend_goods_ids"];
+            designerModel *model = [designerModel mj_objectWithKeyValues:dic];
             [modelArray addObject:model];
         }
         [detailTable reloadData];
@@ -95,11 +105,7 @@
             [modelArray removeAllObjects];
             designerArray = [NSMutableArray arrayWithArray:[[domain.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
             for (NSDictionary *dic in designerArray) {
-                designerModel *model = [designerModel new];
-                model.clothesImage = [dic stringForKey:@"img"];
-                model.titlename = [dic stringForKey:@"name"];
-                model.p_time = [dic stringForKey:@"c_time_format"];
-                model.good_Id = [dic stringForKey:@"recommend_goods_ids"];
+                designerModel *model = [designerModel mj_objectWithKeyValues:dic];
                 [modelArray addObject:model];
             }
             [detailTable.mj_header endRefreshing];
@@ -119,11 +125,8 @@
         if ([self checkHttpResponseResultStatus:domain]) {
             for (NSDictionary *dic in [[domain.dataRoot objectForKey:@"data"] arrayForKey:@"data"]) {
                 [designerArray addObject:dic] ;
-                designerModel *model = [designerModel new];
-                model.clothesImage = [dic stringForKey:@"img"];
-                model.titlename = [dic stringForKey:@"name"];
-                model.p_time = [dic stringForKey:@"c_time_format"];
-                model.good_Id = [dic stringForKey:@"recommend_goods_ids"];
+                designerModel *model = [designerModel mj_objectWithKeyValues:dic];
+              
                 [modelArray addObject:model];
             }
             
@@ -155,7 +158,80 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     designerinfoNewTableViewCell *reCell = [tableView dequeueReusableCellWithIdentifier:@"designerList" forIndexPath:indexPath];
-    reCell.model = modelArray[indexPath.row];
+    designerModel* model = modelArray[indexPath.row];
+    reCell.model = model;
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    __weak __typeof(*&reCell) weakCell = reCell;
+
+    [reCell setFourBtns:^(UIButton *buttons) {
+        switch (buttons.tag) {
+            case 31:
+            {
+                //1、创建分享参数（必要）
+                NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
+                NSArray* imageArray = @[[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.img]]];
+                [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
+                [shareParams SSDKSetupShareParamsByText:model.title
+                                                 images:imageArray
+                                                    url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%@&type=2",URL_HEADURL, Share_ChengPin, model.goods_id]]
+                                                  title:model.name
+                                                   type:SSDKContentTypeWebPage];
+                [ShareCustom shareWithContent:shareParams];
+            }
+                break;
+            case 32:
+            {
+                [params setObject:model.goods_id forKey:@"cid"];
+                [params setObject:@(2) forKey:@"type"];
+                [shouCangDomain getData:URL_AddSave PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+                    if ([self checkHttpResponseResultStatus:shouCangDomain]) {
+                        //                            WCLLog(@"%@",domain.dataRoot);
+                        if ([[domain.dataRoot objectForKey:@"code"]integerValue]==1) {
+                            [weakCell.shouChangBtn setImage:[UIImage imageNamed:@"收藏选中"] forState:UIControlStateNormal];
+                            
+                        }
+                        else if ([[domain.dataRoot objectForKey:@"code"]integerValue]==2)
+                        {
+                            [weakCell.shouChangBtn setImage:[UIImage imageNamed:@"收藏"] forState:UIControlStateNormal];
+                        }
+                    }
+                }];
+            }
+                break;
+            case 33:
+            {
+                [params setObject:model.goods_id forKey:@"news_id"];
+                [params setObject:@(2) forKey:@"is_type"];
+                [loveDomain getData:URL_Love_Main PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+                    if ([self checkHttpResponseResultStatus:loveDomain]) {
+                   //     WCLLog(@"%@",domain.dataRoot);
+                        if ([[domain.dataRoot objectForKey:@"data"]integerValue]==1) {
+                            [weakCell.loveBtn setImage:[UIImage imageNamed:@"喜欢选中"] forState:UIControlStateNormal];
+                            [weakCell.loveBtn setTitle:[NSString stringWithFormat:@"%@",[domain.dataRoot objectForKey:@"lovenum"]] forState:UIControlStateNormal];
+                        }
+                        else if ([[domain.dataRoot objectForKey:@"data"]integerValue]==2)
+                        {
+                            [weakCell.loveBtn setImage:[UIImage imageNamed:@"喜欢"] forState:UIControlStateNormal];
+                            [weakCell.loveBtn setTitle:[NSString stringWithFormat:@"%@",[domain.dataRoot objectForKey:@"lovenum"]] forState:UIControlStateNormal];
+                        }
+                    }
+                    
+                }];
+            }
+                break;
+            default:
+                break;
+        }
+    }];
+    [reCell setDesignerInfo:^(UITapGestureRecognizer *tap) {
+        designerHomeViewController * designer = [[designerHomeViewController alloc]init];
+        designer.desginerId = [NSString stringWithFormat:@"%zd",model.des_uid];
+        designer.designerImage = model.avatar;
+        designer.designerName = model.uname;
+        designer.remark = model.tag;
+//        designer.designerStory = mo
+        [self.navigationController pushViewController:designer animated:YES];
+    }];
     [reCell setSelectionStyle:UITableViewCellSelectionStyleNone];
     return reCell;
 }

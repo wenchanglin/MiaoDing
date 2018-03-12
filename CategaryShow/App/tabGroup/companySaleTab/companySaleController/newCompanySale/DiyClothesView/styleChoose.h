@@ -20,7 +20,7 @@
 
 
 
-@property(nonatomic, assign)id<styleChooseViewDelegate> delegate;
+@property(nonatomic, weak)id<styleChooseViewDelegate> delegate;
 @property (nonatomic, retain) choosePriceModel *model;
 
 @property (nonatomic, retain) NSMutableArray *priceTitleArray;

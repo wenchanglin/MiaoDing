@@ -18,5 +18,5 @@
 @interface MeasureLabelAndTextField : UITableViewCell<UITextFieldDelegate>
 
 @property (nonatomic, strong)MeasureLabelAndTextFieldModel *model;
-@property (nonatomic, assign) id<measureLabelAndTextDelegate>delegate;
+@property (nonatomic, weak) id<measureLabelAndTextDelegate>delegate;
 @end

@@ -30,12 +30,12 @@
     worningLabel = [UILabel new];
     [self.contentView addSubview:worningLabel];
     worningLabel.sd_layout
-    .leftSpaceToView(contentView, 15)
+    .leftSpaceToView(contentView, 12)
     .centerYEqualToView(contentView)
     .rightSpaceToView(contentView,10)
     .heightIs(20);
-    [worningLabel setTextColor:[UIColor blackColor]];
-    [worningLabel setFont:[UIFont systemFontOfSize:14]];
+    [worningLabel setTextColor:[UIColor colorWithHexString:@"#222222"]];
+    [worningLabel setFont:[UIFont fontWithName:@"PingFangSC-Light" size:14]];
 }
 
 -(void)setModel:(AddressModel *)model

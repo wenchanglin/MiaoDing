@@ -13,5 +13,5 @@
 
 @end
 @interface alertViewViewController : BaseViewController
-@property (nonatomic, strong)id<alertChooseDelegate>delegate;
+@property (nonatomic, weak)id<alertChooseDelegate>delegate;
 @end

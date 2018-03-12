@@ -14,10 +14,15 @@
 {
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
         
-        _chooseCon = [[UILabel alloc] initWithFrame:CGRectMake(15, 10, self.frame.size.width - 30, 20)];
-        [_chooseCon setFont:Font_14];
+        _chooseCon = [[UILabel alloc] init];
+        _chooseCon.textColor = [UIColor colorWithHexString:@"#222222"];
+        _chooseCon.font = [UIFont fontWithName:@"PingFangSC-Light" size:14];
         [self.contentView addSubview:_chooseCon];
-        
+        [_chooseCon mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(12);
+            make.centerY.equalTo(self.contentView.mas_centerY);
+            make.height.mas_equalTo(20);
+        }];
     }
     
     return self;

@@ -69,7 +69,7 @@
     designerModel *searchModel = [designerModel new];
     NSDictionary *dict = noti.userInfo;
     for (designerModel *model in modelArray) {
-        if ([model.good_Id isEqualToString:[dict stringForKey:@"goods_id"]]) {
+        if ([model.goods_id isEqualToString:[dict stringForKey:@"goods_id"]]) {
             searchModel = model;
         }
     }
@@ -102,18 +102,8 @@
             NSLog(@"%@", getData.dataRoot);
             collectionItem = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
             for (NSDictionary *dic in [[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]) {
-                designerModel *model = [[designerModel alloc] init];
-                model.clothesImage = [dic stringForKey:@"img"];
-                model.titlename = [dic stringForKey:@"name"];
-                model.good_Id = [dic stringForKey:@"goods_id"];
-                model.desginer_Id = [dic stringForKey:@"uid"];
-                model.detailClothesImg = [dic stringForKey:@"thumb"];
-                model.designerHead = [dic stringForKey:@"avatar"];
-                model.remark = [dic stringForKey:@"remark"];
-                model.designerName = [dic stringForKey:@"username"];
-                model.p_time = [dic stringForKey:@"p_time"];
-                model.tag = [dic stringForKey:@"tag"];
-                model.introduce = [dic stringForKey:@"introduce"];
+                designerModel *model = [designerModel mj_objectWithKeyValues:dic];
+               
                 [modelArray addObject:model];
             }
             
@@ -161,7 +151,7 @@
 -(void)designerClothesClick:(UIButton *)sender
 {
     designerModel *model = modelArray[sender.tag - 10000];
-    if (![model.good_Id isEqualToString:@""]) {
+    if (![model.goods_id isEqualToString:@""]) {
         NSMutableDictionary *dic = collectionItem[sender.tag - 10000];
         DesignerClothesDetailViewController *designerClothes = [[DesignerClothesDetailViewController alloc] init];
         designerClothes.goodDic = dic;
@@ -175,11 +165,11 @@
 {
     
         designerModel *model = modelArray[sender.tag - 1000];
-    if (![model.good_Id isEqualToString:@""]) {
+    if (![model.goods_id isEqualToString:@""]) {
         DesignerDetailIntroduce *introduce = [[DesignerDetailIntroduce alloc] init];
-        introduce.desginerId = model.desginer_Id;
-        introduce.designerImage = model.designerHead;
-        introduce.designerName = model.designerName;
+        introduce.desginerId = [NSString stringWithFormat:@"%zd",model.des_uid];
+        introduce.designerImage = model.avatar;
+        introduce.designerName = model.uname;
         introduce.remark = model.introduce;
         [self.navigationController pushViewController:introduce animated:YES];
     }
@@ -188,7 +178,6 @@
     
 }
 
-#pragma mark -
 
 - (void)showPage:(NSNumber *)pageNum
 {

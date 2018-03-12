@@ -29,6 +29,6 @@
 
 @property (nonatomic, retain) UICollectionView *clotehImageCollect;
 
-@property (nonatomic, retain) id<diyClothesDelegate>delegate;
+@property (nonatomic, weak) id<diyClothesDelegate>delegate;
 
 @end

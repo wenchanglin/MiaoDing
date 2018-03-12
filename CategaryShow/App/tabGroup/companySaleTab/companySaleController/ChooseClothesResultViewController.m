@@ -48,9 +48,6 @@
         
         arrayTitle = [NSMutableArray arrayWithArray:[_goodArray valueForKey:@"spec_name"]];
         arrayDetail = [NSMutableArray arrayWithArray:[_goodArray valueForKey:@"name"]];
-        
-       
-        
         if (_xiuZiDic != nil) {
             [arrayTitle addObject:@"法式袖扣"];
             [arrayDetail addObject:[_xiuZiDic stringForKey:@"name"]];
@@ -85,7 +82,6 @@
     }
     
     
-    // Do any additional setup after loading the view.
 }
 
 
@@ -124,7 +120,7 @@
         make.centerY.equalTo(priceLowView.mas_centerY);
         make.height.equalTo(@20);
     }];
-    [priceDetail setText:[NSString stringWithFormat:@"¥%.2f", [_price floatValue]]];
+    [priceDetail setText:[NSString stringWithFormat:@"%@",_mianliaoprice]];
     
     [priceDetail setFont:Font_14];
     
@@ -163,12 +159,28 @@
     
     [_paramsClothes setObject:@"1" forKey:@"goods_type"];
     [_paramsClothes setObject:@"1" forKey:@"type"];
-    
-    
+    [_paramsClothes setObject:[_price objectForKey:@"price_id"] forKey:@"price_id"];
+    [_paramsClothes setObject:[_goodDic objectForKey:@"id"] forKey:@"goods_id"];
+    [_paramsClothes setObject:[_price objectForKey:@"price"] forKey:@"price"];
+    [_paramsClothes setObject:[_goodDic objectForKey:@"name"] forKey:@"goods_name"];
     if (_diyArray != nil) {
-        
         [_paramsClothes setObject:[_diyArray componentsJoinedByString:@";"] forKey:@"diy_content"];
-        
+    }
+    if ([[_price objectForKey:@"goods_img"] length]>0) {
+        [_paramsClothes setObject:[_price objectForKey:@"goods_img"] forKey:@"goods_thumb"];
+    }
+    else
+    {
+        [_paramsClothes setObject:[_goodDic objectForKey:@"thumb"] forKey:@"goods_thumb"];
+    }
+    [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
+    [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
+    [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mainliao_id"];
+    [_paramsDic setObject:_banxingid forKey:@"banxing_id"];
+    if (_ifTK) {
+        [_paramsClothes setObject:@"1" forKey:@"is_scan"];
+    } else {
+        [_paramsClothes setObject:@"0" forKey:@"is_scan"];
     }
     [_paramsClothes setObject:@"1" forKey:@"num"];
     [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
@@ -183,7 +195,7 @@
            
             model.clothesCount = @"1";
             model.clothesName = [_goodDic stringForKey:@"name"];
-            model.clothesPrice = _price;
+            model.clothesPrice = [_price stringForKey:@"price"];
             model.clotheMaxCount = @"100";
             NSMutableArray *array = [NSMutableArray arrayWithObjects:model, nil];
             PayForClothesViewController *clothesPay = [[PayForClothesViewController alloc] init];
@@ -191,7 +203,7 @@
             clothesPay.dingDate = _dingDate;
             clothesPay.arrayForClothes = array;
             clothesPay.carId = [[postData.dataRoot objectForKey:@"data"] stringForKey:@"car_id"];
-            clothesPay.allPrice = _price;
+            clothesPay.allPrice = [_price stringForKey:@"price"];
             [self.navigationController pushViewController:clothesPay animated:YES];
         }
         
@@ -208,34 +220,48 @@
 {
     
     
-
     [_paramsClothes setObject:@"1" forKey:@"goods_type"];
-
-    [_paramsClothes setObject:@"2" forKey:@"type"];
-
-    [_paramsClothes setObject:@"1" forKey:@"num"];
-    
+    [_paramsClothes setObject:@"1" forKey:@"type"];
+    [_paramsClothes setObject:[_price objectForKey:@"price_id"] forKey:@"price_id"];
+    [_paramsClothes setObject:[_goodDic objectForKey:@"id"] forKey:@"goods_id"];
+    [_paramsClothes setObject:[_price objectForKey:@"price"] forKey:@"price"];
+    [_paramsClothes setObject:[_goodDic objectForKey:@"name"] forKey:@"goods_name"];
+    if (_diyArray != nil) {
+        [_paramsClothes setObject:[_diyArray componentsJoinedByString:@";"] forKey:@"diy_content"];
+    }
+    if ([[_price objectForKey:@"goods_img"] length]>0) {
+        [_paramsClothes setObject:[_price objectForKey:@"goods_img"] forKey:@"goods_thumb"];
+    }
+    else
+    {
+        [_paramsClothes setObject:[_goodDic objectForKey:@"thumb"] forKey:@"goods_thumb"];
+    }
+    [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
+    [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
+    [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mainliao_id"];
+    [_paramsDic setObject:_banxingid forKey:@"banxing_id"];
     if (_ifTK) {
         [_paramsClothes setObject:@"1" forKey:@"is_scan"];
     } else {
         [_paramsClothes setObject:@"0" forKey:@"is_scan"];
     }
+    [_paramsClothes setObject:@"1" forKey:@"num"];
     
     [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
         
         if ([self checkHttpResponseResultStatus:postData]) {
             
-            UIImageView *image = [[UIImageView alloc] initWithFrame:CGRectMake(ScreenWidth / 2 - 60, ScreenHeight / 2 - 60, 120, 120)];
-            [image sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_paramsClothes stringForKey:@"goods_thumb"]]]];
+//            UIImageView *image = [[UIImageView alloc] initWithFrame:CGRectMake(ScreenWidth / 2 - 60, ScreenHeight / 2 - 60, 120, 120)];
+//            [image sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_paramsClothes stringForKey:@"goods_thumb"]]]];
             
             
             [[NSNotificationCenter defaultCenter] postNotificationName:@"addCarSuccess" object:nil];
-            [[PurchaseCarAnimationTool shareTool]startAnimationandView:image andRect:image.frame andFinisnRect:CGPointMake(ScreenWidth - 30, 35) andFinishBlock:^(BOOL finisn){
-//                UIView *tabbarBtn = self.tabBarController.tabBar.subviews[3];
-                [PurchaseCarAnimationTool shakeAnimation:rightButton];
-                
-//                 [self alertViewShowOfTime:@"加入购物车成功" time:1.5];
-            }];
+//            [[PurchaseCarAnimationTool shareTool]startAnimationandView:image andRect:image.frame andFinisnRect:CGPointMake(ScreenWidth - 30, 35) andFinishBlock:^(BOOL finisn){
+////                UIView *tabbarBtn = self.tabBarController.tabBar.subviews[3];
+//                [PurchaseCarAnimationTool shakeAnimation:rightButton];
+            
+                 [self alertViewShowOfTime:domain.resultMessage time:1.5];
+          //  }];
 //
             
            

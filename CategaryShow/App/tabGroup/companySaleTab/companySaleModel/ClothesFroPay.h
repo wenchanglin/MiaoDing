@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface ClothesFroPay : NSObject
-
+@property(nonatomic,strong)NSString * sizeContent;
 @property (nonatomic, retain) NSString *clothesName;
 @property (nonatomic, retain) NSString *clothesImage;
 @property (nonatomic, retain) NSString *clothesPrice;

@@ -14,6 +14,8 @@
 {
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
         _lastMoney = [UILabel new];
+        [_lastMoney setFont:[UIFont fontWithName:@"PingFangSC-Light" size:14]];
+        _lastMoney.textColor = [UIColor colorWithHexString:@"#222222"];
         [self.contentView addSubview:_lastMoney];
         
         _chooseImage = [UIButton new];
@@ -27,19 +29,18 @@
 -(void)layoutSubviews
 {
     [super layoutSubviews];
-    _chooseImage.sd_layout
-    .leftSpaceToView(self.contentView, 15)
-    .centerYEqualToView(self.contentView)
-    .widthIs(14)
-    .heightIs(14);
+    [_chooseImage mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(12);
+        make.centerY.equalTo(self.contentView.mas_centerY);
+        make.height.width.mas_equalTo(14);
+    }];
     
-    _lastMoney.sd_layout
-    .leftSpaceToView(_chooseImage, 10)
-    .centerYEqualToView(self.contentView)
-    .heightIs(16)
-    .rightSpaceToView(self.contentView, 10);
+    [_lastMoney mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_chooseImage.mas_right).offset(5);
+        make.centerY.equalTo(self.contentView.mas_centerY);
+        make.height.mas_equalTo(20);
+    }];
     
-    [_lastMoney setFont:Font_14];
     
     
     

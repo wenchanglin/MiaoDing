@@ -7,10 +7,19 @@
 //
 
 #import "designerProductViewController.h"
-#import "designerModel.h"
+#import "NewDesignerModel.h"
 #import "designerInfoTableViewCell.h"
 #import "DesignerClothesDetailViewController.h"
-#import "designerinfoNewTableViewCell.h"
+#import "DesignerZuoPinCell.h"
+#import <ShareSDK/ShareSDK.h>
+#import <ShareSDKExtension/SSEShareHelper.h>
+#import <ShareSDKUI/ShareSDK+SSUI.h>
+#import <ShareSDKUI/SSUIShareActionSheetStyle.h>
+#import <ShareSDKUI/SSUIShareActionSheetCustomItem.h>
+#import <ShareSDK/ShareSDK+Base.h>
+#import <ShareSDKUI/SSUIEditorViewStyle.h>
+#import <ShareSDKExtension/ShareSDK+Extension.h>
+#define URLShare @"/web/jquery-obj/static/fx/html/designer.html"
 @interface designerProductViewController ()<UITableViewDelegate, UITableViewDataSource>
 
 @end
@@ -19,17 +28,20 @@
 {
     UITableView *desinger;
     BaseDomain *getData;
+    BaseDomain * shouCangDomain;
+    BaseDomain * loveDomain;
     NSMutableDictionary *designerDic;
     NSMutableArray *modelArray;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     getData = [BaseDomain getInstance:NO];
+    shouCangDomain = [BaseDomain getInstance:NO];
+    loveDomain = [BaseDomain getInstance:NO];
     designerDic = [NSMutableDictionary dictionary];
     modelArray = [NSMutableArray array];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self getDatas];
-    // Do any additional setup after loading the view.
 }
 
 -(void)getDatas
@@ -39,27 +51,9 @@
     [getData getData:URL_GetDesignerDeetail PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         
         if ([self checkHttpResponseResultStatus:getData]) {
-            
             designerDic = [NSMutableDictionary dictionaryWithDictionary:[getData.dataRoot dictionaryForKey:@"data"]];
-            
-            
             for (NSDictionary *dic in [designerDic arrayForKey:@"goods_list"]) {
-                designerModel *model = [designerModel new];
-                model.designerName = _designerName;
-                model.designerHead = _designerImage;
-                model.p_time = [dic stringForKey:@"c_time"];
-                model.clothesImage =[dic stringForKey:@"thumb"];
-                model.titlename = [dic stringForKey:@"name"];
-                model.good_Id = [dic stringForKey:@"id"];
-                model.desginer_Id = _desginerId;
-                model.detailClothesImg = [dic stringForKey:@"thumb"];
-
-                model.remark = [dic stringForKey:@"remark"];
-                
-                
-                model.tag = [dic stringForKey:@"tag"];
-                model.introduce = [dic stringForKey:@"introduce"];
-                
+                DesignerGoodsListModel *model = [DesignerGoodsListModel mj_objectWithKeyValues:dic];
                 [modelArray addObject:model];
             }
             
@@ -70,10 +64,11 @@
 
 -(void)createDeisgner
 {
-    desinger = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStylePlain];
+    desinger = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStylePlain];
+    
     desinger.delegate = self;
     desinger.dataSource = self;
-    [desinger registerClass:[designerinfoNewTableViewCell class] forCellReuseIdentifier:@"designer"];
+    [desinger registerClass:[DesignerZuoPinCell class] forCellReuseIdentifier:@"designerzuopin"];
     [self.view addSubview:desinger];
     [desinger setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     
@@ -125,13 +120,76 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 526.0 / 667.0 * SCREEN_HEIGHT;
+    return 331;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    designerinfoNewTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"designer" forIndexPath:indexPath];
-    cell.model = modelArray[indexPath.row];
+    DesignerZuoPinCell *cell = [tableView dequeueReusableCellWithIdentifier:@"designerzuopin" forIndexPath:indexPath];
+    DesignerGoodsListModel * model =modelArray[indexPath.row];
+    cell.models = model;
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    __weak __typeof(*&cell) weakCell = cell;
+    [cell setZuoPinFourBtns:^(UIButton *buttons) {
+        switch (buttons.tag) {
+            case 41:
+            {
+                //1、创建分享参数（必要）
+                NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
+                NSArray* imageArray = @[[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.thumb]]];
+                [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
+                [shareParams SSDKSetupShareParamsByText:model.sub_name
+                                                 images:imageArray
+                                                    url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%zd&type=2", URL_HEADURL,Share_ChengPin, model.goodsListId]]
+                                                  title:model.name
+                                                   type:SSDKContentTypeWebPage];
+                [ShareCustom shareWithContent:shareParams];
+            }
+                break;
+            case 42:
+            {
+                [params setObject:@(model.goodsListId) forKey:@"cid"];
+                [params setObject:@(2) forKey:@"type"];
+                [shouCangDomain getData:URL_AddSave PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+                    if ([self checkHttpResponseResultStatus:shouCangDomain]) {
+//                        WCLLog(@"%@",domain.dataRoot);
+                        if ([[domain.dataRoot objectForKey:@"code"]integerValue]==1) {
+                            [weakCell.shouChangBtn setImage:[UIImage imageNamed:@"收藏选中"] forState:UIControlStateNormal];
+                            
+                        }
+                        else if ([[domain.dataRoot objectForKey:@"code"]integerValue]==2)
+                        {
+                            [weakCell.shouChangBtn setImage:[UIImage imageNamed:@"收藏"] forState:UIControlStateNormal];
+                        }
+                    }
+                }];
+            }
+                break;
+            case 43:
+            {
+                [params setObject:@(model.goodsListId) forKey:@"news_id"];
+                [params setObject:@(2) forKey:@"is_type"];
+                [loveDomain getData:URL_Love_Main PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+                    if ([self checkHttpResponseResultStatus:loveDomain]) {
+                     //   WCLLog(@"%@",domain.dataRoot);
+                        if ([[domain.dataRoot objectForKey:@"data"]integerValue]==1) {
+                            [weakCell.loveBtn setImage:[UIImage imageNamed:@"喜欢选中"] forState:UIControlStateNormal];
+                            [weakCell.loveBtn setTitle:[NSString stringWithFormat:@"%@",[domain.dataRoot objectForKey:@"lovenum"]] forState:UIControlStateNormal];
+                        }
+                        else if ([[domain.dataRoot objectForKey:@"data"]integerValue]==2)
+                        {
+                            [weakCell.loveBtn setImage:[UIImage imageNamed:@"喜欢"] forState:UIControlStateNormal];
+                            [weakCell.loveBtn setTitle:[NSString stringWithFormat:@"%@",[domain.dataRoot objectForKey:@"lovenum"]] forState:UIControlStateNormal];
+                        }
+                    }
+                    
+                }];
+            }
+                break;
+            default:
+                break;
+        }
+    }];
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     return cell;
 }

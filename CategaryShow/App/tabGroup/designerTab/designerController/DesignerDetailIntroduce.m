@@ -89,28 +89,7 @@
           
             
             for (NSDictionary *dic in [designerDic arrayForKey:@"goods_list"]) {
-                designerModel *model = [designerModel new];
-                model.designerName = _designerName;
-                model.designerHead = _designerImage;
-                model.p_time = [dic stringForKey:@"c_time"];
-                model.clothesImage =[dic stringForKey:@"thumb"];
-                model.titlename = [dic stringForKey:@"name"];
-                
-                
-                
-                
-                
-                
-                model.good_Id = [dic stringForKey:@"id"];
-                model.desginer_Id = _desginerId;
-                model.detailClothesImg = [dic stringForKey:@"thumb"];
-                
-                model.remark = [dic stringForKey:@"remark"];
-                
-                
-                model.tag = [dic stringForKey:@"tag"];
-                model.introduce = [dic stringForKey:@"introduce"];
-                
+                designerModel *model = [designerModel mj_objectWithKeyValues:dic];
                 [modelArray addObject:model];
             }
             

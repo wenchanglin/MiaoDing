@@ -17,7 +17,7 @@
 
 @interface priceChooseView : UIView<UITableViewDelegate, UITableViewDataSource>
 
-@property(nonatomic, assign)id<priceChooseViewDelegate> delegate;
+@property(nonatomic, weak)id<priceChooseViewDelegate> delegate;
 @property (nonatomic, retain) choosePriceModel *model;
 @property (nonatomic, retain) NSMutableArray *priceArray;
 @property (nonatomic, retain) NSMutableArray *priceTitleArray;

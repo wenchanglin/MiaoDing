@@ -29,7 +29,7 @@
     [super viewDidLoad];
     postData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    self.title = @"订单详情";
+    [self settabTitle:@"订单详情"];
     [self getDatas];
     
     
@@ -96,7 +96,12 @@
 
 -(void)createTableView    //createtable
 {
-    clothesDetailTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64  - 50) style:UITableViewStylePlain];
+    if (@available(iOS 11.0, *)) {
+        clothesDetailTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+    clothesDetailTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64  - 50) style:UITableViewStylePlain];
     clothesDetailTable.delegate = self;
     clothesDetailTable.dataSource = self;
     [clothesDetailTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -132,7 +137,7 @@
     [priceTitle setText:@"合计:"];
     [priceTitle setFont:Font_14];
     
-    UIButton *buttonSave = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3, SCREEN_HEIGHT - 50, SCREEN_WIDTH / 3 , 50)];
+    UIButton *buttonSave = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3, SCREEN_HEIGHT-64 - 50, SCREEN_WIDTH / 3 , 50)];
     [buttonSave setBackgroundColor:getUIColor(Color_DZClolor)];
     [self.view addSubview:buttonSave];
     [buttonSave addTarget:self action:@selector(saveTheClothes) forControlEvents:UIControlEventTouchUpInside];
@@ -140,7 +145,7 @@
     [buttonSave setTitle:@"加入购物袋" forState:UIControlStateNormal];
     
     
-    UIButton *buttonBuy = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3 * 2, SCREEN_HEIGHT - 50, SCREEN_WIDTH / 3 , 50)];
+    UIButton *buttonBuy = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3 * 2, SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
     [buttonBuy setBackgroundColor:getUIColor(Color_TKClolor)];
     [self.view addSubview:buttonBuy];
     [buttonBuy addTarget:self action:@selector(payForClothes) forControlEvents:UIControlEventTouchUpInside];

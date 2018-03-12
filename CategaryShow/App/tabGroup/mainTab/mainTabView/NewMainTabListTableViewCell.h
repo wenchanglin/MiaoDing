@@ -8,11 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "NewMainModel.h"
+
 @interface NewMainTabListTableViewCell : UITableViewCell
+@property(nonatomic,strong)UIViewController * VC;
 @property (nonatomic,strong) NewMainModel *model;
 @property(nonatomic,strong)UIButton * zhuanFaBtn;
 @property(nonatomic,strong)UIButton *shouCangBtn;
 @property(nonatomic,strong)UIButton *xiHuanBtn;
 @property(nonatomic,strong)UIButton *pingLunBtn;
 @property(nonatomic,strong)UIView * lastView;
+@property(nonatomic) void(^FourBtn)(UIButton * buttons);
 @end
