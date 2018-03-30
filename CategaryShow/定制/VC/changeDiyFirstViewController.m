@@ -117,7 +117,10 @@
 //    }
   
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)clickAction:(UIButton *)sender
 {
     [seleBtn setSelected:NO];
@@ -160,7 +163,11 @@
     NSArray *array = [userD arrayForKey:@"FL"];
     FLArray = [NSMutableArray arrayWithArray:array];
     page = 1;
-    
+    if (@available(iOS 11.0, *)) {
+        clothesCollection.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;//UIScrollView也适用
+    }else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     FLFlog = 0;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(searchAction:) name:@"searchDZ" object:nil];
@@ -178,6 +185,8 @@
     
     [getData getData:URL_GetYouPingList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:domain]) {
+//            WCLLog(@"%@",domain.dataRoot[@"data"]);
+
             [modelArray removeAllObjects];
             detailArray = [NSMutableArray arrayWithArray:[[domain.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
             for (NSMutableDictionary *dic in detailArray) {
@@ -205,11 +214,7 @@
     clothesCollection.dataSource = self;
     clothesCollection.showsVerticalScrollIndicator = NO;
     [self.view addSubview:clothesCollection];
-    if (@available(iOS 11.0, *)) {
-        clothesCollection.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;//UIScrollView也适用
-    }else {
-        self.automaticallyAdjustsScrollViewInsets = NO;
-    }
+   
     clothesCollection.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
 //    clothesCollection.layer.masksToBounds = NO;
 //    [[clothesCollection layer] setShadowOffset:CGSizeMake(0, 3)]; // 阴影的范围
@@ -217,21 +222,38 @@
 //    [[clothesCollection layer] setShadowOpacity:0.5];               // 阴影透明度
 //    [[clothesCollection layer] setShadowColor:[UIColor grayColor].CGColor];
     //注册cell和ReusableView（相当于头部）
-    [clothesCollection registerClass:[changeDiyCollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
-
-    clothesCollection.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+    [clothesCollection registerClass:[changeDiyCollectionViewCell class] forCellWithReuseIdentifier:@"changecell"];
+    NSMutableArray *headerImages = [NSMutableArray array];
+    for (int i = 1; i <= 60; i++) {
+        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%d",i]];
+        [headerImages addObject:image];
+    }
+    MJRefreshGifHeader * header = [MJRefreshGifHeader headerWithRefreshingBlock:^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self reloadData];
+        });
         
-        [self reloadData];
-       
-        // 这个地方是网络请求的处理
     }];
+    header.stateLabel.hidden = YES;
+    header.lastUpdatedTimeLabel.hidden = YES;
+    [header setImages:@[headerImages[0]] forState:MJRefreshStateIdle];//@[headerImages[0]]
+    [header setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
+    clothesCollection.mj_header = header;
     
-    clothesCollection.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+    MJRefreshAutoGifFooter * footer = [MJRefreshAutoGifFooter footerWithRefreshingBlock:^{
         // 模拟延迟加载数据，因此2秒后才调用（真实开发中，可以移除这段gcd代码）
-        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self reloadAddData];
-        // 结束刷新
+        });
     }];
+    footer.stateLabel.hidden =YES;
+    footer.refreshingTitleHidden = YES;
+    [footer setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
+    [footer setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
+    clothesCollection.mj_footer = footer;
+   
+    
+   
     
 }
 
@@ -245,8 +267,11 @@
     
     [getData getData:URL_GetYouPingList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:domain]) {
-            
-            
+            if ([[[domain.dataRoot objectForKey:@"data"] arrayForKey:@"data"]count]==0&&page>1) {
+                [clothesCollection.mj_footer endRefreshingWithNoMoreData];
+            }
+            else
+            {
             for (NSDictionary *dic in [[domain.dataRoot objectForKey:@"data"] arrayForKey:@"data"]) {
                 [detailArray addObject:dic];
                 chageDiyModel *model = [chageDiyModel mj_objectWithKeyValues:dic];
@@ -257,6 +282,7 @@
             [clothesCollection.mj_footer endRefreshing];
             [clothesCollection reloadData];
             
+            }
         }
     }];
 }
@@ -271,16 +297,14 @@
     
     [getData getData:URL_GetYouPingList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:domain]) {
-            
             [modelArray removeAllObjects];
             detailArray = [NSMutableArray arrayWithArray:[[domain.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
-            
             for (NSMutableDictionary *dic in detailArray) {
                 chageDiyModel *model = [chageDiyModel mj_objectWithKeyValues:dic];
                 [modelArray addObject:model];
             }
-            
             [clothesCollection.mj_header endRefreshing];
+            [clothesCollection.mj_footer resetNoMoreData];
             [clothesCollection reloadData];
             
         }
@@ -299,13 +323,8 @@
 //每个UICollectionView展示的内容
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *identify = @"cell";
-    changeDiyCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
-    [cell sizeToFit];
+    changeDiyCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"changecell" forIndexPath:indexPath];
     cell.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
-    if (!cell) {
-        NSLog(@"无法创建CollectionViewCell时打印，自定义的cell就不可能进来了。");
-    }
     cell.itemIdex = indexPath.item;
     chageDiyModel *model = modelArray[indexPath.item];
     cell.model = model;
@@ -316,9 +335,10 @@
 //定义每个UICollectionView 的大小
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    chageDiyModel * model = modelArray[indexPath.row];
     //边距占5*4=20 ，2个
     //图片为正方形，边长：(fDeviceWidth-20)/2-5-5 所以总高(fDeviceWidth-20)/2-5-5 +20+30+5+5 label高20 btn高30 边
-    return CGSizeMake(SCREEN_WIDTH / 2 - 6, 266);
+    return CGSizeMake(SCREEN_WIDTH / 2 - 6, (SCREEN_WIDTH / 2 - 6)/[model.img_info floatValue]+73.8);
 }
 //定义每个UICollectionView 的间距
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section

@@ -25,7 +25,10 @@
     listArray = [NSMutableArray array];
     [self getDatas];
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];

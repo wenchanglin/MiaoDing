@@ -22,11 +22,11 @@
 #import "takePhotoCollectionViewCell.h"
 #import "LodingViewController.h"
 #import "HttpRequestTool.h"
+#import <Photos/Photos.h>
 #define LabelX backgroundView.center.x / 16 - 7.5
 #define LeftLabelY  backgroundView.center.y
 #define DownLabelX  backgroundView.center.x
 #define DownLabelY  LeftLabelY * 1.66 - 5
-
 using namespace cv;
 using namespace std;
 Mat img;
@@ -52,6 +52,7 @@ CGPoint pointSize;
 NSInteger flog;
 
 @interface tablePhotoViewController ()<UITableViewDelegate, UITableViewDataSource,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UICollectionViewDelegate, UICollectionViewDataSource>
+@property(nonatomic,strong) UILabel *leftLabel;
 
 @end
 
@@ -64,7 +65,6 @@ NSInteger flog;
     NSArray *backgroundImages;
     UIImageView *backgroundView;
     CMMotionManager *motionManager;
-    UILabel *leftLabel;
     UILabel *downLabel;
     UIButton *shutButton;
     UIButton *retakeButton;
@@ -79,7 +79,7 @@ NSInteger flog;
     UIButton *helpBtn;
     UIView *cameraResult;
     UISwitch *chooseSwitch;
-    
+    NSMutableArray * iphone7Arr;
     NSMutableArray *photoDataArray;
     
 }
@@ -96,13 +96,16 @@ NSInteger flog;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"拍照结果";
+    [self settabTitle:@"拍照结果"];
     areaArray = [NSMutableArray array];
     resultArray = [NSMutableArray array];
+    UIBarButtonItem *item =   [[UIBarButtonItem alloc]initWithImage:[self reSizeImage:[UIImage imageNamed:@"backLeftWhite"] toSize:CGSizeMake(9, 16)] style:UIBarButtonItemStyleDone target:self action:@selector(backAction:)];
+    self.navigationItem.leftBarButtonItem = item;
+    
     ppi = [self getPPi];
     canShut = NO;
     y_position = NULL;
-
+    iphone7Arr = [NSMutableArray array];
     photoDataArray = [NSMutableArray array];
     postData = [BaseDomain getInstance:NO];
     pisitonArray = [NSMutableArray array];
@@ -112,7 +115,7 @@ NSInteger flog;
     UIButton *rightButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 20)];
     [rightButton setTitle:@"重拍" forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightButton];
-    [rightButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [rightButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [rightButton addTarget:self action:@selector(retake) forControlEvents:UIControlEventTouchUpInside];
     
     NSArray *array = [NSArray arrayWithObjects:@"正面",@"左侧", @"背面", @"右侧", nil];
@@ -127,9 +130,28 @@ NSInteger flog;
     [self createPhotoTable];
     [self takePhoto];
     [self createPhotoShow];
-    // Do any additional setup after loading the view.
 }
 
+- (UIImage *)reSizeImage:(UIImage *)image toSize:(CGSize)reSize
+{
+    UIGraphicsBeginImageContext(CGSizeMake(reSize.width, reSize.height));
+    [image drawInRect:CGRectMake(0, 0, reSize.width, reSize.height)];
+    UIImage *reSizeImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return [reSizeImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+}
+-(void)backAction:(UIBarButtonItem *)item
+{
+    WCLLog(@"你点击了我");
+    [photoCollection removeFromSuperview];
+    [self.navigationController popViewControllerAnimated:YES];
+    [photoTable removeFromSuperview];
+    photoTable = nil;
+    photoModelArray = nil;
+    photoCollection =nil;
+
+}
 -(CGFloat)getPPi
 {
 //    CGFloat scale_screen = [UIScreen mainScreen].scale;
@@ -137,14 +159,20 @@ NSInteger flog;
     NSString *strDe = [self deviceVersion];
     if ([strDe isEqualToString:@"5S"] || [strDe isEqualToString:@"5"]) {
         x = sqrt(SCREEN_HEIGHT * SCREEN_HEIGHT + SCREEN_WIDTH *SCREEN_WIDTH) / 3.5;
-    } else if ([strDe isEqualToString:@"6"] || [strDe isEqualToString:@"6S"]|| [strDe isEqualToString:@"7"]|| [strDe isEqualToString:@"7P"]) {
+    } else if ([strDe isEqualToString:@"6"] || [strDe isEqualToString:@"6S"]|| [strDe isEqualToString:@"7"]|| [strDe isEqualToString:@"8"]) {
 //         x = sqrt(SCREEN_HEIGHT *scale_screen * SCREEN_HEIGHT *scale_screen + SCREEN_WIDTH *scale_screen *SCREEN_WIDTH *scale_screen) / 4.5;
         x = 326;
         lowPoint = 190;
-    } else {
+    } else if([strDe isEqualToString:@"6P"]||[strDe isEqualToString:@"6SP"]|| [strDe isEqualToString:@"7P"]|| [strDe isEqualToString:@"8P"])
+    {
 //        x = sqrt(SCREEN_HEIGHT *scale_screen * SCREEN_HEIGHT *scale_screen + SCREEN_WIDTH *scale_screen *SCREEN_WIDTH *scale_screen) / 5.5;
-        x = 326;
+        x = 401;
         lowPoint = 210;
+    }
+    else //iphone X
+    {
+        x= 458;
+        lowPoint = 230;
     }
 
     return x;
@@ -242,10 +270,9 @@ NSInteger flog;
     //    imagePickerController.cameraOverlayView = backgroundView;
     [self createCoreMotionOnCameraView];
     
-    
-    
+    __weak __typeof(self) weakSelf = self;
     [self presentViewController:imagePickerController animated:YES completion:^{
-        [self createMoveLabelWithTheGravityInCaremaView];
+        [weakSelf createMoveLabelWithTheGravityInCaremaView];
         
     }];
 }
@@ -263,7 +290,7 @@ NSInteger flog;
     if (canShut) {
         [backgroundView removeFromSuperview];
         [shutMInebutton removeFromSuperview];
-        [leftLabel removeFromSuperview];
+        [_leftLabel removeFromSuperview];
         [downLabel removeFromSuperview];
         [imagePickerController takePicture];
 
@@ -280,13 +307,11 @@ NSInteger flog;
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
-    
-   
-    
     UIImage* imgTake = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
     UIImage *imageFix = [self fixOrientation:imgTake];
     UIImage *resImg = [self imageHog:imageFix];
-    
+//    UIImageWriteToSavedPhotosAlbum(resImg, self, @selector(image:didFinishSavingWithError:contextInfo:), self);
+  
     if (resImg == nil) {
         [imagePickerController dismissViewControllerAnimated:NO completion:nil];
         
@@ -332,8 +357,9 @@ NSInteger flog;
             //[backgroundView setFrame:imagePickerController.view.frame];
             //imagePickerController.cameraOverlayView = backgroundView;
             [self createCoreMotionOnCameraView];
+            __weak typeof(self) weakself = self;
             [self presentViewController:imagePickerController animated:YES completion:^{
-                [self createMoveLabelWithTheGravityInCaremaView];
+                [weakself createMoveLabelWithTheGravityInCaremaView];
             }];
         }
         else{
@@ -446,24 +472,7 @@ NSInteger flog;
 //    return  re;
 //}
 
-- (NSString*)deviceVersion
-{
-    // 需要#import "sys/utsname.h"
-    struct utsname systemInfo;
-    uname(&systemInfo);
-    NSString * deviceString = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
-    //iPhone
-    
-    if ([deviceString isEqualToString:@"iPhone6,1"])    return @"5S";
-    if ([deviceString isEqualToString:@"iPhone6,2"])    return @"5S";
-    if ([deviceString isEqualToString:@"iPhone7,1"])    return @"6P";
-    if ([deviceString isEqualToString:@"iPhone7,2"])    return @"6";
-    if ([deviceString isEqualToString:@"iPhone8,1"])    return @"6S";
-    if ([deviceString isEqualToString:@"iPhone8,2"])    return @"6SP";
-    if ([deviceString isEqualToString:@"iPhone9,1"])    return @"7";
-    if ([deviceString isEqualToString:@"iPhone9,2"])    return @"7P";
-    return deviceString;
-}
+
 
 - (UIImage *)fixOrientation:(UIImage *)aImage {
     
@@ -595,11 +604,11 @@ NSInteger flog;
 
 -(void)createMoveLabelWithTheGravityInCaremaView
 {
-    leftLabel = [[UILabel alloc]initWithFrame:CGRectMake(LabelX,LeftLabelY,15,15)];
-    leftLabel.layer.cornerRadius = 7.5;
-    leftLabel.clipsToBounds      = YES;
-    leftLabel.backgroundColor    = [UIColor blueColor];
-    [imagePickerController.view addSubview:leftLabel];
+    _leftLabel = [[UILabel alloc]initWithFrame:CGRectMake(LabelX,LeftLabelY,15,15)];
+    _leftLabel.layer.cornerRadius = 7.5;
+    _leftLabel.clipsToBounds      = YES;
+    _leftLabel.backgroundColor    = [UIColor blueColor];
+    [imagePickerController.view addSubview:_leftLabel];
     
     downLabel = [[UILabel alloc]initWithFrame:CGRectMake(DownLabelX,DownLabelY,15,15)];
     downLabel.layer.cornerRadius = 7.5;
@@ -615,7 +624,7 @@ NSInteger flog;
     motionManager = [[CMMotionManager alloc] init];
     if (motionManager.deviceMotionAvailable) {
         
-        motionManager.deviceMotionUpdateInterval = 0.01f;
+        motionManager.deviceMotionUpdateInterval = 0.01;
         [motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion * _Nullable motion, NSError * _Nullable error) {
             
             //前后摇晃时候与Y轴的夹角
@@ -623,7 +632,7 @@ NSInteger flog;
             //左右摇晃时与Y轴的夹角
             double yTheta = atan2(motion.gravity.x, sqrt(motion.gravity.z * motion.gravity.z + motion.gravity.y * motion.gravity.y)) / M_PI * 180.0;
             [UIView animateWithDuration:1 animations:^{
-                leftLabel.frame  = CGRectMake(LabelX, LeftLabelY + fTheta * 5, 15, 15);
+                _leftLabel.frame  = CGRectMake(LabelX, LeftLabelY + fTheta * 5, 15, 15);
                 downLabel.frame  = CGRectMake( DownLabelX + yTheta * 5, DownLabelY , 15, 15);
             }];
                         if (fTheta > -5 && fTheta < 5 && yTheta < 1 && yTheta > -1){
@@ -718,7 +727,10 @@ NSInteger flog;
 {
     
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)createPhotoShow
 {
     UICollectionViewFlowLayout *flowLayout=[[UICollectionViewFlowLayout alloc] init];
@@ -789,7 +801,7 @@ NSInteger flog;
 
 -(void)createPhotoTable
 {
-    photoTable = [[UITableView alloc] initWithFrame:CGRectMake(0,NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64)];
+    photoTable = [[UITableView alloc] initWithFrame:CGRectMake(0,NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-74:SCREEN_HEIGHT - 64)];
     photoTable.dataSource = self;
     photoTable.delegate = self;
     
@@ -813,7 +825,7 @@ NSInteger flog;
     
     return view;
 }
-
+#pragma mark - 提交图片
 -(void)handOn
 
 {
@@ -823,29 +835,46 @@ NSInteger flog;
         if ([resultArray[i] floatValue] - minArea > 15 || [resultArray[i] floatValue] - minArea < -15) {
             [resultArray replaceObjectAtIndex:i withObject:[NSNumber numberWithFloat:minArea]];
         }
-    }
+    }//62370
     for (int j = 0; j < [resultArray count]; j ++) {
         
-//        double val = sqrt(area / sqrt(2));
-        if ([[self deviceVersion] integerValue] == 7) {
+        if ([[self deviceVersion] isEqualToString:@"X"]) {
+            [_params setObject:@"19.3305" forKey:@"actual_width"];
+            area = [resultArray[j] floatValue];
+            if (!BiLi) {
+                BiLi = [NSString stringWithFormat:@"%.4f",21.0  / area * 0.9205];
+            } else {
+                BiLi = [NSString stringWithFormat:@"%@,%.4f",BiLi,21  / area * 0.9205];
+            }
+        }
+        else if([[self deviceVersion]integerValue]==8)
+        {
+            [_params setObject:@"19.2058" forKey:@"actual_width"];
+            area = [resultArray[j] floatValue];
+            if (!BiLi) {
+                BiLi = [NSString stringWithFormat:@"%.4f",21.0  / area * 0.9145]; // 9183
+            } else {
+                BiLi = [NSString stringWithFormat:@"%@,%.4f",BiLi,21  / area * 0.9145];
+            }
+            
+        }else if ([[self deviceVersion] integerValue] == 7) {
             [_params setObject:@"19.1415" forKey:@"actual_width"];
             area = [resultArray[j] floatValue];
             if (!BiLi) {
                 BiLi = [NSString stringWithFormat:@"%.4f",21.0  / area * 0.9115];
             } else {
-                
-                    BiLi = [NSString stringWithFormat:@"%@,%.4f",BiLi,21  / area * 0.9115];
+                BiLi = [NSString stringWithFormat:@"%@,%.4f",BiLi,21  / area * 0.9115];
             }
             
         } else if ([[self deviceVersion] integerValue] == 6) {
             area = [resultArray[j] floatValue];
             CGFloat TSScan = 1.0;
             if ([[self deviceVersion] isEqualToString:@"6"]) {
-                 [_params setObject:@"18.7656" forKey:@"actual_width"];
+                [_params setObject:@"18.7656" forKey:@"actual_width"];
                 TSScan = 0.8936;
             } else if ([[self deviceVersion] isEqualToString:@"6P"]) {
                 TSScan = 0.9013;
-                 [_params setObject:@"18.9273" forKey:@"actual_width"];
+                 [_params setObject:@"18.9273" forKey:@"actual_width"];//62370
             } else if([[self deviceVersion] isEqualToString:@"6S"] ||[[self deviceVersion] isEqualToString:@"6SP"]) {
                 TSScan = 0.8967;
                 [_params setObject:@"18.8307" forKey:@"actual_width"];
@@ -866,7 +895,10 @@ NSInteger flog;
     } else if([[self deviceVersion] integerValue] == 6) {
         [_params setObject:@"0.9434" forKey:@"type_scale"];
     }
-
+    else if ([[self deviceVersion]integerValue]==8)
+    {
+        [_params setObject:@"0.9912" forKey:@"type_scale"];
+    }
     [_params setObject:[SelfPersonInfo getInstance].personPhone forKey:@"phone"];
 //  [_params setObject:stringImage forKey:@"img_list"];
     [_params setObject:BiLi forKey:@"scale"];
@@ -951,7 +983,8 @@ NSInteger flog;
 {
     photoTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"photo" forIndexPath:indexPath];
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    cell.model = photoModelArray[indexPath.row];
+    photoModel* model =photoModelArray[indexPath.row];
+    cell.model = model;
     return cell;
 }
 
@@ -1037,14 +1070,14 @@ NSInteger flog;
     return min;
 }
 
-
+#pragma mark - 显示图片
 -(CGFloat)showImage:(UIImage *)imageTemp
 {
     
     
     IplImage *psrc = [self CreateIplImageFromUIImage:imageTemp];
     IplImage *pdst;
-    CvSize size = cvSize(imageTemp.size.width , imageTemp.size.height /2);
+    CvSize size = cvSize(imageTemp.size.width , imageTemp.size.height); ///2);
     cvSetImageROI(psrc, cvRect(0,0, size.width, size.height));
     pdst = cvCreateImage(size, psrc ->depth, psrc ->nChannels);
     cvCopy(psrc,pdst);
@@ -1063,21 +1096,21 @@ NSInteger flog;
         cvtColor(temp1,gray_temp,CV_BGR2GRAY);
         equalizeHist(gray_temp, dst);
 
-        adaptiveThreshold(gray_temp, img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY_INV, 13, -1);
-
+        adaptiveThreshold(gray_temp, img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 5, -1);
+        
         vector<vector<cv::Point>>contours1;
         vector<Vec4i> hierarchy;
         drawing = Mat::zeros( img.size(), CV_8UC3 );
-//        [imagev removeFromSuperview];
-//        flog=0;
-//        imagev = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
-//        [imagev setUserInteractionEnabled:YES];
-//        [imagev setImage:[self MatToUIImage:img]];
-//        [imagev setContentMode:UIViewContentModeScaleAspectFill];
-//        [self.view addSubview:imagev];
-//        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(chage:)];
-//        [imagev addGestureRecognizer:tap];
-//
+        //        [imagev removeFromSuperview];
+        //        flog=0;
+        //        imagev = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+        //        [imagev setUserInteractionEnabled:YES];
+        //        [imagev setImage:[self MatToUIImage:img]];
+        //        [imagev setContentMode:UIViewContentModeScaleAspectFill];
+        //        [self.view addSubview:imagev];
+        //        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(chage:)];
+        //        [imagev addGestureRecognizer:tap];
+
         findContours( img, contours1, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
         Mat result1(img.size(), CV_8U, cv::Scalar(255));
         vector<RotatedRect> minRect( contours1.size() );
@@ -1092,12 +1125,13 @@ NSInteger flog;
                     line( drawing, rect_points[j], rect_points[(j+1)%4], color, 1, 8 );
             }
             if ([[self deviceVersion] isEqualToString:@"6"] || [[self deviceVersion] isEqualToString:@"6P"]) {
-                
-
-                
                 if ((y > 1.38 && y < 1.44) || (y > 0.694 && y < 0.7246)) {
                     if (x > 40000 && x < 70000) {
+//                        WCLLog(@"%f",x);
+                        
                         CGFloat reMin = [self minBetweenA:minRect[i].size.height B:minRect[i].size.width];
+                       // WCLLog(@"x面积:%f-----%f---A:%f---B:%f", x,reMin,minRect[i].size.height,minRect[i].size.width);
+
                         [pisitonArray addObject:[NSNumber numberWithFloat:minRect[i].center.y]];
                         [areaArray addObject:[NSNumber numberWithFloat:reMin]];
                     } else if(x < 40000){
@@ -1110,12 +1144,11 @@ NSInteger flog;
                 }
                 
 
-            } else {
+            } else { //6s 6s plus
 
-                
-                
                 if ((y > 1.38 && y < 1.44) || (y > 0.694 && y < 0.7246)) {
                     if (x > 65000 && x < 106000) {
+//                        WCLLog(@"%f",x);
                         CGFloat reMin = [self minBetweenA:minRect[i].size.height B:minRect[i].size.width];
                         [pisitonArray addObject:[NSNumber numberWithFloat:minRect[i].center.y]];
                         [areaArray addObject:[NSNumber numberWithFloat:reMin]];
@@ -1156,10 +1189,110 @@ NSInteger flog;
         if (area > 2) {
             model.photo = [self MatToUIImage:img];
         }
-        WCLLog(@"%f", area);
+//        WCLLog(@"%f", area);
         
 
     } else if ([[self deviceVersion] integerValue] == 7) {
+        area = 0.0000;
+        Mat temp1;
+        Mat dst;
+        UIImageToMat(image, temp1);
+        Mat gray_temp;
+        //        gaussblur(temp1, temp1, cv::Size(3,3));
+        GaussianBlur(temp1, temp1, cv::Size(3,3), 7);
+        cvtColor(temp1,gray_temp,CV_BGR2GRAY);
+        //
+        equalizeHist(gray_temp, dst);
+        
+        adaptiveThreshold(gray_temp, img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 7, -1);
+
+//        adaptiveThreshold(gray_temp, img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 13, -1);//13
+
+        vector<vector<cv::Point>>contours1;
+        vector<Vec4i> hierarchy;
+        drawing = Mat::zeros( img.size(), CV_8UC3 );
+//        [imagev removeFromSuperview];
+//        flog=0;
+//        imagev = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+//        [imagev setUserInteractionEnabled:YES];
+//        [imagev setImage:[self MatToUIImage:img]];
+//        [imagev setContentMode:UIViewContentModeScaleAspectFill];
+//        [self.view addSubview:imagev];
+//        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(chage:)];
+//        [imagev addGestureRecognizer:tap];
+        //
+        findContours( img, contours1, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
+        Mat result1(img.size(), CV_8U, cv::Scalar(255));
+//无底图测量
+        vector<RotatedRect> minRect( contours1.size() );
+        for (unsigned int i = 0; i < contours1.size(); i ++) {
+            minRect[i] = minAreaRect(contours1[i]);
+            CGFloat x = minRect[i].size.width * minRect[i].size.height;
+            CGFloat y = minRect[i].size.width / minRect[i].size.height;
+//            NSLog(@"area :%f", x);
+            if (x > 30000 && x < 110000) {
+                Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+                Point2f rect_points[4]; minRect[i].points( rect_points );
+                for( int j = 0; j < 4; j++ )
+                    line( drawing, rect_points[j], rect_points[(j+1)%4], color, 1, 8 );
+            }
+//            [iphone7Arr removeAllObjects];
+
+            if ((y > 1.38 && y < 1.44) || (y > 0.694 && y < 0.7246)) {
+                if (x > 60000 && x < 94000) {
+            //        WCLLog(@"%f", x);
+//                    [iphone7Arr addObject:@(x)];
+                    CGFloat reMin = [self minBetweenA:minRect[i].size.height B:minRect[i].size.width];
+            //        WCLLog(@"x面积:%f-----%f---A:%f---B:%f", x,reMin,minRect[i].size.height,minRect[i].size.width);
+                   // [self alertViewShowOfTime:[NSString stringWithFormat:@"%f",sqrt(62370/x)] time:1];
+            //        WCLLog(@"%f",sqrt(62370/x));//210*297
+                    [pisitonArray addObject:[NSNumber numberWithFloat:minRect[i].center.y]];
+                    [areaArray addObject:[NSNumber numberWithFloat:reMin]];
+                } else if(x < 60000){
+                    area = 1;
+                } else if (x > 94000) {
+                    area = 2;
+                }
+            }else {
+                area = 0;
+            }
+            
+           
+           
+        }
+        
+        [self.view addSubview:imagev];
+        
+        if ([areaArray count] > 1) {
+            area = [self funMin:areaArray];
+            
+            for (int i = 0; i < [areaArray count]; i ++) {
+                if (area == [areaArray[i] floatValue]) {
+                    if (y_position) {
+                        y_position = [NSString stringWithFormat:@"%@,%f",y_position,[pisitonArray[i] floatValue]];
+                    } else {
+                        y_position = [NSString stringWithFormat:@"%f",[pisitonArray[i] floatValue]];
+                    }
+                }
+            }
+            [resultArray addObject:[NSNumber numberWithFloat:area]];
+            WCLLog(@"%f",21/area);
+        }
+        
+        
+        photoModel *model = photoModelArray[currentStep - 1];
+        if (area > 2) {
+            model.photo = [self MatToUIImage:img];
+            [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+                        PHAssetChangeRequest *req = [PHAssetChangeRequest creationRequestForAssetFromImage:model.photo];
+            } completionHandler:^(BOOL success, NSError * _Nullable error) {
+                WCLLog(@"success = %d ,error =%@",success,error);
+            }];
+        }
+
+
+    }
+    else if ([[self deviceVersion] integerValue] == 8) {
         
         
         area = 0.0000;
@@ -1174,40 +1307,23 @@ NSInteger flog;
         equalizeHist(gray_temp, dst);
         
         
-        adaptiveThreshold(gray_temp, img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY_INV, 13, -1);
-
+        adaptiveThreshold(gray_temp, img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 5, -1);//13
+        
         vector<vector<cv::Point>>contours1;
         vector<Vec4i> hierarchy;
         drawing = Mat::zeros( img.size(), CV_8UC3 );
-        
-        
-        
-//        flog = 0;
-//        [imagev removeFromSuperview];
-//        imagev = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
-//        [imagev setUserInteractionEnabled:YES];
-//        [imagev setImage:[self MatToUIImage:img]];
-//        [imagev setContentMode:UIViewContentModeScaleAspectFill];
-//        [self.view addSubview:imagev];
-//        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(chage:)];
-//        [imagev addGestureRecognizer:tap];
-        
         findContours( img, contours1, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
         Mat result1(img.size(), CV_8U, cv::Scalar(255));
-        
-
-        
-        
-//无底图测量
+        //无底图测量
         vector<RotatedRect> minRect( contours1.size() );
-
+        
         for (unsigned int i = 0; i < contours1.size(); i ++) {
             minRect[i] = minAreaRect(contours1[i]);
             CGFloat x = minRect[i].size.width * minRect[i].size.height;
             CGFloat y = minRect[i].size.width / minRect[i].size.height;
-//            NSLog(@"area :%f", x);
-            if (x > 30000 && x < 110000) {
-                //                NSLog(@"%f,%f", x, y);
+            if(x>30000&&x<110000)
+            {
+               
                 Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
                 Point2f rect_points[4]; minRect[i].points( rect_points );
                 for( int j = 0; j < 4; j++ )
@@ -1215,8 +1331,12 @@ NSInteger flog;
             }
 
             if ((y > 1.38 && y < 1.44) || (y > 0.694 && y < 0.7246)) {
+
                 if (x > 60000 && x < 94000) {
                     CGFloat reMin = [self minBetweenA:minRect[i].size.height B:minRect[i].size.width];
+                    WCLLog(@"x面积:%f-----%f---A:%f---B:%f", x,reMin,minRect[i].size.height,minRect[i].size.width);
+                    
+                    WCLLog(@"%f",sqrt(62370/x));//210*297 -0.03
                     [pisitonArray addObject:[NSNumber numberWithFloat:minRect[i].center.y]];
                     [areaArray addObject:[NSNumber numberWithFloat:reMin]];
                 } else if(x < 60000){
@@ -1247,8 +1367,7 @@ NSInteger flog;
                     }
                 }
             }
-            
-            
+            WCLLog(@"%f",21/area);
             [resultArray addObject:[NSNumber numberWithFloat:area]];
             
         }
@@ -1258,10 +1377,97 @@ NSInteger flog;
         if (area > 2) {
             model.photo = [self MatToUIImage:img];
         }
-
-
+        
+        
     }
-    
+    else if ([[self deviceVersion] isEqualToString:@"X"]) {
+        
+        area = 0.0000;
+        Mat temp1;
+        Mat dst;
+        UIImageToMat(image, temp1);
+        Mat gray_temp;
+        //        gaussblur(temp1, temp1, cv::Size(3,3));
+        GaussianBlur(temp1, temp1, cv::Size(3,3), 7);
+        cvtColor(temp1,gray_temp,CV_BGR2GRAY);
+        //
+        equalizeHist(gray_temp, dst);
+        
+        
+        adaptiveThreshold(gray_temp, img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 5, -1);//13 -1
+        
+        vector<vector<cv::Point>>contours1;
+        vector<Vec4i> hierarchy;
+        drawing = Mat::zeros( img.size(), CV_8UC3 );
+        findContours( img, contours1, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
+        Mat result1(img.size(), CV_8U, cv::Scalar(255));
+        //无底图测量
+        vector<RotatedRect> minRect( contours1.size() );
+        
+        for (unsigned int i = 0; i < contours1.size(); i ++) {
+            minRect[i] = minAreaRect(contours1[i]);
+            CGFloat x = minRect[i].size.width * minRect[i].size.height;
+            CGFloat y = minRect[i].size.width / minRect[i].size.height;
+            if(x>30000&&x<110000)
+            {
+               // WCLLog(@"%f",x);
+
+                Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+                Point2f rect_points[4]; minRect[i].points( rect_points );
+                for( int j = 0; j < 4; j++ )
+                    line( drawing, rect_points[j], rect_points[(j+1)%4], color, 1, 8 );
+            }
+//
+            if ((y > 1.38 && y < 1.44) || (y > 0.694 && y < 0.7246)) {
+
+                if (x > 60000 && x < 94000) {
+                    CGFloat reMin = [self minBetweenA:minRect[i].size.height B:minRect[i].size.width];
+                    WCLLog(@"x面积:%f-----%f---A:%f---B:%f", x,reMin,minRect[i].size.height,minRect[i].size.width);
+
+                    WCLLog(@"%f",sqrt(62370/x));//210*297
+                    [pisitonArray addObject:[NSNumber numberWithFloat:minRect[i].center.y]];
+                    [areaArray addObject:[NSNumber numberWithFloat:reMin]];
+                } else if(x < 60000){
+                    area = 1;
+                } else if (x > 94000) {
+                    area = 2;
+                }
+            }else {
+                area = 0;
+            }
+            
+            
+        }
+        
+        
+        
+        [self.view addSubview:imagev];
+        
+        if ([areaArray count] > 1) {
+            area = [self funMin:areaArray];
+            
+            for (int i = 0; i < [areaArray count]; i ++) {
+                if (area == [areaArray[i] floatValue]) {
+                    if (y_position) {
+                        y_position = [NSString stringWithFormat:@"%@,%f",y_position,[pisitonArray[i] floatValue]];
+                    } else {
+                        y_position = [NSString stringWithFormat:@"%f",[pisitonArray[i] floatValue]];
+                    }
+                }
+            }
+            WCLLog(@"%f",21/area);
+            [resultArray addObject:[NSNumber numberWithFloat:area]];
+            
+        }
+        
+        
+        photoModel *model = photoModelArray[currentStep - 1];
+        if (area > 2) {
+            model.photo = [self MatToUIImage:img];
+        }
+        
+        
+    }
     return area;
 
 }
@@ -1273,8 +1479,14 @@ NSInteger flog;
         return a;
     } else return b;
 }
-
-
+-(CGFloat)a:(CGFloat)a xiaoyub:(CGFloat)b
+{
+    if(a<b)
+    {
+        return a/b;
+    }else return b/a;
+    
+}
 
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex

@@ -7,8 +7,8 @@
 //
 
 #import "designerForSaveViewController.h"
-#import "NewMainModel.h"
-#import "NewMainTabListTableViewCell.h"
+#import "MySaveForZiXunModel.h"
+#import "MySaveForZiXunCell.h"
 #import "MainTabDetailViewController.h"
 @interface designerForSaveViewController ()<UITableViewDelegate, UITableViewDataSource>
 
@@ -18,13 +18,14 @@
 {
     NSMutableArray *modelArray;
     BaseDomain *getData;
+    NSInteger page;
     UITableView *mainTabTable;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     getData = [BaseDomain getInstance:NO];
     modelArray = [NSMutableArray array];
-    
+    page =1;
     [self createGetData];
 }
 
@@ -35,36 +36,35 @@
     if (mainTabTable) {
         [self reloadData];
     }
-    
 }
 
 -(void)reloadData
 {
-    [modelArray removeAllObjects];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"1" forKey:@"type"];
+    [params setObject:@(page) forKey:@"page"];
     [getData getData:URL_SaveList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         
         if ([self checkHttpResponseResultStatus:getData]) {
-            
-            if ([[getData.dataRoot arrayForKey:@"data"] count] == 0) {
+            [mainTabTable.mj_footer endRefreshing];
+            [mainTabTable.mj_header endRefreshing];
+            if ([[getData.dataRoot arrayForKey:@"data"] count] == 0&&page==1) {
                 [mainTabTable removeFromSuperview];
                 [self createNoSave];
-            } else {
+            }
+            else if ([[getData.dataRoot arrayForKey:@"data"] count] == 0&&page!=1)
+            {
+                [mainTabTable.mj_footer endRefreshingWithNoMoreData];
+                [mainTabTable reloadData];
+            }
+            else {
                 for (NSDictionary *dic in [getData.dataRoot objectForKey:@"data"]) {
-                    NewMainModel *model  = [NewMainModel new];
-                    model.ImageUrl = [dic stringForKey:@"img"];
-                    model.linkUrl = [dic stringForKey:@"link"];
-                    model.LinkId = [dic stringForKey:@"id"];
-                    model.fenLei = [dic stringForKey:@"name"];
-                    model.name = [dic stringForKey:@"title"];
-                    model.detail = [dic stringForKey:@"sub_title"];
-                    model.tagName = [dic stringForKey:@"tags_name"];
+                    MySaveForZiXunModel *model  = [MySaveForZiXunModel mj_objectWithKeyValues:dic];
                     [modelArray addObject:model];
                 }
                 
                 [mainTabTable reloadData];
-
+                
             }
             
         }
@@ -77,26 +77,18 @@
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"1" forKey:@"type"];
+    [params setObject:@"1" forKey:@"page"];
     [getData getData:URL_SaveList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
         if ([self checkHttpResponseResultStatus:getData]) {
-            
+            [mainTabTable.mj_header endRefreshing];
             if ([[getData.dataRoot arrayForKey:@"data"] count] == 0) {
                 [self createNoSave];
             } else {
-                
-                    for (NSDictionary *dic in [getData.dataRoot objectForKey:@"data"]) {
-                        NewMainModel *model  = [NewMainModel new];
-                        model.ImageUrl = [dic stringForKey:@"img"];
-                        model.linkUrl = [dic stringForKey:@"link"];
-                        model.LinkId = [dic stringForKey:@"id"];
-                        //                model.titleContent = [dic stringForKey:@"title"];
-                        model.fenLei = [dic stringForKey:@"name"];
-                        model.name = [dic stringForKey:@"title"];
-                        model.detail = [dic stringForKey:@"sub_title"];
-                        model.tagName = [dic stringForKey:@"tags_name"];
-                        [modelArray addObject:model];
-                    }
+                [modelArray removeAllObjects];
+                for (NSDictionary *dic in [getData.dataRoot objectForKey:@"data"]) {
+                    MySaveForZiXunModel *model  = [MySaveForZiXunModel mj_objectWithKeyValues:dic];
+                    [modelArray addObject:model];
+                }
                 
                 
                 [self createView];
@@ -116,14 +108,45 @@
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
     [mainTabTable setBackgroundColor:[UIColor whiteColor]];
-
+    mainTabTable.estimatedSectionHeaderHeight = 0;
     mainTabTable.delegate = self;
     mainTabTable.dataSource = self;
-    [mainTabTable registerClass:[NewMainTabListTableViewCell class] forCellReuseIdentifier:NSStringFromClass([NewMainTabListTableViewCell class])];
     [self.view addSubview:mainTabTable];
     [mainTabTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-}
+    NSMutableArray *headerImages = [NSMutableArray array];
+    for (int i = 1; i <= 60; i++) {
+        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%d",i]];
+        [headerImages addObject:image];
+    }
+    __weak designerForSaveViewController *weakSelf = self;
 
+    MJRefreshGifHeader * header = [MJRefreshGifHeader headerWithRefreshingBlock:^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [weakSelf createGetData];
+        });
+        
+    }];
+    header.stateLabel.hidden = YES;
+    header.lastUpdatedTimeLabel.hidden = YES;
+    [header setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
+    [header setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
+    mainTabTable.mj_header = header;
+
+    MJRefreshAutoGifFooter * footer = [MJRefreshAutoGifFooter footerWithRefreshingBlock:^{
+        // 模拟延迟加载数据，因此2秒后才调用（真实开发中，可以移除这段gcd代码）
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            page += 1;
+            [weakSelf reloadData];
+            
+        });
+    }];
+    footer.stateLabel.hidden =YES;
+    footer.refreshingTitleHidden = YES;
+    [footer setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
+    [footer setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
+    mainTabTable.mj_footer = footer;
+
+}
 -(void)createNoSave
 {
     UIView *bgNoDingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
@@ -164,7 +187,7 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-
+    
     return 1;
     
 }
@@ -178,7 +201,17 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 321;
+    
+    MySaveForZiXunModel * model = modelArray[indexPath.section];
+    CGFloat realHeight;
+    if ([model.img_info isEqualToString:@""]||model.img_info ==nil) {
+        realHeight =0.0001;
+    }
+    else
+    {
+        realHeight = (SCREEN_WIDTH-24) /[model.img_info floatValue];
+    }
+    return 79+realHeight;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -188,21 +221,9 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 38;
+    return 0.0001;
 }
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    
-        UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 38)];
-        UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(12, 12, 80, 18)];
-        [titleLabel setBackgroundColor:[UIColor whiteColor]];
-        
-        titleLabel.text = @"店铺活动";
-        titleLabel.textColor = [UIColor colorWithHexString:@"#222222"];
-        titleLabel.font =[UIFont fontWithName:@"PingFangSC-Light" size:15];
-        [titleView addSubview:titleLabel];
-        return titleView;
-   
-}
+
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
     return [[UIView alloc] init];
 }
@@ -213,16 +234,17 @@
     UITableViewCell *reCell;
     
     
-    NewMainModel *model = [modelArray objectAtIndex:indexPath.section];
-    
-    
-    Class currentClass = [NewMainTabListTableViewCell class];
-    NewMainTabListTableViewCell *cell = nil;
-//    [cell setBackgroundColor:[UIColor whiteColor]];
-    cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass(currentClass)];
+    MySaveForZiXunModel *model = [modelArray objectAtIndex:indexPath.section];
+    MySaveForZiXunCell *cell = [tableView dequeueReusableCellWithIdentifier:@"sflkj"];
+    if (!cell) {
+        cell =[[MySaveForZiXunCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"sflkj"];
+    }
+    cell.zhuanFaBtn.hidden = YES;
+    cell.shouCangBtn.hidden = YES;
+    cell.xiHuanBtn.hidden =YES;
+    cell.lastView.hidden =YES;
+    cell.pingLunBtn.hidden = YES;
     cell.model = model;
-    cell.tag = indexPath.section * 10000 + indexPath.row;
-    
     ////// 此步设置用于实现cell的frame缓存，可以让tableview滑动更加流畅 //////
     reCell = cell;
     
@@ -237,13 +259,13 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NewMainModel *model = [modelArray objectAtIndex:indexPath.section];
+    MySaveForZiXunModel *model = [modelArray objectAtIndex:indexPath.section];
     MainTabDetailViewController *MainDetail = [[MainTabDetailViewController alloc] init];
-    MainDetail.webId = model.LinkId;
-    MainDetail.imageUrl = model.ImageUrl;
-    MainDetail.titleName = model.name;
-    MainDetail.tagName = model.tagName;
-//    [self getDateBegin:datBegin currentView:model.tagName fatherView:@"首页"];
+    MainDetail.webId = [NSString stringWithFormat:@"%ld",model.ID];
+    MainDetail.imageUrl = model.img;
+    MainDetail.titleName = model.title;
+    MainDetail.tagName = model.sub_title;
+    //    [self getDateBegin:datBegin currentView:model.tagName fatherView:@"首页"];
     [self.navigationController pushViewController:MainDetail animated:YES];
 }
 
@@ -254,13 +276,13 @@
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end

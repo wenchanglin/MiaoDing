@@ -49,7 +49,7 @@
     CGFloat width = self.frame.size.width;
     UIColor *color = [UIColor colorWithRed:242/255.0 green:243/255.0 blue:249/255.0 alpha:1];
     UIColor *btnColor = getUIColor(Color_WearClothesPlaceHolder);
-    UIView *selectView = [[UIView alloc] initWithFrame:CGRectMake(0, height - 210, width, 30)];
+    UIView *selectView = [[UIView alloc] initWithFrame:CGRectMake(0, height -84 -210, width, 30)];
     selectView.backgroundColor = color;
     UIButton *cancleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [cancleBtn setTitle:@"取消" forState:0];
@@ -68,7 +68,7 @@
     [selectView addSubview:ensureBtn];
     [self addSubview:selectView];
     
-    self.pickView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, height - 180 , width,  180)];
+    self.pickView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, height - 180-84 , width,  50+180)];
     self.pickView.delegate   = self;
     self.pickView.dataSource = self;
     self.pickView.backgroundColor = color;

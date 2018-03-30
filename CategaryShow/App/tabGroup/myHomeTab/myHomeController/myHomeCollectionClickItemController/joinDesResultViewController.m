@@ -23,7 +23,10 @@
     [self settabTitle:@"入驻反馈"];
     [self createView];
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)createView
 {
     UIImageView *success = [UIImageView new];

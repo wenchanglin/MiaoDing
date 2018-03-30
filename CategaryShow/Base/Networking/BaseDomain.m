@@ -1,4 +1,4 @@
-//
+    //
 //  BaseDomain.m
 //  CongestionOfGod
 //
@@ -103,7 +103,8 @@
         // 整合数据
         self.result = -99;
         self.resultMessage = NSLocalizedString(@"baseform_progress_NetErrorMessage", nil);
-        
+        WCLLog(@"106post:%@----%@",error,urlString);
+
         // 传递结果
         if (success)
         {
@@ -155,7 +156,8 @@
         // 整合数据
         self.result = -99;
         self.resultMessage = NSLocalizedString(@"baseform_progress_NetErrorMessage", nil);
-        
+        WCLLog(@"159get:%@----%@",error,urlString);
+
         // 传递结果
         if (success)
         {

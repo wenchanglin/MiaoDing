@@ -30,6 +30,7 @@
     BaseDomain *postData;
     BaseDomain *getData;
     UITableView *diyTable;
+    NSMutableArray * twodiyArr;
     NSMutableDictionary *dataDic;
     NSMutableArray *diyArray;
     NSMutableDictionary *dic;//创建一个字典进行判断收缩还是展开
@@ -60,6 +61,7 @@
     dataDic = [NSMutableDictionary dictionary];
     _paramsClothes = [NSMutableDictionary dictionary];
     diyArray = [NSMutableArray array];
+    twodiyArr = [NSMutableArray array];
     getData = [BaseDomain getInstance:NO];
     isViewYFisrt = YES;
     banxingtag = 0;
@@ -91,6 +93,15 @@
     chooseStyleCon.class_id = _class_id;
     chooseStyleCon.paramsClothes = _paramsClothes;
     chooseStyleCon.xiuZiDic = _xiuZiDic;
+    if([textFildString objectForKey:@"name"] ==nil)
+    {
+        
+        chooseStyleCon.diydetailArray = twodiyArr;
+    }
+    else
+    {
+    chooseStyleCon.diydetailArray = diydetailArray;
+    }
     chooseStyleCon.mianliaoprice = [_price objectForKey:@"price"];
     chooseStyleCon.goodDic = _goodDic;
     chooseStyleCon.dataDic = dataDic;
@@ -111,7 +122,10 @@
     
 }
 
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 
 
 -(void)getDatas
@@ -128,6 +142,7 @@
             diydetailArray = [NSMutableArray array];
             if ([[dataDic arrayForKey:@"classify_id"] count] > 0) {
                 [diydetailArray addObject:[[dataDic arrayForKey:@"classify_id"]firstObject]];
+                [twodiyArr addObject:[[dataDic arrayForKey:@"classify_id"]firstObject]];
             }
             else
             {
@@ -135,6 +150,7 @@
             }
             if ([[dataDic arrayForKey:@"mianliao"]count]>0) {
                 [diydetailArray addObject:[[dataDic arrayForKey:@"mianliao"]firstObject]];
+                [twodiyArr addObject:[[dataDic arrayForKey:@"mianliao"]firstObject]];
             }
             else
             {
@@ -181,7 +197,7 @@
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
-    diyTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 50) style:UITableViewStyleGrouped];
+    diyTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT - 64 - 50) style:UITableViewStyleGrouped];
     diyTable.dataSource = self;
     diyTable.delegate = self;
     [diyTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -205,45 +221,35 @@
 //    [button2.layer setMasksToBounds:YES];
 //    [button2 setTitle:@"预览" forState:UIControlStateNormal];
 //    [self.view addSubview:button2];
-    UIView *priceLowView = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3, 50)];
-    priceLowView.tag = 5000;
-    [priceLowView setBackgroundColor:[UIColor whiteColor]];
-    [self.view addSubview:priceLowView];
+//    UIView *priceLowView = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3, 50)];
+//    priceLowView.tag = 5000;
+//    [priceLowView setBackgroundColor:[UIColor whiteColor]];
+//    [self.view addSubview:priceLowView];
     
     
-    UILabel *priceDetail = [UILabel new];
+    UILabel *priceDetail = [[UILabel alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-64-95:SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3-10, 50)];
     priceDetail.tag = 6000;
-    [priceLowView addSubview:priceDetail];
-    [priceDetail mas_makeConstraints:^(MASConstraintMaker *make) {
-        
-        make.centerX.equalTo(priceLowView.mas_centerX).with.offset(20);
-        make.centerY.equalTo(priceLowView.mas_centerY);
-        make.height.equalTo(@20);
-        
-    }];
-//    if (dataDic.count>0) {
-        [priceDetail setText:[NSString stringWithFormat:@"¥%@",[[[dataDic arrayForKey:@"mianliao"]objectAtIndex:0] objectForKey:@"price"]]];
-//
-//    }
+    priceDetail.textAlignment = NSTextAlignmentRight;
+    [self.view addSubview:priceDetail];
+    [priceDetail setText:[NSString stringWithFormat:@"合计:¥%@",[[[dataDic arrayForKey:@"mianliao"]objectAtIndex:0] objectForKey:@"price"]]];
+    priceDetail.textColor= [UIColor colorWithHexString:@"#222222"];
+    [priceDetail setFont:[UIFont fontWithName:@"SanFranciscoDisplay-Regular" size:16]];
     
     
-    [priceDetail setFont:Font_14];
-    
-    
-    UILabel *priceTitle = [UILabel new];
-    [priceLowView addSubview:priceTitle];
-    priceTitle.sd_layout
-    .centerYEqualToView(priceLowView)
-    .rightSpaceToView(priceDetail,0)
-    .widthIs(40)
-    .autoHeightRatio(20);
-    [priceTitle setText:@"合计:"];
-    [priceTitle setFont:[UIFont systemFontOfSize:14]];
+//    UILabel *priceTitle = [UILabel new];
+//    [self.view addSubview:priceTitle];
+//    priceTitle.sd_layout
+//    .centerYEqualToView(priceLowView)
+//    .rightSpaceToView(priceDetail,0)
+//    .widthIs(40)
+//    .autoHeightRatio(20);
+//    [priceTitle setText:@"合计:"];
+//    [priceTitle setFont:[UIFont systemFontOfSize:14]];
     
     
     
     
-    UIButton *buttonSave = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3, SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
+    UIButton *buttonSave = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3,IsiPhoneX?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
     [buttonSave setBackgroundColor:getUIColor(Color_DZClolor)];
     [self.view addSubview:buttonSave];
     [buttonSave addTarget:self action:@selector(saveTheClothes) forControlEvents:UIControlEventTouchUpInside];
@@ -251,7 +257,7 @@
     [buttonSave setTitle:@"加入购物袋" forState:UIControlStateNormal];
     
     
-    UIButton *buttonBuy = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3 * 2, SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
+    UIButton *buttonBuy = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3 * 2,IsiPhoneX?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
     [buttonBuy setBackgroundColor:getUIColor(Color_TKClolor)];
     [self.view addSubview:buttonBuy];
     [buttonBuy addTarget:self action:@selector(payForClothes) forControlEvents:UIControlEventTouchUpInside];
@@ -385,7 +391,8 @@
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(action_tap:)];
     titleSection.tag = 300 + section;
     [titleSection addGestureRecognizer:tap];
-    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, 80, 42)];
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, 160, 42)];
+//    titleLabel.backgroundColor = [UIColor blueColor];
     [titleLabel setFont:[UIFont fontWithName:@"PingFangSC-Light" size:13]];
     titleLabel.textColor = [UIColor colorWithHexString:@"#222222"];
     UILabel * rightLabel = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH-200-12, 0, 200, 42)];
@@ -401,14 +408,24 @@
         if ([[dataDic arrayForKey:@"classify_id"] count]>0) {
             rightLabel.text =[[[dataDic arrayForKey:@"classify_id"] objectAtIndex:banxingtag] stringForKey:@"name"];
             _banxing = [[dataDic arrayForKey:@"classify_id"] objectAtIndex:banxingtag];
+            NSMutableDictionary * dic1 = [NSMutableDictionary dictionaryWithDictionary:[[dataDic arrayForKey:@"classify_id"] objectAtIndex:banxingtag]];
+            [dic1 setObject:@"版型" forKey:@"a_name"];
+            [diydetailArray replaceObjectAtIndex:0 withObject:dic1];
+            [twodiyArr replaceObjectAtIndex:0 withObject:dic1];
+
         }
     } else if (section == 1) {
-        [titleLabel setText:@"选择面料"];
+        [titleLabel setText:@"选择面料(长按可看大图)"];
         rightLabel.tag =2223;
         if ([[dataDic arrayForKey:@"mianliao"]count]>0) {
             rightLabel.text = [[[dataDic arrayForKey:@"mianliao"] objectAtIndex:mianliaotag] stringForKey:@"name"];
             _price = [[dataDic arrayForKey:@"mianliao"]objectAtIndex:mianliaotag];
-            
+//            [[[[dataDic arrayForKey:@"mianliao"] objectAtIndex:mianliaotag] copy] setObject:@"面料" forKey:@"a_name"];
+            NSMutableDictionary * dic2 = [NSMutableDictionary dictionaryWithDictionary:[[dataDic arrayForKey:@"mianliao"]objectAtIndex:mianliaotag]];
+            [dic2 setObject:@"面料" forKey:@"a_name"];
+            [diydetailArray replaceObjectAtIndex:1 withObject:dic2];
+            [twodiyArr replaceObjectAtIndex:1 withObject:dic2];
+
         }
     }
     else
@@ -440,10 +457,7 @@
         }else{//反之关闭cell
             [dic setObject:@"0" forKey:str];
         }
-//        NSIndexSet *indexSet=[[NSIndexSet alloc]initWithIndex:2];
-//        [diyTable reloadSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
         [diyTable reloadData];
-
     }
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -536,7 +550,7 @@
         {
             DiyHeadCell * cell = [tableView dequeueReusableCellWithIdentifier:@"diyHead" forIndexPath:indexPath];
             cell.tag =1002;
-            cell.leftLabel.text = @"选择颜色";
+            cell.leftLabel.text = @"选择字体颜色";
             cell.rightLabel.text = [[[dataDic arrayForKey:@"color"] objectAtIndex:colortag] stringForKey:@"name"];
             reCell = cell;
         }
@@ -576,6 +590,7 @@
         {
             textFieldWordDiyTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"textField" forIndexPath:indexPath];
             cell.wordDiy .delegate = self;
+            [cell.wordDiy addTarget:self action:@selector(textfieldDidChange:) forControlEvents:UIControlEventEditingChanged];
             cell.isenglish = is_english;
             reCell = cell;
         }
@@ -585,79 +600,28 @@
     return reCell;
 }
 
--(void)textFieldDidBeginEditing:(UITextField *)textField
+-(void)textfieldDidChange:(UITextField *)textfield
 {
-//    [self scrollViewToBottom:YES];
-//
-//    if (isViewYFisrt) {
-//        initViewY = self.view.frame.origin.y;
-//        isViewYFisrt = NO;
-//    }
-//
-//    int offset = [self getControlFrameOriginY:textField] + 75 - (self.view.frame.size.height - 216.0);//键盘高度216
-//
-//    NSTimeInterval animationDuration = 0.30f;
-//    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
-//    [UIView setAnimationDuration:animationDuration];
-//
-//    //将视图的Y坐标向上移动offset个单位，以使下面腾出地方用于软键盘的显示
-//    if(offset > 0)
-//        self.view.frame = CGRectMake(0.0f, -offset, self.view.frame.size.width, self.view.frame.size.height);
-//
-//    [UIView commitAnimations];
+    [diydetailArray removeObject:textFildString];
+
+    if (textfield.text.length>0) {
+        [textFildString setObject:@"文字" forKey:@"a_name"];
+        [textFildString setObject:textfield.text forKey:@"name"];
+        [diydetailArray addObject:textFildString];
+    }
 }
 
-- (void)scrollViewToBottom:(BOOL)animated
-
-{
-
-//    if (diyTable.contentSize.height > diyTable.frame.size.height)
-//
-//    {
-//
-//        CGPoint offset = CGPointMake(0, diyTable.contentSize.height - diyTable.frame.size.height);
-//
-//        [diyTable setContentOffset:offset animated:animated];
-//
-//    }
-
-}
-
-//- (CGFloat) getControlFrameOriginY : (UIView *) curView {
-//
-//    CGFloat resultY = 0;
-//
-//    if ([curView superview] != nil && ![[curView superview] isEqual:self.view]) {
-//        resultY = [self getControlFrameOriginY:[curView superview]];
-//    }
-//
-//    return resultY + curView.frame.origin.y;
-//}
-//
--(void)textFieldDidEndEditing:(UITextField *)textField
-{
-//    CGRect frame = self.view.frame;
-//
-//    frame.origin.x = 0;
-//    frame.origin.y = initViewY;
-//
-//    NSTimeInterval animationDuration = 0.30f;
-//    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
-//    [UIView setAnimationDuration:animationDuration];
-//
-//    [self.view setFrame:frame];
-//
-//    [UIView commitAnimations];
-    //    self.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-    UIView * button = [self.view viewWithTag:5000];
-    button.frame = CGRectMake(0, SCREEN_HEIGHT-50-64, SCREEN_WIDTH, 50);
-}
 
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [textFildString setObject:@"文字" forKey:@"a_name"];
-    [textFildString setObject:textField.text forKey:@"name"];
+    [diydetailArray removeObject:textFildString];
+    if (textField.text.length>0) {
+        [textFildString setObject:@"文字" forKey:@"a_name"];
+        [textFildString setObject:textField.text forKey:@"name"];
+        [diydetailArray addObject:textFildString];
+    }
+    //        NSString *contentDiy = [diyArray componentsJoinedByString:@";"];
     [textField resignFirstResponder];
     return YES;
 }
@@ -668,18 +632,24 @@
     UILabel *Label = [self.view viewWithTag:2222];
     Label.text = [[[dataDic arrayForKey:@"classify_id"] objectAtIndex:index] stringForKey:@"name"];
     banxingtag = index;
-    [diydetailArray replaceObjectAtIndex:0 withObject:[[dataDic arrayForKey:@"classify_id"] objectAtIndex:index]];
+    NSMutableDictionary * banxingDic = [NSMutableDictionary dictionaryWithDictionary:[[dataDic arrayForKey:@"classify_id"] objectAtIndex:index]]  ;
+    [banxingDic setObject:@"版型" forKey:@"a_name"];
+    [diydetailArray replaceObjectAtIndex:0 withObject:banxingDic];
+    [twodiyArr replaceObjectAtIndex:0 withObject:banxingDic];
 }
 -(void)mianLiaoClick:(NSInteger)index
 {
     [diyArray replaceObjectAtIndex:1 withObject:[NSString stringWithFormat:@"%@:%@",[[[dataDic arrayForKey:@"mianliao"] objectAtIndex:index] stringForKey:@"a_name"],[[[dataDic arrayForKey:@"mianliao"] objectAtIndex:index] stringForKey:@"name"]]];
     _price = [[dataDic arrayForKey:@"mianliao"]objectAtIndex:index];
     UILabel * label1 = [self.view viewWithTag:6000];
-    label1.text = [NSString stringWithFormat:@"%@",[_price objectForKey:@"price"]];
+    label1.text = [NSString stringWithFormat:@"合计:¥%@",[_price objectForKey:@"price"]];
     UILabel *Label = [self.view viewWithTag:2223];
     Label.text = [[[dataDic arrayForKey:@"mianliao"] objectAtIndex:index] stringForKey:@"name"];
     mianliaotag = index;
-    [diydetailArray replaceObjectAtIndex:1 withObject:[[dataDic arrayForKey:@"mianliao"] objectAtIndex:index]];
+    NSMutableDictionary * mianliaoDic = [NSMutableDictionary dictionaryWithDictionary:[[dataDic arrayForKey:@"mianliao"] objectAtIndex:index]];
+    [mianliaoDic setObject:@"面料" forKey:@"a_name"];
+    [diydetailArray replaceObjectAtIndex:1 withObject:mianliaoDic];
+    [twodiyArr replaceObjectAtIndex:1 withObject:mianliaoDic];
 }
 -(void)positionClick:(NSInteger)index
 {

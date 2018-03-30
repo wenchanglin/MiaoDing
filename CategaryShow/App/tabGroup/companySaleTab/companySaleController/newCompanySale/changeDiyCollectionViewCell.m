@@ -46,13 +46,15 @@
     }];
     
     titleLabel = [UILabel new];
-    titleLabel.numberOfLines = 0;
+    titleLabel.numberOfLines = 1;
+    titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     [bgView addSubview:titleLabel];
     titleLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:14];
     titleLabel.textColor = [UIColor colorWithHexString:@"#3D3D3D"];
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(imgView.mas_bottom).offset(12);
         make.left.mas_equalTo(9);
+        make.right.mas_equalTo(-20);
         make.height.mas_equalTo(20);
     }];
     
@@ -78,7 +80,11 @@
 -(void)setModel:(chageDiyModel *)model
 {
     
-    [imgView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.thumb]]];
+    [imgView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.img_new]]];
+    [imgView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.top.right.equalTo(bgView);
+        make.height.mas_equalTo((SCREEN_WIDTH / 2 - 6)/[model.img_info floatValue]);
+    }];
     [titleLabel setText:model.name];
     [tagLabel setText:model.sub_name];
     priceLabel.text = model.price;

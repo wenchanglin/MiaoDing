@@ -9,7 +9,7 @@
 #import "chooseConponViewController.h"
 #import "couponTableViewCell.h"
 #import "couponModel.h"
-@interface chooseConponViewController ()<UITableViewDelegate, UITableViewDataSource>
+@interface chooseConponViewController ()<UITableViewDelegate, UITableViewDataSource,UITextFieldDelegate>
 
 @end
 
@@ -33,7 +33,10 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
@@ -105,7 +108,7 @@
     [self.view addSubview:view];
     
     
-    canUse = [[UITableView alloc] initWithFrame:CGRectMake(8, 60+NavHeight, SCREEN_WIDTH - 16, SCREEN_HEIGHT  - 64) style:UITableViewStyleGrouped];
+    canUse = [[UITableView alloc] initWithFrame:CGRectMake(8, 60+NavHeight, SCREEN_WIDTH - 16,IsiPhoneX?SCREEN_HEIGHT-88-74:SCREEN_HEIGHT  - 64-49) style:UITableViewStyleGrouped];
     if (@available(iOS 11.0, *)) {
         canUse.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     } else {
@@ -120,7 +123,7 @@
     [self.view addSubview:canUse];
     
     
-    UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 49, SCREEN_WIDTH, 49)];
+    UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?self.view.frame.size.height-74:self.view.frame.size.height - 49, SCREEN_WIDTH, 49)];
     [buttonBack setBackgroundColor:[UIColor blackColor]];
     [buttonBack setTitle:@"不使用优惠券" forState:UIControlStateNormal];
     [buttonBack.titleLabel setFont:[UIFont systemFontOfSize:14]];
@@ -134,7 +137,7 @@
     NSMutableDictionary *dicNoti = [NSMutableDictionary dictionary];
     [dicNoti setObject:@"0" forKey:@"price"];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"chooseCoupon" object:nil userInfo:dicNoti];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"chooseCoupon" object:nil userInfo:dicNoti];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -151,7 +154,11 @@
     }];
     
 }
-
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    return NO;
+}
 -(void)reloadData
 {
     [modelArray removeAllObjects];

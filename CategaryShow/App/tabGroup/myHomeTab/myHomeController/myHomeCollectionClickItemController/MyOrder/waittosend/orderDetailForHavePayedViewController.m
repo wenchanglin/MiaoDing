@@ -31,7 +31,7 @@
     [super viewDidLoad];
     modelArray = [NSMutableArray array];
     getData = [BaseDomain getInstance:NO];
-    self.title = @"订单详情";
+    [self settabTitle:@"订单详情"];
     orderDetail = [NSMutableDictionary dictionary];
     
     UIView *topView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 64)];
@@ -43,7 +43,10 @@
     [self createTableView];
     // Do any additional setup after loading the view.
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
@@ -80,7 +83,12 @@
 
 -(void)createTableView
 {
-    orderDetailTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 84) style:UITableViewStyleGrouped];
+    orderDetailTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 84) style:UITableViewStyleGrouped];
+    if (@available(iOS 11.0, *)) {
+        orderDetailTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     orderDetailTable.dataSource = self;
     orderDetailTable.delegate = self;
     [orderDetailTable setBackgroundColor:getUIColor(Color_myOrderBack)];

@@ -27,11 +27,12 @@
 }
 
 
-- (void)request:(HTTPMethod)method urlString:(NSString *)urlString parameters:(id)parameters finished:(void (^)(id responseObject, NSError *error))finished {
+- (void)request:(HTTPMethod)method urlString:(NSString *)urlString parameters:(NSMutableDictionary *)parameters finished:(void (^)(id responseObject, NSError *error))finished {
      NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
     if (method == GET) {
 //        if ([[userd stringForKey:@"token"]length] > 0 ) {
-//            [parameters setObject:[userd stringForKey:@"token"] forKey:@"token"];
+//            NSString * str1 = [userd stringForKey:@"token"];
+//            [parameters setObject:str1 forKey:@"token"];
 //        }
         [[wclNetTool sharedTools] GET:urlString parameters:parameters  success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
             finished(responseObject,nil);

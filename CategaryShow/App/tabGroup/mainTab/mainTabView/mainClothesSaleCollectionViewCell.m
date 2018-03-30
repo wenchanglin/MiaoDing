@@ -44,12 +44,17 @@
     _imageDesigner = [UIImageView new];
     
     [shadowView addSubview:_imageDesigner];
-    
-    _imageDesigner.sd_layout
-    .centerXEqualToView(shadowView)
-    .centerYEqualToView(shadowView)
-    .widthIs(169.5)
-    .heightIs(105);
+    [_imageDesigner mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(12);
+        make.left.mas_equalTo(6);
+        make.right.mas_equalTo(-6);
+        make.bottom.mas_equalTo(-12);
+    }];
+//    _imageDesigner.sd_layout
+//    .centerXEqualToView(shadowView)
+//    .centerYEqualToView(shadowView)
+//    .widthIs(169.5)
+//    .heightIs(105);
     [_imageDesigner.layer setCornerRadius:3];
     [_imageDesigner.layer setMasksToBounds:YES];
     

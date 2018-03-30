@@ -146,6 +146,16 @@
     
     [_commendBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [_commendBtn setTitle:@"立即评论" forState:UIControlStateNormal];
+    _nextBtn = [UIButton new];
+    [_nextBtn.layer setCornerRadius:1];
+    [_nextBtn.layer setMasksToBounds:YES];
+    [_nextBtn.layer setBorderColor:[UIColor lightGrayColor].CGColor];
+    [_nextBtn.layer setBorderWidth:1];
+    [_nextBtn.titleLabel setFont:[UIFont systemFontOfSize:12.5]];
+    [_nextBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [_nextBtn setTitle:@"再来一单" forState:UIControlStateNormal];
+    [contentView addSubview:_nextBtn];
+    _nextBtn.sd_layout.rightSpaceToView(_commendBtn, 10).topSpaceToView(line2, 7).widthIs(70).heightIs(30);
     
     haveDone = [UILabel new];
     [contentView addSubview:haveDone];

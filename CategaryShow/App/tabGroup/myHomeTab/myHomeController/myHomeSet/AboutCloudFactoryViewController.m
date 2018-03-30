@@ -21,15 +21,15 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"关于妙定";
-    UIView *viewH = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 64)];
-    [viewH setBackgroundColor:[UIColor whiteColor]];
-    [self.view addSubview:viewH];
+    [self settabTitle:@"关于妙定"];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self createView];
     // Do any additional setup after loading the view.
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)createView
 {
     

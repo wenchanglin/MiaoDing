@@ -43,6 +43,10 @@
     [self.view setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
     
 }
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)rightClick
 {
     couPonRulerViewController *cpRuler = [[couPonRulerViewController alloc] init];

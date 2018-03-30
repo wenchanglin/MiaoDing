@@ -9,5 +9,8 @@
 #import "chageDiyModel.h"
 
 @implementation chageDiyModel
-
++(NSDictionary *)mj_replacedKeyFromPropertyName
+{
+    return @{@"ID":@"id"};
+}
 @end

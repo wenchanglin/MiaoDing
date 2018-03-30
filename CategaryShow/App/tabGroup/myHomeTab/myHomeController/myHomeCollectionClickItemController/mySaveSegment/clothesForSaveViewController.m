@@ -23,19 +23,15 @@
     UITableView *haveSaveTable;
     UICollectionView *haveSaveCollection;
     NSMutableArray *modelArray;
+    NSInteger page;
     BaseDomain *getData;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
+    //我的收藏-商品
     getData = [BaseDomain getInstance:NO];
+    page =1;
     
-    self.title = @"我的收藏";
-    // Do any additional setup after loading the view.
-//
-    
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0,0, SCREEN_WIDTH, 64)];
-    [view setBackgroundColor:[UIColor whiteColor]];
-    [self.view addSubview:view];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     modelArray = [NSMutableArray array];
     
@@ -54,17 +50,24 @@
 
 -(void)reloadData
 {
-    [modelArray removeAllObjects];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    
+    [params setObject:@"2" forKey:@"type"];
+    [params setObject:@(page) forKey:@"page"];
     [getData getData:URL_SaveList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         
         if ([self checkHttpResponseResultStatus:getData]) {
-            
-            if ([[getData.dataRoot arrayForKey:@"data"] count] == 0) {
+            [haveSaveCollection.mj_footer endRefreshing];
+            [haveSaveCollection.mj_header endRefreshing];
+            if ([[getData.dataRoot arrayForKey:@"data"] count] == 0&&page==1) {
                 [haveSaveTable removeFromSuperview];
                 [self createNoSave];
-            } else {
+            }
+            else if ([[getData.dataRoot arrayForKey:@"data"] count] == 0&&page!=1)
+            {
+                [haveSaveCollection.mj_footer endRefreshingWithNoMoreData];
+                [haveSaveCollection reloadData];
+            }
+            else {
                 for (NSDictionary *dis in [getData.dataRoot arrayForKey:@"data"] ) {
                     mySavedModel *model = [[mySavedModel alloc] init];
                     model.clothesPrice = [dis stringForKey:@"price2"];
@@ -88,14 +91,16 @@
 -(void)createGetData
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    
+    [params setObject:@"2" forKey:@"type"];
+    [params setObject:@"1" forKey:@"page"];
     [getData getData:URL_SaveList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-       
         if ([self checkHttpResponseResultStatus:getData]) {
-            
+            [haveSaveCollection.mj_header endRefreshing];
+
             if ([[getData.dataRoot arrayForKey:@"data"] count] == 0) {
                 [self createNoSave];
             } else {
+                [modelArray removeAllObjects];
                 for (NSDictionary *dis in [getData.dataRoot arrayForKey:@"data"] ) {
                     mySavedModel *model = [[mySavedModel alloc] init];
                     model.clothesPrice = [dis stringForKey:@"price2"];
@@ -253,6 +258,37 @@
     
     [haveSaveCollection registerClass:[mySavedClothesCollectionViewCell class] forCellWithReuseIdentifier:@"mysaveClothes"];
     [haveSaveCollection registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"ReusableView"];
+    NSMutableArray *headerImages = [NSMutableArray array];
+    for (int i = 1; i <= 60; i++) {
+        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%d",i]];
+        [headerImages addObject:image];
+    }
+    __weak clothesForSaveViewController *weakSelf = self;
+
+    MJRefreshGifHeader * header = [MJRefreshGifHeader headerWithRefreshingBlock:^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [weakSelf createGetData];
+        });
+        
+    }];
+    header.stateLabel.hidden = YES;
+    header.lastUpdatedTimeLabel.hidden = YES;
+    [header setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
+    [header setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
+    haveSaveCollection.mj_header = header;
+    MJRefreshAutoGifFooter * footer = [MJRefreshAutoGifFooter footerWithRefreshingBlock:^{
+        // 模拟延迟加载数据，因此2秒后才调用（真实开发中，可以移除这段gcd代码）
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            page += 1;
+            [weakSelf reloadData];
+            
+        });
+    }];
+    footer.stateLabel.hidden =YES;
+    footer.refreshingTitleHidden = YES;
+    [footer setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
+    [footer setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
+    haveSaveCollection.mj_footer = footer;
 }
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
@@ -285,7 +321,7 @@
     //边距占5*4=20 ，2个
     //图片为正方形，边长：(fDeviceWidth-20)/2-5-5 所以总高(fDeviceWidth-20)/2-5-5 +20+30+5+5 label高20 btn高30 边
     
-    return CGSizeMake(SCREEN_WIDTH / 2 - 6, 266);
+    return CGSizeMake(SCREEN_WIDTH / 2-6 , 266);//-6
 }
 //定义每个UICollectionView 的间距
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section

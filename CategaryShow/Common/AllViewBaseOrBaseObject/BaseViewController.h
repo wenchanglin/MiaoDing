@@ -41,7 +41,7 @@
 - (CGFloat) calculateTextHeight:(UIFont *)font givenText:(NSString *)text givenWidth:(CGFloat)width;
 - (Boolean)checkCOmpanyRenZhengOrNot:(NSString *)string;
 
-
+-(UIImage *)imageWithColor:(UIColor *)color;
 + (NSString*) getFriendlyDateString : (long long) lngDate;
 -(UIImage *) imageCompressForWidth:(UIImage *)sourceImage targetWidth:(CGFloat)defineWidth;
 -(void)settabTitle :(NSString *)title;
@@ -62,5 +62,5 @@
 -(void)showJiaZaiAlert;
 
 -(void)alertViewShowOfTime :(NSString *)message time:(NSInteger )time;
-
+- (NSString*)deviceVersion;
 @end

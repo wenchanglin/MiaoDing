@@ -24,6 +24,7 @@
 #import "RDVTabBarController.h"
 #import "RDVTabBarItem.h"
 #import <objc/runtime.h>
+#define IsiPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
 
 @interface UIViewController (RDVTabBarControllerItemInternal)
 
@@ -201,9 +202,9 @@
         CGFloat tabBarStartingY = viewSize.height;
         CGFloat contentViewHeight = viewSize.height;
         CGFloat tabBarHeight = CGRectGetHeight([[weakSelf tabBar] frame]);
-        
+#warning rdvtabbar高度设置
         if (!tabBarHeight) {
-            tabBarHeight = 49;
+            tabBarHeight =IsiPhoneX?83:49;
         }
         
         if (!hidden) {
@@ -214,7 +215,7 @@
             [[weakSelf tabBar] setHidden:NO];
         }
         
-        [[weakSelf tabBar] setFrame:CGRectMake(0, tabBarStartingY, viewSize.width, tabBarHeight)];
+        [[weakSelf tabBar] setFrame:CGRectMake(0,tabBarStartingY, viewSize.width, tabBarHeight)];
         [[weakSelf contentView] setFrame:CGRectMake(0, 0, viewSize.width, contentViewHeight)];
     };
     

@@ -19,8 +19,9 @@
 
 @interface payForView : UIView<UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, retain) NSString *price;
-@property (nonatomic, assign) id <payForViewDelegate> delegate;
-
+@property (nonatomic, weak) id <payForViewDelegate> delegate;
+@property(nonatomic,strong)    UILabel *priceLable;
+@property(nonatomic,strong)UILabel * hejiLabel;
 -(void)reloadView;
 
 @end

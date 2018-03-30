@@ -50,7 +50,7 @@
     if (self.navigationItem != nil){
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];
     }
-    UIImageView * mView=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 49)];//这是整个tabbar的颜色
+    UIImageView * mView=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, IsiPhoneX?83:49)];//这是整个tabbar的颜色
     [mView setImage:[UIImage imageNamed:@"tabBackImage"]];
     [self.tabBar insertSubview:mView atIndex:1];
     
@@ -185,22 +185,22 @@
     RDVTabBarItem *aTabBarItem = [self.tabBar.items objectAtIndex:0];
     // Set Title
     aTabBarItem.title = @"首页";;
-    [aTabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"home"] withFinishedUnselectedImage:[UIImage imageNamed:@"home-hui"]];
+    [aTabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"首页选中"] withFinishedUnselectedImage:[UIImage imageNamed:@"首页"]];
     
     RDVTabBarItem *bTabBarItem = [self.tabBar.items objectAtIndex:1];
     // Set Title
     bTabBarItem.title = @"定制";;
-    [bTabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"youpin"] withFinishedUnselectedImage:[UIImage imageNamed:@"youpin-hui"]];
+    [bTabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"定制选中"] withFinishedUnselectedImage:[UIImage imageNamed:@"定制"]];
     
     RDVTabBarItem *cTabBarItem = [self.tabBar.items objectAtIndex:2];
     // Set Title
     cTabBarItem.title = @"腔调";;
-    [cTabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"jiangxin"] withFinishedUnselectedImage:[UIImage imageNamed:@"jiangxin-hui"]];
+    [cTabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"腔调选中"] withFinishedUnselectedImage:[UIImage imageNamed:@"腔调"]];
     
     RDVTabBarItem *dTabBarItem = [self.tabBar.items objectAtIndex:3];
     // Set Title
     dTabBarItem.title = @"我的";;
-    [dTabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"wode"] withFinishedUnselectedImage:[UIImage imageNamed:@"wode-hui"]];
+    [dTabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"我的选中"] withFinishedUnselectedImage:[UIImage imageNamed:@"我的"]];
     
     [aTabBarItem setSelectedTitleAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], UITextAttributeTextColor,nil]];
     

@@ -102,7 +102,10 @@
     
 }
 
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.view setBackgroundColor:[UIColor whiteColor]];
@@ -118,9 +121,6 @@
     goodParams = [NSMutableDictionary dictionary];
     getData = [BaseDomain getInstance:NO];
     [self createGetData];
-    
-   
-    // Do any additional setup after loading the view.
 }
 
 -(void)realToOrder
@@ -210,7 +210,7 @@
     [flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
     flowLayout.minimumLineSpacing = 0;
     //        flowLayout.headerReferenceSize = CGSizeMake(self.frame.size.width, 0);//头部
-    colthesCollect = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 49) collectionViewLayout:flowLayout];
+    colthesCollect = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-70:SCREEN_HEIGHT - 49) collectionViewLayout:flowLayout];
     
     
     if (@available(iOS 11.0, *)) {
@@ -360,7 +360,7 @@
 
 -(void)createScroller
 {
-    scrollerDetail = [[UIScrollView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT - 50)];
+    scrollerDetail = [[UIScrollView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-70:SCREEN_HEIGHT - 50)];
     [self.view addSubview:scrollerDetail];
     scrollerDetail.delegate = self;
     if (@available(iOS 11.0, *)) {
@@ -403,7 +403,7 @@
 
 -(void)createLowView
 {
-    lowView = [[UIImageView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - 50, SCREEN_WIDTH, 50)];
+    lowView = [[UIImageView alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-70:SCREEN_HEIGHT - 50, SCREEN_WIDTH,IsiPhoneX?70:50)];
     [lowView setImage:[UIImage imageNamed:@"tabBackImage"]];
     [lowView setBackgroundColor:[UIColor whiteColor]];
     [lowView setUserInteractionEnabled:YES];
@@ -419,10 +419,10 @@
     buttonLike = [[UIButton alloc] initWithFrame:CGRectMake(67, 15, 25, 25)];
     [buttonLike addTarget:self action:@selector(saveClothesClick) forControlEvents:UIControlEventTouchUpInside];
     if([dataDictionary integerForKey:@"is_collect"] == 1) {
-        [buttonLike setImage:[UIImage imageNamed:@"fullHeart"] forState:UIControlStateNormal];
+        [buttonLike setImage:[UIImage imageNamed:@"收藏选中"] forState:UIControlStateNormal];
         
     } else {
-        [buttonLike setImage:[UIImage imageNamed:@"Empty"] forState:UIControlStateNormal];
+        [buttonLike setImage:[UIImage imageNamed:@"收藏"] forState:UIControlStateNormal];
         
     }
     
@@ -438,7 +438,7 @@
     
     UIButton *TKButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - (113*2) , 0, 113*2, 50)];
     [TKButton setBackgroundColor:getUIColor(Color_DZClolor)];
-    [TKButton setTitle:@"购买同款" forState:UIControlStateNormal];
+    [TKButton setTitle:@"购买" forState:UIControlStateNormal];
     [TKButton setTitleColor:getUIColor(Color_shadow) forState:UIControlStateNormal];
     [TKButton addTarget:self action:@selector(ClickToBuyTK) forControlEvents:UIControlEventTouchUpInside];
     [TKButton.titleLabel setFont:[UIFont systemFontOfSize:14]];
@@ -447,7 +447,7 @@
 //    [lowView setAlpha:0];
     
     
-    UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(0, 20, 45, 45)];
+    UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?HitoSafeAreaHeight:20, 45, 45)];
     
     [buttonBack.layer setCornerRadius:33 / 2];
     [buttonBack.layer setMasksToBounds:YES];
@@ -458,7 +458,7 @@
     [self.view bringSubviewToFront:buttonBack];
     
     
-    UIButton *rightShare = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 45, 20, 45, 45)];
+    UIButton *rightShare = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 45, IsiPhoneX?HitoSafeAreaHeight:20, 45, 45)];
     [rightShare.layer setCornerRadius:33 / 2];
     [rightShare.layer setMasksToBounds:YES];
     [rightShare setImage:[UIImage imageNamed:@"shareRight"] forState:UIControlStateNormal];
@@ -538,12 +538,12 @@
         
         if (domain.result == 1) {
             
-            [buttonLike setImage:[UIImage imageNamed:@"fullHeart"] forState:UIControlStateNormal];
+            [buttonLike setImage:[UIImage imageNamed:@"收藏选中"] forState:UIControlStateNormal];
         } else if (domain.result == 10001) {
             [self getDateBeginHaveReturn:datBegin fatherView:@"收藏"];
         } else {
             
-            [buttonLike setImage:[UIImage imageNamed:@"Empty"] forState:UIControlStateNormal];
+            [buttonLike setImage:[UIImage imageNamed:@"收藏"] forState:UIControlStateNormal];
         }
         
         

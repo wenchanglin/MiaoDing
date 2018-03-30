@@ -53,6 +53,7 @@
         if ([self checkHttpResponseResultStatus:getData]) {
             designerDic = [NSMutableDictionary dictionaryWithDictionary:[getData.dataRoot dictionaryForKey:@"data"]];
             for (NSDictionary *dic in [designerDic arrayForKey:@"goods_list"]) {
+                WCLLog(@"%@",dic);
                 DesignerGoodsListModel *model = [DesignerGoodsListModel mj_objectWithKeyValues:dic];
                 [modelArray addObject:model];
             }
@@ -64,7 +65,7 @@
 
 -(void)createDeisgner
 {
-    desinger = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStylePlain];
+    desinger = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-88:SCREEN_HEIGHT - 64) style:UITableViewStylePlain];
     
     desinger.delegate = self;
     desinger.dataSource = self;
@@ -120,7 +121,17 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 331;
+    DesignerGoodsListModel *model = modelArray[indexPath.row];
+//    WCLLog(@"%@--%@",model.name,model.img_info);
+    CGFloat realHeight;
+    if ([model.img_info isEqualToString:@""]||model.img_info==nil) {
+        realHeight = 0.0001;
+    }
+    else
+    {
+     realHeight = (SCREEN_WIDTH-24) /[model.img_info floatValue];
+    }
+    return realHeight+113.3;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -155,11 +166,13 @@
 //                        WCLLog(@"%@",domain.dataRoot);
                         if ([[domain.dataRoot objectForKey:@"code"]integerValue]==1) {
                             [weakCell.shouChangBtn setImage:[UIImage imageNamed:@"收藏选中"] forState:UIControlStateNormal];
+                            model.is_collect = 1;
                             
                         }
                         else if ([[domain.dataRoot objectForKey:@"code"]integerValue]==2)
                         {
                             [weakCell.shouChangBtn setImage:[UIImage imageNamed:@"收藏"] forState:UIControlStateNormal];
+                            model.is_collect =0;
                         }
                     }
                 }];
@@ -175,11 +188,15 @@
                         if ([[domain.dataRoot objectForKey:@"data"]integerValue]==1) {
                             [weakCell.loveBtn setImage:[UIImage imageNamed:@"喜欢选中"] forState:UIControlStateNormal];
                             [weakCell.loveBtn setTitle:[NSString stringWithFormat:@"%@",[domain.dataRoot objectForKey:@"lovenum"]] forState:UIControlStateNormal];
+                            model.is_love = 1;
+                            model.love_num = model.love_num+1;
                         }
                         else if ([[domain.dataRoot objectForKey:@"data"]integerValue]==2)
                         {
                             [weakCell.loveBtn setImage:[UIImage imageNamed:@"喜欢"] forState:UIControlStateNormal];
                             [weakCell.loveBtn setTitle:[NSString stringWithFormat:@"%@",[domain.dataRoot objectForKey:@"lovenum"]] forState:UIControlStateNormal];
+                            model.is_love = 0;
+                            model.love_num = model.love_num-1;
                         }
                     }
                     

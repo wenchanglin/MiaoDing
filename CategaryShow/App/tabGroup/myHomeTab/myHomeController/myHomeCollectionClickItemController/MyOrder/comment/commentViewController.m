@@ -35,9 +35,8 @@
     selectedAssets = [NSMutableArray array];
     photoArrayM  = [NSMutableArray arrayWithObjects:[UIImage imageNamed:@"addPicture"], nil];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    self.title = @"发表评价";
+    [self settabTitle:@"发表评价"];
     [self createView];
-    // Do any additional setup after loading the view.
 }
 
 -(void)createView

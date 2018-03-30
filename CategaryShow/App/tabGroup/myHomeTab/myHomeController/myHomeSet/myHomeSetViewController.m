@@ -39,7 +39,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self settabTitle:@"设置"];
-    
+    if (@available(iOS 11.0, *)) {
+        setTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    }
+    else{
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     postData = [BaseDomain getInstance:NO];
     getData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
@@ -48,17 +53,15 @@
     [self createTable];
     [self createNickName];
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 
 -(void)createTable
 {
-    if (@available(iOS 11.0, *)) {
-        setTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-    }
-    else{
-        self.automaticallyAdjustsScrollViewInsets = NO;
-    }
-    setTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+   
+    setTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-88-74:SCREEN_HEIGHT - 64-49) style:UITableViewStyleGrouped];
     [setTable setSeparatorColor :[UIColor colorWithHexString:@"#EDEDED"]];
     setTable.dataSource = self;
     setTable.delegate = self;
@@ -68,7 +71,7 @@
     
     
     
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-64- 49, SCREEN_WIDTH, 49)];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-88-74:SCREEN_HEIGHT-64- 49, SCREEN_WIDTH, 49)];
     [button setTitle:@"退出登录" forState:UIControlStateNormal];
     [button setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:UIControlStateNormal];
     [button.titleLabel setFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14]];
@@ -151,7 +154,13 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         if (indexPath.row == 0) {
             HomeSetForHeadImageTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"setImage" forIndexPath:indexPath];
             [cell.titleLabel setText:[[arrayTitle objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]];
+            if ([[SelfPersonInfo getInstance].personImageUrl hasPrefix:@"http"]) {
+                 [cell.headImage sd_setImageWithURL:[NSURL URLWithString:[SelfPersonInfo getInstance].personImageUrl] placeholderImage:[UIImage imageNamed:@"headImage"]];
+            }
+            else
+            {
             [cell.headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]] placeholderImage:[UIImage imageNamed:@"headImage"]];
+            }
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];

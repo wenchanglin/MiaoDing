@@ -20,14 +20,13 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"帮助详情";
+    [self settabTitle:@"帮助详情"];
     getData = [BaseDomain getInstance:NO];
     UIView *HeadView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 64)];
     [HeadView setBackgroundColor:[UIColor whiteColor]];
     [self.view addSubview:HeadView];
     [self.view setBackgroundColor:getUIColor(Color_background)];
     [self getDatas];
-    // Do any additional setup after loading the view.
 }
 
 -(void)getDatas

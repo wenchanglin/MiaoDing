@@ -16,113 +16,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CategaryShow/&#x5b9a;&#x5236;/VC/changeDiyFirstViewController.m"
-            timestampString = "542526816.554023"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "183"
-            endingLineNumber = "183"
-            landmarkName = "-getDatas"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__40-[changeDiyFirstViewController getDatas]_block_invoke"
-                  moduleName = "CategaryShow"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/wenchanglin/MiaoDing/CategaryShow/%E5%AE%9A%E5%88%B6/VC/changeDiyFirstViewController.m"
-                  timestampString = "542526816.820019"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "183"
-                  endingLineNumber = "183"
-                  offsetFromSymbolStart = "442">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__40-[changeDiyFirstViewController getDatas]_block_invoke"
-                  moduleName = "CategaryShow"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/wenchanglin/MiaoDing/CategaryShow/%E5%AE%9A%E5%88%B6/VC/changeDiyFirstViewController.m"
-                  timestampString = "542526816.826842"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "183"
-                  endingLineNumber = "183"
-                  offsetFromSymbolStart = "461">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CategaryShow/&#x5b9a;&#x5236;/VC/changeDiyFirstViewController.m"
-            timestampString = "542526854.9437619"
+            filePath = "CategaryShow/&#x9996;&#x9875;/VC/NewMainTabViewController.m"
+            timestampString = "544072047.979841"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "252"
-            endingLineNumber = "252"
-            landmarkName = "-reloadAddData"
+            startingLineNumber = "304"
+            endingLineNumber = "304"
+            landmarkName = "-getDetailData"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CategaryShow/&#x5b9a;&#x5236;/VC/changeDiyFirstViewController.m"
-            timestampString = "542526864.691733"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "278"
-            endingLineNumber = "278"
-            landmarkName = "-reloadData"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__42-[changeDiyFirstViewController reloadData]_block_invoke"
-                  moduleName = "CategaryShow"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/wenchanglin/MiaoDing/CategaryShow/%E5%AE%9A%E5%88%B6/VC/changeDiyFirstViewController.m"
-                  timestampString = "542541382.712898"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "278"
-                  endingLineNumber = "278"
-                  offsetFromSymbolStart = "442">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__42-[changeDiyFirstViewController reloadData]_block_invoke"
-                  moduleName = "CategaryShow"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/wenchanglin/MiaoDing/CategaryShow/%E5%AE%9A%E5%88%B6/VC/changeDiyFirstViewController.m"
-                  timestampString = "542541382.716705"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "278"
-                  endingLineNumber = "278"
-                  offsetFromSymbolStart = "461">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

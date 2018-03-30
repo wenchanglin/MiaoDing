@@ -23,7 +23,6 @@
     
     [self.view setBackgroundColor:[UIColor clearColor]];
     [self createView];
-    // Do any additional setup after loading the view.
 }
 
 -(void)createView
@@ -130,6 +129,11 @@
     if (theTextField.text.length > 0) {
         [done setUserInteractionEnabled:YES];
         [done setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    }
+    else
+    {
+        [done setUserInteractionEnabled:NO];
+        [done setTitleColor:getUIColor(Color_lightGrayLine) forState:UIControlStateNormal];
     }
 }
 

@@ -143,7 +143,10 @@
     }
     
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)createAddressTable
 {
     

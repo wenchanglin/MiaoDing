@@ -37,6 +37,10 @@
         
     }];
 }
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 
 -(void)createScrollerView
 {

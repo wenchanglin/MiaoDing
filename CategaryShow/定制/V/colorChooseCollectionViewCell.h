@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface colorChooseCollectionViewCell : UICollectionViewCell
-
+@property(nonatomic,strong)UIButton * bigImage;
 @property (nonatomic, retain) UIImageView *colorImage;
 @property (nonatomic, retain) UIImageView *colorChoose;
 @property (nonatomic, retain) UILabel *colorName;

@@ -12,6 +12,9 @@
 @property (nonatomic, retain) NSString *thumb;
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSString *sub_name;
+@property(nonatomic,assign) NSInteger ID;
+@property(nonatomic,strong)NSString * img_info;
+@property(nonatomic,strong)NSString * img_new;
 @property(nonatomic,strong)NSString * price;
 @property(nonatomic,strong)NSNumber * type;
 @end

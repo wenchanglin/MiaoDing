@@ -39,7 +39,6 @@
     NSArray *array4 = [NSArray arrayWithObjects:@"kefu", @"zaixian", nil];
     titleImgArray = [NSMutableArray arrayWithObjects:array3,array4, nil];
     [self getDatas];
-    // Do any additional setup after loading the view.
 }
 
 -(void)getDatas
@@ -55,7 +54,10 @@
         }
     }];
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)createSuggestView
 {
     suggestTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];

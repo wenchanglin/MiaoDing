@@ -27,13 +27,13 @@
     UIView *bgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_HEIGHT, 64)];
     [self.view addSubview:bgView];
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 - 100, 10, 200, 64)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 - 100, 15, 200, 64)];
     [label setText:@"用户协议"];
     [label setTextAlignment:NSTextAlignmentCenter];
     [label setFont:[UIFont boldSystemFontOfSize:16]];
     [bgView addSubview:label];
     
-    UIButton *buttonClose = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 50, 20, 40, 40)];
+    UIButton *buttonClose = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 50,25, 40, 40)];
     [buttonClose addTarget:self action:@selector(closeView) forControlEvents:UIControlEventTouchUpInside];
     [buttonClose setImage:[UIImage imageNamed:@"X"] forState:UIControlStateNormal];
     [bgView addSubview:buttonClose];
@@ -48,6 +48,7 @@
 -(void)creatData
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [params setObject:@"1" forKey:@"page"];
     [getData getData:URL_GETPEIZHI PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:getData]) {
             reageString = [[getData.dataRoot objectForKey:@"data"] stringForKey:@"user_manual"];

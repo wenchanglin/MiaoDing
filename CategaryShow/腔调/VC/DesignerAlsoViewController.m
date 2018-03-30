@@ -144,7 +144,10 @@
     }
     return mainTableView;
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 #pragma marl -tableDelegate
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
@@ -156,7 +159,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    return Main_Screen_Height - 64;
+    return IsiPhoneX?Main_Screen_Height-88:Main_Screen_Height - 64;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -183,14 +186,13 @@
         
         //        SecondViewTableViewController * Second=[[SecondViewTableViewController alloc]init];
         
-        DesignerCardViewController * Third=[[DesignerCardViewController alloc]init];
+        //DesignerCardViewController * Third=[[DesignerCardViewController alloc]init];
         
         NSArray *controllers=@[First];//,Third];
         
         NSArray *titleArray =@[@"腔调"];//,@"设计师"];
         
-        MySegMentViewNew * rcs=[[MySegMentViewNew alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, Main_Screen_Height) controllers:controllers titleArray:titleArray ParentController:self lineWidth:25 lineHeight:2.0 butHeight:30 viewHeight:64 showLine:NO];
-        
+        MySegMentViewNew * rcs=[[MySegMentViewNew alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, Main_Screen_Height) controllers:controllers titleArray:titleArray ParentController:self lineWidth:25 lineHeight:2.0 butHeight:30 viewHeight:IsiPhoneX?88:64 showLine:NO];
         _RCSegView = rcs;
     }
     return _RCSegView;

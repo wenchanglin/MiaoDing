@@ -53,16 +53,19 @@
     [buttonLeft addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *buttonRight = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-    [buttonRight setImage:[UIImage imageNamed:@"shareRight"] forState:UIControlStateNormal];
+    [buttonRight setImage:[UIImage imageNamed:@"share_white"] forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRight];
     [buttonRight addTarget:self action:@selector(shareClick) forControlEvents:UIControlEventTouchUpInside];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loginSuccessAction) name:@"loginSuccess" object:nil];
     
-    [self.view setBackgroundColor:[UIColor whiteColor]];
+    [self.view setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
     [self createScrollerView];
 }
-
-
+    
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 - (void)back:(UIBarButtonItem *)btn
 {
     if ([web canGoBack]) {
@@ -106,7 +109,7 @@
     
     web = [[UIWebView alloc] initWithFrame:CGRectMake(0, NavHeight, self.view.frame.size.width, self.view.frame.size.height - 64)];
     [self.view addSubview:web];
-    
+    web.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
     web.scrollView.scrollsToTop = YES;
     
     UIScrollView *tempView = (UIScrollView *)[web.subviews objectAtIndex:0];

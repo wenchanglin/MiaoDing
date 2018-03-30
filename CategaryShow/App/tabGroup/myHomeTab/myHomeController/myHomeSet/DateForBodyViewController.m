@@ -33,7 +33,10 @@
     [self createDates];
     // Do any additional setup after loading the view.
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)createDates
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];

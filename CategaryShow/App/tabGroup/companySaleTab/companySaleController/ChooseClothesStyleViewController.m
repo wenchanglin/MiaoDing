@@ -123,7 +123,7 @@
     [buttonRightBarButton setHidden:YES];
     
     
-    resetButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 60, SCREEN_HEIGHT -64-175, 40, 40)];
+    resetButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 60,IsiPhoneX?SCREEN_HEIGHT-164-104:SCREEN_HEIGHT -64-175, 40, 40)];
     [resetButton setImage:[UIImage imageNamed:@"resetButton"] forState:UIControlStateNormal];;
     [resetButton setHidden:YES];
     [self.view addSubview:resetButton];
@@ -140,7 +140,10 @@
 
     [self getDatas];
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     
     self.touchTimer = [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(addLoop) userInfo:nil repeats:NO];
@@ -215,7 +218,7 @@
         if (flogTouch == 1) {
             flogXiuxi = NO;
             
-            self.title = [LowImageArray[0] stringForKey:@"spec_name"];
+            [self settabTitle:[LowImageArray[0] stringForKey:@"spec_name"]];
             if ([[[LowImageArray objectAtIndex:0] stringForKey:@"position_id"] isEqualToString:@"1"]) {
                 [buttonFront setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
                 [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
@@ -301,10 +304,10 @@
             rightPicArray = [NSMutableArray arrayWithArray:array];
             
             if (60 * [rightPicArray count] > SCREEN_WIDTH) {
-                [rightCollection setFrame:CGRectMake(10, SCREEN_HEIGHT - 64 - 65 - 5, SCREEN_WIDTH, 65)];
+                [rightCollection setFrame:CGRectMake(10, IsiPhoneX?SCREEN_HEIGHT-64-84-80: SCREEN_HEIGHT - 120 -85, SCREEN_WIDTH, 65)];
             } else {
                 
-                [rightCollection setFrame:CGRectMake(SCREEN_WIDTH / 2 - (60 * [rightPicArray count] / 2), SCREEN_HEIGHT - 64 - 65 - 5, 60 * [rightPicArray count], 65)];
+                [rightCollection setFrame:CGRectMake(SCREEN_WIDTH / 2 - (60 * [rightPicArray count] / 2), IsiPhoneX?SCREEN_HEIGHT-64-84-80: SCREEN_HEIGHT - 120-85, 60 * [rightPicArray count], 65)];
             }
             
             [rightCollection reloadData];
@@ -478,7 +481,7 @@
         result.ifTK = NO;
 //        result.defaultImg = _defaultImg;
         result.diyArray = _diyArray;
-    //    result.diyDetailArray = diydetailArray;
+        result.diyDetailArray = _diydetailArray;
     [self.navigationController pushViewController:result animated:YES];
     
     //    [self.navigationController pushViewController:result animated:YES];
@@ -568,7 +571,7 @@
         [image setContentMode:UIViewContentModeScaleAspectFill];
         [image.layer setMasksToBounds:YES];
         [image sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [[[LowImageArray[i] arrayForKey:@"list"] firstObject] stringForKey:@"img_c"]]]];
-        image.center = CGPointMake(self.view.centerX, self.view.centerY - 20-64);
+        image.center = CGPointMake(self.view.centerX, IsiPhoneX?self.view.centerY-104:self.view.centerY - 20-84);
         
         
         [self.view addSubview:image];
@@ -741,7 +744,7 @@
     [self.view addSubview:lowCollection];
     if (60 * [LowImageArray count] >SCREEN_WIDTH) {
         lowCollection.sd_layout
-        .bottomEqualToView(self.view)
+        .bottomSpaceToView(self.view, 20)
         .heightIs(65)
         .widthIs(SCREEN_WIDTH)
         .centerXEqualToView(self.view);
@@ -752,7 +755,7 @@
     } else {
         
         lowCollection.sd_layout
-        .bottomEqualToView(self.view)
+        .bottomSpaceToView(self.view, 20)
         .heightIs(65)
         .widthIs(60 *[LowImageArray count])
         .centerXEqualToView(self.view);
@@ -1121,7 +1124,7 @@
     if (collectionView == lowCollection) {
         flogXiuxi = NO;
        
-        self.title = [LowImageArray[indexPath.item] stringForKey:@"spec_name"];
+        [self settabTitle:[LowImageArray[indexPath.item] stringForKey:@"spec_name"]];
         if ([[[LowImageArray objectAtIndex:indexPath.item] stringForKey:@"position_id"] isEqualToString:@"1"]) {
             [buttonFront setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
@@ -1211,10 +1214,10 @@
         rightPicArray = [NSMutableArray arrayWithArray:array];
         
         if (60 * [rightPicArray count] > SCREEN_WIDTH) {
-             [rightCollection setFrame:CGRectMake(10, SCREEN_HEIGHT - 64 - 65-55 - 5, SCREEN_WIDTH, 65)];
+            [rightCollection setFrame:CGRectMake(10,IsiPhoneX?SCREEN_HEIGHT-64-94-80: SCREEN_HEIGHT - 120-95, SCREEN_WIDTH, 65)];
         } else {
             
-            [rightCollection setFrame:CGRectMake(SCREEN_WIDTH / 2 - (60 * [rightPicArray count] / 2), SCREEN_HEIGHT - 64 - 65-55-5, 60 * [rightPicArray count], 65)];
+            [rightCollection setFrame:CGRectMake(SCREEN_WIDTH / 2 - (60 * [rightPicArray count] / 2), IsiPhoneX?SCREEN_HEIGHT-64-94-80: SCREEN_HEIGHT - 120-95, 60 * [rightPicArray count], 65)];
             
         }
         

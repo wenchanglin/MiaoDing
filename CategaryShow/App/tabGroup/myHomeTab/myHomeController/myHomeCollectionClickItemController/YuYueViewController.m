@@ -31,6 +31,11 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self.navigationController setNavigationBarHidden:NO animated:animated];
 }
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    self.mapView.showsUserLocation =NO;
+    self.mapView.delegate = nil;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -58,9 +63,11 @@
     
     
    
-    // Do any additional setup after loading the view.
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 - (void)configLocationManager
 {
     self.locationManager = [[AMapLocationManager alloc] init];
@@ -131,7 +138,7 @@
         
     }
     
-    AddressText = [[UITextField alloc] initWithFrame:CGRectMake(20, NavHeight+31, self.view.frame.size.width - 40, 50)];
+    AddressText = [[UITextField alloc] initWithFrame:CGRectMake(20, NavHeight+51, self.view.frame.size.width - 40, 50)];
     [AddressText.layer setCornerRadius:5];
     [AddressText.layer setMasksToBounds:YES];
     [AddressText.layer setBorderWidth:1];
@@ -148,7 +155,7 @@
     [self.view addSubview:image];
     
     
-    UIButton *BtnYuYue = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 / 2, self.view.frame.size.height -60-100, self.view.frame.size.width / 2, 40)];
+    UIButton *BtnYuYue = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 / 2,IsiPhoneX?self.view.frame.size.height-64-84: self.view.frame.size.height -64-50, self.view.frame.size.width / 2, 40)];
     [BtnYuYue setBackgroundColor:[UIColor blackColor]];
     [BtnYuYue.layer setCornerRadius:1];
     [BtnYuYue.layer setMasksToBounds:YES];
@@ -178,9 +185,10 @@
 -(void)getYuYueData
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    
     [getData getData:URL_YuYueData PostParams:params finish:^(BaseDomain *domain, Boolean success) {
        
-        if ([self checkHttpResponseResultStatus:getData]) {
+        if ([self checkHttpResponseResultStatus:domain]) {
             yuYueStatus = [[getData.dataRoot dictionaryForKey:@"data"] integerForKey:@"status"];
             time = [[getData.dataRoot dictionaryForKey:@"data"] stringForKey:@"sm_time"];
             [self createHadYuYueView];
@@ -194,7 +202,7 @@
     UIButton *imagev = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 - 75 / 2, self.view.frame.size.height / 2 - 100, 75, 75)];
     [imagev setImage:[UIImage imageNamed:@"yuyuesuccess"] forState:UIControlStateNormal];
     [self.view addSubview:imagev];
-    [imagev addTarget:self action:@selector(FiveClick) forControlEvents:UIControlEventTouchUpInside];
+   // [imagev addTarget:self action:@selector(FiveClick) forControlEvents:UIControlEventTouchUpInside];
     
     
     
@@ -212,9 +220,23 @@
         case 2:
             [success setText:@"当前状态：预约成功，等待客服受理"];
             break;
-            
-        default:
+        case 3:
+        case 4:
+        {
+            if([time intValue]==0)
+            {
+                success.text = @"当前状态：派单成功，等待上门量体";
+            }
+            else
+            {
             [success setText:[NSString stringWithFormat:@"当前状态：派单成功，等待上门量体\n上门时间：%@",[self dateToString:time]]];
+            }
+        }
+            break;
+        case -1:
+            success.text = @"当前状态：已取消";
+            break;
+        default:
             break;
     }
     
@@ -232,14 +254,14 @@
     successButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 - 70, SCREEN_HEIGHT - 100, 140, 35)];
     [successButton setBackgroundColor:getUIColor(Color_buyColor)];
     [successButton setTitle:@"拍照量体" forState:UIControlStateNormal];
-    [successButton addTarget:self action:@selector(cameraClick) forControlEvents:UIControlEventTouchUpInside];
+   // [successButton addTarget:self action:@selector(cameraClick) forControlEvents:UIControlEventTouchUpInside];
     [successButton.layer setCornerRadius:1];
     
     [successButton.layer setMasksToBounds:YES];
     [successButton setAlpha:0];
     [successButton.titleLabel setFont:[UIFont systemFontOfSize:14]];
     [self.view addSubview:successButton];
-    self.title = @"预约结果";
+    [self settabTitle:@"预约结果"];
 }
 
 -(NSString *)dateToString:(NSString *)dateString
@@ -271,37 +293,20 @@
 }
 
 
--(void)cameraClick {
-    
-    if ([[[self deviceVersion] substringWithRange:NSMakeRange(0,1)] integerValue] > 5 ) {
-        putInUserInfoViewController *put = [[putInUserInfoViewController alloc] init];
-        [self.navigationController pushViewController:put animated:YES];
-    } else {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您的机型暂时不支持该拍照功能" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-        [alertView show];
-    }
-    
-}
+//-(void)cameraClick {
+//
+//    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+//        putInUserInfoViewController *put = [[putInUserInfoViewController alloc] init];
+//        [self.navigationController pushViewController:put animated:YES];
+//    } else {
+//        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您的机型暂时不支持该拍照功能" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+//        [alertView show];
+//    }
+//
+//}
+//
 
 
-- (NSString*)deviceVersion
-{
-    // 需要#import "sys/utsname.h"
-    struct utsname systemInfo;
-    uname(&systemInfo);
-    NSString * deviceString = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
-    //iPhone
-    
-    if ([deviceString isEqualToString:@"iPhone6,1"])    return @"5S";
-    if ([deviceString isEqualToString:@"iPhone6,2"])    return @"5S";
-    if ([deviceString isEqualToString:@"iPhone7,1"])    return @"6P";
-    if ([deviceString isEqualToString:@"iPhone7,2"])    return @"6";
-    if ([deviceString isEqualToString:@"iPhone8,1"])    return @"6S";
-    if ([deviceString isEqualToString:@"iPhone8,2"])    return @"6SP";
-    if ([deviceString isEqualToString:@"iPhone9,1"])    return @"7";
-    if ([deviceString isEqualToString:@"iPhone9,2"])    return @"7P";
-    return deviceString;
-}
 
 
 - (void)mapView:(MAMapView *)mapView regionDidChangeAnimated:(BOOL)animated {

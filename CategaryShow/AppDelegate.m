@@ -100,7 +100,7 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
 
 
 - (void) checkServerDataThread {
-   
+    
 }
 
 -(void)searchDetailsData
@@ -118,8 +118,8 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     self.threadIsPause = NO;
     self.Noti = NO;
     self.threadIsRun = YES;
-//    self.threadRefreshData = [[NSThread alloc] initWithTarget:self selector:@selector(checkServerDataThread) object:nil];
-//    [self.threadRefreshData start];
+    //    self.threadRefreshData = [[NSThread alloc] initWithTarget:self selector:@selector(checkServerDataThread) object:nil];
+    //    [self.threadRefreshData start];
     appDelegate = self;
     NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024 diskCapacity:20 * 1024 * 1024 diskPath:nil];
     [NSURLCache setSharedURLCache:URLCache];
@@ -141,8 +141,8 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     keyboardManager.enableAutoToolbar = NO; // 控制是否显示键盘上的工具条
     
     keyboardManager.shouldShowToolbarPlaceholder = YES; // 是否显示占位文字
-
-    //[self checkAppUpdate];
+    
+    [self checkAppUpdate];
     
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"everLaunched"]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"everLaunched"];
@@ -152,19 +152,19 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"firstLaunch"];
     }
     
-//    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]) {
-//        // 这里判断是否第一次
-//        hDisplayView *hvc = [[hDisplayView alloc]initWithFrame:CGRectMake(0, 0, MainScreen_width, MainScreen_height)];
-//        [self.window.rootViewController.view addSubview:hvc];
-//        [UIView animateWithDuration:0.25 animations:^{
-//            hvc.frame = CGRectMake(0, 0, MainScreen_width, MainScreen_height);
-//        }];
-//    }
+    //    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]) {
+    //        // 这里判断是否第一次
+    //        hDisplayView *hvc = [[hDisplayView alloc]initWithFrame:CGRectMake(0, 0, MainScreen_width, MainScreen_height)];
+    //        [self.window.rootViewController.view addSubview:hvc];
+    //        [UIView animateWithDuration:0.25 animations:^{
+    //            hvc.frame = CGRectMake(0, 0, MainScreen_width, MainScreen_height);
+    //        }];
+    //    }
     
     
     [self configureAPIKey];
     [self registerShareSdk];
-
+    
     [GeTuiSdk startSdkWithAppId:kGtAppId appKey:kGtAppKey appSecret:kGtAppSecret delegate:self];
     // 注册 APNs
     [self registerRemoteNotification];
@@ -172,7 +172,6 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     [[QYSDK sharedSDK] registerAppId:@"e98a79aca99f25ebf9bacbc8c334b76b"
                              appName:@"云工场"];
     [WXApi registerApp:@"wx07c2173e7686741e" withDescription:@"demo 2.0"];
-    
     getDataIcon = [BaseDomain getInstance:NO];
     NSMutableDictionary *parmas = [NSMutableDictionary dictionary];
     [parmas setObject:@"2" forKey:@"type"];
@@ -194,7 +193,7 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
         }
         NSError *error;
         NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
-       // NSLog(@"jsonDic%@",jsonDict);
+        // NSLog(@"jsonDic%@",jsonDict);
         jsonDict = [jsonDict[@"results"] firstObject];
         
         if (!error && jsonDict) {
@@ -267,10 +266,10 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
 {
     [ShareSDK registerApp:@"188b0b9b49186"
           activePlatforms:@[
-                
                             @(SSDKPlatformSubTypeWechatSession),
                             @(SSDKPlatformSubTypeWechatTimeline),
                             @(SSDKPlatformSubTypeQQFriend),
+                            @(SSDKPlatformTypeSinaWeibo)
                             ]
                  onImport:^(SSDKPlatformType platformType) {
                      
@@ -284,7 +283,9 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
                              [ShareSDKConnector connectQQ:[QQApiInterface class]
                                         tencentOAuthClass:[TencentOAuth class]];
                              break;
-                         
+                         case SSDKPlatformTypeSinaWeibo:
+                             [ShareSDKConnector connectWeibo:[WeiboSDK class]];
+                             break;  
                          default:
                              break;
                      }
@@ -293,38 +294,28 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
               
               switch (platformType)
               {
-                  
-                 
+                      
+                      
                   case SSDKPlatformTypeWechat:
                       [appInfo SSDKSetupWeChatByAppId:@"wx07c2173e7686741e"
-                                            appSecret:@"bb8ae0571dd28e0ea9623b1c9e9424fd"];
+                                            appSecret:@"c8eed9d6aeb3672d623aa9475fbb013e"];
                       break;
                   case SSDKPlatformTypeQQ:
-                      [appInfo SSDKSetupQQByAppId:@"1105803355"
+                      [appInfo SSDKSetupQQByAppId:@"1105803355"//
                                            appKey:@"gAccBmTUz0l6yNti"
                                          authType:SSDKAuthTypeBoth];
                       break;
-                  
+                    case SSDKPlatformTypeSinaWeibo:
+                      [appInfo SSDKSetupSinaWeiboByAppKey:@"476026790" appSecret:@"2cfaca499726dbff5202dca18b7787b5" redirectUri:@"http://www.sharesdk.cn" authType:SSDKAuthTypeBoth];
+                      break;
                   default:
                       break;
               }
           }];
-
+    
     
     
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 -(void)systemShake
 {
@@ -413,7 +404,7 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     
     // 向个推服务器注册deviceToken
     [GeTuiSdk registerDeviceToken:token];
-
+    
     [[QYSDK sharedSDK] updateApnsToken:deviceToken];
 }
 
@@ -434,7 +425,7 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:clientId forKey:@"device_id"];
     [params setObject:@"2" forKey:@"type"];
-    
+    [params setObject:@"1" forKey:@""];
     [getData getData:URL_Message PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         
     }];
@@ -462,7 +453,7 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
         [dic setObject:payloadMsg forKey:@"message"];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"GeTui" object:nil userInfo:dic];
     }
-   
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"roadCound" object:nil];
     NSLog(@"\n>>>[GexinSdk ReceivePayload]:%@\n\n", msg);
 }
@@ -476,7 +467,7 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
-
+    
     
     // [4-EXT]:处理APN
     

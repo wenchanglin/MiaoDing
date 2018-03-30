@@ -35,7 +35,10 @@
     [self settabTitle:@"会员俱乐部"];
     [self getDatas];
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)rightClick
 {
     vipRuleViewController *vipRule = [[vipRuleViewController alloc] init];
@@ -47,7 +50,7 @@
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [getData getData:URL_VipGrow PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:domain]) {
-            NSLog(@"%@", domain.dataRoot);
+            //NSLog(@"%@", domain.dataRoot);
             for (NSDictionary *dic in [domain.dataRoot arrayForKey:@"data"]) {
                 VipGrowModel *model = [VipGrowModel new];
                 model.time = [self dateToString:[dic stringForKey:@"c_time"]];

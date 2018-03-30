@@ -26,7 +26,11 @@
     params = [NSMutableDictionary dictionary];
     [self.view setBackgroundColor:getUIColor(Color_background)];
     titleArray = [NSMutableArray arrayWithObjects:[NSArray arrayWithObjects:@"姓   名：", @"手机号：",@"身   高：",@"体   重：", nil],[NSArray arrayWithObjects:@"店铺号：", @"胸   围：",@"腰   围：",@"臀   围：", nil], nil];
-    
+    if (@available(iOS 11.0, *)) {
+        infoTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     
     
     
@@ -43,19 +47,15 @@
 -(void)CreateTableViewForInfo
 {
     infoTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 49)];
-    if (@available(iOS 11.0, *)) {
-        infoTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-    } else {
-        self.automaticallyAdjustsScrollViewInsets = NO;
-    }
+   
     infoTable.dataSource = self;
     infoTable.delegate = self;
     [self.view addSubview:infoTable];
     [infoTable setBackgroundColor:getUIColor(Color_background)];
     [infoTable registerClass:[NewPhotoInfoTableViewCell class] forCellReuseIdentifier:@"infoUser"];
     
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(endEditingAction)];
-    [infoTable addGestureRecognizer:tap];
+//    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(endEditingAction)];
+//    [infoTable addGestureRecognizer:tap];
     
     UIButton *buttonTake = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
     [buttonTake setBackgroundColor:getUIColor(Color_TKClolor)];
@@ -66,10 +66,10 @@
     
 }
 
--(void)endEditingAction
-{
-    [self.view endEditing:YES];
-}
+//-(void)endEditingAction
+//{
+//    [self.view endEditing:YES];
+//}
 
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -209,7 +209,10 @@
     }
     
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)takePhoto{
     
     if ([[params stringForKey:@"height"] length] > 0 && [[params stringForKey:@"weight"] length] > 0 && [[params stringForKey:@"name"] length] > 0 &&[[params stringForKey:@"sh_phone"] length] > 0) {

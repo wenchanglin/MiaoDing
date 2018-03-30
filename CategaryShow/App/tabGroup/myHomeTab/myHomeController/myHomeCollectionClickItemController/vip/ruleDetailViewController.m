@@ -20,7 +20,10 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self createScrollerView];
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)createScrollerView
 {
     

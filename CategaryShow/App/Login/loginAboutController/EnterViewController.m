@@ -18,7 +18,7 @@
 #import "LYButton.h"
 #import "UILabel+YBAttributeTextTapAction.h"
 #import "UserDelegateViewController.h"
-@interface EnterViewController ()<YBAttributeTapActionDelegate>
+@interface EnterViewController ()<YBAttributeTapActionDelegate,UITextFieldDelegate>
 
 @property (retain,nonatomic) BaseDomain *loginDomain;
 
@@ -61,7 +61,8 @@
    
     UIImageView * mainImageView = [UIImageView new];
     mainImageView.userInteractionEnabled = YES;
-    mainImageView.image = [UIImage imageNamed:@"loginBackImg"];
+    mainImageView.contentMode = UIViewContentModeScaleAspectFill;
+    mainImageView.image =[UIImage imageNamed:@"loginBackImg"];
     [self.view addSubview:mainImageView];
     [mainImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
@@ -176,83 +177,83 @@
 
    
 
-//    NSString *label_text2 = @"温馨提示:未注册的手机号将自动注册为妙定用户,且代表已阅读并同意《妙定用户协议》";
-//    NSMutableAttributedString *attributedString2 = [[NSMutableAttributedString alloc]initWithString:label_text2];
-//    [attributedString2 addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:8] range:NSMakeRange(0, label_text2.length)];
-//    [attributedString2 addAttribute:NSForegroundColorAttributeName value:getUIColor(Color_TKClolor) range:NSMakeRange(32, 7)];
-//    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-//    [paragraphStyle setLineSpacing:3];
-//    [attributedString2 addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [label_text2 length])];
+    NSString *label_text2 = @"温馨提示:未注册的手机号将自动注册为妙定用户,且代表已阅读并同意《妙定用户协议》";
+    NSMutableAttributedString *attributedString2 = [[NSMutableAttributedString alloc]initWithString:label_text2];
+    [attributedString2 addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:8] range:NSMakeRange(0, label_text2.length)];
+    [attributedString2 addAttribute:NSForegroundColorAttributeName value:getUIColor(Color_TKClolor) range:NSMakeRange(32, 7)];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setLineSpacing:3];
+    [attributedString2 addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [label_text2 length])];
 //
-//    UILabel *ybLabel2 = [UILabel new];
-//    [self.view addSubview:ybLabel2];
-//    ybLabel2.sd_layout
-//    .leftSpaceToView(self.view, 10)
-//    .rightSpaceToView(self.view, 10)
-//    .bottomSpaceToView(self.view, 10)
-//    .heightIs(15);
-//    [ybLabel2 setTextColor:getUIColor(Color_loginNoUserName)];
-//    [ybLabel2 setFont:[UIFont systemFontOfSize:8]];
-//    ybLabel2.numberOfLines = 2;
-//    [ybLabel2 setText:label_text2];
-//    ybLabel2.attributedText = attributedString2;
-//    [ybLabel2 setTextAlignment:NSTextAlignmentCenter];
-//
-//
-//     [ybLabel2 yb_addAttributeTapActionWithStrings:@[@"妙定用户协议"] delegate:self];
+    UILabel *ybLabel2 = [UILabel new];
+    [self.view addSubview:ybLabel2];
+    ybLabel2.sd_layout
+    .leftSpaceToView(self.view, 10)
+    .rightSpaceToView(self.view, 10)
+    .bottomSpaceToView(self.view, 40)
+    .heightIs(15);
+    [ybLabel2 setTextColor:getUIColor(Color_loginNoUserName)];
+    [ybLabel2 setFont:[UIFont systemFontOfSize:8]];
+    ybLabel2.numberOfLines = 2;
+    [ybLabel2 setText:label_text2];
+    ybLabel2.attributedText = attributedString2;
+    [ybLabel2 setTextAlignment:NSTextAlignmentCenter];
+
+
+     [ybLabel2 yb_addAttributeTapActionWithStrings:@[@"妙定用户协议"] delegate:self];
     //设置是否有点击效果，默认是YES
     
 }
 
 
 
--(void)textFieldDidBeginEditing:(UITextField *)textField
-{
-    
-    if (isViewYFisrt) {
-        initViewY = self.view.frame.origin.y;
-        isViewYFisrt = NO;
-    }
-    
-    int offset = [self getControlFrameOriginY:textField] + 75 - (self.view.frame.size.height - 216.0);//键盘高度216
-    NSTimeInterval animationDuration = 0.30f;
-    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
-    [UIView setAnimationDuration:animationDuration];
-    
-    //将视图的Y坐标向上移动offset个单位，以使下面腾出地方用于软键盘的显示
-    if(offset > 0)
-        self.view.frame = CGRectMake(0.0f, -offset, self.view.frame.size.width, self.view.frame.size.height);
-    
-    [UIView commitAnimations];
-}
-
-- (CGFloat) getControlFrameOriginY : (UIView *) curView {
-    
-    CGFloat resultY = 0;
-    
-    if ([curView superview] != nil && ![[curView superview] isEqual:self.view]) {
-        resultY = [self getControlFrameOriginY:[curView superview]];
-    }
-    
-    return resultY + curView.frame.origin.y;
-}
-
--(void)textFieldDidEndEditing:(UITextField *)textField
-{
-    CGRect frame = self.view.frame;
-    
-    frame.origin.x = 0;
-    frame.origin.y = initViewY;
-    
-    NSTimeInterval animationDuration = 0.30f;
-    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
-    [UIView setAnimationDuration:animationDuration];
-    
-    [self.view setFrame:frame];
-    
-    [UIView commitAnimations];
-    //    self.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-}
+//-(void)textFieldDidBeginEditing:(UITextField *)textField
+//{
+//
+//    if (isViewYFisrt) {
+//        initViewY = self.view.frame.origin.y;
+//        isViewYFisrt = NO;
+//    }
+//
+//    int offset = [self getControlFrameOriginY:textField] + 75 - (self.view.frame.size.height - 216.0);//键盘高度216
+//    NSTimeInterval animationDuration = 0.30f;
+//    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
+//    [UIView setAnimationDuration:animationDuration];
+//
+//    //将视图的Y坐标向上移动offset个单位，以使下面腾出地方用于软键盘的显示
+//    if(offset > 0)
+//        self.view.frame = CGRectMake(0.0f, -offset, self.view.frame.size.width, self.view.frame.size.height);
+//
+//    [UIView commitAnimations];
+//}
+//
+//- (CGFloat) getControlFrameOriginY : (UIView *) curView {
+//
+//    CGFloat resultY = 0;
+//
+//    if ([curView superview] != nil && ![[curView superview] isEqual:self.view]) {
+//        resultY = [self getControlFrameOriginY:[curView superview]];
+//    }
+//
+//    return resultY + curView.frame.origin.y;
+//}
+//
+//-(void)textFieldDidEndEditing:(UITextField *)textField
+//{
+//    CGRect frame = self.view.frame;
+//
+//    frame.origin.x = 0;
+//    frame.origin.y = initViewY;
+//
+//    NSTimeInterval animationDuration = 0.30f;
+//    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
+//    [UIView setAnimationDuration:animationDuration];
+//
+//    [self.view setFrame:frame];
+//
+//    [UIView commitAnimations];
+//    //    self.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+//}
 
 
 

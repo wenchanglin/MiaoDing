@@ -54,7 +54,10 @@
     [self getData];
 }
 
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)alphaView
 {
     
@@ -256,11 +259,15 @@
     .topSpaceToView(firstBack, - 34)
     .heightIs(68)
     .widthIs(68);
-    [headImg setBackgroundColor:[UIColor blueColor]];
     [headImg.layer setCornerRadius:34];
     [headImg.layer setMasksToBounds:YES];
+    if ([[SelfPersonInfo getInstance].personImageUrl hasPrefix:@"http"]) {
+        [headImg sd_setImageWithURL:[NSURL URLWithString:[SelfPersonInfo getInstance].personImageUrl ]];
+    }
+    else
+    {
     [headImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]]];
-    
+    }
     nameLabel = [UILabel new];
     [firstBack addSubview:nameLabel];
     [nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -290,8 +297,6 @@
     [firstBack addSubview:processView];
 //    [processView setBackgroundColor:[UIColor lightGrayColor]];
     processView.percent = [[userInfo stringForKey:@"credit"] floatValue] / [[[userInfo objectForKey:@"user_grade"] stringForKey:@"max_credit"] floatValue] * 100;
-    
-    
     
     UILabel *vipCountright = [UILabel new];
     [firstBack addSubview:vipCountright];

@@ -38,7 +38,7 @@
 //    [flowLayout setMinimumLineSpacing:15];
 //    [flowLayout setMinimumInteritemSpacing:43];
     //        flowLayout.headerReferenceSize = CGSizeMake(self.frame.size.width, 0);//头部
-    position = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 12, SCREEN_WIDTH - 20,  (SCREEN_WIDTH - 60) / 4+20) collectionViewLayout:flowLayout];
+    position = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 12, SCREEN_WIDTH,  (SCREEN_WIDTH - 60) / 4+20) collectionViewLayout:flowLayout];
     
     //设置代理
     position.delegate = self;

@@ -45,11 +45,14 @@ PODS:
   - RKNotificationHub (2.0.4)
   - SCLAlertView-Objective-C (1.0.6)
   - SDAutoLayout (2.1.9)
+  - SDCycleScrollView (1.65):
+    - SDWebImage (~> 3.7)
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
   - TSMessages (0.9.12):
     - HexColors (~> 2.2.0)
+  - XHWebImageAutoSize (1.1.2)
 
 DEPENDENCIES:
   - AFNetworking (~> 2.6.3)
@@ -66,14 +69,16 @@ DEPENDENCIES:
   - MAThemeKit (~> 1.0)
   - MBProgressHUD
   - MJExtension
-  - MJRefresh (~> 3.1.13)
+  - MJRefresh
   - QIYU_iOS_SDK (~> 3.11.0)
   - RDVTabBarController (~> 1.1.9)
   - RKNotificationHub (~> 2.0.4)
   - SCLAlertView-Objective-C (~> 1.0.6)
   - SDAutoLayout (~> 2.1.7)
+  - SDCycleScrollView (~> 1.61)
   - SDWebImage (~> 3.8.1)
   - TSMessages (~> 0.9.12)
+  - XHWebImageAutoSize (~> 1.1.0)
 
 SPEC CHECKSUMS:
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
@@ -97,9 +102,11 @@ SPEC CHECKSUMS:
   RKNotificationHub: 3765424499139c3d3885b681bb0837f072d12ae6
   SCLAlertView-Objective-C: ca78280817e66e74366b78579350dee2ff277e23
   SDAutoLayout: 6b6f4db0d009dfc46cef14ef710dbb164e86616c
+  SDCycleScrollView: f72904c77698a7f93a41bcbbc2d78b073bf7326c
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   TSMessages: c8cc7b80f2a833af533872cd02010cac061532cc
+  XHWebImageAutoSize: 8e5d7bf036f960885769dbe3410579024d3ac1a1
 
-PODFILE CHECKSUM: 4feabc3e89ffa17d5a50a38223cfabdf3c3f0b52
+PODFILE CHECKSUM: 662bc613987cf73f3a537045345c2aa296c4952b
 
 COCOAPODS: 1.4.0

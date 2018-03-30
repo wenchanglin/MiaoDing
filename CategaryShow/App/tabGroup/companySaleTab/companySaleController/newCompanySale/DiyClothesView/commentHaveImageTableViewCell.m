@@ -176,7 +176,7 @@
     PhotoCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cell" forIndexPath:indexPath];
     [cell setBackgroundColor:getUIColor(Color_background)];
     [cell.photoV sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [[_model.commentDic arrayForKey:@"img_list"] objectAtIndex:indexPath.item]]]];
-    [cell.photoV setContentMode:UIViewContentModeScaleAspectFit];
+    [cell.photoV setContentMode:UIViewContentModeScaleAspectFill];
     [cell.photoV.layer setMasksToBounds:YES];
     return cell;
 }

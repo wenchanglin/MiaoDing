@@ -39,7 +39,7 @@
     //  [flowLayout setMinimumLineSpacing:15];
     //  [flowLayout setMinimumInteritemSpacing:43];
     //  flowLayout.headerReferenceSize = CGSizeMake(self.frame.size.width, 0);//头部
-    color = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 12, SCREEN_WIDTH - 20,  (SCREEN_WIDTH - 60) / 4+20) collectionViewLayout:flowLayout];
+    color = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 12, SCREEN_WIDTH,  (SCREEN_WIDTH - 60) / 4+20) collectionViewLayout:flowLayout];
     //设置代理
     color.delegate = self;
     color.dataSource = self;
@@ -67,6 +67,7 @@
     static NSString *identify = @"cell";
     colorChooseCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
     [cell.colorImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_colorArray[indexPath.item] stringForKey:@"img"]]]];
+    cell.bigImage.hidden = YES;
     [cell.colorName setText:[_colorArray[indexPath.item] stringForKey:@"name"]];
     if (indexPath.item == flog) {
         [cell.colorChoose setHidden:NO];

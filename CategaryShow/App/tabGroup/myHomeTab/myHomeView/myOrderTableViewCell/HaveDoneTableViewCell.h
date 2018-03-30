@@ -11,7 +11,8 @@
 
 @interface HaveDoneTableViewCell : UITableViewCell
 @property(nonatomic, strong) orderModel *model;
-
+/**再来一单*/
+@property(nonatomic,strong)UIButton * nextBtn;//
 @property (nonatomic, retain) UIButton *commendBtn;  //评论
 
 @end

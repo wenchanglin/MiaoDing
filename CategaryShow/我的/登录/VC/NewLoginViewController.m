@@ -10,6 +10,8 @@
 #import "EnterViewController.h"
 #import "JYHNavigationController.h"
 #import <ShareSDK/ShareSDK.h>
+#import "BangDingPhotoVC.h"
+#import "SelfPersonInfo.h"
 @interface NewLoginViewController ()
 @property(nonatomic,strong)UIImageView * mainImageView;
 @property(nonatomic,strong)UIButton * closeBtn;
@@ -28,6 +30,10 @@
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:animated];
     self.view.backgroundColor = [UIColor blackColor];
+}
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -128,10 +134,30 @@
         case 11:
         {
             [ShareSDK getUserInfo:SSDKPlatformTypeWechat onStateChanged:^(SSDKResponseState state, SSDKUser *user, NSError *error) {
-                WCLLog(@"uid=%@",user.uid);
-                WCLLog(@"%@",user.credential);
-                WCLLog(@"token=%@",user.credential.token);
-                WCLLog(@"nickname=%@",user.nickname);
+                NSMutableDictionary * parameter = [NSMutableDictionary dictionary];
+                [parameter setObject:user.uid forKey:@"userid"];
+                [parameter setObject:@"1" forKey:@"is_type"];
+                [[wclNetTool sharedTools]request:POST urlString:@"/index/login/partLogin" parameters:parameter finished:^(id responseObject, NSError *error) {
+                    if([responseObject[@"code"] intValue]==1)
+                    {
+                        NSUserDefaults *used = [NSUserDefaults standardUserDefaults];
+                        [used setObject:responseObject[@"data"][@"token"] forKey:@"token"];
+                        [[userInfoModel getInstance] saveLoginData:responseObject[@"data"][@"name"] userImg:@""];
+                        [[SelfPersonInfo getInstance] setPersonInfoFromJsonData:responseObject[@"data"]];
+                        [self dismissViewControllerAnimated:YES completion:nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"loginSuccess" object:nil];
+
+                    }
+                    else
+                    {
+                        BangDingPhotoVC * bvc = [[BangDingPhotoVC alloc]init];
+                        bvc.userid = user.uid;
+                        bvc.is_type = 1;
+                        bvc.icon = user.icon;
+                        bvc.nickname = user.nickname;
+                        [self.navigationController pushViewController:bvc animated:YES];
+                    }
+                }];
             }];
         }
             break;
@@ -142,6 +168,30 @@
                 WCLLog(@"%@",user.credential);
                 WCLLog(@"token=%@",user.credential.token);
                 WCLLog(@"nickname=%@",user.nickname);
+                NSMutableDictionary * parameter = [NSMutableDictionary dictionary];
+                [parameter setObject:user.uid forKey:@"userid"];
+                [parameter setObject:@"2" forKey:@"is_type"];
+                [[wclNetTool sharedTools]request:POST urlString:@"/index/login/partLogin" parameters:parameter finished:^(id responseObject, NSError *error) {
+                    if([responseObject[@"code"] intValue]==1)
+                    {
+                        NSUserDefaults *used = [NSUserDefaults standardUserDefaults];
+                        [used setObject:responseObject[@"data"][@"token"] forKey:@"token"];
+                        [[userInfoModel getInstance] saveLoginData:responseObject[@"data"][@"name"] userImg:@""];
+                        [[SelfPersonInfo getInstance] setPersonInfoFromJsonData:responseObject[@"data"]];
+                        [self dismissViewControllerAnimated:YES completion:nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"loginSuccess" object:nil];
+                        
+                    }
+                    else
+                    {
+                        BangDingPhotoVC * bvc = [[BangDingPhotoVC alloc]init];
+                        bvc.userid = user.uid;
+                        bvc.is_type = 2;
+                        bvc.icon = user.icon;
+                        bvc.nickname = user.nickname;
+                        [self.navigationController pushViewController:bvc animated:YES];
+                    }
+                }];
             }];
         }break;
             case 13:
@@ -151,8 +201,33 @@
                 WCLLog(@"%@",user.credential);
                 WCLLog(@"token=%@",user.credential.token);
                 WCLLog(@"nickname=%@",user.nickname);
+                NSMutableDictionary * parameter = [NSMutableDictionary dictionary];
+                [parameter setObject:user.uid forKey:@"userid"];
+                [parameter setObject:@"3" forKey:@"is_type"];
+                [[wclNetTool sharedTools]request:POST urlString:@"/index/login/partLogin" parameters:parameter finished:^(id responseObject, NSError *error) {
+                    if([responseObject[@"code"] intValue]==1)
+                    {
+                        NSUserDefaults *used = [NSUserDefaults standardUserDefaults];
+                        [used setObject:responseObject[@"data"][@"token"] forKey:@"token"];
+                        [[userInfoModel getInstance] saveLoginData:responseObject[@"data"][@"name"] userImg:@""];
+                        [[SelfPersonInfo getInstance] setPersonInfoFromJsonData:responseObject[@"data"]];
+                        [self dismissViewControllerAnimated:YES completion:nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"loginSuccess" object:nil];
+                        
+                    }
+                    else
+                    {
+                        BangDingPhotoVC * bvc = [[BangDingPhotoVC alloc]init];
+                        bvc.userid = user.uid;
+                        bvc.is_type = 3;
+                        bvc.icon = user.icon;
+                        bvc.nickname = user.nickname;
+                        [self.navigationController pushViewController:bvc animated:YES];
+                    }
+                }];
             }];
         }
+            break;
         default:
             break;
     }

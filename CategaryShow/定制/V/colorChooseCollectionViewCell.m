@@ -23,6 +23,13 @@
 
 -(void)setUp
 {
+    _bigImage = [UIButton new];
+//    _bigImage.backgroundColor = [UIColor blueColor];
+    [self.contentView addSubview:_bigImage];
+    [_bigImage mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self.contentView.mas_centerX);
+        make.height.width.mas_equalTo(60);
+    }];
     _colorImage = [UIImageView new];
     [_colorImage.layer setCornerRadius:30];
     [_colorImage.layer setMasksToBounds:YES];
@@ -52,7 +59,5 @@
     [_colorName setTextColor:[UIColor blackColor]];
     [_colorName setTextAlignment:NSTextAlignmentCenter];
     [_colorName setFont:[UIFont systemFontOfSize:12]];
-    
 }
-
 @end

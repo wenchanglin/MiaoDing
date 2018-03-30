@@ -42,7 +42,10 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadAddress) name:@"createAddress" object:nil];
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)reloadAddress
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
@@ -134,7 +137,7 @@
     [self.view addSubview:addressTable];
 
     
-    buttonAdd = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
+    buttonAdd = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-64-92:SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
     [self.view addSubview:buttonAdd];
     [buttonAdd setBackgroundColor:getUIColor(Color_DZClolor)];
     [buttonAdd setTitle:@"新增地址" forState:UIControlStateNormal];

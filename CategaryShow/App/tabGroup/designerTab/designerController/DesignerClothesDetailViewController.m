@@ -179,17 +179,17 @@
             _class_id = [dataDictionary stringForKey:@"classify_id"];
             pictureArray = [NSMutableArray arrayWithArray:[dataDictionary arrayForKey:@"img_list"]];
             prctureIntro = [NSMutableArray arrayWithArray:[dataDictionary arrayForKey:@"img_introduce"]];
-            
+            WCLLog(@"%@",dataDictionary);
             lt_data = [domain.dataRoot stringForKey:@"lt_data"];
             designer.content = [dataDictionary stringForKey:@"content"];
-            designer.img = [dataDictionary stringForKey:@"thumb"];
+            designer.img = [dataDictionary stringForKey:@"img_often"];
             designer.name = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"name"];
             designer.avatar = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"avatar"];
             designer.tag = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"tag"];
             designer.name = [dataDictionary stringForKey:@"sub_name"];
 //            _model.good_Id = [dataDictionary stringForKey:@"uid"];
             designer.detailClothesImg = [dataDictionary arrayForKey:@"img_list"][0];
-            designer.deginerID = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"id"];
+            designer.deginerID = [[dataDictionary dictionaryForKey:@"designer"] integerForKey:@"id"];
             designer.introduce = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"introduce"];
             
             new_comment = [NSMutableDictionary dictionaryWithDictionary:[dataDictionary dictionaryForKey:@"new_comment"]];
@@ -352,7 +352,10 @@
         page.currentPage = pageNum;
     }
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 
 //-(void)createScroller
 //{
@@ -426,7 +429,7 @@
 //    page.currentPageIndicatorTintColor = [UIColor whiteColor];
     
     
-    UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(12, 24, 33, 33)];
+    UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(12, IsiPhoneX?HitoSafeAreaHeight+10:24, 33, 33)];
     
     [buttonBack.layer setCornerRadius:33 / 2];
     [buttonBack.layer setMasksToBounds:YES];
@@ -436,7 +439,7 @@
     
     [self.view bringSubviewToFront:buttonBack];
     
-    UIButton *rightShare = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 45, 24, 33, 33)];
+    UIButton *rightShare = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 45, IsiPhoneX?HitoSafeAreaHeight+10:24, 33, 33)];
     
     [rightShare.layer setCornerRadius:33 / 2];
     [rightShare.layer setMasksToBounds:YES];
@@ -451,11 +454,12 @@
 
 -(void)createAlphaBuyView
 {
-    bgViewAlpha = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 289, SCREEN_WIDTH, 289)];
-    [bgViewAlpha setBackgroundColor:[UIColor whiteColor]];
+    bgViewAlpha = [[UIView alloc] initWithFrame:CGRectMake(0,IsiPhoneX?self.view.frame.size.height-289-21: self.view.frame.size.height - 289, SCREEN_WIDTH,IsiPhoneX?310:289)];
+    [bgViewAlpha setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
     [self.view addSubview:bgViewAlpha];
     UIImageView *imageHead = [[UIImageView alloc] initWithFrame:CGRectMake(20, -30, 70, 90)];
-    [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL, [dataDictionary stringForKey:@"thumb"]]]];
+    imageHead.contentMode = UIViewContentModeScaleAspectFill;
+    [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL, [dataDictionary stringForKey:@"img_often"]]]];
     [bgViewAlpha addSubview:imageHead];
     
     UIButton *btnClose = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 50, 5, 40, 40)];
@@ -492,7 +496,7 @@
     sizeCollection.delegate = self;
     sizeCollection.dataSource = self;
     [bgViewAlpha addSubview:sizeCollection];
-    sizeCollection.backgroundColor = [UIColor whiteColor];
+    sizeCollection.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
     //注册cell和ReusableView（相当于头部）
     
     sizeCollection.pagingEnabled = YES ;
@@ -522,7 +526,7 @@
     sizeShowCollection.delegate = self;
     sizeShowCollection.dataSource = self;
     [bgViewAlpha addSubview:sizeShowCollection];
-    sizeShowCollection.backgroundColor = [UIColor whiteColor];
+    sizeShowCollection.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
     //注册cell和ReusableView（相当于头部）
     [sizeShowCollection setShowsHorizontalScrollIndicator:NO];
     sizeShowCollection.pagingEnabled = YES ;
@@ -632,7 +636,7 @@
     [params setObject:[NSString stringWithFormat:@"%@;%@", colorStr,sizeStr] forKey:@"size_content"];
     [params setObject:[NSNumber numberWithInteger:clothesCount] forKey:@"num"];
     [params setObject:[sizeShowDic stringForKey:@"id"] forKey:@"size_ids"];
-    [params setObject:[dataDictionary stringForKey:@"thumb"] forKey:@"goods_thumb"];
+    [params setObject:[dataDictionary stringForKey:@"img_often"] forKey:@"goods_thumb"];
     [params setObject:_marketId forKey:@"market_id"];
     [params setObject:_shopId forKey:@"shop_id"];
     if ([sizeShowDic integerForKey:@"type"] == 1) {

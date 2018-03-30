@@ -109,12 +109,9 @@ static LoginManager * _loginCheck;
     
     return resultValue;
 }
-
 - (void) postLoginAuth:(NSString*) userName userPwd:(NSString*) userPassword loginId:(NSString *)loginId  isAuto:(Boolean) isAutoLogin finish:(void (^)(Boolean)) finish {
     
-    NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithCapacity:5];
-
-    
+    NSMutableDictionary * params = [NSMutableDictionary dictionary];
     NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
     [params setValue:[userd stringForKey:@"token"] forKey:@"token"];
     [params setValue:userName forKey:@"phone"];
@@ -124,9 +121,55 @@ static LoginManager * _loginCheck;
     [params setValue:@"2" forKey:@"phone_type"];
     [params setValue:[self deviceVersion] forKey:@"device_type"];
     
-    NSLog(@"%@", URL_LoginAuth);
+    WCLLog(@"%@", URL_LoginAuth);
     [self.loginDomain postData:URL_LoginAuth PostParams:params finish:^(BaseDomain * domain,Boolean success) {
-        NSLog(@"root == %@", self.loginDomain.dataRoot);
+        WCLLog(@"root == %@", domain.dataRoot);
+        
+        if (self.loginDomain.result == 1) {
+            NSUserDefaults *used = [NSUserDefaults standardUserDefaults];
+            [used setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"token"] forKey:@"token"];
+            NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
+            [user setObject:@"login" forKey:@"status"];
+            [self saveLoginData:userName userPwd:userPassword isAuto:isAutoLogin];
+            [self.userInfo saveLoginData:userName userImg:userPassword];
+            [[SelfPersonInfo getInstance] setPersonInfoFromJsonData:self.loginDomain.dataRoot];
+            
+            [[userInfoModel getInstance] saveLoginData:userName userImg:@""];
+            
+            if (finish) {
+                finish(YES);
+            }
+        }
+        else {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"dialog_title_tip", nil) message:self.loginDomain.resultMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"dialog_button_okknow", nil) otherButtonTitles: nil];
+            
+            [alertView show];
+            
+            if (finish) {
+                finish(NO);
+            }
+        }
+    }];
+}
+- (void) postLoginAuth:(NSString*) userName userPwd:(NSString*) userPassword loginId:(NSString *)loginId userId:(NSString *)userid icon:(NSString *)icon nickName:(NSString*)nickname isType:(NSInteger)is_type isAuto:(Boolean) isAutoLogin finish:(void (^)(Boolean)) finish {
+    
+    NSMutableDictionary * params = [NSMutableDictionary dictionary];
+    NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
+    [params setValue:[userd stringForKey:@"token"] forKey:@"token"];
+    [params setObject:@(is_type) forKey:@"is_type"];//do_login
+    [params setObject:userid forKey:@"userid"];
+    [params setObject:icon forKey:@"icon"];
+    [params setObject:nickname forKey:@"nickname"];
+    [params setValue:userName forKey:@"phone"];
+    [params setValue:userPassword forKey:@"code"];
+    [params setValue:loginId forKey:@"id"];
+    [params setValue:[userd stringForKey:@"cId"] forKey:@"device_id"];
+    [params setValue:@"2" forKey:@"phone_type"];
+    [params setValue:[self deviceVersion] forKey:@"device_type"];
+    
+    WCLLog(@"%@", URL_LoginAuth);
+    [self.loginDomain postData:URL_LoginAuth PostParams:params finish:^(BaseDomain * domain,Boolean success) {
+        WCLLog(@"root == %@", domain.dataRoot);
         
         if (self.loginDomain.result == 1) {
             NSUserDefaults *used = [NSUserDefaults standardUserDefaults];
@@ -171,6 +214,14 @@ static LoginManager * _loginCheck;
     if ([deviceString isEqualToString:@"iPhone8,2"])    return @"6SP";
     if ([deviceString isEqualToString:@"iPhone9,1"])    return @"7";
     if ([deviceString isEqualToString:@"iPhone9,2"])    return @"7P";
+    if([deviceString isEqualToString:@"iPhone10,1"])    return @"8";
+    if([deviceString isEqualToString:@"iPhone10,2"])    return @"8P";
+    if([deviceString isEqualToString:@"iPhone10,3"])    return @"X";
+    if([deviceString isEqualToString:@"iPhone10,4"])    return @"8";
+    if([deviceString isEqualToString:@"iPhone10,5"])    return @"8P";
+    if([deviceString isEqualToString:@"iPhone10,6"])    return @"X";
+    
+    
     return deviceString;
 }
 

@@ -57,12 +57,12 @@
     
     
     UIButton *buttonRight = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-    [buttonRight setImage:[UIImage imageNamed:@"shareRight"] forState:UIControlStateNormal];
+    [buttonRight setImage:[UIImage imageNamed:@"share_white"] forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRight];
     [buttonRight addTarget:self action:@selector(shareClick) forControlEvents:UIControlEventTouchUpInside];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loginSuccessAction) name:@"loginSuccess" object:nil];
-   
-    [self.view setBackgroundColor:[UIColor whiteColor]];
+    [self.view setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
+
     [self createScrollerView];
 }
 
@@ -74,15 +74,19 @@
         [web removeFromSuperview];
         web = nil;
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)createScrollerView
 {
 
 //
     NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-    web = [[UIWebView alloc] initWithFrame:CGRectMake(0, NavHeight, self.view.frame.size.width, self.view.frame.size.height-64 - NavHeight)];
+    web = [[UIWebView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT-64 - NavHeight)];
     [self.view addSubview:web];
-    
+    [web setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
+
     web.scrollView.scrollsToTop = YES;
     
     UIScrollView *tempView = (UIScrollView *)[web.subviews objectAtIndex:0];
@@ -91,9 +95,9 @@
     NSURLRequest *request;
     web.delegate = self;
     if ([[userd stringForKey:@"token"] length] > 0) {
-        request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@&token=%@&type=1&ios=true&new_ios=1",URL_HEADURL, URLZIXUAN, _webId, [userd stringForKey:@"token"]]]];
+        request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@&token=%@&content=1&ios=true&new_ios=1",URL_HEADURL, URLZIXUAN, _webId, [userd stringForKey:@"token"]]]];
     } else {
-         request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@&type=1&ios=true&new_ios=1",URL_HEADURL, URLZIXUAN, _webId]]];
+         request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@&content=1&ios=true&new_ios=1",URL_HEADURL, URLZIXUAN, _webId]]];
     }
     
     

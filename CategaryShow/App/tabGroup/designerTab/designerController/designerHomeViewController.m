@@ -180,7 +180,6 @@ static CGFloat const headViewHeight = 320;
         
         UIImageView * bgview = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 203)];
         bgview.userInteractionEnabled = YES;
-        bgview.backgroundColor = [UIColor cyanColor];
         [bgview sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL,_bgViewArr[0]]]];
         [bgview setContentMode:UIViewContentModeScaleAspectFill];
         [_headImageView addSubview:bgview];
@@ -232,7 +231,7 @@ static CGFloat const headViewHeight = 320;
         .bottomEqualToView(_headImageView)
         .heightIs(10);
         
-        UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(12, 26, 33, 33)];
+        UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(12,IsiPhoneX?HitoSafeAreaHeight:26, 33, 33)];
         
         [buttonBack.layer setCornerRadius:33 / 2];
         [buttonBack.layer setMasksToBounds:YES];
@@ -244,7 +243,7 @@ static CGFloat const headViewHeight = 320;
         
         
         
-        UIButton *rightShare = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 45, 26, 33, 33)];
+        UIButton *rightShare = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 45, IsiPhoneX?HitoSafeAreaHeight:26, 33, 33)];
         
         [rightShare.layer setCornerRadius:33 / 2];
         [rightShare.layer setMasksToBounds:YES];
@@ -323,12 +322,14 @@ static CGFloat const headViewHeight = 320;
         NSArray *titleArray =@[@"故事",@"作品"];
         
         MYSegmentViewWhite * rcs=[[MYSegmentViewWhite alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, Main_Screen_Height) controllers:controllers titleArray:titleArray ParentController:self lineWidth:25 lineHeight:2.0];
-        
         _RCSegView = rcs;
     }
     return _RCSegView;
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

@@ -39,7 +39,6 @@
         
         // 禁用右滑切换
         self.interactivePopGestureRecognizer.enabled = NO;
-        
         // 设置Bar背景色
         [self.navigationBar setBarTintColor:[UIColor whiteColor]];
     
@@ -58,7 +57,11 @@
     
 }
 
-
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    UIViewController* topVC = self.topViewController;
+    return [topVC preferredStatusBarStyle];
+}
 
 - (void)didReceiveMemoryWarning
 {
@@ -100,11 +103,15 @@
         animation.type = kCATransitionReveal;
         animation.subtype = kCATransitionFromRight;
         [self.view.layer addAnimation:animation forKey:nil];
-        viewController.navigationItem.leftBarButtonItem = [self backItemWithimage:[UIImage imageNamed:@"backLeftWhite"] highImage:[UIImage imageNamed:@"backLeftWhite"]  target:self action:@selector(back) title:@""];
+        viewController.navigationItem.leftBarButtonItem = [self backItemWithimage:[UIImage imageNamed:@"backLeftWhite"] highImage:[UIImage imageNamed:@"backLeftWhite"]  target:self action:@selector(back) title:@"返        回"];
         [super pushViewController:viewController animated:NO];
         return;
     }
     [super pushViewController:viewController animated:YES];
+    // 修改tabBra的frame
+    CGRect frame = self.tabBarController.tabBar.frame;
+    frame.origin.y = [UIScreen mainScreen].bounds.size.height - frame.size.height;
+    self.tabBarController.tabBar.frame = frame;
 }
 - (void)back{
     [self popViewControllerAnimated:YES];
@@ -115,10 +122,10 @@
     [backButton setTitle:title forState:UIControlStateNormal];
     [backButton setImage:image forState:UIControlStateNormal];
     [backButton setImage:highImage forState:UIControlStateHighlighted];
-    [backButton setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:UIControlStateNormal];
-    [backButton setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
+    [backButton setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];//colorWithHexString:@"#FFFFFF"
+    [backButton setTitleColor:[UIColor clearColor] forState:UIControlStateHighlighted];
     [backButton sizeToFit];
-    backButton.contentEdgeInsets = UIEdgeInsetsMake(0, -15, 0, 0);
+    backButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
     [backButton addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
     return  [[UIBarButtonItem alloc] initWithCustomView:backButton];
 }

@@ -117,8 +117,13 @@ static CGFloat const headViewHeight = 240;
    
     
     self.rdv_tabBarController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRight];
-    
-    [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]]];
+    if ([[SelfPersonInfo getInstance].personImageUrl hasPrefix:@"http"]) {
+        [imageHead sd_setImageWithURL:[NSURL URLWithString:[SelfPersonInfo getInstance].personImageUrl ]];
+    }
+    else
+    {
+        [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]]];
+    }
     _countentLabel.text = [SelfPersonInfo getInstance].cnPersonUserName;
     
     datBegin = [NSDate dateWithTimeIntervalSinceNow:0];
@@ -213,7 +218,10 @@ static CGFloat const headViewHeight = 240;
     
     
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)reloadMy
 {
     [self createDataGet];
@@ -312,7 +320,7 @@ static CGFloat const headViewHeight = 240;
     [backImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
-    imageBack = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 205)];
+    imageBack = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_WIDTH/375*205)];
     [imageBack setImage:[UIImage imageNamed:@"我的头部背景图"]];
     [self.view addSubview:imageBack];
     
@@ -321,7 +329,7 @@ static CGFloat const headViewHeight = 240;
     [imageBack addSubview:setBtn];
     setBtn.sd_layout
     .leftSpaceToView(imageBack, 12)
-    .topSpaceToView(imageBack, 27)
+    .topSpaceToView(imageBack,IsiPhoneX?HitoSafeAreaHeight+10:27)
     .widthIs(30)
     .heightIs(30);
     [setBtn setImage:[UIImage imageNamed:@"leftSet"] forState:UIControlStateNormal];
@@ -340,9 +348,13 @@ static CGFloat const headViewHeight = 240;
     imageHead.layer.masksToBounds = YES;
     
     imageHead.layer.cornerRadius = 37.5;
-
+    if ([[SelfPersonInfo getInstance].personImageUrl hasPrefix:@"http"]) {
+        [imageHead sd_setImageWithURL:[NSURL URLWithString:[SelfPersonInfo getInstance].personImageUrl ]];
+    }
+    else
+    {
     [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]]];
-    
+    }
     
     labelName = [UIButton new];
     [imageBack addSubview:labelName];
@@ -373,7 +385,7 @@ static CGFloat const headViewHeight = 240;
     [_vipIm sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_userGade stringForKey:@"img"]]]];
     
     
-    rightButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 12 - 20, 27, 28, 25)];
+    rightButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 12 - 20, IsiPhoneX?HitoSafeAreaHeight+10:27, 28, 25)];
     [rightButton setImage:[UIImage imageNamed:@"worning"] forState:UIControlStateNormal];
     [self.view addSubview:rightButton];
     [rightButton addTarget:self action:@selector(worningClick) forControlEvents:UIControlEventTouchUpInside];
@@ -545,7 +557,7 @@ static CGFloat const headViewHeight = 240;
 //            joinDesignerViewController *joinD = [[joinDesignerViewController alloc] init];
 //            [self.navigationController pushViewController:joinD animated:YES];
             
-            if ([[[self deviceVersion] substringWithRange:NSMakeRange(0,1)] integerValue] > 5 ) {
+             if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
                 NewPototUserInfoViewController *put = [[NewPototUserInfoViewController alloc] init];
                 [self.navigationController pushViewController:put animated:YES];
             } else {
@@ -591,24 +603,7 @@ static CGFloat const headViewHeight = 240;
     }
 }
 
-- (NSString*)deviceVersion
-{
-    // 需要#import "sys/utsname.h"
-    struct utsname systemInfo;
-    uname(&systemInfo);
-    NSString * deviceString = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
-    //iPhone
-    
-    if ([deviceString isEqualToString:@"iPhone6,1"])    return @"5S";
-    if ([deviceString isEqualToString:@"iPhone6,2"])    return @"5S";
-    if ([deviceString isEqualToString:@"iPhone7,1"])    return @"6P";
-    if ([deviceString isEqualToString:@"iPhone7,2"])    return @"6";
-    if ([deviceString isEqualToString:@"iPhone8,1"])    return @"6S";
-    if ([deviceString isEqualToString:@"iPhone8,2"])    return @"6SP";
-    if ([deviceString isEqualToString:@"iPhone9,1"])    return @"7";
-    if ([deviceString isEqualToString:@"iPhone9,2"])    return @"7P";
-    return deviceString;
-}
+
 
 -(void)leftSetClickAction
 {

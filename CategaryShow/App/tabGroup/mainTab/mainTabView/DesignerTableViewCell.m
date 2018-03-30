@@ -7,7 +7,7 @@
 //
 
 #import "DesignerTableViewCell.h"
-#import "NewMainDesigner.h"
+#import "IndexTypeModel.h"
 @implementation DesignerTableViewCell
 {
     UICollectionView *noThreeCollection;
@@ -56,7 +56,7 @@
     
     [noThreeCollection registerClass:[mainClothesSaleCollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
     [noThreeCollection registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"ReusableView"];
-    [noThreeCollection setBackgroundColor:[UIColor whiteColor]];
+    [noThreeCollection setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
 }
 
 
@@ -73,15 +73,15 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *identify = @"cell";
-    NewMainDesigner *deModel = modelArray[indexPath.item];
+    IndexTypeModel *deModel = modelArray[indexPath.item];
     mainClothesSaleCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
     //    [cell.imageShow setImage:[UIImage imageNamed:_model.imageArray[indexPath.item]]];
 //    [cell.imageShow sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, _model.imageArray[indexPath.item]]]];
-    [cell.imageDesigner sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, deModel.imgUrl]]];;
-    [cell.nameLabel setText:deModel.name];
+    [cell.imageDesigner sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, deModel.img]] placeholderImage:[UIImage imageNamed:@"logoImage"]];;
+//    [cell.nameLabel setText:deModel.name];
    
     
-    cell.backgroundColor = [UIColor whiteColor];
+    cell.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
     [cell sizeToFit];
     
     
@@ -94,12 +94,12 @@
 {
     //边距占5*4=20 ，2个
     //图片为正方形，边长：(fDeviceWidth-20)/2-5-5 所以总高(fDeviceWidth-20)/2-5-5 +20+30+5+5 label高20 btn高30 边
-    return CGSizeMake(169.5+16, 105+28);
+    return CGSizeMake(SCREEN_WIDTH/2-6, (SCREEN_WIDTH-36)/2/169.5*105+24);//CGSizeMake(169.5+16, 105+28);
 }
 //定义每个UICollectionView 的间距
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
 {
-    return UIEdgeInsetsMake(0, 0, 0, 0);
+    return UIEdgeInsetsMake(0, 6, 0, 6);
 }
 //定义每个UICollectionView 纵向的间距
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
@@ -118,13 +118,8 @@
 {
     _model = model;
     [modelArray removeAllObjects];
-    for (int i = 0; i < [model.designerArray count]; i++) {
-        NewMainDesigner *deModel = [NewMainDesigner new];
-        deModel.name = [model.designerArray[i] stringForKey:@"name"];
-        deModel.uid = [model.designerArray[i] stringForKey:@"goods_id"];
-        deModel.imgUrl = [model.designerArray[i] stringForKey:@"recommend_img"];
-        deModel.phone = [model.designerArray[i] stringForKey:@"sub_name"];
-        deModel.tagInfo = [model.designerArray[i] stringForKey:@"goods_type"];
+    for (NSDictionary * dic in model.designerArray ) {
+        IndexTypeModel *deModel = [IndexTypeModel mj_objectWithKeyValues:dic];
         [modelArray addObject:deModel];
     }
     

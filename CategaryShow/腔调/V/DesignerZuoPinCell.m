@@ -110,6 +110,20 @@
 {
     _models = models;
     [clothesImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL,models.thumb]]];
+    CGFloat realHeight;
+    if ([models.img_info isEqualToString:@""]||models.img_info==nil) {
+        realHeight = 0.0001;
+    }
+    else
+    {
+    realHeight= (SCREEN_WIDTH-24) /[models.img_info floatValue];
+    }
+    [clothesImg mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(@12);
+        make.top.equalTo(@15);
+        make.right.mas_equalTo(-12);
+        make.height.mas_equalTo(realHeight);
+    }];
     zuoPinName.text = models.name;
     if(models.is_love ==0)
     {

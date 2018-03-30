@@ -37,7 +37,7 @@ static id _controller;
     [window addSubview:blackView];
     [blackView addTarget:self action:@selector(shareBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    UIView *shareView = [[UIView alloc] initWithFrame:CGRectMake(0, kScreenHeight - 200, kScreenWidth, 200)];
+    UIView *shareView = [[UIView alloc] initWithFrame:CGRectMake(0, IsiPhoneX?kScreenHeight -210:kScreenHeight-200, kScreenWidth, IsiPhoneX?243:209)];
     
     shareView.backgroundColor = getUIColor(Color_Share);
     shareView.tag = 441;
@@ -72,11 +72,11 @@ static id _controller;
     }
     
     
-    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, shareView.frame.size.height - 45, kScreenWidth, 1)];
+    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, 150, kScreenWidth, 1)];
     [lineView setBackgroundColor:[UIColor lightGrayColor]];
     [shareView addSubview:lineView];
     
-    UIButton *cancleBtn = [[UIButton alloc] initWithFrame:CGRectMake(0,shareView.frame.size.height - 40,kScreenWidth,40)];
+    UIButton *cancleBtn = [[UIButton alloc] initWithFrame:CGRectMake(0,155,kScreenWidth,40)];
     [cancleBtn.titleLabel setFont:[UIFont systemFontOfSize:14]];
     [cancleBtn setTitle:@"取消" forState:UIControlStateNormal];
     [cancleBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
@@ -110,7 +110,7 @@ static id _controller;
     [window addSubview:blackView];
     [blackView addTarget:self action:@selector(shareBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    UIView *shareView = [[UIView alloc] initWithFrame:CGRectMake(0, kScreenHeight - 200, kScreenWidth, 200)];
+    UIView *shareView = [[UIView alloc] initWithFrame:CGRectMake(0, IsiPhoneX?kScreenHeight -210:kScreenHeight-200, kScreenWidth, IsiPhoneX?243:209)];
     
     shareView.backgroundColor = getUIColor(Color_Share);
     shareView.tag = 441;
@@ -145,11 +145,11 @@ static id _controller;
     }
     
     
-    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, shareView.frame.size.height - 45, kScreenWidth, 1)];
+    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, 150, kScreenWidth, 1)];
     [lineView setBackgroundColor:[UIColor lightGrayColor]];
     [shareView addSubview:lineView];
     
-    UIButton *cancleBtn = [[UIButton alloc] initWithFrame:CGRectMake(0,shareView.frame.size.height - 40,kScreenWidth,40)];
+    UIButton *cancleBtn = [[UIButton alloc] initWithFrame:CGRectMake(0,155,kScreenWidth,40)];
     [cancleBtn.titleLabel setFont:[UIFont systemFontOfSize:14]];
     [cancleBtn setTitle:@"取消" forState:UIControlStateNormal];
     [cancleBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];

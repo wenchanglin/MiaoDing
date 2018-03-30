@@ -8,6 +8,26 @@
 
 #ifndef Constant_h
 #define Constant_h
+#define IsiPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
+
+#define HitoStatusBarHeight [[UIApplication sharedApplication] statusBarFrame].size.height
+
+//导航栏的高度
+
+#define HitoNavBarHeight 44.0
+
+//iphoneX-SafeArea的高度
+
+#define HitoSafeAreaHeight ([[UIApplication sharedApplication] statusBarFrame].size.height>20?34:0)
+
+//分栏+iphoneX-SafeArea的高度
+
+#define HitoTabBarHeight (49+HitoSafeAreaHeight)
+
+//导航栏+状态栏的高度
+
+#define HitoTopHeight (HitoStatusBarHeight + HitoNavBarHeight)
+
 #define NavHeight 0
 #define SCREEN_WIDTH    ([UIScreen mainScreen].bounds.size.width)
 #define SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height)

@@ -61,7 +61,10 @@
     return _photoArrayM;
 }
 
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -256,7 +259,7 @@
         _textView.placeholderColor = RGBCOLOR(0x89, 0x89, 0x89);
         _textView.placeholder = @"写下你遇到的问题，或告诉我们你的宝贵意见~";
        
-        
+            
     }
     
     return _textView;
@@ -306,14 +309,17 @@
         [self isMobileNumber:self.textField.text];
         [self isValidateEmail:self.textField.text];
         //验证qq未写
-   
+        
         if (self.emailRight != 0 || self.phoneRight != 0) {
             
             NSMutableDictionary *params = [NSMutableDictionary dictionary];
             [params setObject:self.textView.text forKey:@"content"];
             [params setObject:self.textField.text forKey:@"contect"];
             
-            
+            if([_photoDataArray isEqualToString:@""]||_photoDataArray==nil)
+            {
+                _photoDataArray =@"";
+            }
             
             [params setObject:_photoDataArray forKey:@"img_list"];
             
@@ -422,42 +428,14 @@
 {
     /**
      * 手机号码
-     * 移动：134[0-8],135,136,137,138,139,150,151,157,158,159,182,187,188
-     * 联通：130,131,132,152,155,156,185,186
-     * 电信：133,1349,153,180,189
+     * 移动：134 135 136 137 138 139 147 150 151 152 157 158 159 178 182 183 184 187 188 198
+     * 联通：130 131 132 145 155 156 166 171 175 176 185 186
+     * 电信：133 149 153 173 177 180 181 189 199
+     * 虚拟运营商: 170
      */
-    NSString * MOBILE = @"^1(3[0-9]|5[0-35-9]|8[025-9])\\d{8}$";
-    /**
-     10         * 中国移动：China Mobile
-     11         * 134[0-8],135,136,137,138,139,150,151,157,158,159,182,187,188
-     12         */
-    NSString * CM = @"^1(34[0-8]|(3[5-9]|5[017-9]|8[278])\\d)\\d{7}$";
-    /**
-     15         * 中国联通：China Unicom
-     16         * 130,131,132,152,155,156,185,186
-     17         */
-    NSString * CU = @"^1(3[0-2]|5[256]|8[56])\\d{8}$";
-    /**
-     20         * 中国电信：China Telecom
-     21         * 133,1349,153,180,189
-     22         */
-    NSString * CT = @"^1((70|33|53|8[09])[0-9]|349)\\d{7}$";
-    /**
-     25         * 大陆地区固话及小灵通
-     26         * 区号：010,020,021,022,023,024,025,027,028,029
-     27         * 号码：七位或八位
-     28         */
-    // NSString * PHS = @"^0(10|2[0-5789]|\\d{3})\\d{7,8}$";
-    
-    NSPredicate *regextestmobile = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", MOBILE];
-    NSPredicate *regextestcm = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", CM];
-    NSPredicate *regextestcu = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", CU];
-    NSPredicate *regextestct = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", CT];
-    
-    if (([regextestmobile evaluateWithObject:mobileNum] == YES)
-        || ([regextestcm evaluateWithObject:mobileNum] == YES)
-        || ([regextestct evaluateWithObject:mobileNum] == YES)
-        || ([regextestcu evaluateWithObject:mobileNum] == YES))
+    NSString *target = @"^(0|86|17951)?(13[0-9]|15[012356789]|16[6]|19[89]]|17[01345678]|18[0-9]|14[579])[0-9]{8}$";
+    NSPredicate *targetPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", target];
+    if ([targetPredicate evaluateWithObject:mobileNum])
     {
         self.phoneRight = 1;
         return YES;

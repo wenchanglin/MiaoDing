@@ -21,6 +21,7 @@
 @property(nonatomic)NSInteger banxingtag;
 @property (nonatomic, retain) NSDate *dingDate;
 @property (nonatomic, retain) NSString *dateId;
+@property(nonatomic,strong)NSMutableArray * diydetailArray;
 @property(nonatomic,strong)NSDictionary * banxing;
 @property (nonatomic, retain) NSString *price_Type;
 @property(nonatomic,strong)NSString *  mianliaoprice;

@@ -11,8 +11,6 @@
 
 @implementation NewMainTabListTableViewCell
 {
-    UIImageView *mainImg;
-    UILabel *nameLabel;
     UIView *firstView;
     UILabel *numberWatch;
 }
@@ -25,24 +23,33 @@
 }
 
 -(void)setUp {
-    mainImg = [UIImageView new];
-    mainImg.contentMode = UIViewContentModeScaleAspectFill;
-    [mainImg.layer setMasksToBounds:YES];
-    [self.contentView addSubview:mainImg];
-    [mainImg mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(5);
+    _headLabel = [UILabel new];
+    _headLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:13];
+    _headLabel.textColor = [UIColor colorWithHexString:@"#222222"];
+    [self.contentView addSubview:_headLabel];
+    [_headLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(10);
         make.left.mas_equalTo(12);
+        make.height.mas_equalTo(18);
+    }];
+    _mainImg = [UIImageView new];
+    _mainImg.contentMode = UIViewContentModeScaleAspectFill;
+    [_mainImg.layer setMasksToBounds:YES];
+    [self.contentView addSubview:_mainImg];
+    [_mainImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_headLabel.mas_bottom).offset(10);
+        make.left.equalTo(_headLabel);
         make.right.mas_equalTo(-12);
         make.height.mas_equalTo(217.7);
     }];
     
-    nameLabel = [UILabel new];
-    nameLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:14];
-    nameLabel.textColor = [UIColor colorWithHexString:@"#222222"];
-    [self.contentView addSubview:nameLabel];
-    [nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(mainImg);
-        make.top.equalTo(mainImg.mas_bottom).offset(11);
+    _nameLabel = [UILabel new];
+    _nameLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:14];
+    _nameLabel.textColor = [UIColor colorWithHexString:@"#222222"];
+    [self.contentView addSubview:_nameLabel];
+    [_nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(_mainImg);
+        make.top.equalTo(_mainImg.mas_bottom).offset(11);
         make.height.equalTo(@20);
     }];
     
@@ -50,8 +57,8 @@
     firstView.backgroundColor = [UIColor colorWithHexString:@"#F1F1F1"];
     [self.contentView addSubview:firstView];
     [firstView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(nameLabel.mas_bottom).offset(10.3);
-        make.left.right.equalTo(mainImg);
+        make.top.equalTo(_nameLabel.mas_bottom).offset(10.3);
+        make.left.right.equalTo(_mainImg);
         make.height.mas_equalTo(2);
     }];
     _zhuanFaBtn = [UIButton new];
@@ -116,33 +123,7 @@
 -(void)fourBtn:(UIButton *)button
 {
     _FourBtn(button);
-//    switch (button.tag) {
-//        case 21:
-//        {
-//            [self shareClick];
-//        }
-//            break;
-//         case 22:
-//        {
-//            if(button.selected)
-//            {
-//                [_shouCangBtn setImage:[UIImage imageNamed:@"收藏"] forState:UIControlStateNormal];
-//
-//                button.selected = NO;
-//            }
-//            else
-//            {
-//                [_shouCangBtn setImage:[UIImage imageNamed:@"收藏选中"] forState:UIControlStateNormal];
-//                button.selected = YES;
-//            }
-//        }break;
-//            case 23:
-//        {}break;
-//            case 24:
-//        {}break;
-//        default:
-//            break;
-//    }
+
 }
 -(void)shareClick
 {
@@ -174,10 +155,24 @@
         
     }
     [_xiHuanBtn setTitle:[NSString stringWithFormat:@"%zd",model.lovenum] forState:UIControlStateNormal];
-    [mainImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,model.ImageUrl]]];
-    [nameLabel setText:model.name];
+    [_mainImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,model.img_new]]];
+    CGFloat realHeight;
+    if ([model.img_info isEqualToString:@""]||model.img_info==nil) {
+        realHeight = 0.0001;
+    }
+    else
+    {
+      realHeight= (SCREEN_WIDTH-24) /[model.img_info floatValue];
+    }
+    [_mainImg mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_headLabel.mas_bottom).offset(10);
+        make.left.equalTo(_headLabel);
+        make.right.mas_equalTo(-12);
+        make.height.mas_equalTo(realHeight);
+    }];
+    [_nameLabel setText:model.subTitle];
     [_pingLunBtn setTitle:[NSString stringWithFormat:@"%zd",model.commentnum] forState:UIControlStateNormal];
-    
+    _headLabel.text = model.name;
     
    // [nameContent setText:model.titleContent];
     //[numberWatch setText:model.detail];

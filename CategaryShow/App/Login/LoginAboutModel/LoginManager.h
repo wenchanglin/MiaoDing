@@ -33,9 +33,8 @@
 - (void) initUserDefalutsValue;
 
 - (void) exitSystemLogin : (UIViewController *) viewController;
-
-- (void) postLoginAuth:(NSString*) userName userPwd:(NSString*) userPassword loginId:(NSString *)loginId isAuto:(Boolean) isAutoLogin finish:(void (^)(Boolean success)) finish;
-
+- (void) postLoginAuth:(NSString*) userName userPwd:(NSString*) userPassword loginId:(NSString *)loginId  isAuto:(Boolean) isAutoLogin finish:(void (^)(Boolean)) finish;
+- (void) postLoginAuth:(NSString*) userName userPwd:(NSString*) userPassword loginId:(NSString *)loginId userId:(NSString *)userid icon:(NSString *)icon nickName:(NSString*)nickname isType:(NSInteger)is_type isAuto:(Boolean) isAutoLogin finish:(void (^)(Boolean)) finish;
 - (void) saveLoginData:(NSString *) userName userPwd:(NSString*) userPassword isAuto:(Boolean) isAutoLogin;
 
 @end

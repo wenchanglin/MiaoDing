@@ -76,7 +76,10 @@
     
 }
 
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 
 
 - (void)viewDidLoad {
@@ -86,6 +89,7 @@
     [self settabTitle:@"确认订单"];
     ZFB = YES;
     choose =YES;
+    _arrayForClothes = [NSMutableArray array];
     payPriceAndCon = [NSMutableArray array];
     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
     [dic setObject:@"商品合计" forKey:@"title"];
@@ -108,7 +112,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(payFlaseAction) name:@"PayFlase" object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(chooseCoupon:) name:@"chooseCoupon" object:nil];
-    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadAddress) name:@"reloadAddress" object:nil];
 }
 -(void)reloadAddress
 {
@@ -122,6 +126,8 @@
 //        [self getDatas];
 //    } else {
         model = [noti.userInfo objectForKey:@"model"];
+        [addressDic setObject:model.userName forKey:@"name"];
+        [addressDic setObject:model.userPhone forKey:@"phone"];
         [addressDic setObject:model.detaiArea forKey:@"address"];
         [addressDic setObject:model.city forKey:@"city"];
         [addressDic setObject:model.area forKey:@"area"];
@@ -332,7 +338,7 @@
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
-    clothesToPay = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 42) style:UITableViewStyleGrouped];
+    clothesToPay = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-64-72: SCREEN_HEIGHT - 64 - 42) style:UITableViewStyleGrouped];
     clothesToPay.separatorStyle = UITableViewCellSeparatorStyleNone;
     clothesToPay.dataSource = self;
     clothesToPay.delegate = self;
@@ -349,7 +355,7 @@
     lowView.sd_layout
     .leftEqualToView(self.view)
     .bottomEqualToView(self.view)
-    .heightIs(50)
+    .heightIs(IsiPhoneX?72:50)
     .rightEqualToView(self.view);
     [lowView setBackgroundColor:[UIColor whiteColor]];
     
@@ -369,14 +375,14 @@
     .leftEqualToView(lowView)
     .centerYEqualToView(lowView)
     .widthIs(SCREEN_WIDTH / 3 * 2)
-    .heightIs(50);
+    .heightIs(IsiPhoneX?72:50);
     
     UIButton *buyButton = [UIButton new];
     [lowView addSubview:buyButton];
     buyButton.sd_layout
     .rightEqualToView(lowView)
     .topEqualToView(lowView)
-    .bottomEqualToView(lowView)
+    .heightIs(50)
     .widthIs(SCREEN_WIDTH / 3);
     [buyButton addTarget:self action:@selector(DownOrderClick) forControlEvents:UIControlEventTouchUpInside];
     [buyButton setTitle:@"付款" forState:UIControlStateNormal];
@@ -389,7 +395,7 @@
     
     [clothesPrice mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(buyButton.mas_left).offset(-10);
-        make.centerY.equalTo(lowView.mas_centerY);
+        make.centerY.equalTo(buyButton.mas_centerY);
     }];
     
     clothesPrice.textColor= [UIColor colorWithHexString:@"#222222"];
@@ -400,7 +406,7 @@
     [leftView addSubview:Heji];
     [Heji mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(clothesPrice.mas_left);
-        make.centerY.equalTo(lowView.mas_centerY);
+        make.centerY.equalTo(buyButton.mas_centerY);
     }];
     [Heji setFont:[UIFont fontWithName:@"PingFangSC-Light" size:13]];
     [Heji setTextColor:[UIColor colorWithHexString:@"#222222"]];
@@ -423,7 +429,7 @@
     if (canUseCard - [lastMoney floatValue] <= 0) {
         
         if (canUseCard - [_allPrice floatValue] == 0) {
-            payView.price = @"¥0.01";
+            payView.price = @"0.01";
             [clothesPrice setText:@"¥0.01"];
         } else {
             payView.price = [NSString stringWithFormat:@"%.2f", [_allPrice floatValue] - canUseCard ];
@@ -482,7 +488,7 @@
         if (canUseCard - [lastMoney floatValue] <= 0) {
             
             if (canUseCard - [_allPrice floatValue] == 0) {
-                payView.price = @"¥0.01";
+                payView.price = @"0.01";
                 [clothesPrice setText:@"¥0.01"];
             } else {
                 payView.price = [NSString stringWithFormat:@"%.2f", [_allPrice floatValue] - canUseCard ];
@@ -618,7 +624,6 @@
         giftCardTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"giftCard" forIndexPath:indexPath];
         [cell.lastMoney setText:[NSString stringWithFormat:@"礼品卡余额（¥%.2f）", [lastMoney floatValue]]];
         if (choose) {
-            
             
             [cell.chooseImage setImage:[UIImage imageNamed:@"giftCardChoose"] forState:UIControlStateNormal];
         } else {
@@ -780,9 +785,17 @@
     
     if (choose) {
         if ([lastMoney floatValue] > canUseCard) {
+            if (price-canUseCard<=0) {
+                clothesPrice.text = @"¥0.01";
+                payView.price = @"0.01";
+            }
+            else
+            {
             [clothesPrice setText: [NSString stringWithFormat:@"¥%.2f", price - canUseCard]];
-            [payPriceAndCon[1] setObject:[NSString stringWithFormat:@"-¥%.2f",canUseCard] forKey:@"detail"];
             payView.price = [NSString stringWithFormat:@"%.2f", price - canUseCard];
+            }
+            [payPriceAndCon[1] setObject:[NSString stringWithFormat:@"-¥%.2f",canUseCard] forKey:@"detail"];
+
         } else {
             [clothesPrice setText: [NSString stringWithFormat:@"¥%.2f", price - [lastMoney floatValue]]];
             [payPriceAndCon[1] setObject:[NSString stringWithFormat:@"-¥%.2f",[lastMoney floatValue]] forKey:@"detail"];
@@ -821,6 +834,7 @@
         [params setObject:[addressDic stringForKey:@"area"] forKey:@"area"];
         [params setObject:[addressDic stringForKey:@"address"] forKey:@"address"];
         [params setObject:[addressDic stringForKey:@"id"] forKey:@"address_id"];
+        [params setObject:@(1) forKey:@"method"];
         if (couponId) {
             [params setObject:couponId forKey:@"ticket_id"];
         }
@@ -989,15 +1003,16 @@
                 [self.navigationController pushViewController:chooseCon animated:YES];
             }
             
+        }
+        
+    }
+    else if(indexPath.section==2) {
+        if (canChooseCard) {
+            saleCardViewController *sale = [[saleCardViewController alloc] init];
+            sale.ifPayContrller = YES;
+            [self.navigationController pushViewController:sale animated:YES];
         } else {
-            if (canChooseCard) {
-                saleCardViewController *sale = [[saleCardViewController alloc] init];
-                sale.ifPayContrller = YES;
-                [self.navigationController pushViewController:sale animated:YES];
-            } else {
-                [self alertViewShowOfTime:@"该产品不能使用礼品卡哦" time:1];
-            }
-            
+            [self alertViewShowOfTime:@"该产品不能使用礼品卡哦" time:1];
         }
         
     }

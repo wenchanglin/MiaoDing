@@ -12,7 +12,7 @@
 #import "JYHNavigationController.h"
 #import "RDVTabBarController.h"
 #import "UrlManager.h"
-
+#import "sys/utsname.h"
 #import "AppDelegate.h"
 #import "LoginManager.h"
 #import "Masonry.h"
@@ -256,7 +256,19 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
     return width;
 }
 
-
+-(UIImage *)imageWithColor:(UIColor *)color {
+    CGRect rect = CGRectMake(0.0f, 0.0f, 1.0f, 1.0f); //宽高 1.0只要有值就够了
+    UIGraphicsBeginImageContext(rect.size); //在这个范围内开启一段上下文
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CGContextSetFillColorWithColor(context, [color CGColor]);//在这段上下文中获取到颜色UIColor
+    CGContextFillRect(context, rect);//用这个颜色填充这个上下文
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();//从这段上下文中获取Image属性,,,结束
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
 
 
 - (void)setExtraCellLineHidden: (UITableView *)tableView{
@@ -322,9 +334,8 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
             return YES;
         }
         else {
-//            alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"dialog_title_tip", nil) message:domain.resultMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"dialog_button_okknow", nil) otherButtonTitles: nil];
-//
-//            [alert show];
+            alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"dialog_title_tip", nil) message:domain.resultMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"dialog_button_okknow", nil) otherButtonTitles: nil];
+            [alert show];
         }
         
         
@@ -479,7 +490,32 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
     return newImage;
 }
 
-
+- (NSString*)deviceVersion
+{
+    // 需要#import "sys/utsname.h"
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    NSString * deviceString = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
+    //iPhone
+    
+    if ([deviceString isEqualToString:@"iPhone6,1"])    return @"5S";
+    if ([deviceString isEqualToString:@"iPhone6,2"])    return @"5S";
+    if ([deviceString isEqualToString:@"iPhone7,1"])    return @"6P";
+    if ([deviceString isEqualToString:@"iPhone7,2"])    return @"6";
+    if ([deviceString isEqualToString:@"iPhone8,1"])    return @"6S";
+    if ([deviceString isEqualToString:@"iPhone8,2"])    return @"6SP";
+    if ([deviceString isEqualToString:@"iPhone9,1"])    return @"7";
+    if ([deviceString isEqualToString:@"iPhone9,2"])    return @"7P";
+    if([deviceString isEqualToString:@"iPhone10,1"])    return @"8";
+    if([deviceString isEqualToString:@"iPhone10,2"])    return @"8P";
+    if([deviceString isEqualToString:@"iPhone10,3"])    return @"X";
+    if([deviceString isEqualToString:@"iPhone10,4"])    return @"8";
+    if([deviceString isEqualToString:@"iPhone10,5"])    return @"8P";
+    if([deviceString isEqualToString:@"iPhone10,6"])    return @"X";
+    
+    
+    return deviceString;
+}
 
 
 -(void )getDateBegin:(NSDate *)dateBegin currentView:(NSString *)view1 fatherView:(NSString *)view2

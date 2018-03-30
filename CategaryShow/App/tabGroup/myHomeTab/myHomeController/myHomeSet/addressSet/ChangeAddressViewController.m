@@ -32,7 +32,10 @@
     getData =[BaseDomain getInstance:NO];
     [self reloadAddress];
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self settabTitle:@"更改地址"];
@@ -44,8 +47,32 @@
     [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
     [button addTarget:self action:@selector(managerClick) forControlEvents:UIControlEventTouchUpInside];
-}
+    //修改leftitem返回键
+   UIBarButtonItem *item =   [[UIBarButtonItem alloc]initWithImage:[self reSizeImage:[UIImage imageNamed:@"backLeftWhite"] toSize:CGSizeMake(9, 16)] style:UIBarButtonItemStyleDone target:self action:@selector(fanhui)];
+    self.navigationItem.leftBarButtonItem = item;
 
+}
+- (UIImage *)reSizeImage:(UIImage *)image toSize:(CGSize)reSize
+{
+    UIGraphicsBeginImageContext(CGSizeMake(reSize.width, reSize.height));
+    [image drawInRect:CGRectMake(0, 0, reSize.width, reSize.height)];
+    UIImage *reSizeImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return [reSizeImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+}
+-(void)fanhui
+{
+//    WCLLog(@"你点击了我");
+    if (modelArray.count>0) {
+        AddressModel *model = modelArray[0];
+        NSMutableDictionary *modelDIc= [NSMutableDictionary dictionary];
+        [modelDIc setObject:model forKey:@"model"];
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"AddressChange" object:nil userInfo:modelDIc];
+    }
+    [self.navigationController popViewControllerAnimated:YES];
+
+}
 -(void)managerClick
 {
     addressSetFirstViewViewController *address = [[addressSetFirstViewViewController alloc] init];

@@ -98,7 +98,6 @@
 
     designerHead = [UIImageView new];
     [contentView addSubview:designerHead];
-    designerHead.backgroundColor = [UIColor cyanColor];
     [designerHead.layer setMasksToBounds:YES];
     [designerHead.layer setCornerRadius:3];
     designerHead.contentMode = UIViewContentModeScaleAspectFill;
@@ -223,6 +222,20 @@
                     range:NSMakeRange(0, model.uname.length)];
     designerCard.attributedText = attrStr;
     [clothesImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.img]]];
+    CGFloat realHeight;
+    if ([model.img_info isEqualToString:@""]||model.img_info==nil) {
+        realHeight = 0.0001;
+    }
+    else
+    {
+        realHeight = (SCREEN_WIDTH-24) /[model.img_info floatValue];
+    }
+    [clothesImg mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(zuoPinLabel);
+        make.top.equalTo(zuoPinLabel.mas_bottom).offset(10);
+        make.right.mas_equalTo(-12);
+        make.height.mas_equalTo(realHeight);
+    }];
     [designerHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL,model.avatar]]];
     designerJieShao.text = model.introduce;
     

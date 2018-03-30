@@ -74,55 +74,55 @@
 
 
 //开始编辑输入框的时候，软键盘出现，执行此事件
--(void)textFieldDidBeginEditing:(UITextField *)textField
-{
-    
-    if (isViewYFisrt) {
-        initViewY = self.superview.superview.superview.frame.origin.y;
-        isViewYFisrt = NO;
-    }
-    
-    int offset = [self getControlFrameOriginY:textField] + 64 + 45 + 25 - (self.superview.superview.superview.frame.size.height - 216.0);//键盘高度216
-    
-    NSTimeInterval animationDuration = 0.30f;
-    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
-    [UIView setAnimationDuration:animationDuration];
-    
-    //将视图的Y坐标向上移动offset个单位，以使下面腾出地方用于软键盘的显示
-    if(offset > 0)
-        self.superview.superview.frame = CGRectMake(0.0f, -offset, self.superview.superview.superview.frame.size.width, self.superview.superview.superview.frame.size.height);
-    
-    [UIView commitAnimations];
-}
--(BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    
-    
-    [textField resignFirstResponder];
-    
-    return YES;
-}
-
-//输入框编辑完成以后，将视图恢复到原始状态
+//-(void)textFieldDidBeginEditing:(UITextField *)textField
+//{
+//
+//    if (isViewYFisrt) {
+//        initViewY = self.superview.superview.superview.frame.origin.y;
+//        isViewYFisrt = NO;
+//    }
+//
+//    int offset = [self getControlFrameOriginY:textField] + 64 + 45 + 25 - (self.superview.superview.superview.frame.size.height - 216.0);//键盘高度216
+//
+//    NSTimeInterval animationDuration = 0.30f;
+//    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
+//    [UIView setAnimationDuration:animationDuration];
+//
+//    //将视图的Y坐标向上移动offset个单位，以使下面腾出地方用于软键盘的显示
+//    if(offset > 0)
+//        self.superview.superview.frame = CGRectMake(0.0f, -offset, self.superview.superview.superview.frame.size.width, self.superview.superview.superview.frame.size.height);
+//
+//    [UIView commitAnimations];
+//}
+//-(BOOL)textFieldShouldReturn:(UITextField *)textField
+//{
+//
+//
+//    [textField resignFirstResponder];
+//
+//    return YES;
+//}
+//
+////输入框编辑完成以后，将视图恢复到原始状态
 -(void)textFieldDidEndEditing:(UITextField *)textField
 {
-    CGRect frame = self.superview.superview.superview.frame;
-    
-    frame.origin.x = 0;
-    frame.origin.y = initViewY;
-    
-    NSTimeInterval animationDuration = 0.30f;
-    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
-    [UIView setAnimationDuration:animationDuration];
-    
-    [self.superview.superview.superview setFrame:frame];
-    
-    [UIView commitAnimations];
-    
+   // CGRect frame = self.superview.superview.superview.frame;
+
+//    frame.origin.x = 0;
+//    frame.origin.y = initViewY;
+//
+//    NSTimeInterval animationDuration = 0.30f;
+//    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
+//    [UIView setAnimationDuration:animationDuration];
+//
+//    [self.superview.superview.superview setFrame:frame];
+//
+//    [UIView commitAnimations];
+
     if ([_delegate respondsToSelector:@selector(textDetail::)]) {
         [_delegate textDetail:textField.text :self.tag];
     }
-    
+
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
@@ -133,16 +133,16 @@
     return YES;
 }
 
-- (CGFloat) getControlFrameOriginY : (UIView *) curView {
-    
-    CGFloat resultY = 0;
-    
-    if ([[[curView superview] superview] superview] != nil && ![[[[curView superview] superview] superview] isEqual:self.superview.superview.superview]) {
-        resultY = [self getControlFrameOriginY:[[[curView superview] superview] superview]];
-    }
-    
-    return resultY + curView.frame.origin.y;
-}
+//- (CGFloat) getControlFrameOriginY : (UIView *) curView {
+//
+//    CGFloat resultY = 0;
+//
+//    if ([[[curView superview] superview] superview] != nil && ![[[[curView superview] superview] superview] isEqual:self.superview.superview.superview]) {
+//        resultY = [self getControlFrameOriginY:[[[curView superview] superview] superview]];
+//    }
+//
+//    return resultY + curView.frame.origin.y;
+//}
 
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

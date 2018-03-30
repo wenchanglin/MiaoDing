@@ -20,7 +20,7 @@
 @property (nonatomic, retain) NSString *img;
 @property(nonatomic,strong)NSString *detailClothesImg;
 @property (nonatomic, retain) NSString *p_time;
-
+@property(nonatomic,strong)NSString *img_info;
 @property (nonatomic, retain) NSString *avatar;
 @property (nonatomic, retain) NSString *uname;
 @property (nonatomic, retain) NSString *tag;

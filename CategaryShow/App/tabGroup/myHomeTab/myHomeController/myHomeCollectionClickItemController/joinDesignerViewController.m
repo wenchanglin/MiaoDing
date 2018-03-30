@@ -23,13 +23,17 @@
     [self.navigationController setNavigationBarHidden:NO animated:animated];
 
 }
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self settabTitle:@"设计师入驻"];
     getData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self getDatas];
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(20, SCREEN_HEIGHT -64-50, SCREEN_WIDTH - 40, 40)];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(20,IsiPhoneX? SCREEN_HEIGHT-64-83:SCREEN_HEIGHT -64-50, SCREEN_WIDTH - 40, 40)];
     [button setBackgroundColor:getUIColor(Color_measureTableTitle)];
     [self.view addSubview:button];
     [button.layer setCornerRadius:1];
@@ -57,7 +61,7 @@
 
 -(void)createScrollerView
 {
-    UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 60 - 64)];
+    UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, IsiPhoneX?SCREEN_HEIGHT-64-83:SCREEN_HEIGHT - 60 - 64)];
     [self.view addSubview:scroller];
 
     UIImageView *imageDetailDes = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];

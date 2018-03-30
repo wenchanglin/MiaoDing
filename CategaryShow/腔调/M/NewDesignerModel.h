@@ -25,6 +25,7 @@
 @property (nonatomic, strong) NSString *sub_name;
 @property (nonatomic, strong) NSString *thumb;
 @property (nonatomic, strong) NSString *c_time;
+@property(nonatomic,strong)NSString * img_info;
 @property (nonatomic) NSInteger goodsListId;
 @property (nonatomic) NSInteger is_love;
 @property (nonatomic) NSInteger is_collect;

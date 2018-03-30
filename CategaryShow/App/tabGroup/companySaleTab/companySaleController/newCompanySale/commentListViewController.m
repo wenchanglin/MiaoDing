@@ -29,13 +29,20 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.view setBackgroundColor:[UIColor whiteColor]];
+    if (@available(iOS 11.0, *)) {
+        commendTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;//UIScrollView也适用
+    }else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     modelArray = [NSMutableArray array];
-    self.title = @"评价";
+    [self settabTitle:@"评价"];
     getData = [BaseDomain getInstance:NO];
     [self getData];
-    // Do any additional setup after loading the view.
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)getData
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
@@ -58,7 +65,7 @@
 }
 -(void)createView
 {
-    commendTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    commendTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
     commendTable.delegate = self;
     commendTable.dataSource = self;
     [commendTable registerClass:[commentHaveImageTableViewCell class] forCellReuseIdentifier:NSStringFromClass([commentHaveImageTableViewCell class])];
@@ -68,11 +75,7 @@
     [commendTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
 //    [commendTable setBackgroundColor:[UIColor whiteColor]];
 
-    if (@available(iOS 11.0, *)) {
-        commendTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;//UIScrollView也适用
-    }else {
-        self.automaticallyAdjustsScrollViewInsets = NO;
-    }
+   
     
 }
 

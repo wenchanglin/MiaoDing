@@ -14,9 +14,7 @@
 
 #define lineColor  [UIColor colorWithRed:196/255.0 green:196/255.0 blue:196/255.0 alpha:1]
 
-#define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 
-#define SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
 
 @interface LTSDateChoose()
 
@@ -79,7 +77,7 @@
         UIView *view = [UIView new];
         view.backgroundColor  = lineColor;
         [self.alertView addSubview:view];
-        view.frame = CGRectMake(CGRectGetMaxX(self.leftBtn.frame), CGRectGetMaxY(self.dateP.frame), 0.5, kDateBtnHeight);
+        view.frame = CGRectMake(CGRectGetMaxX(self.leftBtn.frame),IsiPhoneX?CGRectGetMaxY(self.dateP.frame)-25:CGRectGetMaxY(self.dateP.frame), 0.5, kDateBtnHeight);
         
     }
     
@@ -118,7 +116,7 @@
 - (UIButton *)leftBtn{
     if (!_leftBtn) {
         self.leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.leftBtn.frame = CGRectMake(0,CGRectGetHeight(self.alertView.frame)-kDateBtnHeight , SCREEN_WIDTH/2, kDateBtnHeight);
+        self.leftBtn.frame = CGRectMake(0,IsiPhoneX?CGRectGetHeight(self.alertView.frame)-kDateBtnHeight-25:CGRectGetHeight(self.alertView.frame)-kDateBtnHeight, SCREEN_WIDTH/2, kDateBtnHeight);
         [self.leftBtn setTitle:@"取消" forState:UIControlStateNormal];
         [self.leftBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [self.leftBtn addTarget:self action:@selector(handleDateTopViewLeft) forControlEvents:UIControlEventTouchUpInside];
@@ -130,7 +128,7 @@
 - (UIButton *)rightBtn {
     if (!_rightBtn) {
         self.rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.rightBtn.frame = CGRectMake(SCREEN_WIDTH/2,CGRectGetHeight(self.alertView.frame)-kDateBtnHeight , SCREEN_WIDTH/2, kDateBtnHeight);
+        self.rightBtn.frame = CGRectMake(SCREEN_WIDTH/2,IsiPhoneX?CGRectGetHeight(self.alertView.frame)-kDateBtnHeight-25:CGRectGetHeight(self.alertView.frame)-kDateBtnHeight , SCREEN_WIDTH/2, kDateBtnHeight);
         [self.rightBtn setTitleColor:[UIColor colorWithRed:0 green:122/255.0 blue:1 alpha:1] forState:UIControlStateNormal];
         [self.rightBtn setTitle:@"确定" forState:UIControlStateNormal];
         

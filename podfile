@@ -1,5 +1,7 @@
 platform:ios,’9.0’
 target ‘CategaryShow’ do
+pod 'XHWebImageAutoSize','~>1.1.0'
+pod 'SDCycleScrollView', '~> 1.61'
 #pod 'MLeaksFinder'
 pod 'MJExtension'
 pod 'IQKeyboardManager'
@@ -17,7 +19,7 @@ pod 'JSONKit', '~> 1.5pre'
 pod 'SCLAlertView-Objective-C', '~> 1.0.6'
 pod 'BlockAlertsAnd-ActionSheets', '~> 1.0.6'
 pod 'Masonry'
-pod 'MJRefresh', '~> 3.1.13'
+pod 'MJRefresh'
 pod 'QIYU_iOS_SDK', '~> 3.11.0’
 pod 'SDWebImage', '~> 3.8.1'
 pod 'SDAutoLayout', '~> 2.1.7'

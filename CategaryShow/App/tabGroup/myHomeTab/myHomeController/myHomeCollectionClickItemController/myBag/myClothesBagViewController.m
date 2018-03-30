@@ -120,7 +120,10 @@
 //        
 //    }];
 //}
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -147,13 +150,9 @@
     
     modelArray = [NSMutableArray array];
     suggestModelArray = [NSMutableArray array];
-    
-    
-    
-    
-    
-    [self createSuggestGet];
+
     [self getDataS];
+    [self createSuggestGet];
 }
 
 -(void)realToOrder
@@ -480,7 +479,7 @@
     [self.view addSubview:lowBgView];
     lowBgView.sd_layout
     .leftEqualToView(self.view)
-    .bottomEqualToView(self.view)
+    .bottomSpaceToView(self.view,IsiPhoneX?22:0)
     .widthIs(SCREEN_WIDTH)
     .heightIs(49);
     [lowBgView setBackgroundColor:[UIColor whiteColor]];

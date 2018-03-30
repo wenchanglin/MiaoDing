@@ -38,7 +38,10 @@
     
     // Do any additional setup after loading the view.
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
@@ -108,7 +111,7 @@
    [clothesDetailTable registerClass:[ComoanySaleDDDtailViewCell class] forCellReuseIdentifier:NSStringFromClass([ComoanySaleDDDtailViewCell class])];
     [self.view addSubview:clothesDetailTable];
     
-    UIView *priceLowView = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - 50, SCREEN_WIDTH / 3, 50)];
+    UIView *priceLowView = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-64 - 50, SCREEN_WIDTH / 3, 50)];
     [priceLowView setBackgroundColor:getUIColor(Color_loginBackViewColor)];
     [self.view addSubview:priceLowView];
     

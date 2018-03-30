@@ -18,7 +18,7 @@
 @end
 
 @interface commentHaveImageTableViewCell : UITableViewCell<UICollectionViewDelegate, UICollectionViewDataSource>
-@property (nonatomic, strong) id<commentDelegate>delegate;
+@property (nonatomic, weak) id<commentDelegate>delegate;
 @property (nonatomic, retain) commentModel *model;
 
 @end

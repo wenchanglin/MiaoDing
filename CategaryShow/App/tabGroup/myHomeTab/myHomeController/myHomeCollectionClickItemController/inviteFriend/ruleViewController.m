@@ -22,7 +22,6 @@
     [self.view addSubview:topView];
     [topView setBackgroundColor:[UIColor whiteColor]];
     [self createScrollerView];
-    // Do any additional setup after loading the view.
 }
 -(void)createScrollerView
 {

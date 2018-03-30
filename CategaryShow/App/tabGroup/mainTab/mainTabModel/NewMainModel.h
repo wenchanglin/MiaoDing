@@ -14,6 +14,8 @@
 @property (nonatomic, retain) NSString *linkUrl;
 @property (nonatomic, retain) NSString *time;
 @property (nonatomic, retain) NSString *LinkId;
+@property(nonatomic,strong)NSString * img_new;
+@property(nonatomic,strong)  NSString * img_info;
 @property(nonatomic)NSInteger is_type;
 @property (nonatomic, retain) NSString *titleContent;
 @property (nonatomic, retain) NSString *fenLei;

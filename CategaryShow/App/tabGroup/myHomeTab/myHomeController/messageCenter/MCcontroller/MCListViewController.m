@@ -38,6 +38,10 @@
     [self.view addSubview:labelCount];
     // Do any additional setup after loading the view.
 }
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 
 -(void)getDatas
 {

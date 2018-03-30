@@ -21,9 +21,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"帮助列表";
-    UIView *HeadView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 64)];
-    [HeadView setBackgroundColor:[UIColor whiteColor]];
-    [self.view addSubview:HeadView];
     helpList = [NSMutableArray array];
     getData = [BaseDomain getInstance:NO];
      [self.view setBackgroundColor:getUIColor(Color_background)];
@@ -46,7 +43,7 @@
 
 -(void)createHelpTable
 {
-    helpTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    helpTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
     helpTable.delegate = self;
     helpTable.dataSource = self;
     [helpTable registerClass:[UITableViewCell class] forCellReuseIdentifier:@"helpList"];

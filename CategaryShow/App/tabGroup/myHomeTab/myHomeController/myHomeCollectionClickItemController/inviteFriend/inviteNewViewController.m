@@ -42,10 +42,10 @@
     NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
     NSArray* imageArray = @[[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]]];
     [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
-    [shareParams SSDKSetupShareParamsByText:[NSString stringWithFormat:@"%@邀请你加入妙定定制",[SelfPersonInfo getInstance].cnPersonUserName]
+    [shareParams SSDKSetupShareParamsByText:[NSString stringWithFormat:@"%@邀请您一起做腔调绅士，来吧，用1000元见面礼定制一套体面的行头",[SelfPersonInfo getInstance].cnPersonUserName]
                                      images:imageArray
                                         url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@",URL_HEADURL, URL_SHARE, uId]]
-                                      title:@"邀请有礼"
+                                      title:@"Hi，新朋友，妙定为您准备了1000元见面礼"
                                        type:SSDKContentTypeWebPage];
     
     [ShareCustom shareWithContent:shareParams];
@@ -53,7 +53,6 @@
     
     
 }
-
 
 -(void)viewWillAppear:(BOOL)animated
 {
@@ -72,16 +71,18 @@
     [buttonLeft setImageEdgeInsets:UIEdgeInsetsMake(0, -10, 0, 10)];
     [buttonLeft addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
     
-    
     UIButton *buttonRight = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-    [buttonRight setImage:[UIImage imageNamed:@"shareRight"] forState:UIControlStateNormal];
+    [buttonRight setImage:[UIImage imageNamed:@"share_white"] forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRight];
     [buttonRight addTarget:self action:@selector(shareClick) forControlEvents:UIControlEventTouchUpInside];
     
     [self getDatas];
     
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];

@@ -18,6 +18,7 @@
 #import "HaveDoneTableViewCell.h"
 #import "HaveDoneViewController.h"
 #import "paySuccessViewController.h"
+#import "NextPayForClothesVC.h"
 @interface myOrderViewController ()<UITableViewDataSource, UITableViewDelegate,waitForPayDelegate>
 
 @end
@@ -36,7 +37,7 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    [self reloadTable];
+    //[self reloadTable];
 }
 
 - (void)viewDidLoad {
@@ -50,6 +51,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableData) name:@"confirm" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableData) name:@"orderDelete" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableData) name:@"cancelOrder" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableData) name:@"realToOrder" object:nil];
+
     [self getDatas];
 }
 
@@ -61,11 +64,8 @@
     [getData getData:URL_GetOrderNew PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:getData]) {
             dataArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
-            
             if ([dataArray count] > 0) {
                 for (NSMutableDictionary *dic in dataArray) {
-                    
-                    
                     orderModel *model = [orderModel new];
                     model.number = [dic stringForKey:@"order_no"];
                     model.orderId = [dic stringForKey:@"id"];
@@ -93,7 +93,9 @@
                     model.clothesStatus = [dic integerForKey:@"status"];
                     switch ([dic integerForKey:@"status"]) {
                         case 1:
+                        {
                             model.clothesBuyStatus = @"待付款";
+                        }
                             break;
                         case 2:
                             model.clothesBuyStatus = @"已付款";
@@ -110,9 +112,10 @@
                         default:
                             break;
                     }
-                    
-                    [modelArray addObject:model];
-                    
+                   
+                        [modelArray addObject:model];
+//                        WCLLog(@"%@",modelArray);
+
                 }
                 
                 [self createHaveOrderView];
@@ -133,18 +136,17 @@
 
 -(void)reloadTableData
 {
-    [modelArray removeAllObjects];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"0" forKey:@"status"];
     [params setObject:@"1" forKey:@"page"];
     [getData getData:URL_GetOrderNew PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:getData]) {
+            [modelArray removeAllObjects];
+
             dataArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
              
             if (dataArray > 0) {
                 for (NSMutableDictionary *dic in dataArray) {
-                    
-                    
                     orderModel *model = [orderModel new];
                     model.number = [dic stringForKey:@"order_no"];
                     model.orderId = [dic stringForKey:@"id"];
@@ -260,6 +262,7 @@
 
 -(void)createHaveOrderView
 {
+    
     haveDingTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
     haveDingTable.dataSource = self;
     haveDingTable.delegate = self;
@@ -347,6 +350,8 @@
     }else if (model.clothesStatus == 4) {
         HaveDoneTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"orderDoneForSend" forIndexPath:indexPath];
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+        cell.nextBtn.tag = indexPath.section+4999;
+        [cell.nextBtn addTarget:self action:@selector(nextClick:) forControlEvents:UIControlEventTouchUpInside];
         cell.commendBtn.tag = indexPath.section + 5000;
         [cell.commendBtn addTarget:self action:@selector(commendBtnClick:) forControlEvents:UIControlEventTouchUpInside];
         cell.model = modelArray[indexPath.section];
@@ -358,7 +363,22 @@
     [resCell setBackgroundColor:[UIColor whiteColor]];
     return resCell;
 }
-
+-(void)nextClick:(UIButton*)btn
+{
+    NSMutableDictionary * parameter = [NSMutableDictionary dictionary];
+    orderModel *model = modelArray[btn.tag - 4999];
+    [parameter setObject:model.orderId forKey:@"orderid"];
+    [[BaseDomain getInstance:NO]postData:URL_NextOrder PostParams:parameter finish:^(BaseDomain *domain, Boolean success) {
+        if ([self checkHttpResponseResultStatus:domain]) {
+            if ([domain.dataRoot integerForKey:@"code"]==1) {
+                NextPayForClothesVC * pvc = [[NextPayForClothesVC alloc]init];
+                pvc.carId = [NSString stringWithFormat:@"%d",[domain.dataRoot integerForKey:@"car_id"]];
+                pvc.allPrice = [NSString stringWithFormat:@"%.2f",[dataArray[btn.tag-4999][@"list"][0][@"price"]floatValue] * [model.clothesCount floatValue]];
+                [self.navigationController pushViewController:pvc animated:YES];
+            }
+        }
+    }];
+}
 -(void)commendBtnClick:(UIButton *)sender
 {
     orderModel *model = modelArray[sender.tag - 5000];
@@ -536,12 +556,12 @@
 
 -(void)reloadTable
 {
-    [modelArray removeAllObjects];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"0" forKey:@"status"];
     [params setObject:@"1" forKey:@"page"];
     [getData getData:URL_GetOrderNew PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:getData]) {
+            [modelArray removeAllObjects];
             dataArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
             
             if ([dataArray count] > 0) {

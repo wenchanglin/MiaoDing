@@ -14,7 +14,6 @@
     UILabel *titleLabel;
     UIButton *cancelBtn;
     UITableView *tablePay;
-    UILabel *priceLable;
     NSMutableArray *typeArray;
     
 }
@@ -82,6 +81,7 @@
     
     UILabel *heji = [UILabel new];
     [self addSubview:heji];
+    _hejiLabel = heji;
     heji.sd_layout
     .leftSpaceToView(self, 16)
     .topSpaceToView(tablePay, 20)
@@ -91,16 +91,16 @@
     [heji setText:@"合计:"];
     
     
-    priceLable = [UILabel new];
-    [self addSubview:priceLable];
-    priceLable.sd_layout
+    _priceLable = [UILabel new];
+    [self addSubview:_priceLable];
+    _priceLable.sd_layout
     .leftSpaceToView(heji,5)
     .topSpaceToView(tablePay,20)
     .heightIs(20)
     .widthIs(SCREEN_WIDTH / 2);
    
-    [priceLable setFont:[UIFont systemFontOfSize:15]];
-    [priceLable setTextAlignment:NSTextAlignmentLeft];
+    [_priceLable setFont:[UIFont systemFontOfSize:15]];
+    [_priceLable setTextAlignment:NSTextAlignmentLeft];
     
     UIButton *buttonPay = [UIButton new];
     [self addSubview:buttonPay];
@@ -120,7 +120,7 @@
 -(void)layoutSubviews
 {
     [super layoutSubviews];
-     [priceLable setText:[NSString stringWithFormat:@"￥%@",_price]];
+     [_priceLable setText:[NSString stringWithFormat:@"￥%@",_price]];
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -160,8 +160,7 @@
 
 -(void)reloadView
 {
-    [priceLable setText:[NSString stringWithFormat:@"￥%.2f",[_price floatValue]]];
-    
+    [_priceLable setText:[NSString stringWithFormat:@"￥%.2f",[_price floatValue]]];
     
 }
 
