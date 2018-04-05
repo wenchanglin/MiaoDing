@@ -134,7 +134,7 @@
     .widthIs(130);
     [nocard setImage:[UIImage imageNamed:@"haveNoCard"]];
     
-    UIButton *addCard = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-88-25-49:SCREEN_HEIGHT  - 50-64, SCREEN_WIDTH, 49.0 )];
+    UIButton *addCard = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-88-25-49:SCREEN_HEIGHT  - 49-64, SCREEN_WIDTH, 49.0 )];
     [addCard setImage:[UIImage imageNamed:@"addCard"] forState:UIControlStateNormal];
     [addCard addTarget:self action:@selector(clickAddAction) forControlEvents:UIControlEventTouchUpInside];
     

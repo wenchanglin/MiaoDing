@@ -108,7 +108,7 @@
     [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
     [shareParams SSDKSetupShareParamsByText:[dataDictionary stringForKey:@"content"]
                                      images:imageArray
-                                        url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%@&shop_id=%@&market_id=%@&type=2", URL_HEADURL,URL_SHARE, goodsId,_shopId,_marketId]]
+                                        url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%@&shop_id=%@&market_id=%@&type=2&shareout_id=%@", URL_HEADURL,URL_SHARE, goodsId,_shopId,_marketId,[SelfPersonInfo getInstance].personUserKey]]
                                       title:[dataDictionary stringForKey:@"name"]
                                        type:SSDKContentTypeWebPage];
     
@@ -179,7 +179,7 @@
             _class_id = [dataDictionary stringForKey:@"classify_id"];
             pictureArray = [NSMutableArray arrayWithArray:[dataDictionary arrayForKey:@"img_list"]];
             prctureIntro = [NSMutableArray arrayWithArray:[dataDictionary arrayForKey:@"img_introduce"]];
-            WCLLog(@"%@",dataDictionary);
+//            WCLLog(@"%@",dataDictionary);
             lt_data = [domain.dataRoot stringForKey:@"lt_data"];
             designer.content = [dataDictionary stringForKey:@"content"];
             designer.img = [dataDictionary stringForKey:@"img_often"];
@@ -211,9 +211,7 @@
             sizeList = [NSMutableArray arrayWithArray:[dataDictionary arrayForKey:@"size_list"]];
             sizeShowDic = [[[sizeList firstObject] arrayForKey:@"size_list"] firstObject];
             if ([sizeList count] > 0) {
-//                sizeStr = [NSString stringWithFormat:@"%@:%@", [sizeList[0] stringForKey:@"size_name"],[sizeList[0] stringForKey:@"name"]];
                 sizeStr = [NSString stringWithFormat:@"尺寸:%@", [sizeList[0] stringForKey:@"size_name"]];
-//                colorStr = [NSString stringWithFormat:@"%@:%@", [[[sizeList[flogSize] arrayForKey:@"size_list"] firstObject] stringForKey:@"size_name"],[[[sizeList[flogSize] arrayForKey:@"size_list"] firstObject] stringForKey:@"name"]];
                 colorStr = [NSString stringWithFormat:@"颜色:%@", [[[sizeList[flogSize] arrayForKey:@"size_list"] firstObject] stringForKey:@"color_name"]];
                 sizeId = [sizeList[0] stringForKey:@"id"];
             }

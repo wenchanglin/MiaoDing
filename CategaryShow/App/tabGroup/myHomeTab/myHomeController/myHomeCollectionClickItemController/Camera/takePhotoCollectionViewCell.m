@@ -9,14 +9,10 @@
 #import "takePhotoCollectionViewCell.h"
 
 @implementation takePhotoCollectionViewCell
-{
-    UIImageView *imagePhoto;
-}
+
 -(instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-        
-        
         [self setUp];
         
     }
@@ -26,20 +22,23 @@
 
 -(void)setUp
 {
-    imagePhoto = [UIImageView new];
+    _imagePhoto = [UIImageView new];
     
-    [imagePhoto setFrame:CGRectMake(0, 0, self.frame.size.height / 4416.0 * 2800.0 , self.frame.size.height)];
-    [imagePhoto setContentMode:UIViewContentModeScaleAspectFit];
-    [imagePhoto.layer setMasksToBounds:YES];
-    [self.contentView addSubview:imagePhoto];
-    
+    [_imagePhoto setContentMode:UIViewContentModeScaleAspectFit];
+    [_imagePhoto.layer setMasksToBounds:YES];
+    _imagePhoto.userInteractionEnabled = YES;
+    [self.contentView addSubview:_imagePhoto];
+//    [_imagePhoto setFrame:CGRectMake(0, 0, SCREEN_WIDTH,SCREEN_HEIGHT)];
+    [_imagePhoto mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.contentView);
+    }];
 }
 
 -(void)setModel:(photoModel *)model
 {
     _model = model;
-    imagePhoto.center = self.contentView.center;
-    imagePhoto.image = model.photo;
+    _imagePhoto.center = self.contentView.center;
+    _imagePhoto.image = model.photo;
     
 }
 @end

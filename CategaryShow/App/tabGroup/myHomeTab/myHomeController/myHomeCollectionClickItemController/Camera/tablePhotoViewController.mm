@@ -143,7 +143,7 @@ NSInteger flog;
 }
 -(void)backAction:(UIBarButtonItem *)item
 {
-    WCLLog(@"你点击了我");
+//    WCLLog(@"你点击了我");
     [photoCollection removeFromSuperview];
     [self.navigationController popViewControllerAnimated:YES];
     [photoTable removeFromSuperview];
@@ -217,10 +217,11 @@ NSInteger flog;
     
    
     
-    shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 50, imagePickerController.view.frame.size.height - 100, 100, 100)];
-    [shutMInebutton.layer setCornerRadius:50];
+    shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 30, imagePickerController.view.frame.size.height - 80, 60, 60)];
+    [shutMInebutton.layer setCornerRadius:30];
     [shutMInebutton.layer setMasksToBounds:YES];
-    [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
+    shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+//    [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
     [shutMInebutton addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
     [imagePickerController.view addSubview:shutMInebutton];
     
@@ -324,10 +325,11 @@ NSInteger flog;
             backgroundView = [[UIImageView alloc] initWithImage:backgroundImages[currentStep - 1]];;
             [backgroundView setFrame:CGRectMake(0, 0, imagePickerController.view.frame.size.width, imagePickerController.view.frame.size.height)];
             [imagePickerController.view addSubview:backgroundView];
-            shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 50, imagePickerController.view.frame.size.height - 100, 100, 100)];
-            [shutMInebutton.layer setCornerRadius:50];
+            shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 30, imagePickerController.view.frame.size.height - 80, 60, 60)];
+            [shutMInebutton.layer setCornerRadius:30];
             [shutMInebutton.layer setMasksToBounds:YES];
-            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
+            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+//            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
             [shutMInebutton addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
             [imagePickerController.view addSubview:shutMInebutton];
             
@@ -398,10 +400,11 @@ NSInteger flog;
             [backgroundView setFrame:CGRectMake(0, 0, imagePickerController.view.frame.size.width, imagePickerController.view.frame.size.height)];
             [imagePickerController.view addSubview:backgroundView];
             
-            shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 50, imagePickerController.view.frame.size.height - 100, 100, 100)];
-            [shutMInebutton.layer setCornerRadius:50];
+            shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 30, imagePickerController.view.frame.size.height - 80, 60, 60)];
+            [shutMInebutton.layer setCornerRadius:30];
             [shutMInebutton.layer setMasksToBounds:YES];
-            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
+            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+//            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
             [shutMInebutton addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
             [imagePickerController.view addSubview:shutMInebutton];
             
@@ -638,10 +641,12 @@ NSInteger flog;
                         if (fTheta > -5 && fTheta < 5 && yTheta < 1 && yTheta > -1){
             
                             canShut = YES;
-                            [shutMInebutton setImage:[UIImage imageNamed:@"shutten"] forState:UIControlStateNormal];
+                            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#90c551"];
+//                            [shutMInebutton setImage:[UIImage imageNamed:@"shutten"] forState:UIControlStateNormal];
                         } else {
                             canShut = NO;
-                            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
+                            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+//                            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
                         }
             
         }];
@@ -852,16 +857,16 @@ NSInteger flog;
             [_params setObject:@"19.2058" forKey:@"actual_width"];
             area = [resultArray[j] floatValue];
             if (!BiLi) {
-                BiLi = [NSString stringWithFormat:@"%.4f",21.0  / area * 0.9145]; // 9183
+                BiLi = [NSString stringWithFormat:@"%.4f",21.0  / area * 0.9183]; // 9183 9145
             } else {
-                BiLi = [NSString stringWithFormat:@"%@,%.4f",BiLi,21  / area * 0.9145];
+                BiLi = [NSString stringWithFormat:@"%@,%.4f",BiLi,21  / area * 0.9183];
             }
             
         }else if ([[self deviceVersion] integerValue] == 7) {
             [_params setObject:@"19.1415" forKey:@"actual_width"];
             area = [resultArray[j] floatValue];
             if (!BiLi) {
-                BiLi = [NSString stringWithFormat:@"%.4f",21.0  / area * 0.9115];
+                BiLi = [NSString stringWithFormat:@"%.4f",21.0  / area * 0.9115];//-0.88532
             } else {
                 BiLi = [NSString stringWithFormat:@"%@,%.4f",BiLi,21  / area * 0.9115];
             }
@@ -873,7 +878,7 @@ NSInteger flog;
                 [_params setObject:@"18.7656" forKey:@"actual_width"];
                 TSScan = 0.8936;
             } else if ([[self deviceVersion] isEqualToString:@"6P"]) {
-                TSScan = 0.9013;
+                TSScan = 0.9013;//-0.012
                  [_params setObject:@"18.9273" forKey:@"actual_width"];//62370
             } else if([[self deviceVersion] isEqualToString:@"6S"] ||[[self deviceVersion] isEqualToString:@"6SP"]) {
                 TSScan = 0.8967;
@@ -900,7 +905,6 @@ NSInteger flog;
         [_params setObject:@"0.9912" forKey:@"type_scale"];
     }
     [_params setObject:[SelfPersonInfo getInstance].personPhone forKey:@"phone"];
-//  [_params setObject:stringImage forKey:@"img_list"];
     [_params setObject:BiLi forKey:@"scale"];
     [_params setObject:y_position forKey:@"y_position"];
     [_params setObject:[self deviceVersion] forKey:@"phone_type"];
@@ -1283,11 +1287,11 @@ NSInteger flog;
         photoModel *model = photoModelArray[currentStep - 1];
         if (area > 2) {
             model.photo = [self MatToUIImage:img];
-            [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
-                        PHAssetChangeRequest *req = [PHAssetChangeRequest creationRequestForAssetFromImage:model.photo];
-            } completionHandler:^(BOOL success, NSError * _Nullable error) {
-                WCLLog(@"success = %d ,error =%@",success,error);
-            }];
+//            [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+//                        PHAssetChangeRequest *req = [PHAssetChangeRequest creationRequestForAssetFromImage:model.photo];
+//            } completionHandler:^(BOOL success, NSError * _Nullable error) {
+//                WCLLog(@"success = %d ,error =%@",success,error);
+//            }];
         }
 
 
@@ -1367,7 +1371,7 @@ NSInteger flog;
                     }
                 }
             }
-            WCLLog(@"%f",21/area);
+            WCLLog(@"%f",21/area);//155.465
             [resultArray addObject:[NSNumber numberWithFloat:area]];
             
         }

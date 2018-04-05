@@ -145,6 +145,8 @@ static CGFloat const headViewHeight = 240;
 -(void)reloadCound{
     
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [params setObject:@"1" forKey:@"page"];
+
     [getData getData:URL_GetUserInfo PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if (domain.result == 10001) {
             
@@ -281,7 +283,8 @@ static CGFloat const headViewHeight = 240;
     
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     
-    
+    [params setObject:@"1" forKey:@"page"];
+
     [getData getData:URL_GetUserInfo PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         
         

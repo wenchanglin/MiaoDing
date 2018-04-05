@@ -266,11 +266,10 @@
     buttonLike = [[UIButton alloc] initWithFrame:CGRectMake(67, 15, 25, 25)];
     [buttonLike addTarget:self action:@selector(saveClothesClick) forControlEvents:UIControlEventTouchUpInside];
     if([_dataDictionary integerForKey:@"is_collect"] == 1) {
-        [buttonLike setImage:[UIImage imageNamed:@"fullHeart"] forState:UIControlStateNormal];
+        [buttonLike setImage:[UIImage imageNamed:@"收藏选中"] forState:UIControlStateNormal];
         
     } else {
-        [buttonLike setImage:[UIImage imageNamed:@"Empty"] forState:UIControlStateNormal];
-        
+        [buttonLike setImage:[UIImage imageNamed:@"收藏"] forState:UIControlStateNormal];
     }
     
     [lowView addSubview:buttonLike];
@@ -285,10 +284,10 @@
     
     UIButton *TKButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - (113*2) , 0, 113*2, 50)];
     [TKButton setBackgroundColor:getUIColor(Color_DZClolor)];
-    [TKButton setTitle:@"购买同款" forState:UIControlStateNormal];
+    [TKButton setTitle:@"购    买" forState:UIControlStateNormal];
     [TKButton setTitleColor:getUIColor(Color_shadow) forState:UIControlStateNormal];
     [TKButton addTarget:self action:@selector(ClickToBuyTK) forControlEvents:UIControlEventTouchUpInside];
-    [TKButton.titleLabel setFont:[UIFont systemFontOfSize:14]];
+    [TKButton.titleLabel setFont:[UIFont systemFontOfSize:16]];
     [lowView addSubview:TKButton];
     
     //    [lowView setAlpha:0];
@@ -437,13 +436,13 @@
         
         
         if (domain.result == 1) {
-            
-            [buttonLike setImage:[UIImage imageNamed:@"fullHeart"] forState:UIControlStateNormal];
+            [buttonLike setImage:[UIImage imageNamed:@"收藏选中"] forState:UIControlStateNormal];
+            [_dataDictionary setObject:@"1" forKey:@"is_collect"];
         } else if (domain.result == 10001) {
             [self getDateBeginHaveReturn:datBegin fatherView:@"收藏"];
-        } else {
-            
-            [buttonLike setImage:[UIImage imageNamed:@"Empty"] forState:UIControlStateNormal];
+        } else if(domain.result==2) {
+            [buttonLike setImage:[UIImage imageNamed:@"收藏"] forState:UIControlStateNormal];
+            [_dataDictionary setObject:@"0" forKey:@"is_collect"];
         }
         
         

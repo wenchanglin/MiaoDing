@@ -104,14 +104,14 @@
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
-    clothesDetailTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64  - 50) style:UITableViewStylePlain];
+    clothesDetailTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-74-84:SCREEN_HEIGHT - 64  - 50) style:UITableViewStylePlain];
     clothesDetailTable.delegate = self;
     clothesDetailTable.dataSource = self;
     [clothesDetailTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
    [clothesDetailTable registerClass:[ComoanySaleDDDtailViewCell class] forCellReuseIdentifier:NSStringFromClass([ComoanySaleDDDtailViewCell class])];
     [self.view addSubview:clothesDetailTable];
     
-    UIView *priceLowView = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-64 - 50, SCREEN_WIDTH / 3, 50)];
+    UIView *priceLowView = [[UIView alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-74-84:SCREEN_HEIGHT-64 - 50, SCREEN_WIDTH / 3, 50)];
     [priceLowView setBackgroundColor:getUIColor(Color_loginBackViewColor)];
     [self.view addSubview:priceLowView];
     
@@ -140,7 +140,7 @@
     [priceTitle setText:@"合计:"];
     [priceTitle setFont:Font_14];
     
-    UIButton *buttonSave = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3, SCREEN_HEIGHT-64 - 50, SCREEN_WIDTH / 3 , 50)];
+    UIButton *buttonSave = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3,IsiPhoneX?SCREEN_HEIGHT-84-74: SCREEN_HEIGHT-64 - 50, SCREEN_WIDTH / 3 , 50)];
     [buttonSave setBackgroundColor:getUIColor(Color_DZClolor)];
     [self.view addSubview:buttonSave];
     [buttonSave addTarget:self action:@selector(saveTheClothes) forControlEvents:UIControlEventTouchUpInside];
@@ -148,7 +148,7 @@
     [buttonSave setTitle:@"加入购物袋" forState:UIControlStateNormal];
     
     
-    UIButton *buttonBuy = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3 * 2, SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
+    UIButton *buttonBuy = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3 * 2,IsiPhoneX?SCREEN_HEIGHT-84-74:SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
     [buttonBuy setBackgroundColor:getUIColor(Color_TKClolor)];
     [self.view addSubview:buttonBuy];
     [buttonBuy addTarget:self action:@selector(payForClothes) forControlEvents:UIControlEventTouchUpInside];

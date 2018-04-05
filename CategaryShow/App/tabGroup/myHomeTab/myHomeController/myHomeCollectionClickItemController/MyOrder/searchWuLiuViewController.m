@@ -22,13 +22,12 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"物流详情";
+    [self settabTitle:@"物流详情"];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     getData = [BaseDomain getInstance:NO];
     wuLiuArray = [NSMutableArray array];
     [self getDatas];
     [self createTableForWuLiu];
-    // Do any additional setup after loading the view.
 }
 
 -(void)getDatas
@@ -48,10 +47,13 @@
         [wuLiuTable reloadData];
     }];
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)createTableForWuLiu
 {
-    wuLiuTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    wuLiuTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-88:SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
     wuLiuTable.delegate = self;
     wuLiuTable.dataSource = self;
     [wuLiuTable registerClass:[WLheaderTableViewCell class] forCellReuseIdentifier:NSStringFromClass([WLheaderTableViewCell class])];

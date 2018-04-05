@@ -38,7 +38,10 @@
     [self settabTitle:@"发表评价"];
     [self createView];
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)createView
 {
     

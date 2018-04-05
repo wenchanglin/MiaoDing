@@ -31,22 +31,22 @@
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
-    
-    
+    [IQKeyboardManager sharedManager].enableAutoToolbar = YES;
+    [IQKeyboardManager sharedManager].shouldShowToolbarPlaceholder = YES;
     
     
     
     
     [self CreateTableViewForInfo];
-    
-    
-    
-    // Do any additional setup after loading the view.
 }
-
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [IQKeyboardManager sharedManager].enableAutoToolbar =NO;
+}
 -(void)CreateTableViewForInfo
 {
-    infoTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 49)];
+    infoTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-64-74:SCREEN_HEIGHT - 64 - 49)];
    
     infoTable.dataSource = self;
     infoTable.delegate = self;
@@ -57,7 +57,7 @@
 //    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(endEditingAction)];
 //    [infoTable addGestureRecognizer:tap];
     
-    UIButton *buttonTake = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
+    UIButton *buttonTake = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-74-64:SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
     [buttonTake setBackgroundColor:getUIColor(Color_TKClolor)];
     [buttonTake.titleLabel setFont:[UIFont systemFontOfSize:16]];
     [buttonTake addTarget:self action:@selector(takePhoto) forControlEvents:UIControlEventTouchUpInside];

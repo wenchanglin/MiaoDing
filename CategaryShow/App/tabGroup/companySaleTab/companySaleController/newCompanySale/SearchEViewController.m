@@ -133,6 +133,8 @@
         NSArray *shopId ;
         NSArray *markerId ;
         NSArray *typeId ;
+        WCLLog(@"%@->%@",result,type);
+
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
         if ([type count] == 2) {
             goodsId = [type[0] componentsSeparatedByString:@"="];
@@ -140,11 +142,11 @@
             
             [params setObject:goodsId[1] forKey:goodsId[0]];
             [params setObject:typeId[1] forKey:typeId[0]];
-        } else if ([type count] == 4) {
+        } else if ([type count] == 4||[type count]==5) {
             goodsId = [type[0] componentsSeparatedByString:@"="];
-            shopId = [type[1] componentsSeparatedByString:@"="];
-            markerId = [type[2] componentsSeparatedByString:@"="];
-            typeId = [type[3] componentsSeparatedByString:@"="];
+            shopId = [type[2] componentsSeparatedByString:@"="];
+            markerId = [type[3] componentsSeparatedByString:@"="];
+            typeId = [type[4] componentsSeparatedByString:@"="];
             
             [params setObject:goodsId[1] forKey:goodsId[0]];
             [params setObject:typeId[1] forKey:typeId[0]];

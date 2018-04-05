@@ -263,7 +263,7 @@
 -(void)createHaveOrderView
 {
     
-    haveDingTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
+    haveDingTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-64-84:SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
     haveDingTable.dataSource = self;
     haveDingTable.delegate = self;
     [haveDingTable setBackgroundColor:getUIColor(Color_myOrderBack)];

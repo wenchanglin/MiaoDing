@@ -36,11 +36,15 @@
     getData = [BaseDomain getInstance:NO];
     [self settabTitle:@"订单详情"];
     orderDetail = [NSMutableDictionary dictionary];
+    if (@available(iOS 11.0, *)) {
+        orderDetailTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(successComm) name:@"commentSuccess" object:nil];
     [self.view setBackgroundColor:getUIColor(Color_myOrderBack)];
     [self getDatas];
     [self createTableView];
-    // Do any additional setup after loading the view.
 }
 
 -(void)successComm
@@ -81,11 +85,6 @@
 -(void)createTableView
 {
     orderDetailTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH , SCREEN_HEIGHT - 153) style:UITableViewStyleGrouped];
-    if (@available(iOS 11.0, *)) {
-        orderDetailTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-    } else {
-        self.automaticallyAdjustsScrollViewInsets = NO;
-    }
     orderDetailTable.dataSource = self;
     orderDetailTable.delegate = self;
     [orderDetailTable setBackgroundColor:getUIColor(Color_myOrderBack)];
@@ -98,7 +97,7 @@
     [self.view addSubview:orderDetailTable];
     
     if (_canCommend) {
-        commendButton = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
+        commendButton = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-74-84:SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
         [self.view addSubview:commendButton];
         [commendButton setBackgroundColor:getUIColor(Color_DZClolor)];
         [commendButton setTitle:@"立即评价" forState:UIControlStateNormal];
@@ -156,8 +155,6 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-   
-  
      if(section == 0) {
         return 7;
      } else if (section == 1) {

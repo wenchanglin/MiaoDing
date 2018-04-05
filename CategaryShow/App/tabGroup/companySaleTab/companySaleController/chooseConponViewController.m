@@ -136,8 +136,7 @@
 {
     NSMutableDictionary *dicNoti = [NSMutableDictionary dictionary];
     [dicNoti setObject:@"0" forKey:@"price"];
-    
-//    [[NSNotificationCenter defaultCenter] postNotificationName:@"chooseCoupon" object:nil userInfo:dicNoti];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"chooseCoupon" object:nil userInfo:dicNoti];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

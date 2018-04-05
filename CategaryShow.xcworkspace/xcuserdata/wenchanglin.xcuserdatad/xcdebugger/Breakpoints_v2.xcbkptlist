@@ -19,13 +19,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CategaryShow/&#x9996;&#x9875;/VC/NewMainTabViewController.m"
-            timestampString = "544072047.979841"
+            filePath = "CategaryShow/&#x5b9a;&#x5236;/V/QuickPhotoCell.m"
+            timestampString = "544528325.812781"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "304"
-            endingLineNumber = "304"
-            landmarkName = "-getDetailData"
+            startingLineNumber = "13"
+            endingLineNumber = "13"
+            landmarkName = "-setModel:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -121,10 +121,7 @@
 -(void)reloadAddressTable:(NSNotification *)noti
 {
     
-    //
-//    if ([[addressDic stringForKey:@"address"] isEqualToString:@""]) {
-//        [self getDatas];
-//    } else {
+
         model = [noti.userInfo objectForKey:@"model"];
         [addressDic setObject:model.userName forKey:@"name"];
         [addressDic setObject:model.userPhone forKey:@"phone"];
@@ -133,7 +130,6 @@
         [addressDic setObject:model.area forKey:@"area"];
         [addressDic setObject:model.province forKey:@"province"];
         [clothesToPay reloadData];
-   // }
     
     
     
@@ -175,9 +171,9 @@
 
 -(void)chooseCoupon:(NSNotification *)noti
 {
-    if ([[noti.userInfo stringForKey:@"price"] integerValue] == 0) {
+    if ([noti.userInfo integerForKey:@"price"] == 0) {
         payView.price = _allPrice;
-        [clothesPrice setText:_allPrice];
+        [clothesPrice setText:[NSString stringWithFormat:@"%@",_allPrice]];
         [payPriceAndCon[1] setObject:@"-￥0.00" forKey:@"detail"];
         couponPrice = @"0.00";
         couPonRemark = @"选择优惠券";
@@ -613,7 +609,6 @@
         [cell.chooseCon setText:couPonRemark];
         if ([couPonRemark isEqualToString:@"选择优惠券"]) {
             [cell.chooseCon setTextColor:[UIColor blackColor]];
-            
         } else {
             [cell.chooseCon setTextColor:[UIColor redColor]];
         }

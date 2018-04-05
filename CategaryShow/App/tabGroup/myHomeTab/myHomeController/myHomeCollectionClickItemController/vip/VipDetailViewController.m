@@ -27,7 +27,11 @@
     modelArray = [NSMutableArray array];
     UIButton *buttonRight = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
     [buttonRight setImage:[UIImage imageNamed:@"RuleImg"] forState:UIControlStateNormal];
-    
+    if (@available(iOS 11.0, *)) {
+        growTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRight];
     
     [buttonRight addTarget:self action:@selector(rightClick) forControlEvents:UIControlEventTouchUpInside];
@@ -48,6 +52,7 @@
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [params setObject:@"1" forKey:@"page"];
     [getData getData:URL_VipGrow PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:domain]) {
             //NSLog(@"%@", domain.dataRoot);
@@ -67,12 +72,8 @@
 
 -(void)createTable
 {
-    growTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
-    if (@available(iOS 11.0, *)) {
-        growTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-    } else {
-        self.automaticallyAdjustsScrollViewInsets = NO;
-    }
+    growTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-84:SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+   
     growTable.dataSource = self;
     growTable.delegate = self;
     [growTable registerClass:[FirstSectionTableViewCell class] forCellReuseIdentifier:@"firstSection"];

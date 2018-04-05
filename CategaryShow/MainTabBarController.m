@@ -54,12 +54,6 @@
     [mView setImage:[UIImage imageNamed:@"tabBackImage"]];
     [self.tabBar insertSubview:mView atIndex:1];
     
-    
-
-//    [[UITabBar appearance] setBackgroundColor:getUIColor(Color_tabbarbackcolor)];
-    
-//    [self.tabBar.backgroundView setBackgroundColor:getUIColor(Color_tabbarbackcolor)]; 
-    
     [[RDVTabBarItem appearance] setSelectedTitleAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], UITextAttributeTextColor,nil]];
     
     [[RDVTabBarItem appearance] setUnselectedTitleAttributes:[NSDictionary dictionaryWithObjectsAndKeys:getUIColor(Color_tabbartextcolor), UITextAttributeTextColor,nil]];
@@ -184,22 +178,22 @@
     self.viewControllers = [[NSArray alloc] initWithObjects:main,custom,desig,myHome,nil];
     RDVTabBarItem *aTabBarItem = [self.tabBar.items objectAtIndex:0];
     // Set Title
-    aTabBarItem.title = @"首页";;
+    aTabBarItem.title = @"首页";
     [aTabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"首页选中"] withFinishedUnselectedImage:[UIImage imageNamed:@"首页"]];
     
     RDVTabBarItem *bTabBarItem = [self.tabBar.items objectAtIndex:1];
     // Set Title
-    bTabBarItem.title = @"定制";;
+    bTabBarItem.title = @"定制";
     [bTabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"定制选中"] withFinishedUnselectedImage:[UIImage imageNamed:@"定制"]];
     
     RDVTabBarItem *cTabBarItem = [self.tabBar.items objectAtIndex:2];
     // Set Title
-    cTabBarItem.title = @"腔调";;
+    cTabBarItem.title = @"腔调";
     [cTabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"腔调选中"] withFinishedUnselectedImage:[UIImage imageNamed:@"腔调"]];
     
     RDVTabBarItem *dTabBarItem = [self.tabBar.items objectAtIndex:3];
     // Set Title
-    dTabBarItem.title = @"我的";;
+    dTabBarItem.title = @"我的";
     [dTabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"我的选中"] withFinishedUnselectedImage:[UIImage imageNamed:@"我的"]];
     
     [aTabBarItem setSelectedTitleAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], UITextAttributeTextColor,nil]];

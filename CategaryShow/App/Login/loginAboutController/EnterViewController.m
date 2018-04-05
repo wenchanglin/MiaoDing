@@ -42,6 +42,8 @@
 //    [self.view.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 //        [obj removeFromSuperview];
 //    }];
+    [IQKeyboardManager sharedManager].enableAutoToolbar = NO;
+    [IQKeyboardManager sharedManager].shouldShowToolbarPlaceholder = NO;
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
@@ -374,11 +376,8 @@
     if (self.loginDomain == nil) {
         self.loginDomain = [BaseDomain getInstance:NO];
     }
-
-   
-
-    
-    
+    [IQKeyboardManager sharedManager].enableAutoToolbar = YES;
+    [IQKeyboardManager sharedManager].shouldShowToolbarPlaceholder = YES;
 }
 
 

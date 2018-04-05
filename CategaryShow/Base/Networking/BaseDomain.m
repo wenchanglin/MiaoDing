@@ -87,7 +87,7 @@
     self.httpTask = [self.httpManager POST:urlString parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         // 整合数据
         self.data = responseObject;
-
+        
         
         
         
@@ -117,7 +117,7 @@
 
 - (void) getData:(NSString *) url PostParams:(NSMutableDictionary *) parameters
            finish:(void (^)(BaseDomain * domain, Boolean success)) success {
-    
+
     [self getData:url appendHostUrl:YES PostParams:parameters finish:success];
 }
 
@@ -139,7 +139,7 @@
     }
     
     self.httpTask = [self.httpManager GET:urlString parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-     //   NSLog(@"143:%@::%@",responseObject,urlString);
+//        NSLog(@"143:%@::%@",responseObject,urlString);
         // 整合数据
         self.data = responseObject;
     

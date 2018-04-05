@@ -205,7 +205,7 @@
                 [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
                 [shareParams SSDKSetupShareParamsByText:model.title
                                                  images:imageArray
-                                                    url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%@&type=2",URL_HEADURL, Share_ChengPin, model.goods_id]]
+                                                    url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%@&type=2&shareout_id=%@",URL_HEADURL, Share_ChengPin, model.goods_id,[SelfPersonInfo getInstance].personUserKey]]
                                                   title:model.name
                                                    type:SSDKContentTypeWebPage];
                 [ShareCustom shareWithContent:shareParams];

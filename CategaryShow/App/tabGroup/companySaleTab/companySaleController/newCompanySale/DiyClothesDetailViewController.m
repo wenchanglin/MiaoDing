@@ -18,7 +18,7 @@
 #import <ShareSDKUI/SSUIEditorViewStyle.h>
 #import <ShareSDKExtension/ShareSDK+Extension.h>
 #import "JZAlbumViewController.h"
-
+#import "NewDiyPersonalityVC.h"
 #import "perentOrderViewController.h"
 #import "DiyClothesDetailViewController.h"
 #import "YYCycleScrollView.h"
@@ -56,7 +56,7 @@
     NSDate *datBegin;
     NSDate *datDingBegin;
     NSString *dateId;
-    
+    NSInteger isopencv;
     
     NSMutableArray *contentIdArray;
     NSMutableArray *contentArray;
@@ -92,7 +92,7 @@
     [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
     [shareParams SSDKSetupShareParamsByText:[dataDictionary stringForKey:@"content"]
                                      images:imageArray
-                                        url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%@&shop_id=%@&market_id=%@&type=2",URL_HEADURL, URL_SHARE, [_goodDic stringForKey:@"id"],_shopId,_marketId]]
+                                        url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%@&shop_id=%@&market_id=%@&type=2&shareout_id=%@",URL_HEADURL, URL_SHARE, [_goodDic stringForKey:@"id"],_shopId,_marketId,[SelfPersonInfo getInstance].personUserKey]]
                                       title:[dataDictionary stringForKey:@"name"]
                                        type:SSDKContentTypeWebPage];
     
@@ -165,9 +165,7 @@
             [_goodDic setObject:[dataDictionary stringForKey:@"name"] forKey:@"name"];
             [_goodDic setObject:[dataDictionary stringForKey:@"sub_name"] forKey:@"sub_name"];
             [_goodDic setObject:[dataDictionary stringForKey:@"thumb"] forKey:@"thumb"];
-            [_goodDic setObject:[dataDictionary stringForKey:@"type"] forKey:@"type"];
-            
-            
+            [_goodDic setObject:[dataDictionary stringForKey:@"type"] forKey:@"type"];            
             _class_id = [dataDictionary stringForKey:@"classify_id"];
             dateId = [domain.dataRoot stringForKey:@"id"];
             pictureArray = [NSMutableArray arrayWithArray:[dataDictionary arrayForKey:@"img_list"]];
@@ -195,6 +193,7 @@
             model.banerArray = pictureArray;
             model.sub_name = [dataDictionary stringForKey:@"sub_name"];
             model.clothesName = [dataDictionary stringForKey:@"name"];
+            [self requestOpenCV];
             [self createView];
             [self createScroller];
             [self createLowView];
@@ -203,7 +202,16 @@
         
     }];
 }
-
+-(void)requestOpenCV
+{
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [params setObject:_class_id forKey:@"classify_id"];
+    [params setObject:[_goodDic stringForKey:@"id"] forKey:@"goods_id"];
+    [params setObject:@"6" forKey:@"phone_type"];
+    [[BaseDomain getInstance:NO] getData:URL_GetDiyData PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+        isopencv = [domain.dataRoot integerForKey:@"is_opencv"];
+    }];
+}
 -(void)createView
 {
     UICollectionViewFlowLayout *flowLayout=[[UICollectionViewFlowLayout alloc] init];
@@ -438,10 +446,10 @@
     
     UIButton *TKButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - (113*2) , 0, 113*2, 50)];
     [TKButton setBackgroundColor:getUIColor(Color_DZClolor)];
-    [TKButton setTitle:@"购买" forState:UIControlStateNormal];
+    [TKButton setTitle:@"购    买" forState:UIControlStateNormal];
     [TKButton setTitleColor:getUIColor(Color_shadow) forState:UIControlStateNormal];
     [TKButton addTarget:self action:@selector(ClickToBuyTK) forControlEvents:UIControlEventTouchUpInside];
-    [TKButton.titleLabel setFont:[UIFont systemFontOfSize:14]];
+    [TKButton.titleLabel setFont:[UIFont systemFontOfSize:16]];
     [lowView addSubview:TKButton];
     
 //    [lowView setAlpha:0];
@@ -472,21 +480,28 @@
     
     NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
     if ([[userd stringForKey:@"token"] length] > 0) {
-        DiyWordInClothesViewController *diy = [[DiyWordInClothesViewController alloc] init];
-        diy.class_id = _class_id;
-        
-        diy.goodDic = _goodDic;
-        diy.ifTK = YES;
-        diy.paramsDic = goodParams;
-        diy.defaultImg = goodDufaultImg;
-        [self.navigationController pushViewController:diy animated:YES];
-//        datDingBegin = [NSDate dateWithTimeIntervalSinceNow:0];
-//
-//        [UIView beginAnimations:nil context:nil];
-//        [UIView setAnimationDuration:0.5];
-//        [chooseStyle setAlpha:1];
-//        [alphaView setAlpha:1];
-//        [UIView commitAnimations];
+       // if (isopencv ==1) {
+         //   WCLLog(@"新页面");
+            NewDiyPersonalityVC * newdiy = [[NewDiyPersonalityVC alloc]init];
+            newdiy.class_id = _class_id;
+            newdiy.goodDic = _goodDic;
+            newdiy.ifTK = YES;
+            newdiy.paramsDic = goodParams;
+            newdiy.defaultImg = goodDufaultImg;
+            [self.navigationController pushViewController:newdiy animated:YES];
+//        }
+//        else
+//        {
+//            WCLLog(@"旧页面");
+//        DiyWordInClothesViewController *diy = [[DiyWordInClothesViewController alloc] init];
+//        diy.class_id = _class_id;
+//        diy.goodDic = _goodDic;
+//        diy.ifTK = YES;
+//        diy.paramsDic = goodParams;
+//        diy.defaultImg = goodDufaultImg;
+//        [self.navigationController pushViewController:diy animated:YES];
+//        }
+
         
         
         

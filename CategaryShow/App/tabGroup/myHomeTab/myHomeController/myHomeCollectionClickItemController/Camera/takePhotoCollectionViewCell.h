@@ -10,4 +10,6 @@
 #import "photoModel.h"
 @interface takePhotoCollectionViewCell : UICollectionViewCell
 @property (nonatomic, retain) photoModel *model;
+@property(nonatomic,strong) UIImageView *imagePhoto;
+@property(nonatomic,strong)UIButton * nextStep;
 @end

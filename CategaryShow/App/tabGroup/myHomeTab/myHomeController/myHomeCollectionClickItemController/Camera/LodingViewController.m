@@ -11,6 +11,7 @@
 #import "photoModel.h"
 #import "putInUserInfoViewController.h"
 #import "NewPototUserInfoViewController.h"
+#import "NewDiyPersonalityVC.h"
 @interface LodingViewController ()<UICollectionViewDelegate, UICollectionViewDataSource>
 
 @end
@@ -37,13 +38,11 @@
     [super viewDidLoad];
     photoArray = [NSMutableArray array];
     [self.view setBackgroundColor:[UIColor clearColor]];
-    
     NSArray *array = [NSArray arrayWithObjects:@"step1",@"step2", @"step3", @"step4", nil];
     for (int i = 0 ; i < [array count]; i ++) {
         UIImage *iamge = [UIImage imageNamed:array[i]];
         photoModel *model = [photoModel new];
         model.photo = iamge;
-        
         [photoArray addObject:model];
         
         
@@ -51,7 +50,6 @@
     
     [self createPhotoShow];
     
-    // Do any additional setup after loading the view.
 }
 
 -(void)createPhotoShow
@@ -85,11 +83,11 @@
 -(void)backHome
 {
     NewPototUserInfoViewController *putInfo = [[NewPototUserInfoViewController alloc] init];
-    
+    NewDiyPersonalityVC * newdiy = [[NewDiyPersonalityVC alloc]init];
     
     UIViewController *target = nil;
     for (UIViewController * controller in self.navigationController.viewControllers) { //遍历
-        if ([controller isKindOfClass:[putInfo class]]) { //这里判断是否为你想要跳转的页面
+        if ([controller isKindOfClass:[putInfo class]]||[controller isKindOfClass:[newdiy class]]) { //这里判断是否为你想要跳转的页面
             target = controller;
             break;
         }

@@ -52,7 +52,16 @@
 {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
 }
-
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    for (UIView * view in [UIApplication sharedApplication].keyWindow.subviews) {
+        if ([view isKindOfClass:[UIImageView class]]) {
+            view.hidden =YES;
+            [view removeFromSuperview];
+        }
+    }
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     postData = [BaseDomain getInstance:NO];

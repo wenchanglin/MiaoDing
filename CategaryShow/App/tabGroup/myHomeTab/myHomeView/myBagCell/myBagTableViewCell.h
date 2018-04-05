@@ -16,7 +16,7 @@
 @end
 
 @interface myBagTableViewCell : UITableViewCell
-@property (nonatomic, strong) id<myBagTableViewCellDelegate>delegate;
+@property (nonatomic, weak) id<myBagTableViewCellDelegate>delegate;
 @property (nonatomic, strong) myBagModel *model;
 @property (nonatomic, retain) UIButton *addCount;
 @property (nonatomic, retain) UIButton *cutCount;

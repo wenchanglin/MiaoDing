@@ -91,13 +91,13 @@
 
 -(void)reloadTableData
 {
-    [modelArray removeAllObjects];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"3" forKey:@"status"];
     [getData getData:URL_GetOrder PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:getData]) {
             dataArray = [NSMutableArray arrayWithArray:[getData.dataRoot arrayForKey:@"data"]];
-            
+            [modelArray removeAllObjects];
+
             if ([dataArray count] > 0) {
                 
                 for (NSMutableDictionary *dic in dataArray) {
@@ -162,7 +162,7 @@
 
 -(void)createViewNoDD    // 创建没有订单界面
 {
-    bgNoDingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH - 0, SCREEN_HEIGHT - 41 - 64)];
+    bgNoDingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH , SCREEN_HEIGHT - 41 - 64)];
     [bgNoDingView setBackgroundColor:[UIColor whiteColor]];
     [self.view addSubview:bgNoDingView];
     
@@ -207,7 +207,7 @@
 
 -(void)createHaveOrderView
 {
-    haveDingTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
+    haveDingTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, IsiPhoneX?SCREEN_HEIGHT-64-84:SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
     haveDingTable.dataSource = self;
     haveDingTable.delegate = self;
     [haveDingTable setBackgroundColor:getUIColor(Color_myOrderBack)];

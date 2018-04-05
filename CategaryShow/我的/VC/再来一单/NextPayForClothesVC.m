@@ -89,6 +89,11 @@
     [self settabTitle:@"确认订单"];
     ZFB = YES;
     choose =YES;
+    if (@available(iOS 11.0, *)) {
+        clothesToPay.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     _arrayForClothes = [NSMutableArray array];
     payPriceAndCon = [NSMutableArray array];
     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
@@ -177,7 +182,7 @@
 {
     if ([[noti.userInfo stringForKey:@"price"] integerValue] == 0) {
         payView.price = _allPrice;
-        [clothesPrice setText:_allPrice];
+        [clothesPrice setText:[NSString stringWithFormat:@"%@",_allPrice]];
         [payPriceAndCon[1] setObject:@"-￥0.00" forKey:@"detail"];
         couponPrice = @"0.00";
         couPonRemark = @"选择优惠券";
@@ -333,12 +338,8 @@
 
 -(void)createTableView
 {
-    if (@available(iOS 11.0, *)) {
-        clothesToPay.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-    } else {
-        self.automaticallyAdjustsScrollViewInsets = NO;
-    }
-    clothesToPay = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 42) style:UITableViewStyleGrouped];
+   
+    clothesToPay = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-64-88:SCREEN_HEIGHT - 64 - 42) style:UITableViewStyleGrouped];
     clothesToPay.separatorStyle = UITableViewCellSeparatorStyleNone;
     clothesToPay.dataSource = self;
     clothesToPay.delegate = self;
@@ -354,22 +355,12 @@
     [self.view addSubview:lowView];
     lowView.sd_layout
     .leftEqualToView(self.view)
-    .bottomEqualToView(self.view)
+    .bottomSpaceToView(self.view,IsiPhoneX?20:0)
     .heightIs(50)
     .rightEqualToView(self.view);
     [lowView setBackgroundColor:[UIColor whiteColor]];
     
-    UIView *lineView = [UIView new];
-    [lowView addSubview:lineView];
-    lineView.sd_layout
-    .leftEqualToView(lineView)
-    .rightEqualToView(lineView)
-    .topEqualToView(lineView)
-    .heightIs(1);
-    [lineView setBackgroundColor:getUIColor(Color_myOrderLine)];
-    
-    
-    UIView *leftView = [UILabel new];
+    UIView *leftView = [UIView new];
     [lowView addSubview:leftView];
     leftView.sd_layout
     .leftEqualToView(lowView)

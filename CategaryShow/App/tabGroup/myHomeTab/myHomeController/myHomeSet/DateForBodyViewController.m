@@ -31,7 +31,6 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self createTable];
     [self createDates];
-    // Do any additional setup after loading the view.
 }
 -(UIStatusBarStyle)preferredStatusBarStyle
 {
@@ -40,6 +39,7 @@
 -(void)createDates
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [params setObject:@"1" forKey:@"page"];
     [getDate postData:URL_GetBodyDate PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:domain]) {
             arrayData = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"data"]];

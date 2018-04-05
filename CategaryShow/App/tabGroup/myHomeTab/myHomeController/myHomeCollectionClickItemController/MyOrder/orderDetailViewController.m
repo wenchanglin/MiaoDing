@@ -42,10 +42,13 @@
     ZFB = YES;
     orderDetail = [NSMutableDictionary dictionary];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(PaySuccessAction) name:@"PaySuccess" object:nil];
-    
+    if (@available(iOS 11.0, *)) {
+        orderDetailTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     [self getDatas];
     [self createTableView];
-    // Do any additional setup after loading the view.
 }
 -(UIStatusBarStyle)preferredStatusBarStyle
 {
@@ -107,12 +110,8 @@
 -(void)createTableView
 {
     
-    orderDetailTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH , SCREEN_HEIGHT - 84 - 49) style:UITableViewStyleGrouped];
-    if (@available(iOS 11.0, *)) {
-        orderDetailTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-    } else {
-        self.automaticallyAdjustsScrollViewInsets = NO;
-    }
+    orderDetailTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH ,IsiPhoneX?SCREEN_HEIGHT-84-74: SCREEN_HEIGHT - 64 - 49) style:UITableViewStyleGrouped];
+   
     orderDetailTable.dataSource = self;
     orderDetailTable.delegate = self;
     [orderDetailTable setBackgroundColor:getUIColor(Color_myOrderBack)];
@@ -136,7 +135,7 @@
 {
     if ([orderDetail integerForKey:@"last_time"] < 0) {
         
-        UIButton *deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-64 - 49, SCREEN_WIDTH, 49)];
+        UIButton *deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-84-74:SCREEN_HEIGHT-64 - 49, SCREEN_WIDTH, 49)];
         [self.view addSubview:deleteButton];
         [deleteButton setBackgroundColor:getUIColor(Color_DZClolor)];
         [deleteButton setTitle:@"删除订单" forState:UIControlStateNormal];
@@ -144,7 +143,7 @@
         [deleteButton addTarget:self action:@selector(deleteOrder) forControlEvents:UIControlEventTouchUpInside];
         
     } else {
-        UIImageView *imageV = [[UIImageView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
+        UIImageView *imageV = [[UIImageView alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-74-84:SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
         [imageV setImage:[UIImage imageNamed:@"tabBackImage"]];
         [self.view addSubview:imageV];
         [imageV setUserInteractionEnabled:YES];
@@ -485,7 +484,6 @@
         MyOrderDetailListTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"orderDetailList" forIndexPath:indexPath];
         myBagModel *model = modelArray[indexPath.row];
         cell.model = model;
-        
         reCell = cell;
         
     }

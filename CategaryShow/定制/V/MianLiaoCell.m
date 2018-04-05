@@ -14,6 +14,7 @@
     UICollectionView *mianliao;
     NSInteger flog;
     UIImageView * bigImageView;
+    UIWindow * window;
 }
 -(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -72,8 +73,17 @@
     [cell.bigImage addTarget:self action:@selector(up:) forControlEvents:UIControlEventTouchUpInside];
     [cell.bigImage addTarget:self action:@selector(down:) forControlEvents:UIControlEventTouchDown];
     NSString * string1 = [_mianLiaoArray[indexPath.item] stringForKey:@"name"];
-    NSString * string2 = [string1 substringWithRange:NSMakeRange(0, 4)];
-    [cell.colorName setText:string2];
+    NSString * string2;
+    if (string1.length>4) {
+        string2 = [string1 substringWithRange:NSMakeRange(0, 4)];
+        [cell.colorName setText:string2];
+
+    }
+    else
+    {
+        [cell.colorName setText:string1];
+
+    }
     if (indexPath.item == flog) {
         [cell.colorChoose setHidden:NO];
         [cell.colorChoose setImage:[UIImage imageNamed:@"JuXC"]];
@@ -85,9 +95,15 @@
 }
 -(void)up:(UIButton *)btn
 {
-    [bigImageView removeFromSuperview];
+   
     flog =btn.tag-2000;
     [mianliao reloadData];
+    for (UIView * view in window.subviews) {
+        if ([view isKindOfClass:[UIImageView class]]) {
+            [view removeFromSuperview];
+        }
+    }
+    [window removeFromSuperview];
     if ([_delegate respondsToSelector:@selector(mianLiaoClick:)]) {
         [_delegate mianLiaoClick:flog];
     }
@@ -95,11 +111,8 @@
 }
 -(void)down:(UIButton *)btn
 {
-    [bigImageView removeFromSuperview];
-    
-    UIWindow * window= [UIApplication sharedApplication].keyWindow;
-//    window.backgroundColor = [UIColor cyanColor];
-    bigImageView = [[UIImageView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-110, SCREEN_HEIGHT/2, 220, 220)];
+    window= [UIApplication sharedApplication].keyWindow;
+    bigImageView = [[UIImageView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-110, 128, 220, 220)];
     
     [bigImageView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_mianLiaoArray[btn.tag-2000] stringForKey:@"img_b"]]]];
     [window addSubview:bigImageView];

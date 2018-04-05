@@ -23,7 +23,7 @@
 
 #import "RDVTabBar.h"
 #import "RDVTabBarItem.h"
-
+#define IsiPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
 @interface RDVTabBar ()
 
 @property (nonatomic) CGFloat itemWidth;
@@ -80,9 +80,9 @@
         if (!itemHeight) {
             itemHeight = frameSize.height;
         }
-        
+#pragma mark - 这里设置tabbar的y轴高
         [item setFrame:CGRectMake(self.contentEdgeInsets.left + (index * self.itemWidth),
-                                  roundf(frameSize.height - itemHeight) - self.contentEdgeInsets.top,
+                                  IsiPhoneX?roundf(frameSize.height - itemHeight) - self.contentEdgeInsets.top-15:roundf(frameSize.height - itemHeight) - self.contentEdgeInsets.top,
                                   self.itemWidth, itemHeight - self.contentEdgeInsets.bottom)];
         [item setNeedsDisplay];
         

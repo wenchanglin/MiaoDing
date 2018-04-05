@@ -263,7 +263,7 @@
             
             banerImgArray = [NSMutableArray arrayWithArray:[_getBaner.dataRoot arrayForKey:@"lunbo"]];
             
-            recommend_list = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"recommend_list"]];
+//            recommend_list = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"recommend_list"]];
             dianpuArr = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"indextype"]];
             
             designeArray.designerArray = dianpuArr;
@@ -367,8 +367,8 @@
             designerArray = [NSMutableArray arrayWithArray:[_getBaner.dataRoot arrayForKey:@"designer_list"]];
             designeArray = [NewDesignerArray new];
             
-            
-            recommend_list = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"recommend_list"]];//recommend_list
+            banerImgArray = [NSMutableArray arrayWithArray:[_getBaner.dataRoot arrayForKey:@"lunbo"]];
+//            recommend_list = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"recommend_list"]];//recommend_list
             dianpuArr = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"indextype"]];
             
             designeArray.designerArray = dianpuArr;
@@ -436,9 +436,9 @@
             designerArray = [NSMutableArray arrayWithArray:[_getBaner.dataRoot arrayForKey:@"designer_list"]];
             designeArray = [NewDesignerArray new];
             
-            //            recommend_list = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"recommend_list"]];//recommend_list
             dianpuArr = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"indextype"]];
-            
+            banerImgArray = [NSMutableArray arrayWithArray:[_getBaner.dataRoot arrayForKey:@"lunbo"]];
+
             designeArray.designerArray = dianpuArr;
             NSArray *array = [_getBaner.dataRoot arrayForKey:@"data"];
             

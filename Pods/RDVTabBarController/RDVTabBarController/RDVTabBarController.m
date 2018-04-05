@@ -202,7 +202,7 @@
         CGFloat tabBarStartingY = viewSize.height;
         CGFloat contentViewHeight = viewSize.height;
         CGFloat tabBarHeight = CGRectGetHeight([[weakSelf tabBar] frame]);
-#warning rdvtabbar高度设置
+#pragma mark - 这里设置rdvtabbar高度
         if (!tabBarHeight) {
             tabBarHeight =IsiPhoneX?83:49;
         }

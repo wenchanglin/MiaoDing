@@ -154,16 +154,25 @@
     if (buttonIndex == 0) {
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
         [params setObject:_orderId forKey:@"order_id"];
-        [getData getData:URL_ConfirmOrder PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-
-            if ([self checkHttpResponseResultStatus:getData]) {
-
+        NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
+        
+        if ([[userd stringForKey:@"token"]length] > 0 ) {
+            [params setObject:[userd stringForKey:@"token"] forKey:@"token"];
+        }
+        [[wclNetTool sharedTools]request:POST urlString:URL_ConfirmOrder parameters:params finished:^(id responseObject, NSError *error) {
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"confirm" object:nil];
-                [self.navigationController popViewControllerAnimated:YES];
-
-            }
-            
+                [self.navigationController popViewControllerAnimated:YES];  
         }];
+//        [getData getData:URL_ConfirmOrder PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+//
+//            if ([self checkHttpResponseResultStatus:domain]) {
+//
+//                [[NSNotificationCenter defaultCenter] postNotificationName:@"confirm" object:nil];
+//                [self.navigationController popViewControllerAnimated:YES];
+//
+//            }
+//
+//        }];
     }
 }
 

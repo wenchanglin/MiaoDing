@@ -54,7 +54,9 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonLeft];
     [buttonLeft setImageEdgeInsets:UIEdgeInsetsMake(0, -15, 0, 15)];
     [buttonLeft addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
-    
+    if (@available(iOS 11.0, *)) {
+        web.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    }
     
     UIButton *buttonRight = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
     [buttonRight setImage:[UIImage imageNamed:@"share_white"] forState:UIControlStateNormal];

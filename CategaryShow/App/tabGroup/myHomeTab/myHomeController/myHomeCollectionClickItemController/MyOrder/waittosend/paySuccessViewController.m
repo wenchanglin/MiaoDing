@@ -28,9 +28,8 @@
     [super viewDidLoad];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     getGuid = [BaseDomain getInstance:NO];
-    self.title = @"支付结果";
+    [self settabTitle:@"支付结果"];
     [self createView];
-    // Do any additional setup after loading the view.
 }
 
 -(void)createView
@@ -86,7 +85,10 @@
     [self createData];
     
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)lookOrder
 {
     DiyClothesDetailViewController *toBuy = [[DiyClothesDetailViewController alloc] init];

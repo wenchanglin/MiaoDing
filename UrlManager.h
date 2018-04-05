@@ -156,7 +156,7 @@
 #define URL_YuYue [NSString stringWithFormat:@"/index%@/add_order_list",BanBenHao]
 
 //#define URL_ConfirmOrder @"/index/index/confirm_order"
-#define URL_ConfirmOrder [NSString stringWithFormat:@"/index%@/confirm_order",BanBenHao]
+#define URL_ConfirmOrder [NSString stringWithFormat:@"/index%@/confirm_order",BanBenHao]//confirm_order
 
 
 //#define URL_invite @"/index/index/invite"
@@ -180,7 +180,6 @@
 #define URL_GetVipUp @"/index/user/user_upgrade_gift"
 
 
-//#define URL_GetBodyDate @"/index/index/lt_data"
 #define URL_GetBodyDate [NSString stringWithFormat:@"/index%@/lt_data",BanBenHao]
 
 

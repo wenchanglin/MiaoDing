@@ -40,27 +40,45 @@
         
         if ([self checkHttpResponseResultStatus:domain]) {
             NSMutableArray *array = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"data"]];
-            for (NSDictionary *dic in array) {
-                couponModel *model = [[couponModel alloc] init];
-                model.price = [NSString stringWithFormat:@"%.f", [[dic stringForKey:@"money"] floatValue]];
-                model.useType = [dic stringForKey:@"title"];
-                model.typeRemark = [dic stringForKey:@"sub_title"];
-                model.imageName = @"grayHaveUsed";
-                model.rightImg = @"haveUsed";
-                model.time = [NSString stringWithFormat:@"有效期:%@至%@",[self dateToString:[dic stringForKey:@"s_time"]], [self dateToString:[dic stringForKey:@"e_time"]]];
-                [modelArray addObject:model];
+            if (array.count>0) {
+                for (NSDictionary *dic in array) {
+                    couponModel *model = [[couponModel alloc] init];
+                    model.price = [NSString stringWithFormat:@"%.f", [[dic stringForKey:@"money"] floatValue]];
+                    model.useType = [dic stringForKey:@"title"];
+                    model.typeRemark = [dic stringForKey:@"sub_title"];
+                    model.imageName = @"grayHaveUsed";
+                    model.rightImg = @"haveUsed";
+                    model.time = [NSString stringWithFormat:@"有效期:%@至%@",[self dateToString:[dic stringForKey:@"s_time"]], [self dateToString:[dic stringForKey:@"e_time"]]];
+                    [modelArray addObject:model];
+                }
+                
+                [self createTable];
             }
-            
-            [self createTable];
+            else
+            {
+                [canUse removeFromSuperview];
+                [self createViewNoDD];
+            }
         }
         
     }];
 }
-
+-(void)createViewNoDD    // 创建没有优惠券界面
+{
+    UIImageView *NoDD = [UIImageView new];
+    [self.view addSubview:NoDD];
+    NoDD.sd_layout
+    .centerXEqualToView(self.view)
+    .topSpaceToView(self.view, 120)
+    .widthIs(211)
+    .heightIs(220);
+    [NoDD setImage:[UIImage imageNamed:@"EmptyCoupon"]];
+    
+}
 -(void)createTable
 {
 
-    canUse = [[UITableView alloc] initWithFrame:CGRectMake(8, 0, SCREEN_WIDTH - 16, SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
+    canUse = [[UITableView alloc] initWithFrame:CGRectMake(8, 0, SCREEN_WIDTH - 16,IsiPhoneX?SCREEN_HEIGHT-64-84:SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
     canUse.delegate = self;
     canUse.dataSource = self;
     canUse.showsVerticalScrollIndicator =NO;

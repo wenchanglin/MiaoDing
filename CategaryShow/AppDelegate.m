@@ -118,8 +118,6 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     self.threadIsPause = NO;
     self.Noti = NO;
     self.threadIsRun = YES;
-    //    self.threadRefreshData = [[NSThread alloc] initWithTarget:self selector:@selector(checkServerDataThread) object:nil];
-    //    [self.threadRefreshData start];
     appDelegate = self;
     NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024 diskCapacity:20 * 1024 * 1024 diskPath:nil];
     [NSURLCache setSharedURLCache:URLCache];
@@ -425,7 +423,6 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:clientId forKey:@"device_id"];
     [params setObject:@"2" forKey:@"type"];
-    [params setObject:@"1" forKey:@""];
     [getData getData:URL_Message PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         
     }];

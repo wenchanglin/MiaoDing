@@ -17,6 +17,7 @@
     if (self =[super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
         
         _wordDiy = [[UITextField alloc] initWithFrame:CGRectMake(12, 10, SCREEN_WIDTH  - 24, 40)];
+        _wordDiy.tag = 993;
         if (_isenglish) {
             [_wordDiy setKeyboardType:UIKeyboardTypeEmailAddress];
 
