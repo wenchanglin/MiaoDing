@@ -49,7 +49,7 @@
     UIButton *buttonLeft = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 25)];
     [buttonLeft setImage:[UIImage imageNamed:@"backLeftWhite"] forState:UIControlStateNormal];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonLeft];
-    [buttonLeft setImageEdgeInsets:UIEdgeInsetsMake(0, -15, 0, 15)];
+    [buttonLeft setImageEdgeInsets:UIEdgeInsetsMake(0, -20, 0, 20)];
     [buttonLeft addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *buttonRight = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];

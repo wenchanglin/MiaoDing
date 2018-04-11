@@ -25,18 +25,22 @@
     UIButton *buttonBehind;
     
 }
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [MobClick endLogPageView:@"我的购物袋-单个商品-订单详情"];
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [MobClick beginLogPageView:@"我的购物袋-单个商品-订单详情"];
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     postData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self settabTitle:@"订单详情"];
     [self getDatas];
-    
-    
-    
-    
-    
-    // Do any additional setup after loading the view.
 }
 -(UIStatusBarStyle)preferredStatusBarStyle
 {
@@ -199,7 +203,7 @@
     [params setObject:[_dataDic stringForKey:@"price"] forKey:@"price"];
     [params setObject:[_dataDic stringForKey:@"goods_name"] forKey:@"goods_name"];
     [params setObject:[_dataDic stringForKey:@"goods_thumb"] forKey:@"goods_thumb"];
-    [params setObject:[_dataDic stringForKey:@"type"] forKey:@"type"];
+    [params setObject:@"1" forKey:@"type"];
     
     [params setObject:[_dataDic stringForKey:@"spec_ids"] forKey:@"spec_ids"];
 
@@ -211,8 +215,8 @@
     [params setObject:[_dataDic stringForKey:@"spec_content"] forKey:@"spec_content"];
     [params setObject:[_dataDic stringForKey:@"num"] forKey:@"num"];
     [postData postData:URL_AddClothesCar PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
         if ([self checkHttpResponseResultStatus:postData]) {
+            [MobClick event:@"place_order" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_dataDic stringForKey:@"goods_name"]]];
             ClothesFroPay *model = [ClothesFroPay new];
             model.clothesImage = [_dataDic stringForKey:@"goods_thumb"];
             model.clothesCount = [_dataDic stringForKey:@"num"];
@@ -241,7 +245,7 @@
     [params setObject:[_dataDic stringForKey:@"price"] forKey:@"price"];
     [params setObject:[_dataDic stringForKey:@"goods_name"] forKey:@"goods_name"];
     [params setObject:[_dataDic stringForKey:@"goods_thumb"] forKey:@"goods_thumb"];
-    [params setObject:[_dataDic stringForKey:@"type"] forKey:@"type"];
+    [params setObject:@"2" forKey:@"type"];
     
     [params setObject:[_dataDic stringForKey:@"spec_ids"] forKey:@"spec_ids"];
     
@@ -254,7 +258,7 @@
     [postData postData:URL_AddClothesCar PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         
         if ([self checkHttpResponseResultStatus:postData]) {
-//            [self showAlertWithTitle:@"提示" message:@"加入购物车成功"];
+            [MobClick event:@"add_cart" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_dataDic stringForKey:@"goods_name"]]];
             [self alertViewShowOfTime:@"加入购物车成功" time:1.5];
         }
         

@@ -33,6 +33,7 @@
     NSMutableArray * designerArray;
     NSInteger page;
 }
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     modelArray = [NSMutableArray array];

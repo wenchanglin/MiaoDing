@@ -169,8 +169,7 @@
     shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 30, imagePickerController.view.frame.size.height - 80, 60, 60)];
     [shutMInebutton.layer setCornerRadius:30];
     [shutMInebutton.layer setMasksToBounds:YES];
-    shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
-//    [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
+    [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
     [shutMInebutton addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
     [imagePickerController.view addSubview:shutMInebutton];
     
@@ -271,9 +270,8 @@
             shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 30, imagePickerController.view.frame.size.height - 80, 60, 60)];
             [shutMInebutton.layer setCornerRadius:30];
             [shutMInebutton.layer setMasksToBounds:YES];
-            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
 
-//            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
+            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
             [shutMInebutton addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
             [imagePickerController.view addSubview:shutMInebutton];
             
@@ -333,7 +331,7 @@
             imagePickerController.delegate   = self;
             imagePickerController.allowsEditing = NO;
             imagePickerController.cameraDevice  = UIImagePickerControllerCameraDeviceRear;
-            
+
             
             currentStep++;
             backgroundView = [[UIImageView alloc] initWithImage:backgroundImages[currentStep - 1]];;
@@ -343,8 +341,7 @@
             shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 30, imagePickerController.view.frame.size.height - 80, 60, 60)];
             [shutMInebutton.layer setCornerRadius:30];
             [shutMInebutton.layer setMasksToBounds:YES];
-            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
-//            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
+            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
             [shutMInebutton addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
             [imagePickerController.view addSubview:shutMInebutton];
             
@@ -420,12 +417,11 @@
             if (fTheta > -5 && fTheta < 5 && yTheta < 1 && yTheta > -1){
                 
                 canShut = YES;
-//                [shutMInebutton setImage:[UIImage imageNamed:@"shutten"] forState:UIControlStateNormal];
-                shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#90c551"];
+                [shutMInebutton setImage:[UIImage imageNamed:@"shutten"] forState:UIControlStateNormal];
             } else {
                 canShut = NO;
-                shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
-//                [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
+              
+                [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
             }
             
         }];
@@ -439,28 +435,44 @@
 - (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
     
-    
+
     //首先判断当前设备的版本(主要是iOS9修改了camera界面底层的实现)
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 9.0) {
         //在相机界面中进行循环遍历出shutterButton
         // NSLog(@"1:  %@", viewController.view.subviews);
         for (UIView *tmpView in viewController.view.subviews) {
-            //   NSLog(@"2:   %@", tmpView.subviews);
-            
+
             //删除拍照界面顶部的工具条 (iOS9之后设置topBar隐藏属性是不能够隐藏掉那个前置摄像头)
-            
+
             //获取重拍按钮
             for (UIView *tmpView2 in tmpView.subviews) {
+//                NSLog(@"448:2: %@", [[tmpView2 class]description]);
+                if( [[[tmpView2 class]description]isEqualToString:@"PLCropOverlayBottomBar"])
+                {
+                    UIButton *retakeButtons=tmpView2.subviews[0].subviews[0];
+                    UIButton * used = tmpView2.subviews[0].subviews[2];
+                    [retakeButtons setImage:[UIImage imageNamed:@"chongpai"] forState:UIControlStateNormal];
+                    //右图左字
+                    [retakeButtons setTitleEdgeInsets:UIEdgeInsetsMake(0, -retakeButtons.imageView.bounds.size.width, 0, retakeButtons.imageView.bounds.size.width)];
+                    retakeButtons.imageEdgeInsets = UIEdgeInsetsMake(0, retakeButtons.titleLabel.bounds.size.width, 0, -retakeButtons.titleLabel.bounds.size.width);
+
+                    [retakeButtons setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
+//                    [retakeButtons addTarget:self action:@selector(test) forControlEvents:UIControlEventTouchUpInside];
+//                    [retakeButtons setTitle:@"Xs" forState:UIControlStateNormal];
+
+                    [used setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
+                    [used setImage:[UIImage imageNamed:@"gou"] forState:UIControlStateNormal];
+                    used.titleEdgeInsets = UIEdgeInsetsMake(0, -20, 0, 16);
+                    used.imageEdgeInsets = UIEdgeInsetsMake(0, 20, 0, -16);
+                    
+                }
                 if ( [[[tmpView2 class]description]isEqualToString:@"CAMBottomBar"])
                 {
-                    
+
                     retakeButton = (UIButton *)[tmpView2.subviews lastObject];
                     [retakeButton addTarget:self action:@selector(takePhotoAgain) forControlEvents:UIControlEventTouchUpInside];
-                    
                     //获取到拍照界面的按钮
-                    
                     shutButton = (UIButton *)tmpView2.subviews[1];
-                    //                    [shutButton removeFromSuperview];
                     [shutButton removeFromSuperview];
                 }
                 
@@ -468,7 +480,7 @@
                     UIToolbar *topBar = (UIToolbar *)tmpView2;
                     [topBar removeFromSuperview];
                 }
-                
+
             }
         }
     }
@@ -482,11 +494,12 @@
             }
             //获取到重拍按钮
             for (UIView *tmpView2 in tmpView.subviews) {
-                
+
                 if ( [[[tmpView2 class]description]isEqualToString:@"PLCropOverlayBottomBar"])
                 {
                     for (UIView *tmpView3 in tmpView2.subviews) {
                         retakeButton = (UIButton *)tmpView3.subviews[0];
+
                         [retakeButton addTarget:self action:@selector(takePhotoAgain) forControlEvents:UIControlEventTouchUpInside];
                     }
                 }
@@ -500,6 +513,9 @@
         }
     }
 }
+//-(void)test{
+//    [self.navigationController popToRootViewControllerAnimated:YES];
+//}
 -(void)setHiddenLabel
 {
     

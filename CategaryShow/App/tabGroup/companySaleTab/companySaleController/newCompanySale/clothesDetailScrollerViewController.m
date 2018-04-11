@@ -8,6 +8,7 @@
 #define URL_SHARE @"/web/jquery-obj/static/fx/html/dingzhi.html"
 #import "clothesDetailScrollerViewController.h"
 #import "DiyWordInClothesViewController.h"
+#import "NewDiyPersonalityVC.h"
 #import "choosePriceModel.h"
 #import "priceChooseView.h"
 #import "styleChoose.h"
@@ -53,14 +54,13 @@
     [self createPriceView];
     
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)backClick
 {
-   
     [self.navigationController popViewControllerAnimated:YES];
-    
-    
-    
 }
 
 -(void)shareClick:(UIButton *)sender
@@ -74,7 +74,7 @@
     [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
     [shareParams SSDKSetupShareParamsByText:[_dataDictionary stringForKey:@"content"]
                                      images:imageArray
-                                        url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%@&type=2&price=%@",URL_HEADURL, URL_SHARE, [_goodDic stringForKey:@"id"], string]]
+                                        url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%@&type=2&price=%@&shareout_id=%@",URL_HEADURL, URL_SHARE, [_goodDic stringForKey:@"id"], string,[SelfPersonInfo getInstance].personUserKey]]
                                       title:[_dataDictionary stringForKey:@"name"]
                                        type:SSDKContentTypeWebPage];
     
@@ -283,13 +283,11 @@
     
     
     UIButton *TKButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - (113*2) , 0, 113*2, 50)];
-    [TKButton setBackgroundColor:getUIColor(Color_DZClolor)];
+    [TKButton setBackgroundColor:getUIColor(Color_buyColor)];
     [TKButton setTitle:@"购    买" forState:UIControlStateNormal];
-    [TKButton setTitleColor:getUIColor(Color_shadow) forState:UIControlStateNormal];
     [TKButton addTarget:self action:@selector(ClickToBuyTK) forControlEvents:UIControlEventTouchUpInside];
     [TKButton.titleLabel setFont:[UIFont systemFontOfSize:16]];
     [lowView addSubview:TKButton];
-    
     //    [lowView setAlpha:0];
     
     
@@ -315,10 +313,6 @@
 
 -(void)chatClick
 {
-    
-    
-    
-    
     QYSource *source = [[QYSource alloc] init];
     source.title =  @"私人顾问";
 
@@ -341,35 +335,25 @@
 }
 
 
--(void)ClickToBuyBut {
-    
-    
-    
-    NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-    if ([[userd stringForKey:@"token"] length] > 0) {
-        DiyWordInClothesViewController *diy = [[DiyWordInClothesViewController alloc] init];
-        diy.class_id = _class_id;
-        
-        diy.goodDic = _goodDic;
-        diy.ifTK = YES;
-        diy.paramsDic = _goodParams;
-        diy.defaultImg = _goodDufaultImg;
-        [self.navigationController pushViewController:diy animated:YES];
-//        datDingBegin = [NSDate dateWithTimeIntervalSinceNow:0];
+//-(void)ClickToBuyBut {
 //
-//        [UIView beginAnimations:nil context:nil];
-//        [UIView setAnimationDuration:0.5];
-//        [viewPiceChoose setAlpha:1];
-//        [alphaView setAlpha:1];
-//        [UIView commitAnimations];
-        
-        
-        
-    } else {
-        [self getDateBeginHaveReturn:datBegin fatherView:@"立即购买"];
-    }
-    
-}
+//
+//
+//    NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
+//    if ([[userd stringForKey:@"token"] length] > 0) {
+//        DiyWordInClothesViewController *diy = [[DiyWordInClothesViewController alloc] init];
+//        diy.class_id = _class_id;
+//
+//        diy.goodDic = _goodDic;
+//        diy.ifTK = YES;
+//        diy.paramsDic = _goodParams;
+//        diy.defaultImg = _goodDufaultImg;
+//        [self.navigationController pushViewController:diy animated:YES];
+//    } else {
+//        [self getDateBeginHaveReturn:datBegin fatherView:@"立即购买"];
+//    }
+//
+//}
 
 
 
@@ -378,14 +362,21 @@
     
     NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
     if ([[userd stringForKey:@"token"] length] > 0) {
-        DiyWordInClothesViewController *diy = [[DiyWordInClothesViewController alloc] init];
-        diy.class_id = _class_id;
-        
-        diy.goodDic = _goodDic;
-        diy.ifTK = YES;
-        diy.paramsDic = _goodParams;
-        diy.defaultImg = _goodDufaultImg;
-        [self.navigationController pushViewController:diy animated:YES];
+        NewDiyPersonalityVC * newdiy = [[NewDiyPersonalityVC alloc]init];
+        newdiy.class_id = _class_id;
+        newdiy.goodDic = _goodDic;
+        newdiy.ifTK = YES;
+        newdiy.paramsDic = _goodParams;
+        newdiy.defaultImg = _goodDufaultImg;
+        [self.navigationController pushViewController:newdiy animated:YES];
+//        DiyWordInClothesViewController *diy = [[DiyWordInClothesViewController alloc] init];
+//        diy.class_id = _class_id;
+//
+//        diy.goodDic = _goodDic;
+//        diy.ifTK = YES;
+//        diy.paramsDic = _goodParams;
+//        diy.defaultImg = _goodDufaultImg;
+//        [self.navigationController pushViewController:diy animated:YES];
         
         
         

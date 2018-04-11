@@ -52,6 +52,7 @@ PODS:
   - SDWebImage/Core (3.8.2)
   - TSMessages (0.9.12):
     - HexColors (~> 2.2.0)
+  - UMengAnalytics-NO-IDFA (4.2.5)
   - XHWebImageAutoSize (1.1.2)
 
 DEPENDENCIES:
@@ -78,6 +79,7 @@ DEPENDENCIES:
   - SDCycleScrollView (~> 1.61)
   - SDWebImage (~> 3.8.1)
   - TSMessages (~> 0.9.12)
+  - UMengAnalytics-NO-IDFA
   - XHWebImageAutoSize (~> 1.1.0)
 
 SPEC CHECKSUMS:
@@ -105,8 +107,9 @@ SPEC CHECKSUMS:
   SDCycleScrollView: f72904c77698a7f93a41bcbbc2d78b073bf7326c
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   TSMessages: c8cc7b80f2a833af533872cd02010cac061532cc
+  UMengAnalytics-NO-IDFA: 16666e32edce5be44ae5b14aaaa7f3582e09d6ab
   XHWebImageAutoSize: 8e5d7bf036f960885769dbe3410579024d3ac1a1
 
-PODFILE CHECKSUM: 662bc613987cf73f3a537045345c2aa296c4952b
+PODFILE CHECKSUM: 8d49da608739b8eb2f485136dcaf455da424d0d2
 
 COCOAPODS: 1.4.0

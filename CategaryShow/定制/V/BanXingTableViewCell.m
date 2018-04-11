@@ -38,7 +38,7 @@
     //    [flowLayout setMinimumLineSpacing:15];
     //    [flowLayout setMinimumInteritemSpacing:43];
     //        flowLayout.headerReferenceSize = CGSizeMake(self.frame.size.width, 0);//头部
-    banxing = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 12, SCREEN_WIDTH - 20,  (SCREEN_WIDTH - 60) / 4+20) collectionViewLayout:flowLayout];
+    banxing = [[UICollectionView alloc]initWithFrame:CGRectMake(10, 12, SCREEN_WIDTH - 20,  (SCREEN_WIDTH - 60) / 4-10) collectionViewLayout:flowLayout];
     
     //设置代理
     banxing.delegate = self;
@@ -66,8 +66,8 @@
 {
     static NSString *identify = @"cell";
     positionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
-    [cell.positionImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_banXingArray[indexPath.item] stringForKey:@"img"]]]];
-    [cell.nameLabel setText:[_banXingArray[indexPath.item] stringForKey:@"name"]];
+    [cell.positionImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_banXingArray[indexPath.item] stringForKey:@"img_min"]]]];
+//    [cell.nameLabel setText:[_banXingArray[indexPath.item] stringForKey:@"name"]];
 //    cell.backgroundColor = [UIColor cyanColor];
     [cell sizeToFit];
     
@@ -86,7 +86,7 @@
 {
     //边距占5*4=20 ，2个
     //图片为正方形，边长：(fDeviceWidth-20)/2-5-5 所以总高(fDeviceWidth-20)/2-5-5 +20+30+5+5 label高20 btn高30 边
-    return CGSizeMake((SCREEN_WIDTH - 60) / 4+10,(SCREEN_WIDTH - 60)  / 4+20);
+    return CGSizeMake((SCREEN_WIDTH - 60) / 4+10,(SCREEN_WIDTH - 60)  / 4-10);
 }
 //定义每个UICollectionView 的间距
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section

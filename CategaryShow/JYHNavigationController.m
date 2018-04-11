@@ -33,7 +33,6 @@
     getIcon = [BaseDomain getInstance:NO];
     iconArray = [NSArray array];
    
-    // Do any additional setup after loading the view.
   
 
         
@@ -47,11 +46,8 @@
         [self.navigationBar setBackgroundImage:[UIImage imageNamed:@"Rectangle1"] forBarMetrics:UIBarMetricsDefault];//navi
         // 设置Bar不透明
 //        [self.navigationBar setTranslucent:YES];
-   
-    
 
         [self.navigationBar setShadowImage:[UIImage new]];
-    
     
         [self.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObject:[UIColor blackColor] forKey:UITextAttributeTextColor]];
     
@@ -81,13 +77,13 @@
 //    return nil;
 //}
 
-- (UINavigationItem *)navigationItem{
-    UINavigationItem * item = [super navigationItem];
-    
-    item.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"test" style:UIBarButtonItemStylePlain target:nil action:nil];
-    
-    return item;
-}
+//- (UINavigationItem *)navigationItem{
+//    UINavigationItem * item = [super navigationItem];
+//
+//    item.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"test" style:UIBarButtonItemStylePlain target:nil action:nil];
+//
+//    return item;
+//}
 
 -(void) pushViewController:(UIViewController *)viewController animated:(BOOL)animated{
 
@@ -103,7 +99,7 @@
         animation.type = kCATransitionReveal;
         animation.subtype = kCATransitionFromRight;
         [self.view.layer addAnimation:animation forKey:nil];
-        viewController.navigationItem.leftBarButtonItem = [self backItemWithimage:[UIImage imageNamed:@"backLeftWhite"] highImage:[UIImage imageNamed:@"backLeftWhite"]  target:self action:@selector(back) title:@"返        回"];
+        viewController.navigationItem.leftBarButtonItem = [self backItemWithimage:[UIImage imageNamed:@"backLeftWhite"] highImage:[UIImage imageNamed:@"backLeftWhite"]  target:self action:@selector(back) title:@"返            回"];
         [super pushViewController:viewController animated:NO];
         return;
     }
@@ -125,7 +121,8 @@
     [backButton setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];//colorWithHexString:@"#FFFFFF"
     [backButton setTitleColor:[UIColor clearColor] forState:UIControlStateHighlighted];
     [backButton sizeToFit];
-    backButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+    backButton.titleEdgeInsets = UIEdgeInsetsMake(0, -5, 0, 5);
+    backButton.imageEdgeInsets = UIEdgeInsetsMake(0, 5, 0, -5);
     [backButton addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
     return  [[UIBarButtonItem alloc] initWithCustomView:backButton];
 }

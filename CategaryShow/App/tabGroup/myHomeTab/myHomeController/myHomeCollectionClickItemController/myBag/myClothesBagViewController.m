@@ -138,9 +138,6 @@
     suggestDataArray = [NSMutableArray array];
     ifUpdate = NO;
     ifAllChoose = 0;
-    UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 64)];
-    [self.view addSubview:titleView];
-    [titleView setBackgroundColor:[UIColor whiteColor]];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downOrderSuccessAction) name:@"downOrderSuccess" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(turnToOrderAction) name:@"turnToOrder" object:nil];
@@ -870,7 +867,6 @@
         
         [modelArray removeObjectAtIndex:indexPath.row];
         [chooseOrNot removeObjectAtIndex:indexPath.row];
-        // Delete the row from the data source.
         [self reloadAllView];
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
         [params setObject:model.bagId forKey:@"car_id"];

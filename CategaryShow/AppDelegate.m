@@ -113,7 +113,6 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
     [user setObject:@"login" forKey:@"status"];
     
-    getDataIcon = [BaseDomain getInstance:NO];
     
     self.threadIsPause = NO;
     self.Noti = NO;
@@ -159,7 +158,7 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     //        }];
     //    }
     
-    
+    [self _setupUMfenxi];
     [self configureAPIKey];
     [self registerShareSdk];
     
@@ -170,14 +169,22 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     [[QYSDK sharedSDK] registerAppId:@"e98a79aca99f25ebf9bacbc8c334b76b"
                              appName:@"云工场"];
     [WXApi registerApp:@"wx07c2173e7686741e" withDescription:@"demo 2.0"];
-    getDataIcon = [BaseDomain getInstance:NO];
-    NSMutableDictionary *parmas = [NSMutableDictionary dictionary];
-    [parmas setObject:@"2" forKey:@"type"];
-    [getDataIcon getData:URL_getIcon PostParams:parmas finish:^(BaseDomain *domain, Boolean success) {
-        
-    }];
+//    getDataIcon = [BaseDomain getInstance:NO];
+//    NSMutableDictionary *parmas = [NSMutableDictionary dictionary];
+//    [parmas setObject:@"2" forKey:@"type"];
+//    [getDataIcon getData:URL_getIcon PostParams:parmas finish:^(BaseDomain *domain, Boolean success) {
+//
+//    }];
     
     return YES;
+}
+-(void)_setupUMfenxi
+{
+    [MobClick setAppVersion:XcodeAppVersion];
+    UMConfigInstance.appKey = UManalyseAppKey;
+    //UMConfigInstance.eSType = E_UM_GAME; //仅适用于游戏场景，应用统计不用设
+    [MobClick startWithConfigure:UMConfigInstance];
+    [MobClick setEncryptEnabled:YES];
 }
 -(void)checkAppUpdate
 {

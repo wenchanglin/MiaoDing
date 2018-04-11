@@ -25,7 +25,7 @@
     [_photoImageView.layer setMasksToBounds:YES];
     _shuomingLabel = [UILabel new];
     _shuomingLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:10];
-    _shuomingLabel.textColor = [UIColor colorWithHexString:@"#979797"];
+    _shuomingLabel.textColor = [UIColor colorWithHexString:@"#B10909"];
     _shuomingLabel.text = @"沿顺时针方向旋转完成身体四个面的拍摄";
     [self.contentView addSubview:_shuomingLabel];
     [_shuomingLabel mas_makeConstraints:^(MASConstraintMaker *make) {

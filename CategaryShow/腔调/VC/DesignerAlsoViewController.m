@@ -49,7 +49,14 @@
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:animated];
+    [MobClick beginLogPageView:@"腔调"];
 
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [MobClick endLogPageView:@"腔调"];
 }
 
 - (void)viewDidLoad {

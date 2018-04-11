@@ -13,33 +13,51 @@
 -(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
+        _msimageView =[UIImageView new];
+        UITapGestureRecognizer * tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tap:)];
+        [_msimageView addGestureRecognizer:tap];
+//        _msimageView.backgroundColor = [UIColor cyanColor];
+        _msimageView.userInteractionEnabled = YES;
+        [self.contentView addSubview:_msimageView];
+        [_msimageView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(10);
+            make.width.mas_equalTo(SCREEN_WIDTH/3);
+            make.top.bottom.equalTo(self.contentView);
+        }];
         _lastMoney = [UILabel new];
         [_lastMoney setFont:[UIFont fontWithName:@"PingFangSC-Light" size:14]];
         _lastMoney.textColor = [UIColor colorWithHexString:@"#222222"];
-        [self.contentView addSubview:_lastMoney];
-        
+        [_msimageView addSubview:_lastMoney];
+
         _chooseImage = [UIButton new];
-        [self.contentView addSubview:_chooseImage];
+        [_msimageView addSubview:_chooseImage];
+        [_chooseImage mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(12);
+            make.centerY.equalTo(self.contentView.mas_centerY);
+            make.height.width.mas_equalTo(14);
+        }];
+        [_lastMoney mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(_chooseImage.mas_right).offset(5);
+            make.centerY.equalTo(self.contentView.mas_centerY);
+            make.height.mas_equalTo(20);
+        }];
+      
+       
         
         
     }
     return self;
 }
-
+-(void)tap:(UITapGestureRecognizer *)tap
+{
+//    _DesignerInfo(tap);
+//        WCLLog(@"你点击了我");
+    
+}
 -(void)layoutSubviews
 {
     [super layoutSubviews];
-    [_chooseImage mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(12);
-        make.centerY.equalTo(self.contentView.mas_centerY);
-        make.height.width.mas_equalTo(14);
-    }];
     
-    [_lastMoney mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(_chooseImage.mas_right).offset(5);
-        make.centerY.equalTo(self.contentView.mas_centerY);
-        make.height.mas_equalTo(20);
-    }];
     
     
     

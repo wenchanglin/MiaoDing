@@ -54,6 +54,7 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
+    [MobClick beginLogPageView:@"新个性定制"];
 }
 -(void)viewWillDisappear:(BOOL)animated
 {
@@ -64,6 +65,7 @@
             [view removeFromSuperview];
         }
     }
+    [MobClick endLogPageView:@"新个性定制"];
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -377,6 +379,7 @@
                 [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
                     // WCLLog(@"%@",domain.dataRoot);
                     if ([self checkHttpResponseResultStatus:postData]) {
+                         [MobClick event:@"place_order" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
                         ClothesFroPay *model = [ClothesFroPay new];
                         if ([_paramsClothes stringForKey:@"mian_img"].length > 0) {
                             model.clothesImage = [_paramsClothes stringForKey:@"mian_img"];
@@ -443,6 +446,7 @@
         [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
             // WCLLog(@"%@",domain.dataRoot);
             if ([self checkHttpResponseResultStatus:postData]) {
+                 [MobClick event:@"place_order" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
                 ClothesFroPay *model = [ClothesFroPay new];
                 if ([_paramsClothes stringForKey:@"mian_img"].length > 0) {
                     model.clothesImage = [_paramsClothes stringForKey:@"mian_img"];
@@ -512,6 +516,7 @@
                 [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
                     //        WCLLog(@"%@",domain.dataRoot);
                     if ([self checkHttpResponseResultStatus:postData]) {
+                         [MobClick event:@"add_cart" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
                         [self alertViewShowOfTime:domain.resultMessage time:1.5];
                         [[NSNotificationCenter defaultCenter] postNotificationName:@"addCarSuccess" object:nil];
                     }
@@ -563,6 +568,7 @@
         [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
             //        WCLLog(@"%@",domain.dataRoot);
             if ([self checkHttpResponseResultStatus:postData]) {
+                [MobClick event:@"add_cart" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
                 [self alertViewShowOfTime:domain.resultMessage time:1.5];
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"addCarSuccess" object:nil];
             }
@@ -606,7 +612,7 @@
         [titleLabel setText:@"输入基本信息"];
         rightLabel.frame = CGRectMake(CGRectGetMaxX(titleLabel.frame)-55, 0, 250, 42);
         rightLabel.textAlignment = NSTextAlignmentLeft;
-        rightLabel.textColor = [UIColor colorWithHexString:@"#979797"];
+        rightLabel.textColor = [UIColor colorWithHexString:@"#B10909"];
         rightLabel.font =[UIFont fontWithName:@"PingFangSC-Light" size:10];
         rightLabel.text = @"为了确保衣服合身，请准确输入你的净身高、净体重";
     }
@@ -721,6 +727,10 @@
     else if (indexPath.section==1)
     {
         return 87;
+    }
+    else if (indexPath.section==2)
+    {
+        return 3+(SCREEN_WIDTH-60)/4;
     }
     else if(indexPath.section==4)
     {

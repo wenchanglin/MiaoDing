@@ -51,7 +51,7 @@
             if (_ifPayContrller) {
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"cardSuccess" object:nil userInfo:giftDic];
-                [self.navigationController popViewControllerAnimated:YES];
+//                [self.navigationController popViewControllerAnimated:YES];
             }
             [self reloadView];
         }
@@ -67,7 +67,7 @@
     
     if ([[giftDic stringForKey:@"gift_card"] integerValue] > 0) {
         [nocard setHidden:YES];
-        UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, NavHeight + 165.0 /  667.0 * SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT  - (49.0 / 667.0 * SCREEN_HEIGHT + 64 + 165.0 /  667.0 * SCREEN_HEIGHT))];
+        UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, NavHeight + 165.0 /  667.0 * SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT  - (49.0 / 667.0 * SCREEN_HEIGHT +128 + 165.0 /  667.0 * SCREEN_HEIGHT))];
         [self.view addSubview:scroller];
         UIImageView *imageDetailDes = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
         [imageDetailDes sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [giftDic stringForKey:@"card_rule"]]] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {

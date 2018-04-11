@@ -26,6 +26,16 @@
         make.bottom.mas_equalTo(-15);
         make.width.mas_equalTo(SCREEN_WIDTH/2-17);
     }];
+   
+    _cmLabel = [UILabel new];
+    _cmLabel.text = @"CM";
+    _cmLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:13];
+    _cmLabel.textColor = [UIColor colorWithHexString:@"#222222"];
+    [_firstImageView addSubview:_cmLabel];
+    [_cmLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(_firstImageView.mas_right).offset(-38);
+        make.centerY.equalTo(_firstImageView.mas_centerY);
+    }];
     _heightTextField = [UITextField new];
     _heightTextField.keyboardType = UIKeyboardTypeNumberPad;
     _heightTextField.tag = 991;
@@ -35,15 +45,7 @@
     [_heightTextField mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(_firstImageView.mas_left).offset(26);
         make.centerY.equalTo(_firstImageView.mas_centerY);
-    }];
-    _cmLabel = [UILabel new];
-    _cmLabel.text = @"CM";
-    _cmLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:13];
-    _cmLabel.textColor = [UIColor colorWithHexString:@"#222222"];
-    [_firstImageView addSubview:_cmLabel];
-    [_cmLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(_firstImageView.mas_right).offset(-38);
-        make.centerY.equalTo(_firstImageView.mas_centerY);
+        make.right.equalTo(_firstImageView);
     }];
     _secondImageView = [UIImageView new];
     _secondImageView.userInteractionEnabled =YES;
@@ -55,17 +57,8 @@
         make.bottom.mas_equalTo(-15);
         make.width.mas_equalTo(SCREEN_WIDTH/2-17);
     }];
-    _weightTextField = [UITextField new];
-    _weightTextField.tag = 992;
-    _weightTextField.keyboardType = UIKeyboardTypeNumberPad;
-   // [_weightTextField addTarget:self action:@selector(weighttextfieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-    _weightTextField.font = [UIFont fontWithName:@"PingFangSC-Light" size:13];
-    _weightTextField.placeholder = @"净体重";
-    [_secondImageView addSubview:_weightTextField];
-    [_weightTextField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(_secondImageView.mas_left).offset(26);
-        make.centerY.equalTo(_secondImageView.mas_centerY);
-    }];
+    
+   
     _kgLabel = [UILabel new];
     _kgLabel.text = @"KG";
     _kgLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:13];
@@ -74,6 +67,18 @@
     [_kgLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(_secondImageView.mas_right).offset(-38);
         make.centerY.equalTo(_secondImageView.mas_centerY);
+    }];
+    _weightTextField = [UITextField new];
+    _weightTextField.tag = 992;
+    _weightTextField.keyboardType = UIKeyboardTypeNumberPad;
+    // [_weightTextField addTarget:self action:@selector(weighttextfieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    _weightTextField.font = [UIFont fontWithName:@"PingFangSC-Light" size:13];
+    _weightTextField.placeholder = @"净体重";
+    [_secondImageView addSubview:_weightTextField];
+    [_weightTextField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_secondImageView.mas_left).offset(26);
+        make.centerY.equalTo(_secondImageView.mas_centerY);
+        make.right.equalTo(_secondImageView);
     }];
 }
 -(void)weighttextfieldDidChange:(UITextField *)textfield

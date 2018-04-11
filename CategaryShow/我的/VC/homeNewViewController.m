@@ -107,7 +107,7 @@ static CGFloat const headViewHeight = 240;
 -(void)viewWillAppear:(BOOL)animated
 {
     [self settabTitle:@""];
-    
+    [MobClick beginLogPageView:@"我的"];
    
     [self.rdv_tabBarController.navigationController setNavigationBarHidden:YES animated:animated];
     
@@ -180,6 +180,7 @@ static CGFloat const headViewHeight = 240;
 -(void)viewWillDisappear:(BOOL)animated
 {
     [self.rdv_tabBarController.navigationController setNavigationBarHidden:NO animated:animated];
+    [MobClick endLogPageView:@"我的"];
 }
 
 

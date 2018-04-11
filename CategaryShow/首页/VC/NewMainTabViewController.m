@@ -85,7 +85,14 @@
     //    self.rdv_tabBarController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
     //    [self settabImg:@"MainLogo"];
     datBegin = [NSDate dateWithTimeIntervalSinceNow:0];
-    
+    [MobClick beginLogPageView:@"首页"];
+
+}
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [MobClick endLogPageView:@"首页"];
+
 }
 -(UIStatusBarStyle)preferredStatusBarStyle
 {
@@ -550,8 +557,10 @@
     }
     return nil;
 }
+#pragma mark - 广告栏
 -(void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index
 {
+    [MobClick event:@"banner" label:[SelfPersonInfo getInstance].cnPersonUserName];
     if ([[banerImgArray[index] stringForKey:@"banner_type"] integerValue] == 1) {
         MainTabBanerDetailViewController *mainBaner = [[MainTabBanerDetailViewController alloc] init];
         
@@ -564,6 +573,7 @@
         
     } else if ([[banerImgArray[index] stringForKey:@"banner_type"] integerValue] == 2){
         joinDesignerViewController *joinD = [[joinDesignerViewController alloc] init];
+        [MobClick event:@"apply_join" label:[SelfPersonInfo getInstance].cnPersonUserName];
         [self.navigationController pushViewController:joinD animated:YES];
     } else if ([[banerImgArray[index] stringForKey:@"banner_type"] integerValue] == 3) {
         

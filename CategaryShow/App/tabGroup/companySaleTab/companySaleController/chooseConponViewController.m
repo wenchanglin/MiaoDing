@@ -108,7 +108,7 @@
     [self.view addSubview:view];
     
     
-    canUse = [[UITableView alloc] initWithFrame:CGRectMake(8, 60+NavHeight, SCREEN_WIDTH - 16,IsiPhoneX?SCREEN_HEIGHT-88-74:SCREEN_HEIGHT  - 64-49) style:UITableViewStyleGrouped];
+    canUse = [[UITableView alloc] initWithFrame:CGRectMake(8, 60+NavHeight, SCREEN_WIDTH - 16,IsiPhoneX?SCREEN_HEIGHT-88-94:SCREEN_HEIGHT  - 84-49) style:UITableViewStyleGrouped];
     if (@available(iOS 11.0, *)) {
         canUse.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     } else {

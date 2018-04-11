@@ -445,9 +445,8 @@
     
     
     UIButton *TKButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - (113*2) , 0, 113*2, 50)];
-    [TKButton setBackgroundColor:getUIColor(Color_DZClolor)];
+    [TKButton setBackgroundColor:getUIColor(Color_buyColor)];
     [TKButton setTitle:@"购    买" forState:UIControlStateNormal];
-    [TKButton setTitleColor:getUIColor(Color_shadow) forState:UIControlStateNormal];
     [TKButton addTarget:self action:@selector(ClickToBuyTK) forControlEvents:UIControlEventTouchUpInside];
     [TKButton.titleLabel setFont:[UIFont systemFontOfSize:16]];
     [lowView addSubview:TKButton];

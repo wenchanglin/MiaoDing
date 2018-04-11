@@ -220,8 +220,7 @@ NSInteger flog;
     shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 30, imagePickerController.view.frame.size.height - 80, 60, 60)];
     [shutMInebutton.layer setCornerRadius:30];
     [shutMInebutton.layer setMasksToBounds:YES];
-    shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
-//    [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
+    [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
     [shutMInebutton addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
     [imagePickerController.view addSubview:shutMInebutton];
     
@@ -328,8 +327,8 @@ NSInteger flog;
             shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 30, imagePickerController.view.frame.size.height - 80, 60, 60)];
             [shutMInebutton.layer setCornerRadius:30];
             [shutMInebutton.layer setMasksToBounds:YES];
-            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
-//            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
+//            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
             [shutMInebutton addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
             [imagePickerController.view addSubview:shutMInebutton];
             
@@ -403,8 +402,8 @@ NSInteger flog;
             shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 30, imagePickerController.view.frame.size.height - 80, 60, 60)];
             [shutMInebutton.layer setCornerRadius:30];
             [shutMInebutton.layer setMasksToBounds:YES];
-            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
-//            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
+//            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
             [shutMInebutton addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
             [imagePickerController.view addSubview:shutMInebutton];
             
@@ -641,12 +640,12 @@ NSInteger flog;
                         if (fTheta > -5 && fTheta < 5 && yTheta < 1 && yTheta > -1){
             
                             canShut = YES;
-                            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#90c551"];
-//                            [shutMInebutton setImage:[UIImage imageNamed:@"shutten"] forState:UIControlStateNormal];
+//                            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#90c551"];
+                            [shutMInebutton setImage:[UIImage imageNamed:@"shutten"] forState:UIControlStateNormal];
                         } else {
                             canShut = NO;
-                            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
-//                            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
+//                            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+                            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
                         }
             
         }];
@@ -672,6 +671,25 @@ NSInteger flog;
             
             //获取重拍按钮
             for (UIView *tmpView2 in tmpView.subviews) {
+                if( [[[tmpView2 class]description]isEqualToString:@"PLCropOverlayBottomBar"])
+                {
+                    UIButton *retakeButtons=tmpView2.subviews[0].subviews[0];
+                    UIButton * used = tmpView2.subviews[0].subviews[2];
+                    [retakeButtons setImage:[UIImage imageNamed:@"chongpai"] forState:UIControlStateNormal];
+                    //右图左字
+                    [retakeButtons setTitleEdgeInsets:UIEdgeInsetsMake(0, -retakeButtons.imageView.bounds.size.width, 0, retakeButtons.imageView.bounds.size.width)];
+                    retakeButtons.imageEdgeInsets = UIEdgeInsetsMake(0, retakeButtons.titleLabel.bounds.size.width, 0, -retakeButtons.titleLabel.bounds.size.width);
+                    
+                    [retakeButtons setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
+                    //                    [retakeButtons addTarget:self action:@selector(test) forControlEvents:UIControlEventTouchUpInside];
+                    //                    [retakeButtons setTitle:@"Xs" forState:UIControlStateNormal];
+                    
+                    [used setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
+                    [used setImage:[UIImage imageNamed:@"gou"] forState:UIControlStateNormal];
+                    used.titleEdgeInsets = UIEdgeInsetsMake(0, -20, 0, 16);
+                    used.imageEdgeInsets = UIEdgeInsetsMake(0, 20, 0, -16);
+                    
+                }
                 if ( [[[tmpView2 class]description]isEqualToString:@"CAMBottomBar"])
                 {
                     

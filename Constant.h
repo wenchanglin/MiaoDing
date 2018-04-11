@@ -48,6 +48,9 @@
 #define Font_26  [UIFont fontWithName:@"Futura-Bold" size:26]
 //判断设备是否是iPad
 #define iPadDevice (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+//友盟APPkey
+#define UManalyseAppKey @"5acad457f29d9835430000ec"
+
 #ifdef DEBUG
 #define WCLLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
 #else

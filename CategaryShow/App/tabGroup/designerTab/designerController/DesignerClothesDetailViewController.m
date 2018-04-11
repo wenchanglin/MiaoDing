@@ -42,7 +42,7 @@
     NSMutableDictionary *dataDictionary;
     NSMutableArray *pictureArray;
     NSMutableArray *prctureIntro;
-    
+    CircleScrollView* csview;
     
     UICollectionView *colthesCollect;
     
@@ -158,6 +158,10 @@
 
 -(void)backClick
 {
+    [sizeCollection removeFromSuperview];
+    [sizeShowCollection removeFromSuperview];
+    [bgViewAlpha removeFromSuperview];
+    [sizeList removeAllObjects];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -334,6 +338,7 @@
     
     
     CircleScrollView *scr1 = [[CircleScrollView alloc]initWithImgUrls:pictureArray  fram:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) intro:prctureIntro];
+    csview = scr1;
     scr1.circleScrollType = CircleScrollTypePageControl;
     scr1.circleScrollStyle = CircleScrollStyleSkewing;
     scr1.circleDelegate = self;
@@ -652,7 +657,8 @@
         if (postData.result == 10001) {
             [self getDateBeginHaveReturn:datBegin fatherView:@"收藏"];
         } else if (postData.result == 1) {
-//            [self showAlertWithTitle:@"提示" message:@"加入购物车成功"];
+            [MobClick event:@"add_cart" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[dataDictionary stringForKey:@"name"]]];
+
             [self alertViewShowOfTime:@"加入购物车成功" time:1.5];
         }
         
@@ -699,14 +705,15 @@
         } else if (postData.result == 1) {
             ClothesFroPay *model = [ClothesFroPay new];
             model.clothesImage = [dataDictionary stringForKey:@"thumb"];
-            model.clothesCount = [NSString stringWithFormat:@"%ld",clothesCount];
+            model.clothesCount = @"1";//[NSString stringWithFormat:@"%ld",clothesCount];
             model.clothesName = [dataDictionary stringForKey:@"name"];
             model.clothesPrice = clothesPrice;
             model.clotheMaxCount = [sizeShowDic stringForKey:@"sku_num"];
             NSMutableArray *array = [NSMutableArray arrayWithObjects:model, nil];
             PayForClothesViewController *clothesPay = [[PayForClothesViewController alloc] init];
             clothesPay.arrayForClothes = array;
-            
+            [MobClick event:@"place_order" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[dataDictionary stringForKey:@"name"]]];
+
             clothesPay.carId = [[postData.dataRoot objectForKey:@"data"] stringForKey:@"car_id"];
             clothesPay.allPrice = [NSString stringWithFormat:@"%.2f",[clothesPrice floatValue] * clothesCount];
             [self.navigationController pushViewController:clothesPay animated:YES];
@@ -743,54 +750,54 @@
 }
 
 
--(void)chatClick
-{
-    QYSource *source = [[QYSource alloc] init];
-    source.title =  @"私人顾问";
-
-    QYSessionViewController *vc = [[QYSDK sharedSDK] sessionViewController];
-    [self.navigationController setNavigationBarHidden:NO];
-    vc.sessionTitle = @"私人顾问";
-    vc.source = source;
-
-
-    if (iPadDevice) {
-        UINavigationController* navi = [[UINavigationController alloc]initWithRootViewController:vc];
-        navi.modalPresentationStyle = UIModalPresentationFormSheet;
-        [self presentViewController:navi animated:YES completion:nil];
-    }
-    else{
-        vc.hidesBottomBarWhenPushed = YES;
-        [self.navigationController pushViewController:vc animated:YES];
-    }
+//-(void)chatClick
+//{
+//    QYSource *source = [[QYSource alloc] init];
+//    source.title =  @"私人顾问";
+//
+//    QYSessionViewController *vc = [[QYSDK sharedSDK] sessionViewController];
+//    [self.navigationController setNavigationBarHidden:NO];
+//    vc.sessionTitle = @"私人顾问";
+//    vc.source = source;
+//
+//
+//    if (iPadDevice) {
+//        UINavigationController* navi = [[UINavigationController alloc]initWithRootViewController:vc];
+//        navi.modalPresentationStyle = UIModalPresentationFormSheet;
+//        [self presentViewController:navi animated:YES completion:nil];
+//    }
+//    else{
+//        vc.hidesBottomBarWhenPushed = YES;
+//        [self.navigationController pushViewController:vc animated:YES];
+//    }
 //    [self alertViewShowOfTime:@"客服不在线哦,请拨打电话:4009901213" time:1];
-}
+//}
 
 
--(void)saveClothesClick
-{
-    //    [self showAlertWithTitle:@"提示" message:@"分享成功"];
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@"2" forKey:@"type"];
-    [params setObject:designer.goods_id forKey:@"cid"];
-    [getData postData:URL_AddSave PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
-        
-        if (domain.result == 1) {
-            
-            [buttonLike setImage:[UIImage imageNamed:@"fullHeart"] forState:UIControlStateNormal];
-        } else if (domain.result == 10001) {
-            [self getDateBeginHaveReturn:datBegin fatherView:@"收藏"];
-        } else {
-            
-            [buttonLike setImage:[UIImage imageNamed:@"Empty"] forState:UIControlStateNormal];
-        }
-        
-        
-        
-    }];
-    
-}
+//-(void)saveClothesClick
+//{
+//    //    [self showAlertWithTitle:@"提示" message:@"分享成功"];
+//    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+//    [params setObject:@"2" forKey:@"type"];
+//    [params setObject:designer.goods_id forKey:@"cid"];
+//    [getData postData:URL_AddSave PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+//
+//
+//        if (domain.result == 1) {
+//
+//            [buttonLike setImage:[UIImage imageNamed:@"fullHeart"] forState:UIControlStateNormal];
+//        } else if (domain.result == 10001) {
+//            [self getDateBeginHaveReturn:datBegin fatherView:@"收藏"];
+//        } else {
+//
+//            [buttonLike setImage:[UIImage imageNamed:@"Empty"] forState:UIControlStateNormal];
+//        }
+//
+//
+//
+//    }];
+//
+//}
 
 
 

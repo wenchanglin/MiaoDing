@@ -68,12 +68,17 @@
 {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     getData = [BaseDomain getInstance:NO];
-    
+    [MobClick beginLogPageView:@"确认订单"];
     
     if (!model) {
         [self getDatas];
     }
     
+}
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [MobClick endLogPageView:@"确认订单"];
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle
@@ -169,43 +174,6 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"realToOrder" object:nil];
 }
 
--(void)chooseCoupon:(NSNotification *)noti
-{
-    if ([noti.userInfo integerForKey:@"price"] == 0) {
-        payView.price = _allPrice;
-        [clothesPrice setText:[NSString stringWithFormat:@"%@",_allPrice]];
-        [payPriceAndCon[1] setObject:@"-￥0.00" forKey:@"detail"];
-        couponPrice = @"0.00";
-        couPonRemark = @"选择优惠券";
-        couponId = nil;
-        
-        
-    } else {
-        couPonRemark = [noti.userInfo stringForKey:@"remark"];
-        couponId = [noti.userInfo stringForKey:@"conponid"];
-        couponPrice = [noti.userInfo stringForKey:@"price"];
-        minCouponPrice = [noti.userInfo stringForKey:@"minPrice"];
-        CGFloat price = 0;
-        for (ClothesFroPay *clothesMo in _arrayForClothes) {
-            price = price + ([clothesMo.clothesPrice floatValue]) * [clothesMo.clothesCount integerValue];
-        }
-        if ([_allPrice floatValue] - [couponPrice floatValue] <= 0) {
-            payView.price = @"0.01";
-            [clothesPrice setText:@"¥0.01"];
-        } else {
-            payView.price = [NSString stringWithFormat:@"%.2f", [_allPrice floatValue] - [couponPrice floatValue]];
-            [clothesPrice setText:[NSString stringWithFormat:@"￥%.2f", [_allPrice floatValue] - [couponPrice floatValue]]];
-        }
-        [payPriceAndCon[0] setObject:[NSString stringWithFormat:@"￥%.2f", price] forKey:@"detail"];
-        [payPriceAndCon[1] setObject:[NSString stringWithFormat:@"-￥%.2f", [couponPrice floatValue]] forKey:@"detail"];
-        choose = NO;
-    }
-    
-    [payView reloadView];
-    [clothesToPay reloadData];
-    
-    
-}
 
 
 
@@ -350,8 +318,8 @@
     [self.view addSubview:lowView];
     lowView.sd_layout
     .leftEqualToView(self.view)
-    .bottomEqualToView(self.view)
-    .heightIs(IsiPhoneX?72:50)
+    .bottomSpaceToView(self.view,IsiPhoneX?20:0)
+    .heightIs(50)
     .rightEqualToView(self.view);
     [lowView setBackgroundColor:[UIColor whiteColor]];
     
@@ -386,32 +354,147 @@
     [buyButton.titleLabel setFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14]];
     
     
+   
+    UILabel *Heji = [UILabel new];
+    [leftView addSubview:Heji];
+    Heji.sd_layout.leftSpaceToView(leftView, 10).centerYEqualToView(leftView).widthIs(40).heightIs(20);
+//    [Heji mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.right.equalTo(clothesPrice.mas_left);
+//        make.centerY.equalTo(buyButton.mas_centerY);
+//    }];
+    [Heji setFont:[UIFont fontWithName:@"PingFangSC-Light" size:13]];
+    [Heji setTextColor:[UIColor colorWithHexString:@"#222222"]];
+    [Heji setText:@"合计:"];
     clothesPrice = [UILabel new];
     [leftView addSubview:clothesPrice];
-    
-    [clothesPrice mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(buyButton.mas_left).offset(-10);
-        make.centerY.equalTo(buyButton.mas_centerY);
-    }];
+    clothesPrice.sd_layout
+    .leftSpaceToView(Heji, 3)
+    .rightSpaceToView(leftView, 3)
+    .topEqualToView(leftView)
+    .bottomEqualToView(leftView);
+    //    [clothesPrice mas_makeConstraints:^(MASConstraintMaker *make) {
+    //        make.right.equalTo(buyButton.mas_left).offset(-10);
+    //        make.centerY.equalTo(buyButton.mas_centerY);
+    //    }];
     
     clothesPrice.textColor= [UIColor colorWithHexString:@"#222222"];
     [clothesPrice setFont:[UIFont fontWithName:@"SanFranciscoDisplay-Regular" size:16]];
     [clothesPrice setTextAlignment:NSTextAlignmentLeft];
-    [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f", [_allPrice floatValue]]];
-    UILabel *Heji = [UILabel new];
-    [leftView addSubview:Heji];
-    [Heji mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(clothesPrice.mas_left);
-        make.centerY.equalTo(buyButton.mas_centerY);
-    }];
-    [Heji setFont:[UIFont fontWithName:@"PingFangSC-Light" size:13]];
-    [Heji setTextColor:[UIColor colorWithHexString:@"#222222"]];
-    [Heji setText:@"合计:"];
+    [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f", [_allPrice floatValue]*[((ClothesFroPay *)_arrayForClothes[0]).clothesCount floatValue]]];
+}
+-(void)chooseGift
+{
+    if (canChooseCard) {
+        if ([couPonRemark isEqualToString:@"选择优惠券"]) {
+            _allPrice = ((ClothesFroPay*)_arrayForClothes[0]).clothesPrice;
+            if (choose) {
+                choose = NO;
+                payView.price = [NSString stringWithFormat:@"%.2f", [_allPrice floatValue]* [((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue]];
+                [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f", [_allPrice floatValue]* [((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue]]];
+                CGFloat price = 0;
+                for (ClothesFroPay *clothesMo in _arrayForClothes) {
+                    price = price + ([clothesMo.clothesPrice floatValue]) * [clothesMo.clothesCount integerValue];
+                }
+                [payPriceAndCon[0] setObject:[NSString stringWithFormat:@"¥%.2f", price] forKey:@"detail"];
+                [payPriceAndCon[1] setObject:@"¥0.00" forKey:@"detail"];
+            } else {
+                choose = YES;
+                
+                CGFloat canUseCard = 0;
+                for (ClothesFroPay *clothesMo in _arrayForClothes) {
+                    
+                    if (clothesMo.can_use_card == 1) {
+                        canUseCard = canUseCard + [clothesMo.clothesPrice floatValue] * [clothesMo.clothesCount integerValue];
+                    }
+                    
+                }
+                
+                if (canUseCard - [lastMoney floatValue] <= 0) {
+                    if (canUseCard == [_allPrice floatValue]* [((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue]) {
+                        payView.price = @"¥0.01";
+                        [clothesPrice setText:@"¥0.01"];
+                    } else if(canUseCard<[_allPrice floatValue]* [((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue]) {
+                        payView.price = [NSString stringWithFormat:@"%.2f", canUseCard-[_allPrice floatValue] ];
+                        [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f",canUseCard -[_allPrice floatValue] ]];
+                    }
+                    else
+                    {
+                        payView.price = [NSString stringWithFormat:@"%.2f",[_allPrice floatValue]-canUseCard];
+                        [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f",[_allPrice floatValue]-canUseCard]];
+                    }
+                    
+                } else {
+                    payView.price = [NSString stringWithFormat:@"%.2f", [_allPrice floatValue]* [((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue] - [lastMoney floatValue]];
+                    [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f", [_allPrice floatValue]* [((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue] - [lastMoney floatValue]]];
+                }
+                
+                CGFloat price = 0;
+                for (ClothesFroPay *clothesMo in _arrayForClothes) {
+                    price = price + ([clothesMo.clothesPrice floatValue]) * [clothesMo.clothesCount integerValue];
+                }
+                [payPriceAndCon[0] setObject:[NSString stringWithFormat:@"¥%.2f", price] forKey:@"detail"];
+                if (canUseCard>=[lastMoney floatValue]) {
+                    [payPriceAndCon[1] setObject:[NSString stringWithFormat:@"-¥%.2f", [lastMoney floatValue]] forKey:@"detail"];
+
+                }
+                else
+                {
+                    [payPriceAndCon[1] setObject:[NSString stringWithFormat:@"-¥%.2f", canUseCard] forKey:@"detail"];
+                }
+                
+            }
+            [payView reloadView];
+        } else {
+            [self alertViewShowOfTime:@"礼品卡与优惠券不能同时使用哦" time:1];
+        }
+    } else {
+        [self alertViewShowOfTime:@"该商品不能使用礼品卡" time:1];
+    }
+    [clothesToPay reloadData];
+}
+-(void)chooseCoupon:(NSNotification *)noti
+{
+    _allPrice = ((ClothesFroPay*)_arrayForClothes[0]).clothesPrice;
+    if ([noti.userInfo integerForKey:@"price"] == 0) {
+        payView.price = [NSString stringWithFormat:@"%.2f", [_allPrice floatValue]* [((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue]];
+        [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f", [_allPrice floatValue]* [((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue]]];
+        [payPriceAndCon[1] setObject:@"-￥0.00" forKey:@"detail"];
+        couponPrice = @"0.00";
+        couPonRemark = @"选择优惠券";
+        couponId = nil;
+        
+        
+    } else {
+        couPonRemark = [noti.userInfo stringForKey:@"remark"];
+        couponId = [noti.userInfo stringForKey:@"conponid"];
+        couponPrice = [noti.userInfo stringForKey:@"price"];
+        minCouponPrice = [noti.userInfo stringForKey:@"minPrice"];
+        CGFloat price = 0;
+        for (ClothesFroPay *clothesMo in _arrayForClothes) {
+            price = price + ([clothesMo.clothesPrice floatValue]) * [clothesMo.clothesCount integerValue];
+        }
+        if (([_allPrice floatValue]*[((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue]) - [couponPrice floatValue] <= 0) {
+            payView.price = @"0.01";
+            [clothesPrice setText:@"¥0.01"];
+        } else {
+            payView.price = [NSString stringWithFormat:@"%.2f", ([_allPrice floatValue]*[((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue]) - [couponPrice floatValue]];
+            [clothesPrice setText:[NSString stringWithFormat:@"￥%.2f", ([_allPrice floatValue]*[((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue]) - [couponPrice floatValue]]];
+        }
+        [payPriceAndCon[0] setObject:[NSString stringWithFormat:@"￥%.2f", price] forKey:@"detail"];
+        [payPriceAndCon[1] setObject:[NSString stringWithFormat:@"-￥%.2f", [couponPrice floatValue]] forKey:@"detail"];
+        choose = NO;
+    }
+    
+    [payView reloadView];
+    [clothesToPay reloadData];
+    
     
 }
 
 -(void)cardSuccessAction:(NSNotification *)noti
 {
+    _allPrice = ((ClothesFroPay*)_arrayForClothes[0]).clothesPrice;
+    choose = YES;
     lastMoney = [noti.userInfo stringForKey:@"gift_card"];
     CGFloat canUseCard = 0;
     for (ClothesFroPay *clothesMo in _arrayForClothes) {
@@ -424,18 +507,24 @@
     
     if (canUseCard - [lastMoney floatValue] <= 0) {
         
-        if (canUseCard - [_allPrice floatValue] == 0) {
+        if (canUseCard ==([_allPrice floatValue] * [((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue])) {
             payView.price = @"0.01";
             [clothesPrice setText:@"¥0.01"];
-        } else {
+        }
+        else if (canUseCard <([_allPrice floatValue] * [((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue]))
+        {
+            payView.price = [NSString stringWithFormat:@"%.2f", canUseCard-[_allPrice floatValue] ];
+            [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f",canUseCard -[_allPrice floatValue]]];
+        }
+        else {
             payView.price = [NSString stringWithFormat:@"%.2f", [_allPrice floatValue] - canUseCard ];
             [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f", [_allPrice floatValue] - canUseCard ]];
         }
         
         
     } else {
-        payView.price = [NSString stringWithFormat:@"%.2f", [_allPrice floatValue] - [lastMoney floatValue]];
-        [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f", [_allPrice floatValue] - [lastMoney floatValue]]];
+        payView.price = [NSString stringWithFormat:@"%.2f", [_allPrice floatValue]* [((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue] - [lastMoney floatValue]];
+        [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f", [_allPrice floatValue]* [((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue] - [lastMoney floatValue]]];
     }
     
     CGFloat price = 0;
@@ -483,7 +572,7 @@
         
         if (canUseCard - [lastMoney floatValue] <= 0) {
             
-            if (canUseCard - [_allPrice floatValue] == 0) {
+            if (canUseCard - ([_allPrice floatValue]* [((ClothesFroPay*)_arrayForClothes[0]).clothesCount integerValue])== 0) {
                 payView.price = @"0.01";
                 [clothesPrice setText:@"¥0.01"];
             } else {
@@ -656,72 +745,7 @@
     return reCell;
 }
 
--(void)chooseGift
-{
-    if (canChooseCard) {
-        if ([couPonRemark isEqualToString:@"选择优惠券"]) {
-            if (choose) {
-                choose = NO;
-                
-                payView.price = [NSString stringWithFormat:@"%.2f", [_allPrice floatValue]];
-                [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f", [_allPrice floatValue]]];
-                CGFloat price = 0;
-                for (ClothesFroPay *clothesMo in _arrayForClothes) {
-                    price = price + ([clothesMo.clothesPrice floatValue]) * [clothesMo.clothesCount integerValue];
-                }
-                [payPriceAndCon[0] setObject:[NSString stringWithFormat:@"¥%.2f", price] forKey:@"detail"];
-                [payPriceAndCon[1] setObject:@"¥0.00" forKey:@"detail"];
-            } else {
-                choose = YES;
-                
-                CGFloat canUseCard = 0;
-                for (ClothesFroPay *clothesMo in _arrayForClothes) {
-                    
-                    if (clothesMo.can_use_card == 1) {
-                        canUseCard = canUseCard + [clothesMo.clothesPrice floatValue] * [clothesMo.clothesCount integerValue];
-                    }
-                    
-                }
-                
-                if (canUseCard - [lastMoney floatValue] <= 0) {
-                    
-                    if (canUseCard == [_allPrice floatValue]) {
-                        payView.price = @"¥0.01";
-                        [clothesPrice setText:@"¥0.01"];
-                    } else {
-                        payView.price = [NSString stringWithFormat:@"%.2f", [_allPrice floatValue] - canUseCard ];
-                        [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f", [_allPrice floatValue] - canUseCard ]];
-                    }
-                    
-                    
-                } else {
-                    payView.price = [NSString stringWithFormat:@"%.2f", [_allPrice floatValue] - [lastMoney floatValue]];
-                    [clothesPrice setText:[NSString stringWithFormat:@"¥%.2f", [_allPrice floatValue] - [lastMoney floatValue]]];
-                }
-                
-                CGFloat price = 0;
-                for (ClothesFroPay *clothesMo in _arrayForClothes) {
-                    price = price + ([clothesMo.clothesPrice floatValue]) * [clothesMo.clothesCount integerValue];
-                }
-                [payPriceAndCon[0] setObject:[NSString stringWithFormat:@"¥%.2f", price] forKey:@"detail"];
-                [payPriceAndCon[1] setObject:[NSString stringWithFormat:@"-¥%.2f", canUseCard] forKey:@"detail"];
-                
-                
-            }
-            [payView reloadView];
-        } else {
-            [self alertViewShowOfTime:@"礼品卡与优惠券不能同时使用哦" time:1];
-        }
-    } else {
-        [self alertViewShowOfTime:@"该商品不能使用礼品卡" time:1];
-    }
-    
-    
-    
-    
-    
-    [clothesToPay reloadData];
-}
+
 
 -(void)upClick:(UIButton *)sender
 {
@@ -812,7 +836,7 @@
     [params setObject:clothesCount.carId forKey:@"car_id"];
     [params setObject:clothesCount.clothesCount forKey:@"num"];
     [postData postData:URL_UpdateClothesCarNum PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
+//        WCLLog(@"%@",domain.dataRoot);
     }];
     
 }

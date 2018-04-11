@@ -3,6 +3,7 @@ target ‘CategaryShow’ do
 pod 'XHWebImageAutoSize','~>1.1.0'
 pod 'SDCycleScrollView', '~> 1.61'
 #pod 'MLeaksFinder'
+pod 'UMengAnalytics-NO-IDFA'
 pod 'MJExtension'
 pod 'IQKeyboardManager'
 pod 'AFNetworking', '~>2.6.3'
