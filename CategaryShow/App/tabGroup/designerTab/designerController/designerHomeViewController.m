@@ -38,6 +38,10 @@ static CGFloat const headViewHeight = 320;
 @property(nonatomic,strong)UILabel *countentLabel;
 @property(nonatomic,strong)NSMutableArray * storyArr;
 @property(nonatomic,strong)NSMutableArray * bgViewArr;
+@property(nonatomic,strong)NSMutableArray * avatarArr;
+@property(nonatomic,strong)NSMutableArray * nameArr;
+@property(nonatomic,strong)NSMutableArray * remarkArr;
+
 @property(nonatomic,strong)NSMutableArray * zuoPinArr;
 @property (nonatomic, retain) UIView *alpha;
 @property (nonatomic, assign) BOOL canScroll;
@@ -63,14 +67,20 @@ static CGFloat const headViewHeight = 320;
     _storyArr = [NSMutableArray array];
     _zuoPinArr = [NSMutableArray array];
     _bgViewArr = [NSMutableArray array];
+    _avatarArr = [NSMutableArray array];
+    _nameArr = [NSMutableArray array];
+    _remarkArr = [NSMutableArray array];
     designerDomain = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     NSMutableDictionary * parma = [NSMutableDictionary dictionary];
     [parma setObject:_desginerId forKey:@"uid"];
     [designerDomain getData:URL_GetDesignerDeetail PostParams:parma finish:^(BaseDomain *domain, Boolean success) {
-       // WCLLog(@"%@",[[domain.dataRoot objectForKey:@"data"] stringForKey:@"story"]);
+        WCLLog(@"%@",[domain.dataRoot objectForKey:@"data"]);
         [_storyArr addObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"story"]];
         [_bgViewArr addObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"bg_img"]];
+        [_avatarArr addObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"avatar"]];
+        [_nameArr addObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"name"]];
+        [_remarkArr addObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"tag"]];
         [self.view addSubview:self.mainTableView];
         [self.mainTableView addSubview:self.headImageView];
        
@@ -88,12 +98,12 @@ static CGFloat const headViewHeight = 320;
     
     //1、创建分享参数（必要）
     NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-    NSArray* imageArray = @[[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, _designerImage]]];
+    NSArray* imageArray = @[[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, _avatarArr[0]]]];
     [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
     [shareParams SSDKSetupShareParamsByText:_remark
                                      images:imageArray
                                         url:[NSURL URLWithString:[NSString stringWithFormat:@"%@?id=%@", URL_SHARE, _desginerId]]
-                                      title:_designerName
+                                      title:_nameArr[0]
                                        type:SSDKContentTypeWebPage];
     
     [ShareCustom shareWithContent:shareParams];
@@ -190,14 +200,14 @@ static CGFloat const headViewHeight = 320;
         _avatarImage.layer.borderWidth = 3;
         _avatarImage.layer.borderColor =[[UIColor blackColor] CGColor];
         _avatarImage.layer.cornerRadius = 1;
-        [_avatarImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, _designerImage]]];
+        [_avatarImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, _avatarArr[0]]]];
         _countentLabel = [[UILabel alloc]initWithFrame:CGRectMake((SCREEN_WIDTH-80)/2, CGRectGetMaxY(_avatarImage.frame)+17, 80, 25)];
         [_headImageView addSubview:_countentLabel];
         _countentLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:18];
         _countentLabel.textColor = [UIColor colorWithHexString:@"#222222"];
         _countentLabel.textAlignment = NSTextAlignmentCenter;
         _countentLabel.numberOfLines = 0;
-        _countentLabel.text = _designerName;
+        _countentLabel.text = _nameArr[0];
         
         
 //        UIImageView *DWImg = [UIImageView new];
@@ -220,7 +230,7 @@ static CGFloat const headViewHeight = 320;
         }];
         [tagLable setFont:[UIFont fontWithName:@"PingFangSC-Thin" size:12]];
         [tagLable setTextColor:[UIColor colorWithHexString:@"#222222"]];
-        [tagLable setText:_remark];
+        [tagLable setText:_remarkArr[0]];
         
         UIView *lineGray = [UIView new];
         [_headImageView addSubview:lineGray];

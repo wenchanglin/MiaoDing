@@ -298,7 +298,6 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
         title = @"请求中";
     }
     _progressHud.label.text = title;
-    
     [self.progressHud show:YES];
 }
 
@@ -389,20 +388,20 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
 //}
 //
 //
-//- (CGFloat) calculateTextHeight:(UIFont *)font givenText:(NSString *)text givenWidth:(CGFloat)width{
-//    CGFloat delta;
-//    if ([text isEqualToString:@""]) {
-//        delta = 0;
-//    } else {
-//        CGSize size = [text sizeWithFont:font constrainedToSize:CGSizeMake(width, 9999) lineBreakMode:NSLineBreakByWordWrapping];
-//        
-//        delta = size.height;
-//    }
-//    
-//    
-//    return delta;
-//    
-//}
+- (CGFloat) calculateTextHeight:(UIFont *)font givenText:(NSString *)text givenWidth:(CGFloat)width{
+    CGFloat delta;
+    if ([text isEqualToString:@""]) {
+        delta = 0;
+    } else {
+        CGSize size = [text sizeWithFont:font constrainedToSize:CGSizeMake(width, 9999) lineBreakMode:NSLineBreakByWordWrapping];
+        
+        delta = size.height;
+    }
+    
+    
+    return delta;
+    
+}
 //
 ////当用户按下return键或者按回车键，keyboard消失
 //-(BOOL)textFieldShouldReturn:(UITextField *)textField

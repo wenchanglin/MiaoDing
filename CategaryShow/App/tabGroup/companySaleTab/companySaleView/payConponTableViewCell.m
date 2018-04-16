@@ -23,6 +23,14 @@
             make.centerY.equalTo(self.contentView.mas_centerY);
             make.height.mas_equalTo(20);
         }];
+        _tikerNumLabel = [[UILabel alloc] init];
+        _tikerNumLabel.textColor = [UIColor colorWithHexString:@"#B10909"];
+        _tikerNumLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:14];
+        [self.contentView addSubview:_tikerNumLabel];
+        [_tikerNumLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.mas_equalTo(-20);
+            make.centerY.equalTo(_chooseCon.mas_centerY);
+        }];
     }
     
     return self;

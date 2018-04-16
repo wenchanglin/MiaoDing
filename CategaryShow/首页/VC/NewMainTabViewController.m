@@ -340,6 +340,7 @@
     MJRefreshGifHeader * header = [MJRefreshGifHeader headerWithRefreshingBlock:^{
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self reloadData];
+            [self getPeiZhi];
         });
         
     }];
@@ -561,7 +562,7 @@
 -(void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index
 {
     [MobClick event:@"banner" label:[SelfPersonInfo getInstance].cnPersonUserName];
-    if ([[banerImgArray[index] stringForKey:@"banner_type"] integerValue] == 1) {
+    if ([[banerImgArray[index] stringForKey:@"banner_type"] integerValue] == 1) {//webview
         MainTabBanerDetailViewController *mainBaner = [[MainTabBanerDetailViewController alloc] init];
         
         mainBaner.titleContent = [banerImgArray[index] stringForKey:@"title"];
@@ -571,13 +572,30 @@
         [self getDateBegin:datBegin currentView:@"baner" fatherView:@"首页"];
         [self.navigationController pushViewController:mainBaner animated:YES];
         
-    } else if ([[banerImgArray[index] stringForKey:@"banner_type"] integerValue] == 2){
+    } else if ([[banerImgArray[index] stringForKey:@"banner_type"] integerValue] == 2){//设计师入驻
         joinDesignerViewController *joinD = [[joinDesignerViewController alloc] init];
         [MobClick event:@"apply_join" label:[SelfPersonInfo getInstance].cnPersonUserName];
         [self.navigationController pushViewController:joinD animated:YES];
-    } else if ([[banerImgArray[index] stringForKey:@"banner_type"] integerValue] == 3) {
-        
-    } else if ([[banerImgArray[index] stringForKey:@"banner_type"] integerValue] == 6) {
+    } else if ([[banerImgArray[index] stringForKey:@"banner_type"] integerValue] == 3) {//定制
+        DiyClothesDetailViewController *toButy = [[DiyClothesDetailViewController alloc] init];
+        NSMutableDictionary *dict= [NSMutableDictionary dictionary];
+        [dict setObject:[banerImgArray[index] stringForKey:@"relation_id"] forKey:@"id"];
+        toButy.goodDic = dict;
+        toButy.good_id = [banerImgArray[index] stringForKey:@"relation_id"];
+        [self.navigationController pushViewController:toButy animated:YES];
+    }
+    else if ([[banerImgArray[index] stringForKey:@"banner_type"] integerValue] == 4)//成品
+    {
+        DesignerClothesDetailViewController *designerClothes = [[DesignerClothesDetailViewController alloc] init];
+        designerClothes.good_id =[banerImgArray[index] stringForKey:@"relation_id"];
+        [self.navigationController pushViewController:designerClothes animated:YES];
+    }
+    else if ([[banerImgArray[index] stringForKey:@"banner_type"] integerValue] == 5){//设计师详情
+        designerHomeViewController * designer = [[designerHomeViewController alloc]init];
+        designer.desginerId = [banerImgArray[index] stringForKey:@"relation_id"];
+        [self.navigationController pushViewController:designer animated:YES];
+    }
+    else if ([[banerImgArray[index] stringForKey:@"banner_type"] integerValue] == 6) {
         if ([self userHaveLogin]) {
             inviteNewViewController *invite = [[inviteNewViewController alloc] init];
             [self.navigationController pushViewController:invite animated:YES];

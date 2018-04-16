@@ -267,10 +267,6 @@
     [reCell setDesignerInfo:^(UITapGestureRecognizer *tap) {
         designerHomeViewController * designer = [[designerHomeViewController alloc]init];
         designer.desginerId = [NSString stringWithFormat:@"%zd",model.des_uid];
-        designer.designerImage = model.avatar;
-        designer.designerName = model.uname;
-        designer.remark = model.tag;
-        //        designer.designerStory = mo
         [self.navigationController pushViewController:designer animated:YES];
     }];
     [reCell setSelectionStyle:UITableViewCellSelectionStyleNone];
@@ -280,7 +276,7 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     DesignerClothesDetailViewController *designerClothes = [[DesignerClothesDetailViewController alloc] init];
-    designerClothes.goodDic = designerArray[indexPath.row];
+    designerClothes.goodDic = designerArray[indexPath.row]; 
     //    designerClothes.model = model;
     designerClothes.good_id = [designerArray[indexPath.row] stringForKey:@"recommend_goods_ids"];
     [self.navigationController pushViewController:designerClothes animated:YES];

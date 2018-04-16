@@ -294,7 +294,7 @@
     }
     [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
     [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
-    [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mainliao_id"];
+    [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
     [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
     if (_ifTK) {
         [_paramsClothes setObject:@"1" forKey:@"is_scan"];
@@ -346,7 +346,7 @@
     }
     [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
     [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
-    [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mainliao_id"];
+    [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
     [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
      if (diyArray != nil) {
     [_paramsDic setObject:[diyArray componentsJoinedByString:@";"] forKey:@"diy_content"];
@@ -410,7 +410,7 @@
     rightLabel.font =[UIFont fontWithName:@"PingFangSC-Light" size:13];
     [titleSection addSubview:rightLabel];
     [titleSection addSubview:titleLabel];
-    UIButton * jiantouBtn = [[UIButton alloc]initWithFrame:CGRectMake(SCREEN_WIDTH-27, 19, 14, 10)];
+    UIButton * jiantouBtn = [[UIButton alloc]initWithFrame:CGRectMake(SCREEN_WIDTH-27, 17, 14, 10)];
     if (section == 0) {
         [titleLabel setText:@"选择版型"];
         rightLabel.tag = 2222;

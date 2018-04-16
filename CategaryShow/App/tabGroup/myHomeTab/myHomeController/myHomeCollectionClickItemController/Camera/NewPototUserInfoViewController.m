@@ -19,12 +19,15 @@
     NSMutableArray *titleArray;
     NSMutableDictionary* params;
     NSArray *keyType;
+    NSMutableDictionary * dic;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self settabTitle:@"用户信息"];
+    dic = [NSMutableDictionary dictionary];
+
     params = [NSMutableDictionary dictionary];
-    [self.view setBackgroundColor:getUIColor(Color_background)];
+    [self.view setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
     titleArray = [NSMutableArray arrayWithObjects:[NSArray arrayWithObjects:@"姓   名：", @"手机号：",@"身   高：",@"体   重：", nil],[NSArray arrayWithObjects:@"店铺号：", @"胸   围：",@"腰   围：",@"臀   围：", nil], nil];
     if (@available(iOS 11.0, *)) {
         infoTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
@@ -51,7 +54,7 @@
     infoTable.dataSource = self;
     infoTable.delegate = self;
     [self.view addSubview:infoTable];
-    [infoTable setBackgroundColor:getUIColor(Color_background)];
+    [infoTable setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
     [infoTable registerClass:[NewPhotoInfoTableViewCell class] forCellReuseIdentifier:@"infoUser"];
     
 //    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(endEditingAction)];
@@ -65,15 +68,76 @@
     [self.view addSubview:buttonTake];
     
 }
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *titleSection = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 43)];
+    [titleSection setBackgroundColor:[UIColor whiteColor]];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(action_tap:)];
+    titleSection.tag = 900 + section;
+    [titleSection addGestureRecognizer:tap];
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(12, 0, 160, 42)];
+    //    titleLabel.backgroundColor = [UIColor blueColor];
+    [titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+    titleLabel.textColor = [UIColor colorWithHexString:@"#222222"];
+    UILabel * rightLabel = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH-200-12, 0, 200, 42)];
+    rightLabel.textAlignment = NSTextAlignmentRight;
+    rightLabel.textColor = [UIColor colorWithHexString:@"#A6A6A6"];
+    rightLabel.font =[UIFont fontWithName:@"PingFangSC-Light" size:13];
+    [titleSection addSubview:rightLabel];
+    [titleSection addSubview:titleLabel];
+    UIButton * jiantouBtn = [[UIButton alloc]initWithFrame:CGRectMake(SCREEN_WIDTH-27, 17, 14, 10)];
+    if(section==0)
+    {
+        [titleLabel setText:@"基本信息"];
+        rightLabel.frame = CGRectMake(CGRectGetMaxX(titleLabel.frame)-55, 0, 250, 42);
+        rightLabel.textAlignment = NSTextAlignmentLeft;
+        rightLabel.textColor = [UIColor colorWithHexString:@"#B10909"];
+        rightLabel.font =[UIFont fontWithName:@"PingFangSC-Light" size:10];
+        rightLabel.text = @"为了确保衣服合身，请准确输入你的净身高、净体重";
+    }
+    else if (section==1)
+    {
+        [titleLabel setText:@"选填信息"];
+        [titleSection addSubview:jiantouBtn];
 
-//-(void)endEditingAction
-//{
-//    [self.view endEditing:YES];
-//}
-
-
+//        rightLabel.text = @"⊙帮助";
+    }
+    if([dic[@"1"] integerValue]==1)
+    {
+        [jiantouBtn setImage:[UIImage imageNamed:@"收起"] forState:UIControlStateNormal];
+    }
+    else
+    {
+        [jiantouBtn setImage:[UIImage imageNamed:@"下拉"] forState:UIControlStateNormal];
+        
+    }
+    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, 42, SCREEN_WIDTH, 1)];
+    [titleSection addSubview:lineView];
+    [lineView setBackgroundColor:getUIColor(Color_saveColor)];
+    return titleSection;
+}
+- (void)action_tap:(UIGestureRecognizer *)tap{
+    
+    if (tap.view.tag ==901) {
+        NSString *str = [NSString stringWithFormat:@"%ld",tap.view.tag-900];
+        if ([dic[str] integerValue] == 0) {//如果是0，就把1赋给字典,打开cell
+            [dic setObject:@"1" forKey:str];
+        }else{//反之关闭cell
+            [dic setObject:@"0" forKey:str];
+        }
+        [infoTable reloadData];
+    }
+}
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (section==1) {
+        NSString *string = [NSString stringWithFormat:@"%ld",section];
+        if ([dic[string] integerValue] == 1 ) {  //打开cell返回数组的count
+            return  [[titleArray objectAtIndex:section] count];
+        }else{
+            return 0;
+        }
+    }
     return [[titleArray objectAtIndex:section] count];
     
 }
@@ -90,12 +154,15 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 0.001;
+    return 43;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    return 35;
+    if (section==1) {
+        return 0.01;
+    }
+    return 9;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -139,21 +206,22 @@
 
 -(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
-    UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 35)];
-    
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH - 12, 35)];
-    [label setTextColor:[UIColor lightGrayColor]];
-    if (section == 0) {
-        [label setText:@"以上为必填信息"];
-    } else {
-        [label setText:@"以上为非必填信息"];
-    }
-    [label setFont:[UIFont systemFontOfSize:12]];
-    [label setTextAlignment:NSTextAlignmentRight];
-    
-    [titleView addSubview:label];
-    
-    
+    UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 0.5)];
+//    [titleView setBackgroundColor:getUIColor(Color_saveColor)];
+
+//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH - 12, 35)];
+//    [label setTextColor:[UIColor lightGrayColor]];
+//    if (section == 0) {
+//        [label setText:@"以上为必填信息"];
+//    } else {
+//        [label setText:@"以上为非必填信息"];
+//    }
+//    [label setFont:[UIFont systemFontOfSize:12]];
+//    [label setTextAlignment:NSTextAlignmentRight];
+//
+//    [titleView addSubview:label];
+
+
     return titleView;
 }
 

@@ -123,7 +123,7 @@
     [buttonRightBarButton setHidden:YES];
     
     
-    resetButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 60,IsiPhoneX?SCREEN_HEIGHT-164-104:SCREEN_HEIGHT -64-175, 40, 40)];
+    resetButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 60,IsiPhoneX?SCREEN_HEIGHT-184-104:SCREEN_HEIGHT -80-175, 40, 40)];
     [resetButton setImage:[UIImage imageNamed:@"resetButton"] forState:UIControlStateNormal];;
     [resetButton setHidden:YES];
     [self.view addSubview:resetButton];

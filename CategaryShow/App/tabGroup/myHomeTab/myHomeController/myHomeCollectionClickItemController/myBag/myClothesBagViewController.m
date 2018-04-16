@@ -608,9 +608,7 @@
     
     myBagModel *model1 = clothesArray[sender.tag - 5];
     model1.clothesCount = [NSString stringWithFormat:@"%ld", [model1.clothesCount integerValue] + 1];
-    
-    
-    
+
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:model.bagId forKey:@"car_id"];
     [params setObject:model.clothesCount forKey:@"num"];

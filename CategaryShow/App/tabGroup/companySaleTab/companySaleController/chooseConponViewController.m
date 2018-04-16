@@ -46,7 +46,7 @@
 //    [params setObject:_maxPrice forKey:@"max_price"];
     [params setObject:_carId forKey:@"car_ids"];
     [getData getData:URL_ChooseCoupon PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
+//        WCLLog(@"%@",domain.dataRoot);
         if ([self checkHttpResponseResultStatus:domain]) {
             NSMutableArray *array = [NSMutableArray arrayWithArray:[[domain.dataRoot objectForKey:@"data"] arrayForKey:@"usable"]];
             

@@ -65,7 +65,16 @@
 {
     return UIStatusBarStyleLightContent;
 }
-
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [MobClick beginLogPageView:@"意见反馈"];
+}
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [MobClick endLogPageView:@"意见反馈"];
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     postData = [BaseDomain getInstance:NO];
@@ -324,7 +333,7 @@
             [params setObject:_photoDataArray forKey:@"img_list"];
             
             [postData postData:URL_SuggestPost PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-               
+                [MobClick endEvent:@"feedback" label:[SelfPersonInfo getInstance].cnPersonUserName];
                 UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"意见反馈" message:@"亲你的意见我们已经收到，我们会尽快处理" preferredStyle:UIAlertControllerStyleAlert];
                 
                 UIAlertAction *album = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {

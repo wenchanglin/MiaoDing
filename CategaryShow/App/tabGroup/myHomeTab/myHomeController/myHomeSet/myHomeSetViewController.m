@@ -49,7 +49,7 @@
     getData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     NSArray *array = [NSArray arrayWithObjects:@"头像",@"昵称",@"年龄", nil];
-    arrayTitle = [NSArray arrayWithObjects:array,@"量体数据", @"收货地址", @"清除缓存",@"意见反馈", @"关于妙定", nil];
+    arrayTitle = [NSArray arrayWithObjects:array,@"量体数据", @"收货地址", @"清除缓存",@"帮助与反馈", @"关于妙定", nil];
     [self createTable];
     [self createNickName];
 }

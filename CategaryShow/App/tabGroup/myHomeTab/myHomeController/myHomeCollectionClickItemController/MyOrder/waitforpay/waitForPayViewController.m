@@ -317,7 +317,16 @@
         [self.navigationController pushViewController:orderDetail animated:YES];
     }
 }
-
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [MobClick endLogPageView:@"等待付款"];
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [MobClick beginLogPageView:@"等待付款"];
+}
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 0) {
@@ -327,6 +336,7 @@
         [getData getData:URL_CancelOrder PostParams:params finish:^(BaseDomain *domain, Boolean success) {
 
             if ([self checkHttpResponseResultStatus:getData]) {
+                [MobClick endEvent:@"cancel_order" label:[NSString stringWithFormat:@"用户%@取消了订单%@",[SelfPersonInfo getInstance].cnPersonUserName,model.clothesName]];
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"cancelOrder" object:nil];
                 [self reloadTable];
                 

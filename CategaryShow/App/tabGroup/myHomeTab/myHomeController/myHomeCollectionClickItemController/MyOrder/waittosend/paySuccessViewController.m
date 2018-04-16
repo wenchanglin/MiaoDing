@@ -23,11 +23,18 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
+    [MobClick beginLogPageView:@"支付完成"];
+}
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [MobClick endLogPageView:@"支付完成"];
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     getGuid = [BaseDomain getInstance:NO];
+    [MobClick endEvent:@"trade_success" label:[SelfPersonInfo getInstance].cnPersonUserName];
     [self settabTitle:@"支付结果"];
     [self createView];
 }

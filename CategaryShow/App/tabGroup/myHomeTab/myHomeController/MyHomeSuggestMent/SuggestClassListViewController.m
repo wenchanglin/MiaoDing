@@ -18,15 +18,23 @@
     NSMutableArray *helpList;
     BaseDomain *getData;
 }
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"帮助列表";
+    [self settabTitle:@"帮助列表"];
     helpList = [NSMutableArray array];
     getData = [BaseDomain getInstance:NO];
      [self.view setBackgroundColor:getUIColor(Color_background)];
+    if (@available(iOS 11.0, *)) {
+        helpTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
     [self createHelpTable];
     [self getDatas];
-    // Do any additional setup after loading the view.
 }
 
 -(void)getDatas
@@ -43,7 +51,7 @@
 
 -(void)createHelpTable
 {
-    helpTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    helpTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-88-74:SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
     helpTable.delegate = self;
     helpTable.dataSource = self;
     [helpTable registerClass:[UITableViewCell class] forCellReuseIdentifier:@"helpList"];

@@ -46,6 +46,8 @@
     CGFloat initViewY;
     Boolean isViewYFisrt;
     NSInteger isopencv;
+    NSString * heightStr;
+    NSString * weightStr;
     NSMutableDictionary *textFildString;
     NSMutableDictionary * heightAndWeightDic;
     BOOL is_english;
@@ -210,7 +212,11 @@
     [getData getData:URL_GetDiyData PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:getData]) {
             dataDic = [NSMutableDictionary dictionaryWithDictionary:[getData.dataRoot dictionaryForKey:@"data"]];
+//            WCLLog(@"%@",domain.dataRoot);
             isopencv = [domain.dataRoot integerForKey:@"is_opencv"];
+            heightStr = [[domain.dataRoot dictionaryForKey:@"cv"] stringForKey:@"height"];
+            weightStr = [[domain.dataRoot dictionaryForKey:@"cv"] stringForKey:@"weight"];
+            
             //            diydetailArray = [NSMutableArray arrayWithObjects:[[dataDic arrayForKey:@"position"] firstObject],[[dataDic arrayForKey:@"color"] firstObject],[[dataDic arrayForKey:@"font"] firstObject], nil];
             diydetailArray = [NSMutableArray array];
             if ([[dataDic arrayForKey:@"classify_id"] count] > 0) {
@@ -368,7 +374,7 @@
                 }
                 [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
                 [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
-                [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mainliao_id"];
+                [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
                 [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
                 if (_ifTK) {
                     [_paramsClothes setObject:@"1" forKey:@"is_scan"];
@@ -417,6 +423,7 @@
     }
     else if(isopencv==2)
     {
+        
         [_paramsClothes setObject:@"1" forKey:@"goods_type"];
         [_paramsClothes setObject:@"1" forKey:@"type"];
         [_paramsClothes setObject:[_price objectForKey:@"price_id"] forKey:@"price_id"];
@@ -435,7 +442,7 @@
         }
         [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
         [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
-        [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mainliao_id"];
+        [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
         [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
         if (_ifTK) {
             [_paramsClothes setObject:@"1" forKey:@"is_scan"];
@@ -500,7 +507,7 @@
                 }
                 [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
                 [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
-                [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mainliao_id"];
+                [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
                 [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
                 if (diyArray != nil) {
                     [_paramsDic setObject:[diyArray componentsJoinedByString:@";"] forKey:@"diy_content"];
@@ -552,7 +559,7 @@
         }
         [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
         [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
-        [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mainliao_id"];
+        [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
         [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
         if (diyArray != nil) {
             [_paramsDic setObject:[diyArray componentsJoinedByString:@";"] forKey:@"diy_content"];
@@ -606,7 +613,7 @@
     rightLabel.font =[UIFont fontWithName:@"PingFangSC-Light" size:13];
     [titleSection addSubview:rightLabel];
     [titleSection addSubview:titleLabel];
-    UIButton * jiantouBtn = [[UIButton alloc]initWithFrame:CGRectMake(SCREEN_WIDTH-27, 19, 14, 10)];
+    UIButton * jiantouBtn = [[UIButton alloc]initWithFrame:CGRectMake(SCREEN_WIDTH-27, 17, 14, 10)];
     if(section==0)
     {
         [titleLabel setText:@"输入基本信息"];
@@ -755,6 +762,12 @@
         HeightAndWeightCell * cell = [tableView dequeueReusableCellWithIdentifier:@"heightandweight"];
         cell.weightTextField.delegate = self;
         cell.heightTextField.delegate = self;
+        if (weightStr.length>0) {
+            cell.weightTextField.text = weightStr;
+        }
+        if (heightStr.length>0) {
+            cell.heightTextField.text = heightStr;
+        }
         [cell.weightTextField addTarget:self action:@selector(weighttextfieldDidChange:) forControlEvents:UIControlEventEditingChanged];
         [cell.heightTextField addTarget:self action:@selector(weighttextfieldDidChange:) forControlEvents:UIControlEventEditingChanged];
         reCell = cell;
@@ -862,24 +875,34 @@
 }
 -(void)xiangji:(UIButton*)btn
 {
+    
     [heightAndWeightDic setObject:[SelfPersonInfo getInstance].cnPersonUserName forKey:@"name"];
     [heightAndWeightDic setObject:[SelfPersonInfo getInstance].personPhone forKey:@"phone"];
+    if(isopencv==1)
+    {
     if([[heightAndWeightDic stringForKey:@"height"] length]>0)
     {
         if ([[heightAndWeightDic stringForKey:@"weight"]length]>0) {
             if (isopencv==1) {
-                QuickPhotoYinDaoVC * vc = [[QuickPhotoYinDaoVC alloc]init];
-                vc.params = heightAndWeightDic;
-                vc.bodyHeight = [[heightAndWeightDic stringForKey:@"height"] floatValue];
-                [self.navigationController pushViewController:vc animated:YES];
+                if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
+                    QuickPhotoYinDaoVC * vc = [[QuickPhotoYinDaoVC alloc]init];
+                    vc.params = heightAndWeightDic;
+                    vc.bodyHeight = [[heightAndWeightDic stringForKey:@"height"] floatValue];
+                    [self.navigationController pushViewController:vc animated:YES];
+                }
+                else
+                {
+                    [self alertViewShowOfTime:@"该设备不支持相机功能" time:1];
+                }
+                
             }
-            else if(isopencv==2)
-            {
-                QuickPhotoVC * qvc = [[QuickPhotoVC alloc]init];
-                qvc.params = heightAndWeightDic;
-                qvc.bodyHeight = [[heightAndWeightDic stringForKey:@"height"] floatValue];
-                [self.navigationController pushViewController:qvc animated:YES];
-            }
+//            else if(isopencv==2)
+//            {
+//                QuickPhotoVC * qvc = [[QuickPhotoVC alloc]init];
+//                qvc.params = heightAndWeightDic;
+//                qvc.bodyHeight = [[heightAndWeightDic stringForKey:@"height"] floatValue];
+//                [self.navigationController pushViewController:qvc animated:YES];
+//            }
 //            WCLLog(@"你点击了按钮%@",heightAndWeightDic);
         }
         else
@@ -891,6 +914,22 @@
     else
     {
         [self alertViewShowOfTime:@"身高不能为空" time:1];
+    }
+    }
+    else if (isopencv==2)
+    {
+        [heightAndWeightDic setObject:heightStr forKey:@"height"];
+        [heightAndWeightDic setObject:weightStr forKey:@"weight"];
+        if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
+        QuickPhotoVC * qvc = [[QuickPhotoVC alloc]init];
+        qvc.params = heightAndWeightDic;
+        qvc.bodyHeight = [[heightAndWeightDic stringForKey:@"height"] floatValue];
+        [self.navigationController pushViewController:qvc animated:YES];
+        }
+        else
+        {
+            [self alertViewShowOfTime:@"该设备暂不支持相机功能" time:1];
+        }
     }
 }
 -(void)weighttextfieldDidChange:(UITextField *)textfield

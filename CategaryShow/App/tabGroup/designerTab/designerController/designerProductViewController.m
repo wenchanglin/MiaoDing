@@ -53,7 +53,7 @@
         if ([self checkHttpResponseResultStatus:getData]) {
             designerDic = [NSMutableDictionary dictionaryWithDictionary:[getData.dataRoot dictionaryForKey:@"data"]];
             for (NSDictionary *dic in [designerDic arrayForKey:@"goods_list"]) {
-                WCLLog(@"%@",dic);
+//                WCLLog(@"%@",dic);
                 DesignerGoodsListModel *model = [DesignerGoodsListModel mj_objectWithKeyValues:dic];
                 [modelArray addObject:model];
             }

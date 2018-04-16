@@ -580,7 +580,7 @@ static CGFloat const headViewHeight = 240;
             QYSessionViewController *vc = [[QYSDK sharedSDK] sessionViewController];
             vc.sessionTitle = @"私人顾问";
             vc.source = source;
-
+            [MobClick endEvent:@"customer_service" label:[SelfPersonInfo getInstance].cnPersonUserName];
             if (iPadDevice) {
                 UINavigationController* navi = [[UINavigationController alloc]initWithRootViewController:vc];
                 navi.modalPresentationStyle = UIModalPresentationFormSheet;

@@ -719,7 +719,7 @@
             [self.navigationController pushViewController:clothesPay animated:YES];
         }
         
-        
+
         
     }];
     

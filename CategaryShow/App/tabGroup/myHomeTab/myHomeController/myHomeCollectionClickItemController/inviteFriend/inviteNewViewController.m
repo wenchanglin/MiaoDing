@@ -47,7 +47,7 @@
                                         url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@",URL_HEADURL, URL_SHARE, uId]]
                                       title:@"Hi，新朋友，妙定为您准备了1000元见面礼"
                                        type:SSDKContentTypeWebPage];
-    
+    [MobClick endEvent:@"invite_friend" label:[SelfPersonInfo getInstance].cnPersonUserName];
     [ShareCustom shareWithContent:shareParams];
     
     
@@ -57,6 +57,12 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
+    [MobClick beginLogPageView:@"邀请好友-邀请有礼"];
+}
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [MobClick endLogPageView:@"邀请好友-邀请有礼"];
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -86,6 +92,7 @@
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [params setObject:@"1" forKey:@"page"];
     [getData getData:URL_invite PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:getData]) {
             inviteDic = [NSMutableDictionary dictionaryWithDictionary:[domain.dataRoot dictionaryForKey:@"data"]];

@@ -35,8 +35,8 @@
     titleArray = [NSMutableArray arrayWithObjects:array1,array2, nil];
     
     
-    NSArray  *array3 = [NSArray arrayWithObjects:@"xiangguang",@"alphaTitleImg",@"alphaTitleImg",@"alphaTitleImg",@"alphaTitleImg", nil];
-    NSArray *array4 = [NSArray arrayWithObjects:@"kefu", @"zaixian", nil];
+    NSMutableArray  *array3 = [NSMutableArray arrayWithObjects:@"xiangguang",@"alphaTitleImg",@"alphaTitleImg",@"alphaTitleImg",nil];
+    NSMutableArray *array4 = [NSMutableArray arrayWithObjects:@"kefu", @"zaixian", nil];
     titleImgArray = [NSMutableArray arrayWithObjects:array3,array4, nil];
     [self getDatas];
 }
@@ -48,6 +48,7 @@
         if ([self checkHttpResponseResultStatus:domain]) {
             for (NSDictionary *dic in [domain.dataRoot arrayForKey:@"data"]) {
                 [[titleArray firstObject] addObject:[dic stringForKey:@"name"]];
+                [[titleImgArray firstObject] addObject:@"alphaTitleImg"];
                 [arrayClassId addObject:[dic stringForKey:@"id"]];
             }
             [suggestTable reloadData];

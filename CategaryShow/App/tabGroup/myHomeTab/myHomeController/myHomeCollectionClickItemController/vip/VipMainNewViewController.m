@@ -194,7 +194,7 @@
 -(void)getData
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-
+    [params setObject:@"1" forKey:@"page"];
     [getData getData:URL_VIPUSERPRIVILEGE PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:domain]) {
             userInfo = [NSMutableDictionary dictionaryWithDictionary:[[domain.dataRoot objectForKey:@"data"] dictionaryForKey:@"user_info"]];
@@ -506,7 +506,7 @@
     [alphaView setAlpha:1];
     [alphaBgview setAlpha:1];
     [UIView commitAnimations];
-    
+    WCLLog(@"%@",[[userPrivilege objectAtIndex:indexPath.item] stringForKey:@"desc"]);
     CGFloat height =  [self calculateTextHeight:[UIFont systemFontOfSize:14] givenText:[[userPrivilege objectAtIndex:indexPath.item] stringForKey:@"desc"] givenWidth:270];
     [alphaView setSize:CGSizeMake(300, 120 + height)];
     

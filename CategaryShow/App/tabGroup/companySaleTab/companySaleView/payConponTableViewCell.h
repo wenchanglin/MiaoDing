@@ -11,5 +11,5 @@
 @interface payConponTableViewCell : UITableViewCell
 
 @property (nonatomic, retain) UILabel *chooseCon;
-
+@property(nonatomic,strong)UILabel * tikerNumLabel;
 @end

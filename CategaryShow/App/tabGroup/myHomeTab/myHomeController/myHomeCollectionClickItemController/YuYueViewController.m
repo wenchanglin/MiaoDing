@@ -28,11 +28,13 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    [self.view setBackgroundColor:[UIColor whiteColor]];
+    [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO animated:animated];
+    [MobClick beginLogPageView:@"预约量体"];
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [MobClick endLogPageView:@"预约量体"];
     self.mapView.showsUserLocation =NO;
     self.mapView.delegate = nil;
 }
@@ -42,6 +44,7 @@
     getData = [BaseDomain getInstance:NO];
     postData = [BaseDomain getInstance:NO];
     clickNum = 0;
+    [self.view setBackgroundColor:[UIColor whiteColor]];
     [self settabTitle:@"预约量体"];
     if ([[SelfPersonInfo getInstance].personYuYue integerValue] == 1) {
         [self.view setBackgroundColor:getUIColor(Color_background)];
@@ -176,6 +179,7 @@
                 [view removeFromSuperview];
             }
             yuYueStatus = 1;
+            [MobClick endEvent:@"measure" label:[SelfPersonInfo getInstance].cnPersonUserName];
             [self createHadYuYueView];
         }
         

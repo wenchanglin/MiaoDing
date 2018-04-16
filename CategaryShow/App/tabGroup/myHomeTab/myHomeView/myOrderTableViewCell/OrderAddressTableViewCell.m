@@ -72,9 +72,11 @@
     [_userAddress mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(addTitle);
         make.left.equalTo(addTitle.mas_right);
+        make.right.mas_equalTo(-20);
         make.height.mas_equalTo(20);
     }];
     [_userAddress setFont:[UIFont fontWithName:@"PingFangSC-Light" size:14]];
+    _userAddress.numberOfLines =2;
     _userAddress.textColor = [UIColor colorWithHexString:@"#222222"];
     UIImageView * rightImageView = [UIImageView new];
     rightImageView.image = [UIImage imageNamed:@"rightDes"];

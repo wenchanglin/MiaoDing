@@ -44,7 +44,7 @@
     .centerYEqualToView(self.contentView)
     .heightIs(20)
     .widthIs(60);
-    [_titleLabel setFont:Font_14];
+    [_titleLabel setFont:[UIFont systemFontOfSize:13]];
     
     _detailText.sd_layout
     .leftSpaceToView(_titleLabel, 15)
@@ -52,7 +52,7 @@
     .centerYEqualToView(self.contentView)
     .heightIs(30);
     _detailText.delegate = self;
-    [_detailText setFont:[UIFont systemFontOfSize:14]];
+    [_detailText setFont:[UIFont systemFontOfSize:13]];
     _detailText.returnKeyType = UIReturnKeyDone;
     if (self.tag == 1) {
         [_detailText setKeyboardType:UIKeyboardTypeNamePhonePad];

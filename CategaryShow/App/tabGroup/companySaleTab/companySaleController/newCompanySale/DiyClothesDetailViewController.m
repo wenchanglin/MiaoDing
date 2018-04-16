@@ -682,8 +682,8 @@
     } else {
         static NSString *identify = @"comment";
         CommentCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
-       
-        cell.modelComment = modelComm;
+#pragma mark - 这里注释了评论
+//        cell.modelComment = modelComm;
         [cell sizeToFit];
         cellRe = cell;
     }

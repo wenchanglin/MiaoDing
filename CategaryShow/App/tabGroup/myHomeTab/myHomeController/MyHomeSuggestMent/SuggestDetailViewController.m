@@ -22,13 +22,14 @@
     [super viewDidLoad];
     [self settabTitle:@"帮助详情"];
     getData = [BaseDomain getInstance:NO];
-    UIView *HeadView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 64)];
-    [HeadView setBackgroundColor:[UIColor whiteColor]];
-    [self.view addSubview:HeadView];
+   
     [self.view setBackgroundColor:getUIColor(Color_background)];
     [self getDatas];
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
@@ -45,7 +46,7 @@
 {
     
     
-    UILabel *labelTitle = [[UILabel alloc] initWithFrame:CGRectMake(10, 64, SCREEN_WIDTH - 60, 40)];
+    UILabel *labelTitle = [[UILabel alloc] initWithFrame:CGRectMake(10, NavHeight, SCREEN_WIDTH - 60, 40)];
     [labelTitle setText:[detailDic stringForKey:@"name"]];
     [labelTitle setFont:[UIFont boldSystemFontOfSize:14]];
     [labelTitle setTextColor:getUIColor(Color_suggestLargeTitle)];
@@ -53,7 +54,7 @@
     
     
     
-    UITextView *contentLabel = [[UITextView alloc] initWithFrame:CGRectMake(5, 104, SCREEN_WIDTH - 10, SCREEN_HEIGHT - 120)];
+    UITextView *contentLabel = [[UITextView alloc] initWithFrame:CGRectMake(5, 40, SCREEN_WIDTH - 10, SCREEN_HEIGHT - 120)];
     [contentLabel setBackgroundColor:[UIColor clearColor]];
     [contentLabel setText:[detailDic stringForKey:@"content"]];
     [contentLabel setFont:[UIFont systemFontOfSize:14]];

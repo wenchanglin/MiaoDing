@@ -548,6 +548,7 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
         [[AlipaySDK defaultService] processOrderWithPaymentResult:url standbyCallback:^(NSDictionary *resultDic) {
             NSLog(@"result = %@",resultDic);
             if ([[resultDic stringForKey:@"resultStatus"] integerValue] == 9000) {
+                
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"PaySuccess" object:nil];
             } else {
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"PayFlase" object:nil];

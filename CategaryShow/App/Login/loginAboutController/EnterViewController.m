@@ -44,10 +44,12 @@
 //    }];
     [IQKeyboardManager sharedManager].enableAutoToolbar = NO;
     [IQKeyboardManager sharedManager].shouldShowToolbarPlaceholder = NO;
+    [MobClick endLogPageView:@"我的-登录"];
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     self.navigationController.navigationBarHidden = NO;
+    [MobClick beginLogPageView:@"我的-登录"];
     [self setUp];
 
 }
@@ -411,6 +413,7 @@
     
     [[LoginManager getInstance] postLoginAuth:username.text userPwd:checkCount.text loginId:_loginId isAuto:YES finish:^(Boolean success) {
         if (success) {
+            [MobClick endEvent:@"log_in" label:[SelfPersonInfo getInstance].cnPersonUserName];
 //            [[AppDelegate getInstance] runMainViewController : self];
             [self dismissViewControllerAnimated:YES completion:nil];
 //            [self.navigationController popViewControllerAnimated:YES];
