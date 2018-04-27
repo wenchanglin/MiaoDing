@@ -34,7 +34,7 @@
 //#define URL_GetYingDao @"/index/index/get_guide_img"
 
 #define URL_GetYingDao [NSString stringWithFormat:@"/index%@/get_guide_img",BanBenHao]
-
+#define URL_GuanLiLT [NSString stringWithFormat:@"/index%@/findlt",BanBenHao]
 //#define URL_getIcon @"/index/index/get_app_icon_list"
 #define URL_getIcon [NSString stringWithFormat:@"/index%@/get_app_icon_list",BanBenHao]
 
@@ -180,7 +180,7 @@
 #define URL_GetVipUp @"/index/user/user_upgrade_gift"
 
 
-#define URL_GetBodyDate [NSString stringWithFormat:@"/index%@/lt_data",BanBenHao]
+#define URL_GetBodyDate [NSString stringWithFormat:@"/index%@/lt_data_info",BanBenHao]
 
 
 #define URL_DiSanFang [NSString stringWithFormat:@"/index/login/partLogin"]
@@ -205,7 +205,7 @@
 //#define URL_ChooseAddress @"/index/index/set_default_address"
 #define URL_ChooseAddress [NSString stringWithFormat:@"/index%@/set_default_address",BanBenHao]
 
-
+#define Url_SetDefaultLt [NSString stringWithFormat:@"/index%@/is_lt",BanBenHao]
 //添加购物车
 //#define URL_AddClothesCar @"/index/index/add_car"
 #define URL_AddClothesCar [NSString stringWithFormat:@"/index%@/add_car",BanBenHao]

@@ -260,6 +260,7 @@
         [XHWebImageAutoSize storeImageSize:image forURL:imageURL completed:^(BOOL result) {
             /** reload  */
             if(result)  [tableView  xh_reloadDataForURL:imageURL];
+            
         }];
     }];
     return cell;

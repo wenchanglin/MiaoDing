@@ -10,7 +10,7 @@
 
 @interface giftCardTableViewCell : UITableViewCell
 
-@property (nonatomic, retain) UILabel *lastMoney;
+//@property (nonatomic, retain) UILabel *lastMoney;
 @property (nonatomic, retain) UIButton *chooseImage;
 @property(nonatomic,strong)UIImageView * msimageView;
 

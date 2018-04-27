@@ -312,7 +312,15 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
         
     }
 }
-
+- (UIImage *)reSizeImage:(UIImage *)image toSize:(CGSize)reSize
+{
+    UIGraphicsBeginImageContext(CGSizeMake(reSize.width, reSize.height));
+    [image drawInRect:CGRectMake(0, 0, reSize.width, reSize.height)];
+    UIImage *reSizeImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return [reSizeImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+}
 
 - (Boolean) checkHttpResponseResultStatus:(BaseDomain*) domain {
     

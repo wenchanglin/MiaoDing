@@ -9,5 +9,5 @@
 #import "BaseViewController.h"
 
 @interface ChangeAddressViewController : BaseViewController
-
+@property(nonatomic,strong)NSString * addressid;
 @end

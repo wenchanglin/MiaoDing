@@ -42,10 +42,14 @@
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
+//     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(back) name:@"quickuploadsucess" object:nil];
     [self settabTitle:@"拍照量体引导图"];
     [self getPaiZhaoYinDaoTu];
     [self createPhotoShow];
 
+}
+-(void)back{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 -(void)getPaiZhaoYinDaoTu
 {
@@ -170,9 +174,11 @@
 //    WCLLog(@"你点击了我");
     if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
     {
+        
     QuickPhotoVC * pvc = [[QuickPhotoVC alloc]init];
     pvc.params = _params;
     pvc.bodyHeight = _bodyHeight;
+    pvc.comefromGeXingDingZhi = _comefromGeXingDingZhi;
     [self.navigationController pushViewController:pvc animated:YES];
     }
     else

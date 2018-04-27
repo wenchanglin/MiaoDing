@@ -28,8 +28,6 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    modelArray = [NSMutableArray array];
-    getData =[BaseDomain getInstance:NO];
     [self reloadAddress];
 }
 -(UIStatusBarStyle)preferredStatusBarStyle
@@ -39,8 +37,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self settabTitle:@"更改地址"];
+    getData =[BaseDomain getInstance:NO];
+    modelArray = [NSMutableArray array];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadAddress) name:@"deleteAddress" object:nil];
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     [button setTitle:@"管理" forState:UIControlStateNormal];
     [button.titleLabel setFont:[UIFont systemFontOfSize:16]];
@@ -50,22 +49,44 @@
     //修改leftitem返回键
    UIBarButtonItem *item =   [[UIBarButtonItem alloc]initWithImage:[self reSizeImage:[UIImage imageNamed:@"backLeftWhite"] toSize:CGSizeMake(9, 16)] style:UIBarButtonItemStyleDone target:self action:@selector(fanhui)];
     self.navigationItem.leftBarButtonItem = item;
+//    [self createTable];
+    [self reloadAddress];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(reloadAddress) name:@"deleteAddress" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadAddress) name:@"createAddress" object:nil];
 
 }
-- (UIImage *)reSizeImage:(UIImage *)image toSize:(CGSize)reSize
-{
-    UIGraphicsBeginImageContext(CGSizeMake(reSize.width, reSize.height));
-    [image drawInRect:CGRectMake(0, 0, reSize.width, reSize.height)];
-    UIImage *reSizeImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return [reSizeImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-}
+
 -(void)fanhui
 {
 //    WCLLog(@"你点击了我");
-    if (modelArray.count>0) {
+    if (modelArray.count==1) {
         AddressModel *model = modelArray[0];
+        NSMutableDictionary *modelDIc= [NSMutableDictionary dictionary];
+        [modelDIc setObject:model forKey:@"model"];
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"AddressChange" object:nil userInfo:modelDIc];
+    }
+    else if(modelArray.count>1)
+    {
+        for (AddressModel* model in modelArray) {
+            if ([_addressid isEqualToString:model.addressId]) {
+                NSMutableDictionary *modelDIc= [NSMutableDictionary dictionary];
+                [modelDIc setObject:model forKey:@"model"];
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"AddressChange" object:nil userInfo:modelDIc];
+            }
+        }
+    }
+    else
+    {
+        AddressModel* model = [AddressModel new];
+        model.userAddress = @"您还没有收货地址，点击添加";
+        model.userPhone =@"";
+        model.userName = @"";
+        model.addressId =@"";
+        model.addressDefault = @"0";
+        model.province = @"";
+        model.city = @"";
+        model.area = @"";
+        model.detaiArea = @"";
         NSMutableDictionary *modelDIc= [NSMutableDictionary dictionary];
         [modelDIc setObject:model forKey:@"model"];
         [[NSNotificationCenter defaultCenter]postNotificationName:@"AddressChange" object:nil userInfo:modelDIc];
@@ -82,13 +103,12 @@
 -(void)reloadAddress
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [params setObject:@"1" forKey:@"page"];
     [getData getData:URL_AddressGet PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:getData]) {
-            
+            [modelArray removeAllObjects];
             if ([[getData.dataRoot arrayForKey:@"data"] count] >0) {
-                [modelArray removeAllObjects];
                 for (NSDictionary *dic in [getData.dataRoot arrayForKey:@"data"]) {
-                    
                     AddressModel* model = [AddressModel new];
                     model.userAddress = [NSString stringWithFormat:@"%@%@%@%@", [dic stringForKey:@"province"],[dic stringForKey:@"city"],[dic stringForKey:@"area"],[dic stringForKey:@"address"]];
                     model.userPhone = [dic stringForKey:@"phone"];
@@ -111,14 +131,18 @@
                 }
                 
                 if (addressTable) {
+                    noAddressWoring.hidden=YES;
+                    noAddressImage.hidden=YES;
+                    addAddressBut.hidden=YES;
                     [addressTable reloadData];
                 } else {
                     [self createTable];
-                    
+                
                 }
                 
             } else {
                 [addressTable removeFromSuperview];
+                addressTable = nil;
                 [self createAddressView];
             }
             

@@ -20,7 +20,7 @@
 
 @interface addressAddTableViewCell : UITableViewCell
 
-@property (nonatomic, strong) id<AddressAddDelegate>delegate;
+@property (nonatomic, weak) id<AddressAddDelegate>delegate;
 
 
 

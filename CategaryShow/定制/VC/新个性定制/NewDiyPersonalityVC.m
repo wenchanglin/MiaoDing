@@ -23,6 +23,7 @@
 #import "PaiZhaoTestCell.h"
 #import "QuickPhotoYinDaoVC.h"
 #import "QuickPhotoVC.h"
+#import "LiangTiModel.h"
 @interface NewDiyPersonalityVC ()<UITableViewDelegate, UITableViewDataSource, positionDelegate, colorDelegate, fontDelegate,UITextFieldDelegate,banXingDelegate,mianLiaoDelegate>
 @property (nonatomic, retain) NSMutableDictionary *paramsClothes;
 
@@ -48,9 +49,13 @@
     NSInteger isopencv;
     NSString * heightStr;
     NSString * weightStr;
+    NSString * nameStr;
     NSMutableDictionary *textFildString;
     NSMutableDictionary * heightAndWeightDic;
     BOOL is_english;
+    NSMutableArray *YDImgArray;
+    UIImageView *imag;
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -81,6 +86,7 @@
     _paramsClothes = [NSMutableDictionary dictionary];
     diyArray = [NSMutableArray array];
     twodiyArr = [NSMutableArray array];
+    YDImgArray = [NSMutableArray array];
     getData = [BaseDomain getInstance:NO];
     isViewYFisrt = YES;
     banxingtag = 0;
@@ -101,49 +107,62 @@
     [rightBtn addTarget:self action:@selector(moreDiy:) forControlEvents:UIControlEventTouchUpInside];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeClothes:) name:@"change" object:nil];
     [self getDatas];
+    [self getMoreYinDao];
 }
+
 -(void)request:(NSNotification*)notification
 {
     isopencv = [[notification.userInfo stringForKey:@"isopencv"] integerValue];
     [diyTable reloadData];
 }
+-(void)getMoreYinDao
+{
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [params setObject:@(8) forKey:@"id"];
+    [[BaseDomain getInstance:NO] getData:URL_GetYingDao PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+        if ([self checkHttpResponseResultStatus:domain]) {
+            YDImgArray = [NSMutableArray arrayWithArray:[[domain.dataRoot objectForKey:@"data"] arrayForKey:@"img_urls"]];
+            [self createNewUser];
+        }
+    }];
+}
 -(void)moreDiy:(UIButton *)button
 {
-    /**/
     if (isopencv==1) {
+        if ([[heightAndWeightDic stringForKey:@"name"] length]>0) {
         if([[heightAndWeightDic stringForKey:@"height"] length]>0)
         {
             if ([[heightAndWeightDic stringForKey:@"weight"]length]>0) {
                 if (isopencv==1) {
                     [self alertViewShowOfTime:@"请拍照身体四个面的照片" time:1.5];
                 }
-               else if (isopencv==2)
-               {
-                   ChooseClothesStyleViewController *chooseStyleCon = [[ChooseClothesStyleViewController alloc] init];
-                   chooseStyleCon.banxing = _banxing;
-                   chooseStyleCon.price_Type = [_price stringForKey:@"id"];
-                   chooseStyleCon.price = _price;
-                   chooseStyleCon.class_id = _class_id;
-                   chooseStyleCon.paramsClothes = _paramsClothes;
-                   chooseStyleCon.xiuZiDic = _xiuZiDic;
-                   if([textFildString objectForKey:@"name"] ==nil)
-                   {
-                       
-                       chooseStyleCon.diydetailArray = twodiyArr;
-                   }
-                   else
-                   {
-                       chooseStyleCon.diydetailArray = diydetailArray;
-                   }
-                   chooseStyleCon.mianliaoprice = [_price objectForKey:@"price"];
-                   chooseStyleCon.goodDic = _goodDic;
-                   chooseStyleCon.dataDic = dataDic;
-                   chooseStyleCon.banxingtag =banxingtag;
-                   chooseStyleCon.diyArray =diyArray;
-                   chooseStyleCon.dateId =_dateId;
-                   chooseStyleCon.dingDate = _dingDate;
-                   [self.navigationController pushViewController:chooseStyleCon animated:YES];
-               }
+                else if (isopencv==2)
+                {
+                    ChooseClothesStyleViewController *chooseStyleCon = [[ChooseClothesStyleViewController alloc] init];
+                    chooseStyleCon.banxing = _banxing;
+                    chooseStyleCon.price_Type = [_price stringForKey:@"id"];
+                    chooseStyleCon.price = _price;
+                    chooseStyleCon.class_id = _class_id;
+                    chooseStyleCon.paramsClothes = _paramsClothes;
+                    chooseStyleCon.xiuZiDic = _xiuZiDic;
+                    if([textFildString objectForKey:@"name"] ==nil)
+                    {
+                        
+                        chooseStyleCon.diydetailArray = twodiyArr;
+                    }
+                    else
+                    {
+                        chooseStyleCon.diydetailArray = diydetailArray;
+                    }
+                    chooseStyleCon.mianliaoprice = [_price objectForKey:@"price"];
+                    chooseStyleCon.goodDic = _goodDic;
+                    chooseStyleCon.dataDic = dataDic;
+                    chooseStyleCon.banxingtag =banxingtag;
+                    chooseStyleCon.diyArray =diyArray;
+                    chooseStyleCon.dateId =_dateId;
+                    chooseStyleCon.dingDate = _dingDate;
+                    [self.navigationController pushViewController:chooseStyleCon animated:YES];
+                }
             }
             else
             {
@@ -155,7 +174,11 @@
         {
             [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
         }
-        
+        }
+        else
+        {
+            [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
+        }
     }
     else if(isopencv==2)
     {
@@ -184,7 +207,7 @@
         chooseStyleCon.dingDate = _dingDate;
         [self.navigationController pushViewController:chooseStyleCon animated:YES];
     }
-   
+    
 }
 -(void)changeClothes:(NSNotification *)noti
 {
@@ -212,11 +235,11 @@
     [getData getData:URL_GetDiyData PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:getData]) {
             dataDic = [NSMutableDictionary dictionaryWithDictionary:[getData.dataRoot dictionaryForKey:@"data"]];
-//            WCLLog(@"%@",domain.dataRoot);
+            //            WCLLog(@"%@",domain.dataRoot);
             isopencv = [domain.dataRoot integerForKey:@"is_opencv"];
             heightStr = [[domain.dataRoot dictionaryForKey:@"cv"] stringForKey:@"height"];
             weightStr = [[domain.dataRoot dictionaryForKey:@"cv"] stringForKey:@"weight"];
-            
+            nameStr =[[domain.dataRoot dictionaryForKey:@"cv"] stringForKey:@"name"];
             //            diydetailArray = [NSMutableArray arrayWithObjects:[[dataDic arrayForKey:@"position"] firstObject],[[dataDic arrayForKey:@"color"] firstObject],[[dataDic arrayForKey:@"font"] firstObject], nil];
             diydetailArray = [NSMutableArray array];
             if ([[dataDic arrayForKey:@"classify_id"] count] > 0) {
@@ -268,7 +291,34 @@
     }];
     
 }
-
+-(void)createNewUser
+{
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]) {
+        // 这里判断是否第一次
+        imag = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+        UITapGestureRecognizer * tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tap)];
+        [imag addGestureRecognizer:tap];
+        [imag setUserInteractionEnabled:YES];
+        UIWindow *win = self.view.window;
+        [imag sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, YDImgArray[0]]] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+            if (image) {
+                CGFloat scan = image.size.width / image.size.height;
+                imag.frame = CGRectMake(0,IsiPhoneX?20:0, SCREEN_WIDTH,IsiPhoneX?150+SCREEN_WIDTH/scan: SCREEN_WIDTH/scan);
+            }
+            else
+            {
+                [imag setFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_WIDTH )];
+            }
+        }];
+        [win addSubview:imag];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"firstLaunch"];
+    }
+}
+-(void)tap
+{
+    [imag removeFromSuperview];
+    imag = nil;
+}
 -(void)createDiyView
 {
     if (@available(iOS 11.0, *)) {
@@ -348,66 +398,67 @@
 -(void)payForClothes
 {
     if (isopencv==1) {
-        if([[heightAndWeightDic stringForKey:@"height"] length]>0)
-        {
+        if ([[heightAndWeightDic stringForKey:@"name"] length]>0) {
+            if([[heightAndWeightDic stringForKey:@"height"] length]>0)
+            {
             if ([[heightAndWeightDic stringForKey:@"weight"]length]>0) {
                 if (isopencv==1) {
                     [self alertViewShowOfTime:@"请拍照身体四个面的照片" time:1.5];
                 }
                 else if (isopencv==2)
                 {
-                [_paramsClothes setObject:@"1" forKey:@"goods_type"];
-                [_paramsClothes setObject:@"1" forKey:@"type"];
-                [_paramsClothes setObject:[_price objectForKey:@"price_id"] forKey:@"price_id"];
-                [_paramsClothes setObject:[_goodDic objectForKey:@"id"] forKey:@"goods_id"];
-                [_paramsClothes setObject:[_price objectForKey:@"price"] forKey:@"price"];
-                [_paramsClothes setObject:[_goodDic objectForKey:@"name"] forKey:@"goods_name"];
-                if (diyArray != nil) {
-                    [_paramsClothes setObject:[diyArray componentsJoinedByString:@";"] forKey:@"diy_content"];
-                }
-                if ([[_price objectForKey:@"goods_img"] length]>0) {
-                    [_paramsClothes setObject:[_price objectForKey:@"goods_img"] forKey:@"goods_thumb"];
-                }
-                else
-                {
-                    [_paramsClothes setObject:[_goodDic objectForKey:@"thumb"] forKey:@"goods_thumb"];
-                }
-                [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
-                [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
-                [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
-                [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
-                if (_ifTK) {
-                    [_paramsClothes setObject:@"1" forKey:@"is_scan"];
-                } else {
-                    [_paramsClothes setObject:@"0" forKey:@"is_scan"];
-                }
-                [_paramsClothes setObject:@"1" forKey:@"num"];
-                [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
-                    // WCLLog(@"%@",domain.dataRoot);
-                    if ([self checkHttpResponseResultStatus:postData]) {
-                         [MobClick event:@"place_order" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
-                        ClothesFroPay *model = [ClothesFroPay new];
-                        if ([_paramsClothes stringForKey:@"mian_img"].length > 0) {
-                            model.clothesImage = [_paramsClothes stringForKey:@"mian_img"];
-                        } else {
-                            model.clothesImage = [_paramsClothes stringForKey:@"goods_thumb"];
+                    [_paramsClothes setObject:@"1" forKey:@"goods_type"];
+                    [_paramsClothes setObject:@"1" forKey:@"type"];
+                    [_paramsClothes setObject:[_price objectForKey:@"price_id"] forKey:@"price_id"];
+                    [_paramsClothes setObject:[_goodDic objectForKey:@"id"] forKey:@"goods_id"];
+                    [_paramsClothes setObject:[_price objectForKey:@"price"] forKey:@"price"];
+                    [_paramsClothes setObject:[_goodDic objectForKey:@"name"] forKey:@"goods_name"];
+                    if (diyArray != nil) {
+                        [_paramsClothes setObject:[diyArray componentsJoinedByString:@";"] forKey:@"diy_content"];
+                    }
+                    if ([[_price objectForKey:@"goods_img"] length]>0) {
+                        [_paramsClothes setObject:[_price objectForKey:@"goods_img"] forKey:@"goods_thumb"];
+                    }
+                    else
+                    {
+                        [_paramsClothes setObject:[_goodDic objectForKey:@"thumb"] forKey:@"goods_thumb"];
+                    }
+                    [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
+                    [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
+                    [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
+                    [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
+                    if (_ifTK) {
+                        [_paramsClothes setObject:@"1" forKey:@"is_scan"];
+                    } else {
+                        [_paramsClothes setObject:@"0" forKey:@"is_scan"];
+                    }
+                    [_paramsClothes setObject:@"1" forKey:@"num"];
+                    [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
+                        // WCLLog(@"%@",domain.dataRoot);
+                        if ([self checkHttpResponseResultStatus:postData]) {
+                            [MobClick event:@"place_order" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
+                            ClothesFroPay *model = [ClothesFroPay new];
+                            if ([_paramsClothes stringForKey:@"mian_img"].length > 0) {
+                                model.clothesImage = [_paramsClothes stringForKey:@"mian_img"];
+                            } else {
+                                model.clothesImage = [_paramsClothes stringForKey:@"goods_thumb"];
+                            }
+                            
+                            model.clothesCount = @"1";
+                            model.clothesName = [_goodDic stringForKey:@"name"];
+                            model.clothesPrice = [_price objectForKey:@"price"];
+                            model.clotheMaxCount = @"100";
+                            NSMutableArray *array = [NSMutableArray arrayWithObjects:model, nil];
+                            PayForClothesViewController *clothesPay = [[PayForClothesViewController alloc] init];
+                            clothesPay.dateId = [_goodDic stringForKey:@"id"];
+                            clothesPay.dingDate =  [NSDate dateWithTimeIntervalSinceNow:0];
+                            clothesPay.arrayForClothes = array;
+                            clothesPay.carId = [[domain.dataRoot objectForKey:@"data"] stringForKey:@"car_id"];
+                            clothesPay.allPrice = [_price objectForKey:@"price"];
+                            [self.navigationController pushViewController:clothesPay animated:YES];
                         }
                         
-                        model.clothesCount = @"1";
-                        model.clothesName = [_goodDic stringForKey:@"name"];
-                        model.clothesPrice = [_price objectForKey:@"price"];
-                        model.clotheMaxCount = @"100";
-                        NSMutableArray *array = [NSMutableArray arrayWithObjects:model, nil];
-                        PayForClothesViewController *clothesPay = [[PayForClothesViewController alloc] init];
-                        clothesPay.dateId = [_goodDic stringForKey:@"id"];
-                        clothesPay.dingDate =  [NSDate dateWithTimeIntervalSinceNow:0];
-                        clothesPay.arrayForClothes = array;
-                        clothesPay.carId = [[domain.dataRoot objectForKey:@"data"] stringForKey:@"car_id"];
-                        clothesPay.allPrice = [_price objectForKey:@"price"];
-                        [self.navigationController pushViewController:clothesPay animated:YES];
-                    }
-                    
-                }];
+                    }];
                 }
             }
             else
@@ -419,6 +470,11 @@
         else
         {
             [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
+        }
+        }
+        else
+        {
+             [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
         }
     }
     else if(isopencv==2)
@@ -453,7 +509,7 @@
         [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
             // WCLLog(@"%@",domain.dataRoot);
             if ([self checkHttpResponseResultStatus:postData]) {
-                 [MobClick event:@"place_order" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
+                [MobClick event:@"place_order" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
                 ClothesFroPay *model = [ClothesFroPay new];
                 if ([_paramsClothes stringForKey:@"mian_img"].length > 0) {
                     model.clothesImage = [_paramsClothes stringForKey:@"mian_img"];
@@ -477,13 +533,14 @@
             
         }];
     }
-        
-   
+    
+    
     
 }
 -(void)saveTheClothes
 {
     if (isopencv==1) {
+        if ([[heightAndWeightDic stringForKey:@"name"] length]>0) {
         if([[heightAndWeightDic stringForKey:@"height"] length]>0)
         {
             if ([[heightAndWeightDic stringForKey:@"weight"]length]>0) {
@@ -492,54 +549,59 @@
                 }
                 else if (isopencv==2)
                 {
-                [_paramsClothes setObject:@"1" forKey:@"goods_type"];
-                [_paramsClothes setObject:@"2" forKey:@"type"];
-                [_paramsClothes setObject:[_price objectForKey:@"price_id"] forKey:@"price_id"];
-                [_paramsClothes setObject:[_goodDic objectForKey:@"id"] forKey:@"goods_id"];
-                [_paramsClothes setObject:[_price objectForKey:@"price"] forKey:@"price"];
-                [_paramsClothes setObject:[_goodDic objectForKey:@"name"] forKey:@"goods_name"];
-                if ([[_price objectForKey:@"goods_img"] length]>0) {
-                    [_paramsClothes setObject:[_price objectForKey:@"goods_img"] forKey:@"goods_thumb"];
-                }
-                else
-                {
-                    [_paramsClothes setObject:[_goodDic objectForKey:@"thumb"] forKey:@"goods_thumb"];
-                }
-                [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
-                [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
-                [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
-                [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
-                if (diyArray != nil) {
-                    [_paramsDic setObject:[diyArray componentsJoinedByString:@";"] forKey:@"diy_content"];
-                }
-                [_paramsClothes setObject:@"1" forKey:@"num"];
-                
-                if (_ifTK) {
-                    [_paramsClothes setObject:@"1" forKey:@"is_scan"];
-                } else {
-                    [_paramsClothes setObject:@"0" forKey:@"is_scan"];
-                }
-                
-                [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
-                    //        WCLLog(@"%@",domain.dataRoot);
-                    if ([self checkHttpResponseResultStatus:postData]) {
-                         [MobClick event:@"add_cart" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
-                        [self alertViewShowOfTime:domain.resultMessage time:1.5];
-                        [[NSNotificationCenter defaultCenter] postNotificationName:@"addCarSuccess" object:nil];
+                    [_paramsClothes setObject:@"1" forKey:@"goods_type"];
+                    [_paramsClothes setObject:@"2" forKey:@"type"];
+                    [_paramsClothes setObject:[_price objectForKey:@"price_id"] forKey:@"price_id"];
+                    [_paramsClothes setObject:[_goodDic objectForKey:@"id"] forKey:@"goods_id"];
+                    [_paramsClothes setObject:[_price objectForKey:@"price"] forKey:@"price"];
+                    [_paramsClothes setObject:[_goodDic objectForKey:@"name"] forKey:@"goods_name"];
+                    if ([[_price objectForKey:@"goods_img"] length]>0) {
+                        [_paramsClothes setObject:[_price objectForKey:@"goods_img"] forKey:@"goods_thumb"];
+                    }
+                    else
+                    {
+                        [_paramsClothes setObject:[_goodDic objectForKey:@"thumb"] forKey:@"goods_thumb"];
+                    }
+                    [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
+                    [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
+                    [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
+                    [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
+                    if (diyArray != nil) {
+                        [_paramsDic setObject:[diyArray componentsJoinedByString:@";"] forKey:@"diy_content"];
+                    }
+                    [_paramsClothes setObject:@"1" forKey:@"num"];
+                    
+                    if (_ifTK) {
+                        [_paramsClothes setObject:@"1" forKey:@"is_scan"];
+                    } else {
+                        [_paramsClothes setObject:@"0" forKey:@"is_scan"];
                     }
                     
-                }];
+                    [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
+                        //        WCLLog(@"%@",domain.dataRoot);
+                        if ([self checkHttpResponseResultStatus:postData]) {
+                            [MobClick event:@"add_cart" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
+                            [self alertViewShowOfTime:domain.resultMessage time:1.5];
+                            [[NSNotificationCenter defaultCenter] postNotificationName:@"addCarSuccess" object:nil];
+                        }
+                        
+                    }];
                 }
             }
             else
             {
-            [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
+                [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
             }
-        
+            
         }
         else
         {
-        [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
+            [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
+        }
+        }
+        else
+        {
+             [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
         }
     }
     else if (isopencv==2)
@@ -626,6 +688,12 @@
     else if (section==1)
     {
         [titleLabel setText:@"拍照量体"];
+        UILabel * centerLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(titleLabel.frame)-95, 0, 250, 42)];
+        [titleSection addSubview:centerLabel];
+        centerLabel.textAlignment = NSTextAlignmentLeft;
+        centerLabel.textColor = [UIColor colorWithHexString:@"#B10909"];
+        centerLabel.font =[UIFont fontWithName:@"PingFangSC-Light" size:10];
+        centerLabel.text = @"若不方便即时拍照量体可稍后与客服确认体型数据";
         rightLabel.text = @"⊙帮助";
     }
     else if (section == 2) {
@@ -729,7 +797,7 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 0) {
-        return 65;
+        return 109;
     }
     else if (indexPath.section==1)
     {
@@ -762,12 +830,17 @@
         HeightAndWeightCell * cell = [tableView dequeueReusableCellWithIdentifier:@"heightandweight"];
         cell.weightTextField.delegate = self;
         cell.heightTextField.delegate = self;
+        cell.nameTextField.delegate = self;
         if (weightStr.length>0) {
             cell.weightTextField.text = weightStr;
         }
         if (heightStr.length>0) {
             cell.heightTextField.text = heightStr;
         }
+        if (nameStr.length>0) {
+            cell.nameTextField.text = nameStr;
+        }
+        [cell.nameTextField addTarget:self action:@selector(weighttextfieldDidChange:) forControlEvents:UIControlEventEditingChanged];
         [cell.weightTextField addTarget:self action:@selector(weighttextfieldDidChange:) forControlEvents:UIControlEventEditingChanged];
         [cell.heightTextField addTarget:self action:@selector(weighttextfieldDidChange:) forControlEvents:UIControlEventEditingChanged];
         reCell = cell;
@@ -777,18 +850,18 @@
         PaiZhaoTestCell * cell = [tableView dequeueReusableCellWithIdentifier:@"paizhaotest"];
         if (isopencv==1) {
             [cell.photoImageView setImage:[UIImage imageNamed:@"xiangji"] forState:UIControlStateNormal];
-            cell.shuomingLabel.text = @"请沿顺时针方向旋转完成身体四个面的拍摄";
-
+            cell.shuomingLabel.text = @"图像拍摄后会自动对脸部进行模糊处理，请放心拍摄。";
+            
         }
         else if(isopencv==2)
         {
             [cell.photoImageView setImage:[UIImage imageNamed:@"JuXC"] forState:UIControlStateNormal];
-            cell.shuomingLabel.text = @"请沿顺时针方向旋转完成身体四个面的拍摄";
+            cell.shuomingLabel.text = @"图像拍摄后会自动对脸部进行模糊处理，请放心拍摄。";
         }
         [cell.photoImageView addTarget:self action:@selector(xiangji:) forControlEvents:UIControlEventTouchUpInside];
-
+        
         reCell = cell;
-
+        
     }
     else if (indexPath.section == 2) {
         BanXingTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"banxing" forIndexPath:indexPath];
@@ -876,55 +949,76 @@
 -(void)xiangji:(UIButton*)btn
 {
     
-    [heightAndWeightDic setObject:[SelfPersonInfo getInstance].cnPersonUserName forKey:@"name"];
+//    [heightAndWeightDic setObject:[SelfPersonInfo getInstance].cnPersonUserName forKey:@"name"];
     [heightAndWeightDic setObject:[SelfPersonInfo getInstance].personPhone forKey:@"phone"];
+    
     if(isopencv==1)
     {
-    if([[heightAndWeightDic stringForKey:@"height"] length]>0)
-    {
-        if ([[heightAndWeightDic stringForKey:@"weight"]length]>0) {
-            if (isopencv==1) {
-                if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
-                    QuickPhotoYinDaoVC * vc = [[QuickPhotoYinDaoVC alloc]init];
-                    vc.params = heightAndWeightDic;
-                    vc.bodyHeight = [[heightAndWeightDic stringForKey:@"height"] floatValue];
-                    [self.navigationController pushViewController:vc animated:YES];
+        if ([[heightAndWeightDic stringForKey:@"name"] length]>0) {
+            if([[heightAndWeightDic stringForKey:@"height"] length]>0)
+            {
+                if ([[heightAndWeightDic stringForKey:@"weight"]length]>0) {
+                    if (isopencv==1) {
+                        if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
+                            QuickPhotoYinDaoVC * vc = [[QuickPhotoYinDaoVC alloc]init];
+                            vc.params = heightAndWeightDic;
+                            vc.comefromGeXingDingZhi = YES;
+                            vc.bodyHeight = [[heightAndWeightDic stringForKey:@"height"] floatValue];
+                            [self.navigationController pushViewController:vc animated:YES];
+                        }
+                        else
+                        {
+                            [self alertViewShowOfTime:@"该设备不支持相机功能" time:1];
+                        }
+                        
+                    }
                 }
                 else
                 {
-                    [self alertViewShowOfTime:@"该设备不支持相机功能" time:1];
+                    [self alertViewShowOfTime:@"体重不能为空" time:1];
+                    
                 }
-                
             }
-//            else if(isopencv==2)
-//            {
-//                QuickPhotoVC * qvc = [[QuickPhotoVC alloc]init];
-//                qvc.params = heightAndWeightDic;
-//                qvc.bodyHeight = [[heightAndWeightDic stringForKey:@"height"] floatValue];
-//                [self.navigationController pushViewController:qvc animated:YES];
-//            }
-//            WCLLog(@"你点击了按钮%@",heightAndWeightDic);
+            else
+            {
+                [self alertViewShowOfTime:@"身高不能为空" time:1];
+            }
         }
         else
         {
-            [self alertViewShowOfTime:@"体重不能为空" time:1];
-
+            [self alertViewShowOfTime:@"姓名或昵称不能为空" time:1];
+            
         }
-    }
-    else
-    {
-        [self alertViewShowOfTime:@"身高不能为空" time:1];
-    }
     }
     else if (isopencv==2)
     {
-        [heightAndWeightDic setObject:heightStr forKey:@"height"];
-        [heightAndWeightDic setObject:weightStr forKey:@"weight"];
+        if ([heightAndWeightDic stringForKey:@"name"].length>0) {
+            [heightAndWeightDic setObject:[heightAndWeightDic stringForKey:@"name"] forKey:@"name"];
+        }
+        else
+        {
+            [heightAndWeightDic setObject:nameStr forKey:@"name"];
+        }
+        if ([heightAndWeightDic stringForKey:@"height"].length>0) {
+            [heightAndWeightDic setObject:[heightAndWeightDic stringForKey:@"height"] forKey:@"height"];
+        }
+        else
+        {
+            [heightAndWeightDic setObject:heightStr forKey:@"height"];
+        }
+        if ([heightAndWeightDic stringForKey:@"weight"].length>0) {
+            [heightAndWeightDic setObject:[heightAndWeightDic stringForKey:@"weight"] forKey:@"weight"];
+        }
+        else
+        {
+            [heightAndWeightDic setObject:weightStr forKey:@"weight"];
+        }
         if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
-        QuickPhotoVC * qvc = [[QuickPhotoVC alloc]init];
-        qvc.params = heightAndWeightDic;
-        qvc.bodyHeight = [[heightAndWeightDic stringForKey:@"height"] floatValue];
-        [self.navigationController pushViewController:qvc animated:YES];
+            QuickPhotoVC * qvc = [[QuickPhotoVC alloc]init];
+            qvc.params = heightAndWeightDic;
+            qvc.comefromGeXingDingZhi= YES;
+            qvc.bodyHeight = [[heightAndWeightDic stringForKey:@"height"] floatValue];
+            [self.navigationController pushViewController:qvc animated:YES];
         }
         else
         {
@@ -935,13 +1029,15 @@
 -(void)weighttextfieldDidChange:(UITextField *)textfield
 {
     if (textfield.text.length>0) {
+        if (textfield.tag==990) {
+            [heightAndWeightDic setObject:textfield.text forKey:@"name"];
+        }
         if (textfield.tag==991) {
-//            [heightAndWeightDic removeObjectForKey:@"height"];
             [heightAndWeightDic setObject:textfield.text forKey:@"height"];
         }
         else if (textfield.tag==992)
         {
-//            [heightAndWeightDic removeObjectForKey:@"weight"];
+            //            [heightAndWeightDic removeObjectForKey:@"weight"];
             [heightAndWeightDic setObject:textfield.text forKey:@"weight"];
             
         }
@@ -949,6 +1045,11 @@
     else
     {
         switch (textfield.tag) {
+            case 990:
+            {
+                [heightAndWeightDic removeObjectForKey:@"name"];
+            }
+                break;
             case 991:
             {
                 [heightAndWeightDic removeObjectForKey:@"height"];
@@ -964,7 +1065,6 @@
                 break;
         }
     }
-//    WCLLog(@"%ld,%@",textfield.tag,textfield.text);
 }
 -(void)textfieldDidChange:(UITextField *)textfield
 {
@@ -984,6 +1084,10 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     if (textField.text.length>0) {
+        if (textField.tag ==990) {
+            [heightAndWeightDic setObject:textField.text forKey:@"name"];
+            
+        }
         if (textField.tag==991) {
             
             [heightAndWeightDic setObject:textField.text forKey:@"height"];
@@ -994,28 +1098,34 @@
             
         }
         else if (textField.tag==993) {
-                [diydetailArray removeObject:textFildString];
-                if (textField.text.length>0) {
+            [diydetailArray removeObject:textFildString];
+            if (textField.text.length>0) {
                 [textFildString setObject:@"文字" forKey:@"a_name"];
                 [textFildString setObject:textField.text forKey:@"name"];
                 [diydetailArray addObject:textFildString];
-                }
             }
+        }
     }
     else
     {
         switch (textField.tag) {
+            case 990:
+            {
+                [heightAndWeightDic removeObjectForKey:@"name"];
+                
+            }
+                break;
             case 991:
-                {
-                    [heightAndWeightDic removeObjectForKey:@"height"];
-                }
+            {
+                [heightAndWeightDic removeObjectForKey:@"height"];
+            }
                 break;
             case 992:
             {
                 [heightAndWeightDic removeObjectForKey:@"weight"];
             }
                 break;
-            
+                
             default:
                 break;
         }

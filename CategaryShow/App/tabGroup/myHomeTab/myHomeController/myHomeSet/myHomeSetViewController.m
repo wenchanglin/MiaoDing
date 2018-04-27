@@ -17,6 +17,7 @@
 #import "LTSDateChoose.h"
 #import "DateForBodyViewController.h"
 #import "SuggestViewController.h"
+#import "LiangTiSureViewController.h"
 @interface myHomeSetViewController ()<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, LTSDateChooseDelegate>
 @property (nonatomic, retain) userInfoModel *userInfo;
 @end
@@ -258,7 +259,9 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
             break;
         case 1:
         {
-            DateForBodyViewController *dateBD = [[DateForBodyViewController alloc] init];
+//            DateForBodyViewController *dateBD = [[DateForBodyViewController alloc] init];
+            LiangTiSureViewController* dateBD = [[LiangTiSureViewController alloc]init];
+            dateBD.comefromwode = YES;
             [self.navigationController pushViewController:dateBD animated:YES];
             
         }

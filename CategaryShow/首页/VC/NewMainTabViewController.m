@@ -178,7 +178,17 @@
         imag = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
         [imag setUserInteractionEnabled:YES];
         UIWindow *win = self.view.window;
-        [imag sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, YDImgArray[0]]]];
+        [imag sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, YDImgArray[0]]] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+            if (image) {
+                CGFloat scan = image.size.width / image.size.height;
+                imag.frame = CGRectMake(0,0, SCREEN_WIDTH,IsiPhoneX?150+SCREEN_WIDTH/scan:SCREEN_WIDTH/scan);
+            }
+            else
+            {
+                [imag setFrame:CGRectMake(0, 0, SCREEN_WIDTH,IsiPhoneX?150+SCREEN_WIDTH:SCREEN_WIDTH)];
+                
+            }
+        }];
         
         
         UIButton *buttonLogin = [[UIButton alloc] initWithFrame:CGRectMake(86.0 / 375.0 * SCREEN_WIDTH, 365.0 / 667.0 * SCREEN_HEIGHT, 203.0 / 375.0 * SCREEN_WIDTH, 48.0 / 667.0 * SCREEN_HEIGHT)];

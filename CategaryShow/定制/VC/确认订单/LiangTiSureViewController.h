@@ -1,0 +1,13 @@
+//
+//  LiangTiSureViewController.h
+//  CategaryShow
+//
+//  Created by 文长林 on 2018/4/24.
+//  Copyright © 2018年 Mr.huang. All rights reserved.
+//
+
+#import "BaseViewController.h"
+
+@interface LiangTiSureViewController : BaseViewController
+@property(nonatomic)BOOL comefromwode;
+@end

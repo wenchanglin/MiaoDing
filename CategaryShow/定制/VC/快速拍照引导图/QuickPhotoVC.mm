@@ -26,6 +26,7 @@
 #import "HttpRequestTool.h"
 #import <Photos/Photos.h>
 #import "NewDiyPersonalityVC.h"
+#import"LiangTiSureViewController.h"
 #define LabelX backgroundView.center.x / 16 - 7.5
 #define LeftLabelY  backgroundView.center.y
 #define DownLabelX  backgroundView.center.x
@@ -640,7 +641,11 @@
 //    [_params setObject:y_position forKey:@"y_position"];
     [_params setObject:[self deviceVersion] forKey:@"phone_type"];
     [self progressShow:@"上传中" animated:YES];
-    
+    for (UIViewController *temp in self.navigationController.viewControllers) {
+        if ([temp isKindOfClass:[NewDiyPersonalityVC class]]) {
+            [_params setObject:@"1" forKey:@"is_index"];
+        }
+    }
     [HttpRequestTool uploadMostImageWithURLString:[NSString stringWithFormat:@"%@%@", URL_HEADURL,URL_PHOTOTAKETEST] parameters:_params uploadDatas:photoDataArray success:^{
         [self progressHide:YES];
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"通知" message:@"数据传输成功！" preferredStyle:UIAlertControllerStyleAlert];
@@ -650,7 +655,21 @@
             photoTable = nil;
             [photoDataArray removeAllObjects];
             photoModelArray = nil;
-            [self.navigationController popViewControllerAnimated:YES];
+            if (_comefromGeXingDingZhi) {
+                for (UIViewController *temp in self.navigationController.viewControllers) {
+                    if ([temp isKindOfClass:[NewDiyPersonalityVC class]]) {
+                        [self.navigationController popToViewController:temp animated:YES];
+                    }
+                }
+            }
+            else
+            {
+                for (UIViewController *temp in self.navigationController.viewControllers) {
+                    if ([temp isKindOfClass:[LiangTiSureViewController class]]) {
+                        [self.navigationController popToViewController:temp animated:YES];
+                    }
+                }
+            }
         }];
         [alert addAction:defaultAction];
         [self presentViewController:alert animated:YES completion:nil];

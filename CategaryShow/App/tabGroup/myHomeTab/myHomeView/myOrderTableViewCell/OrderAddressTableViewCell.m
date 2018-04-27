@@ -64,7 +64,7 @@
         make.left.mas_equalTo(11);
         make.height.mas_equalTo(20);
     }];
-    [addTitle setFont:[UIFont systemFontOfSize:14]];
+    [addTitle setFont:[UIFont fontWithName:@"PingFangSC-Light" size:14]];
     [addTitle setText:@"地   址："];
     
     _userAddress = [UILabel new];

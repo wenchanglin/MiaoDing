@@ -10,9 +10,11 @@
 
 @interface HeightAndWeightCell : UITableViewCell<UITextFieldDelegate>
 @property(nonatomic,strong)UIImageView * firstImageView;
+@property(nonatomic,strong)UIImageView * secondImageView;
+@property(nonatomic,strong)UITextField * nameTextField;
 @property(nonatomic,strong)UITextField *heightTextField;
 @property(nonatomic,strong)UILabel * cmLabel;
-@property(nonatomic,strong)UIImageView * secondImageView;
+@property(nonatomic,strong)UIImageView * thirdImageView;
 @property(nonatomic,strong)UITextField * weightTextField;
 @property(nonatomic,strong)UILabel * kgLabel;
 @end

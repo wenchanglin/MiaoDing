@@ -186,7 +186,8 @@
             [goodParams setObject:[dataDictionary stringForKey:@"price_type"] forKey:@"price_id"];
             [goodParams setObject:[_goodDic stringForKey:@"type"] forKey:@"type"];
             [goodParams setObject:mianId forKey:@"mianliao_id"];
-             [goodParams setObject:default_price forKey:@"price"];
+            
+            [goodParams setObject:default_price forKey:@"price"];
             [goodParams setObject:[dataDictionary stringForKey:@"default_spec_ids"] forKey:@"spec_ids"];
             [goodParams setObject:[dataDictionary stringForKey:@"default_spec_content"] forKey:@"spec_content"];
             model = [diyClothesDetailModel new];
@@ -390,12 +391,9 @@
             
             [imageDetailDes setFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_WIDTH / scan)];
         } else {
-            
-            
+
             scrollerDetail.contentSize=CGSizeMake(SCREEN_WIDTH,SCREEN_WIDTH + 80);
-            
-            
-            [imageDetailDes setFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_WIDTH )];
+             [imageDetailDes setFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_WIDTH )];
         }
         
         

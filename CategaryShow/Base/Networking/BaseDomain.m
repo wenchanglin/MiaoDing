@@ -156,7 +156,7 @@
         // 整合数据
         self.result = -99;
         self.resultMessage = NSLocalizedString(@"baseform_progress_NetErrorMessage", nil);
-        WCLLog(@"159get:%@----%@",error,urlString);
+//        WCLLog(@"159get:%@----%@",error,urlString);
 
         // 传递结果
         if (success)

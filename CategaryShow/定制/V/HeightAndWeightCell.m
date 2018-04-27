@@ -19,42 +19,70 @@
 -(void)createUI{
     _firstImageView = [UIImageView new];
     _firstImageView.userInteractionEnabled =YES;
-    _firstImageView.image = [UIImage imageNamed:@"font"];
+    _firstImageView.layer.cornerRadius = 3;
+    _firstImageView.layer.borderWidth =1;
+    _firstImageView.layer.borderColor = [UIColor colorWithHexString:@"#979797"].CGColor;
+    _firstImageView.layer.masksToBounds = YES;
     [self.contentView addSubview:_firstImageView];
     [_firstImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.top.mas_equalTo(12);
-        make.bottom.mas_equalTo(-15);
-        make.width.mas_equalTo(SCREEN_WIDTH/2-17);
+        make.height.mas_equalTo(38);
+        make.width.mas_equalTo(SCREEN_WIDTH-24);
     }];
-   
-    _cmLabel = [UILabel new];
-    _cmLabel.text = @"CM";
-    _cmLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:13];
-    _cmLabel.textColor = [UIColor colorWithHexString:@"#222222"];
-    [_firstImageView addSubview:_cmLabel];
-    [_cmLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(_firstImageView.mas_right).offset(-38);
-        make.centerY.equalTo(_firstImageView.mas_centerY);
-    }];
-    _heightTextField = [UITextField new];
-    _heightTextField.keyboardType = UIKeyboardTypeNumberPad;
-    _heightTextField.tag = 991;
-    _heightTextField.font = [UIFont fontWithName:@"PingFangSC-Light" size:13];
-    _heightTextField.placeholder = @"净身高";
-    [_firstImageView addSubview:_heightTextField];
-    [_heightTextField mas_makeConstraints:^(MASConstraintMaker *make) {
+    _nameTextField = [UITextField new];
+    _nameTextField.tag = 990;
+    _nameTextField.font = [UIFont fontWithName:@"PingFangSC-Light" size:13];
+    _nameTextField.placeholder = @"姓名或昵称";
+    [_firstImageView addSubview:_nameTextField];
+    [_nameTextField mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(_firstImageView.mas_left).offset(26);
         make.centerY.equalTo(_firstImageView.mas_centerY);
         make.right.equalTo(_firstImageView);
     }];
     _secondImageView = [UIImageView new];
     _secondImageView.userInteractionEnabled =YES;
-    _secondImageView.image = [UIImage imageNamed:@"font"];
+    _secondImageView.layer.cornerRadius = 3;
+    _secondImageView.layer.borderWidth =1;
+    _secondImageView.layer.borderColor = [UIColor colorWithHexString:@"#979797"].CGColor;
+    _secondImageView.layer.masksToBounds = YES;
     [self.contentView addSubview:_secondImageView];
     [_secondImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(12);
-        make.left.equalTo(_firstImageView.mas_right).offset(7);
-        make.bottom.mas_equalTo(-15);
+        make.top.equalTo(_firstImageView.mas_bottom).offset(12);
+        make.left.mas_equalTo(12);
+        make.height.mas_equalTo(38);
+        make.width.mas_equalTo(SCREEN_WIDTH/2-14);
+    }];
+    _cmLabel = [UILabel new];
+    _cmLabel.text = @"CM";
+    _cmLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:13];
+    _cmLabel.textColor = [UIColor colorWithHexString:@"#222222"];
+    [_secondImageView addSubview:_cmLabel];
+    [_cmLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(_secondImageView.mas_right).offset(-38);
+        make.centerY.equalTo(_secondImageView.mas_centerY);
+    }];
+    _heightTextField = [UITextField new];
+    _heightTextField.keyboardType = UIKeyboardTypeNumberPad;
+    _heightTextField.tag = 991;
+    _heightTextField.font = [UIFont fontWithName:@"PingFangSC-Light" size:13];
+    _heightTextField.placeholder = @"净身高";
+    [_secondImageView addSubview:_heightTextField];
+    [_heightTextField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_secondImageView.mas_left).offset(26);
+        make.centerY.equalTo(_secondImageView.mas_centerY);
+        make.right.equalTo(_secondImageView);
+    }];
+    _thirdImageView = [UIImageView new];
+    _thirdImageView.userInteractionEnabled =YES;
+    _thirdImageView.layer.cornerRadius = 3;
+    _thirdImageView.layer.borderWidth =1;
+    _thirdImageView.layer.borderColor = [UIColor colorWithHexString:@"#979797"].CGColor;
+    _thirdImageView.layer.masksToBounds = YES;
+    [self.contentView addSubview:_thirdImageView];
+    [_thirdImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_secondImageView);
+        make.left.equalTo(_secondImageView.mas_right).offset(7);
+        make.height.mas_equalTo(38);
         make.width.mas_equalTo(SCREEN_WIDTH/2-17);
     }];
     
@@ -63,10 +91,10 @@
     _kgLabel.text = @"KG";
     _kgLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:13];
     _kgLabel.textColor = [UIColor colorWithHexString:@"#222222"];
-    [_secondImageView addSubview:_kgLabel];
+    [_thirdImageView addSubview:_kgLabel];
     [_kgLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(_secondImageView.mas_right).offset(-38);
-        make.centerY.equalTo(_secondImageView.mas_centerY);
+        make.right.equalTo(_thirdImageView.mas_right).offset(-38);
+        make.centerY.equalTo(_thirdImageView.mas_centerY);
     }];
     _weightTextField = [UITextField new];
     _weightTextField.tag = 992;
@@ -74,11 +102,11 @@
     // [_weightTextField addTarget:self action:@selector(weighttextfieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     _weightTextField.font = [UIFont fontWithName:@"PingFangSC-Light" size:13];
     _weightTextField.placeholder = @"净体重";
-    [_secondImageView addSubview:_weightTextField];
+    [_thirdImageView addSubview:_weightTextField];
     [_weightTextField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(_secondImageView.mas_left).offset(26);
-        make.centerY.equalTo(_secondImageView.mas_centerY);
-        make.right.equalTo(_secondImageView);
+        make.left.equalTo(_thirdImageView.mas_left).offset(26);
+        make.centerY.equalTo(_thirdImageView.mas_centerY);
+        make.right.equalTo(_thirdImageView);
     }];
 }
 -(void)weighttextfieldDidChange:(UITextField *)textfield

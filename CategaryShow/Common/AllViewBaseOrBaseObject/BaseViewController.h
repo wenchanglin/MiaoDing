@@ -40,7 +40,7 @@
 - (Boolean)checkCompanyResultStatus;
 - (CGFloat) calculateTextHeight:(UIFont *)font givenText:(NSString *)text givenWidth:(CGFloat)width;
 - (Boolean)checkCOmpanyRenZhengOrNot:(NSString *)string;
-
+- (UIImage *)reSizeImage:(UIImage *)image toSize:(CGSize)reSize;
 -(UIImage *)imageWithColor:(UIColor *)color;
 + (NSString*) getFriendlyDateString : (long long) lngDate;
 -(UIImage *) imageCompressForWidth:(UIImage *)sourceImage targetWidth:(CGFloat)defineWidth;

@@ -35,14 +35,14 @@
 {
     [super layoutSubviews];
     
-    _titleLabel.frame = CGRectMake(20, 0, self.frame.size.width / 3 - 19,  self.frame.size.height);
+    _titleLabel.frame = CGRectMake(20, 0, self.frame.size.width / 3+15 ,  self.frame.size.height);
     [_titleLabel setFont:[UIFont systemFontOfSize:14]];
     
-    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.size.width / 3 - 1, 5, 1, self.frame.size.height - 10)];
-    [lineView setBackgroundColor:getUIColor(Color_myTabIconLineColor)];
-    [self.contentView addSubview:lineView];
+//    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.size.width / 3 - 1, 5, 1, self.frame.size.height - 10)];
+//    [lineView setBackgroundColor:getUIColor(Color_myTabIconLineColor)];
+//    [self.contentView addSubview:lineView];
     
-    _detailLabel.frame = CGRectMake(self.frame.size.width / 3 + 15, 0, self.frame.size.width / 3 * 2 - 15, self.frame.size.height);
+    _detailLabel.frame = CGRectMake(self.frame.size.width / 3 + 35, 0, self.frame.size.width / 3 * 2 - 15, self.frame.size.height);
     [_detailLabel setFont:[UIFont systemFontOfSize:14]];
     
 }

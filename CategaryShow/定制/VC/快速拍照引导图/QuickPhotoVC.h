@@ -11,4 +11,5 @@
 @interface QuickPhotoVC : BaseViewController
 @property (nonatomic, retain) NSMutableDictionary *params;
 @property (nonatomic, assign) CGFloat bodyHeight;
+@property(nonatomic) BOOL comefromGeXingDingZhi;
 @end

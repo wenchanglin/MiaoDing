@@ -249,12 +249,11 @@
 -(void)getDataS
 {
     NSMutableDictionary *parms = [NSMutableDictionary dictionary];
-    
+    [parms setObject:@"1" forKey:@"page"];
     [getData getData:URL_MyPayBag PostParams:parms finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:getData]) {
             
             if ([[getData.dataRoot arrayForKey:@"data"] count] == 0) {
-                
                 
 //                 [self.view setBackgroundColor:[UIColor whiteColor]];
                 [self createViewNoDD];

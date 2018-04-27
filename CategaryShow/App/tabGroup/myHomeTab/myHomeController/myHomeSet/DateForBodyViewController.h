@@ -9,5 +9,5 @@
 #import "BaseViewController.h"
 
 @interface DateForBodyViewController : BaseViewController
-
+@property(nonatomic,assign)NSInteger lt_id;
 @end

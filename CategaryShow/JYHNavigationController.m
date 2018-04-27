@@ -99,7 +99,14 @@
         animation.type = kCATransitionReveal;
         animation.subtype = kCATransitionFromRight;
         [self.view.layer addAnimation:animation forKey:nil];
-        viewController.navigationItem.leftBarButtonItem = [self backItemWithimage:[UIImage imageNamed:@"backLeftWhite"] highImage:[UIImage imageNamed:@"backLeftWhite"]  target:self action:@selector(back) title:@"返            回"];
+        UIBarButtonItem *negativeSpacer = [[UIBarButtonItem alloc]
+                                           initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                           target:nil action:nil];
+        
+        negativeSpacer.width = -15;
+       UIBarButtonItem* barbtnitem= [self backItemWithimage:[UIImage imageNamed:@"backLeftWhite"] highImage:[UIImage imageNamed:@"backLeftWhite"]  target:self action:@selector(back) title:@"返            回"];
+        viewController.navigationItem.leftBarButtonItem = barbtnitem;
+//        viewController.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:negativeSpacer, barbtnitem, nil];
         [super pushViewController:viewController animated:NO];
         return;
     }

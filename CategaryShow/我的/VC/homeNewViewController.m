@@ -246,6 +246,8 @@ static CGFloat const headViewHeight = 240;
 {
     iconArray = nil;
     [[userInfoModel getInstance] exitLogin];
+    NSUserDefaults *used = [NSUserDefaults standardUserDefaults];
+    [used setObject:@"" forKey:@"token"];
     [imageBack removeFromSuperview];
     imageBack = nil;
     _headImageView = nil;

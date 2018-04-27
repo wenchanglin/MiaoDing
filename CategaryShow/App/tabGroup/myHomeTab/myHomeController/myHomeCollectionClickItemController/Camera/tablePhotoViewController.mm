@@ -231,7 +231,6 @@ NSInteger flog;
     [helpBtn addTarget:self action:@selector(helpClick) forControlEvents:UIControlEventTouchUpInside];
     [imagePickerController.view addSubview:helpBtn];
     
-    
 //    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 70 - 40, 5, 40, 40)];
 //    [title setFont:[UIFont systemFontOfSize:16]];
 //    [title setTextColor:[UIColor whiteColor]];
@@ -321,7 +320,7 @@ NSInteger flog;
             imagePickerController.delegate   = self;
             imagePickerController.allowsEditing = NO;
             imagePickerController.cameraDevice  = UIImagePickerControllerCameraDeviceRear;
-            backgroundView = [[UIImageView alloc] initWithImage:backgroundImages[currentStep - 1]];;
+            backgroundView = [[UIImageView alloc] initWithImage:backgroundImages[currentStep - 1]];
             [backgroundView setFrame:CGRectMake(0, 0, imagePickerController.view.frame.size.width, imagePickerController.view.frame.size.height)];
             [imagePickerController.view addSubview:backgroundView];
             shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 30, imagePickerController.view.frame.size.height - 80, 60, 60)];

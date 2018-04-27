@@ -16,7 +16,6 @@
         _msimageView =[UIImageView new];
         UITapGestureRecognizer * tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tap:)];
         [_msimageView addGestureRecognizer:tap];
-//        _msimageView.backgroundColor = [UIColor cyanColor];
         _msimageView.userInteractionEnabled = YES;
         [self.contentView addSubview:_msimageView];
         [_msimageView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -24,23 +23,25 @@
             make.width.mas_equalTo(SCREEN_WIDTH/3);
             make.top.bottom.equalTo(self.contentView);
         }];
-        _lastMoney = [UILabel new];
-        [_lastMoney setFont:[UIFont fontWithName:@"PingFangSC-Light" size:14]];
-        _lastMoney.textColor = [UIColor colorWithHexString:@"#222222"];
-        [_msimageView addSubview:_lastMoney];
+//        _lastMoney = [UILabel new];
+//        [_lastMoney setFont:[UIFont fontWithName:@"PingFangSC-Light" size:14]];
+//        _lastMoney.textColor = [UIColor colorWithHexString:@"#222222"];
+//        [_msimageView addSubview:_lastMoney];
 
         _chooseImage = [UIButton new];
+        _chooseImage.titleLabel.font =[UIFont fontWithName:@"PingFangSC-Light" size:14];
+        [_chooseImage setTitleColor:[UIColor colorWithHexString:@"#222222"] forState:UIControlStateNormal];
         [_msimageView addSubview:_chooseImage];
         [_chooseImage mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.mas_equalTo(12);
+            make.left.mas_equalTo(5);
             make.centerY.equalTo(self.contentView.mas_centerY);
-            make.height.width.mas_equalTo(14);
+//            make.height.width.mas_equalTo(14);
         }];
-        [_lastMoney mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_chooseImage.mas_right).offset(5);
-            make.centerY.equalTo(self.contentView.mas_centerY);
-            make.height.mas_equalTo(20);
-        }];
+//        [_lastMoney mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.left.equalTo(_chooseImage.mas_right).offset(5);
+//            make.centerY.equalTo(self.contentView.mas_centerY);
+//            make.height.mas_equalTo(20);
+//        }];
       
        
         
