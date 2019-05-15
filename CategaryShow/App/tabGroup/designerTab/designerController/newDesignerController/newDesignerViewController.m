@@ -33,7 +33,7 @@
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     self.rdv_tabBarController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
-    [self settabTitle:@"腔调"];
+    [self settabTitle:@"好物"];//腔调
     
     UIButton *buttonRight = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
     [buttonRight setImage:[UIImage imageNamed:@""] forState:UIControlStateNormal];
@@ -55,10 +55,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(searchAction:) name:@"searchTKRun" object:nil];
     
-    // Do any additional setup after loading the view, typically from a nib.
     
-    
-    
+
     
 }
 
@@ -69,7 +67,7 @@
     designerModel *searchModel = [designerModel new];
     NSDictionary *dict = noti.userInfo;
     for (designerModel *model in modelArray) {
-        if ([model.goods_id isEqualToString:[dict stringForKey:@"goods_id"]]) {
+        if (model.ID ==[[dict stringForKey:@"goods_id"]integerValue]) {
             searchModel = model;
         }
     }
@@ -151,28 +149,28 @@
 -(void)designerClothesClick:(UIButton *)sender
 {
     designerModel *model = modelArray[sender.tag - 10000];
-    if (![model.goods_id isEqualToString:@""]) {
-        NSMutableDictionary *dic = collectionItem[sender.tag - 10000];
-        DesignerClothesDetailViewController *designerClothes = [[DesignerClothesDetailViewController alloc] init];
-        designerClothes.goodDic = dic;
-        designerClothes.model = model;
-        [self.navigationController pushViewController:designerClothes animated:YES];
-
-    }
+//    if (![model.goods_id isEqualToString:@""]) {
+//        NSMutableDictionary *dic = collectionItem[sender.tag - 10000];
+//        DesignerClothesDetailViewController *designerClothes = [[DesignerClothesDetailViewController alloc] init];
+//        designerClothes.goodDic = dic;
+//        designerClothes.model = model;
+//        [self.navigationController pushViewController:designerClothes animated:YES];
+//
+//    }
     
 }
 -(void)designerClick:(UIButton *)sender
 {
     
         designerModel *model = modelArray[sender.tag - 1000];
-    if (![model.goods_id isEqualToString:@""]) {
-        DesignerDetailIntroduce *introduce = [[DesignerDetailIntroduce alloc] init];
-        introduce.desginerId = [NSString stringWithFormat:@"%zd",model.des_uid];
-        introduce.designerImage = model.avatar;
-        introduce.designerName = model.uname;
-        introduce.remark = model.introduce;
-        [self.navigationController pushViewController:introduce animated:YES];
-    }
+//    if (![model.goods_id isEqualToString:@""]) {
+//        DesignerDetailIntroduce *introduce = [[DesignerDetailIntroduce alloc] init];
+//        introduce.desginerId = [NSString stringWithFormat:@"%zd",model.des_uid];
+//        introduce.designerImage = model.avatar;
+//        introduce.designerName = model.uname;
+//        introduce.remark = model.introduce;
+//        [self.navigationController pushViewController:introduce animated:YES];
+//    }
     
     
     

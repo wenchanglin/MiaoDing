@@ -108,7 +108,7 @@
     _nameLabel.text = models.name;
     _heightLabel.text = [NSString stringWithFormat:@"%@cm",@(models.height)];
     _weightLabel.text = [NSString stringWithFormat:@"%@kg",@(models.weight)];
-    if (models.is_index ==1) {
+    if (models.is_default ==1) {
         [_chooseBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(_weightLabel.mas_bottom).offset(20);
             make.left.mas_equalTo(2);

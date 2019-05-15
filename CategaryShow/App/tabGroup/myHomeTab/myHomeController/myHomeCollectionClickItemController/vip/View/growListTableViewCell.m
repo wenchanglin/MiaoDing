@@ -61,9 +61,9 @@
 -(void)setModel:(VipGrowModel *)model
 {
     _model = model;
-    [nameLabel setText:model.name];
-    [timeLabel setText:model.time];
-    [addCountLabel setText:model.addCount];
+    [nameLabel setText:model.type_name];
+    [timeLabel setText:model.create_time];
+    [addCountLabel setText:model.credit];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

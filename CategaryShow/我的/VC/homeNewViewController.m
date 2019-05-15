@@ -36,9 +36,9 @@
 #import "saleCardViewController.h"
 #import "inviteNewViewController.h"
 #import "NewPototUserInfoViewController.h"
+#import "XingTiDataViewController.h"
 #define Main_Screen_Height      [[UIScreen mainScreen] bounds].size.height
 #define Main_Screen_Width       [[UIScreen mainScreen] bounds].size.width
-static CGFloat const headViewHeight = 240;
 
 
 
@@ -82,7 +82,6 @@ static CGFloat const headViewHeight = 240;
 
 @implementation homeNewViewController
 {
-    BaseDomain *getData;
     
     UIImageView *imageHead;
     
@@ -108,24 +107,23 @@ static CGFloat const headViewHeight = 240;
 {
     [self settabTitle:@""];
     [MobClick beginLogPageView:@"我的"];
-   
-    [self.rdv_tabBarController.navigationController setNavigationBarHidden:YES animated:animated];
+    
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
     
     UIButton *buttonRight = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
     [buttonRight setImage:[UIImage imageNamed:@""] forState:UIControlStateNormal];
     [buttonRight setContentEdgeInsets:UIEdgeInsetsMake(0, 15, 0, -15)];
-   
+    
     
     self.rdv_tabBarController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRight];
-    if ([[SelfPersonInfo getInstance].personImageUrl hasPrefix:@"http"]) {
-        [imageHead sd_setImageWithURL:[NSURL URLWithString:[SelfPersonInfo getInstance].personImageUrl ]];
+    if ([[SelfPersonInfo shareInstance].userModel.avatar hasPrefix:@"http"]) {
+        [imageHead sd_setImageWithURL:[NSURL URLWithString:[SelfPersonInfo shareInstance].userModel.avatar ]];
     }
     else
     {
-        [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]]];
+        [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo shareInstance].userModel.avatar]]];
     }
-    _countentLabel.text = [SelfPersonInfo getInstance].cnPersonUserName;
-    
+    _countentLabel.text = [SelfPersonInfo shareInstance].userModel.username;
     datBegin = [NSDate dateWithTimeIntervalSinceNow:0];
     
     [self reloadCound];
@@ -146,40 +144,18 @@ static CGFloat const headViewHeight = 240;
     
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"1" forKey:@"page"];
-
-    [getData getData:URL_GetUserInfo PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if (domain.result == 10001) {
-            
-        } else {
-            
-            _userGade = [NSDictionary dictionaryWithDictionary:[[domain.dataRoot objectForKey:@"data"] dictionaryForKey:@"user_grade"]];
-            
-            [_vipLevel setTitle:[_userGade stringForKey:@"name"] forState:UIControlStateNormal];
-            [_vipIm sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_userGade stringForKey:@"img"]]]];
-            
-            [labelName setTitle:[SelfPersonInfo getInstance].cnPersonUserName forState:UIControlStateNormal];
-            if (_countLabel) {
-                [_countLabel setText:[[domain.dataRoot dictionaryForKey:@"data"] stringForKey:@"unread_message_num"]];
-            } else {
-                
-                _countMessage = [[domain.dataRoot dictionaryForKey:@"data"] stringForKey:@"unread_message_num"];
-            }
-            
-            if ([[domain.dataRoot dictionaryForKey:@"data"] integerForKey:@"unread_message_num"] == 0) {
-                [_countLabel setHidden:YES];
-            } else {
-                [_countLabel setHidden:NO];
-            }
+    
+    [[wclNetTool sharedTools]request:GET urlString:URL_GetUserInfo parameters:params finished:^(id responseObject, NSError *error) {
+        if ([responseObject[@"code"]integerValue]==10000) {
+//            WCLLog(@"%@",responseObject);‘
         }
-        
-        
     }];
     
 }
 
 -(void)viewWillDisappear:(BOOL)animated
 {
-    [self.rdv_tabBarController.navigationController setNavigationBarHidden:NO animated:animated];
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
     [MobClick endLogPageView:@"我的"];
 }
 
@@ -192,9 +168,7 @@ static CGFloat const headViewHeight = 240;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-//    [self.view setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
-    getData = [BaseDomain getInstance:NO];
-
+    
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"exitLogin" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(exitNotiFication) name:@"exitLogin" object:nil];
@@ -213,9 +187,6 @@ static CGFloat const headViewHeight = 240;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"cancelLogin" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cancelLogin) name:@"cancelLogin" object:nil];
-    
-    
-    
     
     _ListArray = [NSMutableArray arrayWithObjects: @"设置", nil];
     
@@ -245,7 +216,7 @@ static CGFloat const headViewHeight = 240;
 -(void)exitNotiFication   //退出登录
 {
     iconArray = nil;
-    [[userInfoModel getInstance] exitLogin];
+    [[SelfPersonInfo shareInstance] exitLogin];
     NSUserDefaults *used = [NSUserDefaults standardUserDefaults];
     [used setObject:@"" forKey:@"token"];
     [imageBack removeFromSuperview];
@@ -256,7 +227,7 @@ static CGFloat const headViewHeight = 240;
     _mainTabTable = nil;
     [collect removeFromSuperview];
     collect = nil;
-//    [self createUserHaventLogin];
+    //    [self createUserHaventLogin];
     [self cancelLogin];
     
 }
@@ -279,42 +250,37 @@ static CGFloat const headViewHeight = 240;
 
 // 登录完成之后
 
-#pragma -mark tableView create To show the baner and anyother thing like today TUIJIAN
 -(void)createDataGet
 {
-    
-    
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    
-    [params setObject:@"1" forKey:@"page"];
-
-    [getData getData:URL_GetUserInfo PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
-        
-        if (domain.result == 10001) {
-            [self createUserHaventLogin];
-        } else {
-            
-            
-            if (!iconArray) {
-                _userGade = [NSDictionary dictionaryWithDictionary:[[domain.dataRoot objectForKey:@"data"] dictionaryForKey:@"user_grade"]];
-                iconArray = [NSArray arrayWithArray:[domain.dataRoot arrayForKey:@"icon_list"]];
-                [[SelfPersonInfo getInstance] setPersonInfoFromJsonData:getData.dataRoot];
-                if (_mainTabTable) {
-                    [_mainTabTable reloadData];
-                    
-                } else {
-                    [self createTableView];
-                }
+    params[@"is_android"]=@"0";
+    [[wclNetTool sharedTools]request:GET urlString:URL_GetUserInfo parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            userInfoModel*models =[userInfoModel mj_objectWithKeyValues:responseObject[@"data"][@"user_info"]];
+            [SelfPersonInfo shareInstance].userModel=models;
+            _userGade = responseObject[@"data"][@"user_info"];
+            iconArray = [NSArray arrayWithArray:responseObject[@"data"][@"icon_list"]];
+            //            [_vipLevel setTitle:[_userGade stringForKey:@"username"] forState:UIControlStateNormal];
+            //            [_vipIm sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_userGade stringForKey:@"avatar"]]]];
+            [labelName setTitle:[SelfPersonInfo shareInstance].userModel.username forState:UIControlStateNormal];
+            if (_countLabel) {
+                [_countLabel setText:[_userGade stringForKey:@"unread_message_num"]];
+            } else {
+                _countMessage = [_userGade stringForKey:@"unread_message_num"];
             }
-            
-            
-            
+            if ([_userGade integerForKey:@"unread_message_num"] == 0) {
+                [_countLabel setHidden:YES];
+            } else {
+                [_countLabel setHidden:NO];
+            }
+            if (_mainTabTable) {
+                [_mainTabTable reloadData];
+            } else {
+                [self createTableView];
+            }
         }
         
-        
     }];
-    
 }
 
 
@@ -326,7 +292,7 @@ static CGFloat const headViewHeight = 240;
     [backImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
-    imageBack = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_WIDTH/375*205)];
+    imageBack = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH,iPadDevice?205:SCREEN_WIDTH/375*205)];
     [imageBack setImage:[UIImage imageNamed:@"我的头部背景图"]];
     [self.view addSubview:imageBack];
     
@@ -335,7 +301,7 @@ static CGFloat const headViewHeight = 240;
     [imageBack addSubview:setBtn];
     setBtn.sd_layout
     .leftSpaceToView(imageBack, 12)
-    .topSpaceToView(imageBack,IsiPhoneX?HitoSafeAreaHeight+10:27)
+    .topSpaceToView(imageBack,[ShiPeiIphoneXSRMax isIPhoneX]?HitoSafeAreaHeight+10:27)
     .widthIs(30)
     .heightIs(30);
     [setBtn setImage:[UIImage imageNamed:@"leftSet"] forState:UIControlStateNormal];
@@ -354,12 +320,12 @@ static CGFloat const headViewHeight = 240;
     imageHead.layer.masksToBounds = YES;
     
     imageHead.layer.cornerRadius = 37.5;
-    if ([[SelfPersonInfo getInstance].personImageUrl hasPrefix:@"http"]) {
-        [imageHead sd_setImageWithURL:[NSURL URLWithString:[SelfPersonInfo getInstance].personImageUrl ]];
+    if ([[SelfPersonInfo shareInstance].userModel.avatar hasPrefix:@"http"]) {
+        [imageHead sd_setImageWithURL:[NSURL URLWithString:[SelfPersonInfo shareInstance].userModel.avatar ]];
     }
     else
     {
-    [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]]];
+        [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo shareInstance].userModel.avatar]]];
     }
     
     labelName = [UIButton new];
@@ -372,7 +338,7 @@ static CGFloat const headViewHeight = 240;
     }];
     
     [labelName.titleLabel setFont:Font_20];
-    [labelName setTitle:[SelfPersonInfo getInstance].cnPersonUserName forState:UIControlStateNormal];
+    [labelName setTitle:[SelfPersonInfo shareInstance].userModel.username forState:UIControlStateNormal];
     [labelName setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [labelName addTarget:self action:@selector(vipClick) forControlEvents:UIControlEventTouchUpInside];
     
@@ -387,11 +353,11 @@ static CGFloat const headViewHeight = 240;
         make.height.equalTo(@11);
         
     }];
-
-    [_vipIm sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_userGade stringForKey:@"img"]]]];
+    
+    //    [_vipIm sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_userGade stringForKey:@"avatar"]]]];
     
     
-    rightButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 12 - 20, IsiPhoneX?HitoSafeAreaHeight+10:27, 28, 25)];
+    rightButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 12 - 20, [ShiPeiIphoneXSRMax isIPhoneX]?HitoSafeAreaHeight+10:27, 28, 25)];
     [rightButton setImage:[UIImage imageNamed:@"worning"] forState:UIControlStateNormal];
     [self.view addSubview:rightButton];
     [rightButton addTarget:self action:@selector(worningClick) forControlEvents:UIControlEventTouchUpInside];
@@ -406,7 +372,7 @@ static CGFloat const headViewHeight = 240;
     [_countLabel setTextColor:[UIColor whiteColor]];
     [_countLabel setHidden:YES];
     [self.view addSubview:_countLabel];
-
+    
     
     
     titleArray = [NSMutableArray arrayWithArray:[iconArray valueForKey:@"name"]];
@@ -420,7 +386,7 @@ static CGFloat const headViewHeight = 240;
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
-    collect = [[UICollectionView alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(imageBack.frame)+8,SCREEN_WIDTH , 346) collectionViewLayout:flowLayout];
+    collect = [[UICollectionView alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(imageBack.frame)+8,SCREEN_WIDTH , iPadDevice?SCREEN_WIDTH-87:SCREEN_WIDTH-29) collectionViewLayout:flowLayout];
     collect.scrollEnabled = NO;
     //设置代理
     collect.delegate = self;
@@ -428,14 +394,14 @@ static CGFloat const headViewHeight = 240;
     [self.view addSubview:collect];
     
     collect.backgroundColor = [UIColor whiteColor];
-//    collect.layer.masksToBounds = NO;
-//    [[collect layer] setShadowOffset:CGSizeMake(0, 3)]; // 阴影的范围
-//    [[collect layer] setShadowRadius:3];                // 阴影扩散的范围控制
-//    [[collect layer] setShadowOpacity:0.5];               // 阴影透明度
-//    [[collect layer] setShadowColor:[UIColor grayColor].CGColor];
+    //    collect.layer.masksToBounds = NO;
+    //    [[collect layer] setShadowOffset:CGSizeMake(0, 3)]; // 阴影的范围
+    //    [[collect layer] setShadowRadius:3];                // 阴影扩散的范围控制
+    //    [[collect layer] setShadowOpacity:0.5];               // 阴影透明度
+    //    [[collect layer] setShadowColor:[UIColor grayColor].CGColor];
     //注册cell和ReusableView（相当于头部）
     [collect registerClass:[MianTabFourCollectionCell class] forCellWithReuseIdentifier:@"wodecells"];
-//    [collect registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"ReusableView"];
+    //    [collect registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"ReusableView"];
     
     
     
@@ -461,9 +427,6 @@ static CGFloat const headViewHeight = 240;
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     MianTabFourCollectionCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"wodecells" forIndexPath:indexPath];
-    if (!cell) {
-        NSLog(@"无法创建CollectionViewCell时打印，自定义的cell就不可能进来了。");
-    }
     if (indexPath.item < 3) {
         [cell.topView setHidden:YES];
     } else {
@@ -493,9 +456,7 @@ static CGFloat const headViewHeight = 240;
 //定义每个UICollectionView 的大小
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    //边距占5*4=20 ，2个
-    //图片为正方形，边长：(fDeviceWidth-20)/2-5-5 所以总高(fDeviceWidth-20)/2-5-5 +20+30+5+5 label高20 btn高30 边
-    return CGSizeMake(SCREEN_WIDTH / 3, 346/ 3);
+    return CGSizeMake(SCREEN_WIDTH / 3,iPadDevice?(SCREEN_WIDTH-87)/3:(SCREEN_WIDTH-29)/3);
 }
 //定义每个UICollectionView 的间距
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
@@ -505,6 +466,7 @@ static CGFloat const headViewHeight = 240;
 //定义每个UICollectionView 纵向的间距
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
     return 0;
+    
 }
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -525,7 +487,6 @@ static CGFloat const headViewHeight = 240;
         case 2:
         {
             canUseViewController * couPon = [[canUseViewController alloc]init];
-//            couPonParentViewController *couPon = [[couPonParentViewController alloc] init];
             [self.navigationController pushViewController:couPon animated:YES];
         }
             break;
@@ -550,9 +511,9 @@ static CGFloat const headViewHeight = 240;
         case 5:
         {
             
-//            CustomMainViewController *custom = [[CustomMainViewController alloc] init];
-//            [self.navigationController pushViewController:custom animated:YES];
-
+            //            CustomMainViewController *custom = [[CustomMainViewController alloc] init];
+            //            [self.navigationController pushViewController:custom animated:YES];
+            
             saleCardViewController* sale = [[saleCardViewController alloc] init];
             [self.navigationController pushViewController:sale animated:YES];
             
@@ -560,10 +521,10 @@ static CGFloat const headViewHeight = 240;
             break;
         case 6:
         {
-//            joinDesignerViewController *joinD = [[joinDesignerViewController alloc] init];
-//            [self.navigationController pushViewController:joinD animated:YES];
+            //            joinDesignerViewController *joinD = [[joinDesignerViewController alloc] init];
+            //            [self.navigationController pushViewController:joinD animated:YES];
             
-             if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+            if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
                 NewPototUserInfoViewController *put = [[NewPototUserInfoViewController alloc] init];
                 [self.navigationController pushViewController:put animated:YES];
             } else {
@@ -576,23 +537,8 @@ static CGFloat const headViewHeight = 240;
             
         case 7:
         {
-            QYSource *source = [[QYSource alloc] init];
-            source.title =  @"17012348908";
-            source.urlString = @"17012348908";
-            QYSessionViewController *vc = [[QYSDK sharedSDK] sessionViewController];
-            vc.sessionTitle = @"私人顾问";
-            vc.source = source;
-            [MobClick endEvent:@"customer_service" label:[SelfPersonInfo getInstance].cnPersonUserName];
-            if (iPadDevice) {
-                UINavigationController* navi = [[UINavigationController alloc]initWithRootViewController:vc];
-                navi.modalPresentationStyle = UIModalPresentationFormSheet;
-                [self presentViewController:navi animated:YES completion:nil];
-            }
-            else{
-                vc.hidesBottomBarWhenPushed = YES;
-                [self.navigationController pushViewController:vc animated:YES];
-            }
-//            [self alertViewShowOfTime:@"客服不在线哦,请拨打电话:4009901213" time:1];
+            XingTiDataViewController*xvc = [[XingTiDataViewController alloc]init];
+            [self.navigationController pushViewController:xvc animated:YES];
             
             //
         }
@@ -623,13 +569,13 @@ static CGFloat const headViewHeight = 240;
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end

@@ -19,7 +19,6 @@
 
 @interface NextRegisViewController ()
 @property (nonatomic, retain)UITextField *userName;
-@property (nonatomic, retain) BaseDomain *regisClick;
 @property (nonatomic, retain) UITextField *regisWord;
 @property (nonatomic, retain) BaseTextField *firstPassWord;
 @property (nonatomic, retain) BaseTextField *CheckPassWord;
@@ -31,10 +30,8 @@
     [super viewDidLoad];
     [self.view setBackgroundColor:getUIColor(Color_background)];
     self.title = @"注册";
-    self.regisClick = [BaseDomain getInstance:YES];
     
     [self.navigationController.navigationBar setTitleTextAttributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:19],NSForegroundColorAttributeName:getUIColor(Color_mainColor)}];
-    // Do any additional setup after loading the view.
     [self createView];
 }
 
@@ -273,24 +270,24 @@
     
     [params setObject:self.userName.text forKey:@"account"];
     [params setObject:@"1" forKey:@"codeType"];
-    [_regisClick postData:@"/buser/applyCheckCode.do" PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        NSLog(@"%@", _regisClick.dataRoot);
-        
-        if ([self checkHttpResponseResultStatus:_regisClick]) {
-
-                sendButton.enabled = NO;
-                [sendButton startWithSecond:120];
-                [sendButton didChange:^NSString *(JKCountDownButton *countDownButton,int second) {
-                    NSString *title = [NSString stringWithFormat:@"重新发送(%d)",second];
-                    return title;
-                }];
-                [sendButton didFinished:^NSString *(JKCountDownButton *countDownButton, int second) {
-                    countDownButton.enabled = YES;
-                    return @"重新获取";
-                }];
-
-        }
-    }];
+//    [_regisClick postData:@"/buser/applyCheckCode.do" PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+//        NSLog(@"%@", _regisClick.dataRoot);
+//        
+//        if ([self checkHttpResponseResultStatus:_regisClick]) {
+//
+//                sendButton.enabled = NO;
+//                [sendButton startWithSecond:120];
+//                [sendButton didChange:^NSString *(JKCountDownButton *countDownButton,int second) {
+//                    NSString *title = [NSString stringWithFormat:@"重新发送(%d)",second];
+//                    return title;
+//                }];
+//                [sendButton didFinished:^NSString *(JKCountDownButton *countDownButton, int second) {
+//                    countDownButton.enabled = YES;
+//                    return @"重新获取";
+//                }];
+//
+//        }
+//    }];
     
     
 }

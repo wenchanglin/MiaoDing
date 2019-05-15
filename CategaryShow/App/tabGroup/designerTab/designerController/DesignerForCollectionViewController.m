@@ -30,7 +30,7 @@
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     self.rdv_tabBarController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
-    [self settabTitle:@"腔调"];
+    [self settabTitle:@"好物"];//腔调
 }
 
 
@@ -162,10 +162,10 @@
     if (sender.tag - 1000 != [modelArray count] - 1) {
         designerModel *model = modelArray[sender.tag - 1000];
         DesignerDetailIntroduce *introduce = [[DesignerDetailIntroduce alloc] init];
-        introduce.desginerId = [NSString stringWithFormat:@"%zd",model.des_uid];
-        introduce.designerImage = model.avatar;
-        introduce.designerName = model.uname;
-        introduce.remark = model.recommend_goods_ids;
+//        introduce.desginerId = [NSString stringWithFormat:@"%zd",model.des_uid];
+//        introduce.designerImage = model.avatar;
+//        introduce.designerName = model.uname;
+//        introduce.remark = model.recommend_goods_ids;
         [self.navigationController pushViewController:introduce animated:YES];
     }
     

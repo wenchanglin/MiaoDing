@@ -26,7 +26,7 @@
     NSMutableArray *dataArr;
 }
 
--(instancetype)initWithContentFrame:(CGRect)frame andimgUrlStr:(NSString *)imgStr andIntroStr:(NSString *)strIntro andBtnBlock:(BtnBlock)block
+-(instancetype) initWithContentFrame:(CGRect)frame andimgUrlStr:(NSString *)imgStr andIntroStr:(NSString *)strIntro andBtnBlock:(BtnBlock)block
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -35,6 +35,7 @@
         self.btnBlock = block;
         self.btn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
         [self.btn sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,imgStr]] forState:UIControlStateNormal];
+        self.btn.contentMode=UIViewContentModeScaleAspectFill;
         [self.btn addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.btn];
         
@@ -47,7 +48,7 @@
         
         NSString *stringInto;
         NSString *stringFirst;
-        if (![strIntro isEqualToString:@" "] && ![strIntro isEqualToString:@""] ) {
+        if (![strIntro isEqualToString:@" "] && ![strIntro isEqualToString:@""]&&strIntro !=nil&&![strIntro isKindOfClass:[NSNull class]] ) {
             stringInto =[strIntro substringFromIndex:1];
             stringFirst = [strIntro substringToIndex:1];
             NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:stringInto];
@@ -148,6 +149,7 @@
         self.btn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
         self.btn.layer.contents = (id)[UIImage imageNamed:imgStr].CGImage;
         [self.btn addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];
+        self.btn.contentMode=UIViewContentModeScaleAspectFill;
         [self addSubview:self.btn];
         self.alpha = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
 

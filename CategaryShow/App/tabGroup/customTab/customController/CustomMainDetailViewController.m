@@ -42,12 +42,12 @@
     
     //1、创建分享参数（必要）
     NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-    NSArray* imageArray = @[[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]]];
+    NSArray* imageArray = @[[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo shareInstance].userModel.avatar]]];
     [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
     [shareParams SSDKSetupShareParamsByText:@"想知道我和那个明星的身材最相近么？戳我进来看看"
                                      images:imageArray
                                         url:[NSURL URLWithString:[NSString stringWithFormat:@"%@?id=%@&ios=true",shareUrl,_webId]]
-                                      title:[NSString stringWithFormat:@"不可想象%@竟然..",[SelfPersonInfo getInstance].personNickName]
+                                      title:[NSString stringWithFormat:@"不可想象%@竟然..",[SelfPersonInfo shareInstance].userModel.username]
                                        type:SSDKContentTypeWebPage];
     
     [ShareCustom shareWithContent:shareParams];    

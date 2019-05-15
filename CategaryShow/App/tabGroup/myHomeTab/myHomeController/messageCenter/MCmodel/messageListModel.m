@@ -9,5 +9,9 @@
 #import "messageListModel.h"
 
 @implementation messageListModel
-
++(NSDictionary *)mj_replacedKeyFromPropertyName
+{
+    return @{@"ID":@"id"};
+}
+Description
 @end

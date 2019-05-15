@@ -7,7 +7,7 @@
 //
 
 #import "addressAddTableViewCell.h"
-
+#import "UILabel+YBAttributeTextTapAction.h"
 @implementation addressAddTableViewCell
 {
     UILabel *userName;
@@ -120,15 +120,19 @@
     
     
     UILabel *update = [UILabel new];
+    [update setText:@"编辑"];
+    [update setFont:[UIFont systemFontOfSize:12]];
+    [update setTextColor:getUIColor(Color_saveColor)];
+    [update yb_addAttributeTapActionWithStrings:@[@"编辑"] tapClicked:^(NSString *string, NSRange range, NSInteger index) {
+        [self updateAction];
+    }];
     [contentView addSubview:update];
     [update mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(contentView.mas_right).with.offset(-12);
         make.top.equalTo(lineView.mas_bottom).with.offset(12);
         make.height.equalTo(@24);
     }];
-    [update setText:@"编辑"];
-    [update setFont:[UIFont systemFontOfSize:12]];
-    [update setTextColor:getUIColor(Color_saveColor)];
+   
     
     
     updateBtn = [UIButton new];
@@ -147,10 +151,10 @@
 -(void)setModel:(AddressModel *)model
 {
     _model = model;
-    userName.text = model.userName;
-    userAddress.text = model.userAddress;
-    userPhone.text = model.userPhone;
-    if ([model.addressDefault isEqualToString:@"1"]) {
+    userName.text = model.accept_name;
+    userAddress.text = model.address;
+    userPhone.text = model.phone;
+    if (model.is_default==1) {
         [chooseBtn setImage:[UIImage imageNamed:@"addressChoose"] forState:UIControlStateNormal];
         [chooseTitle setText:@"默认地址"];
     } else {

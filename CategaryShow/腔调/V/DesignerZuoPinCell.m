@@ -71,7 +71,8 @@
     [_shouChangBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(_zhuanFaBtn.mas_centerY);
         make.left.equalTo(_zhuanFaBtn.mas_right).offset(25);
-        make.width.height.mas_equalTo(20);
+        make.width.mas_equalTo(20);
+        make.height.mas_equalTo(18);
     }];
     _loveBtn = [UIButton new];
     [_loveBtn setTitleColor:[UIColor colorWithHexString:@"#A6A6A6"] forState:UIControlStateNormal];
@@ -86,6 +87,7 @@
         make.centerY.equalTo(_zhuanFaBtn.mas_centerY);
         make.left.equalTo(_shouChangBtn.mas_right).offset(20);
         make.width.mas_equalTo(80);
+        make.height.mas_equalTo(16);
     }];
     //    _commentBtn = [UIButton new];
     //    _commentBtn.tag =44;

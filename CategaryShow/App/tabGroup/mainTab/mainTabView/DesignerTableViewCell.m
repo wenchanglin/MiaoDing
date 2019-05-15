@@ -28,6 +28,23 @@
 {
     UIView *contentView = self.contentView;
     [self setBackgroundColor:[UIColor whiteColor]];
+    UILabel*label1 = [[UILabel alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-40, 31, 80, 20)];
+    label1.text =@"热销商品";
+    NSMutableParagraphStyle *paraStyle = [[NSMutableParagraphStyle alloc] init];
+
+    paraStyle.hyphenationFactor = 1.0;
+    paraStyle.firstLineHeadIndent = 0.0;
+    paraStyle.paragraphSpacingBefore = 0.0;
+    paraStyle.headIndent = 0;
+    paraStyle.tailIndent = 0;
+   UIFont*font= [UIFont fontWithName:@"PingFangTC-Regular" size:14];
+    //设置字间距 NSKernAttributeName:@1.5f
+    NSDictionary *dic = @{NSFontAttributeName:font, NSParagraphStyleAttributeName:paraStyle, NSKernAttributeName:@1.6f};
+    NSAttributedString *attributeStr = [[NSAttributedString alloc] initWithString:label1.text attributes:dic];
+    label1.attributedText = attributeStr;
+    label1.textAlignment=NSTextAlignmentCenter;
+    label1.textColor =[UIColor colorWithHexString:@"#202020"];
+    [contentView addSubview:label1];
     
     UICollectionViewFlowLayout *flowLayout=[[UICollectionViewFlowLayout alloc] init];
     [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
@@ -45,18 +62,13 @@
     .centerXEqualToView(contentView)
     .centerYEqualToView(contentView)
     .widthIs(SCREEN_WIDTH)
-    .topSpaceToView(contentView,0)
+    .topSpaceToView(label1,10)
     .bottomEqualToView(contentView);
-
-    
-    
     //注册cell和ReusableView（相当于头部）
-    
-    //    noThreeCollection.pagingEnabled = YES ;
     
     [noThreeCollection registerClass:[mainClothesSaleCollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
     [noThreeCollection registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"ReusableView"];
-    [noThreeCollection setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
+    [noThreeCollection setBackgroundColor:[UIColor whiteColor]];
 }
 
 
@@ -75,13 +87,20 @@
     static NSString *identify = @"cell";
     IndexTypeModel *deModel = modelArray[indexPath.item];
     mainClothesSaleCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
-    //    [cell.imageShow setImage:[UIImage imageNamed:_model.imageArray[indexPath.item]]];
-//    [cell.imageShow sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, _model.imageArray[indexPath.item]]]];
-    [cell.imageDesigner sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, deModel.img]] placeholderImage:[UIImage imageNamed:@"logoImage"]];;
-//    [cell.nameLabel setText:deModel.name];
+//    cell.backgroundColor=[UIColor blueColor];
+    [cell.imageDesigner sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, deModel.img]] placeholderImage:[UIImage imageNamed:@"loading"]];;
+    if (iPadDevice) {
+        NSString*height = ((IndexTypeModel *)modelArray[0]).img_info;
+        [cell.imageDesigner mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.mas_equalTo(6);
+            make.left.mas_equalTo(10);
+            make.right.mas_equalTo(-10);
+            make.height.mas_equalTo((SCREEN_WIDTH-20)/2.5/[height floatValue]-61);
+        }];
+    }
    
-    
-    cell.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
+    [cell.nameLabel setText:deModel.goods_name];
+    cell.priceLabel.text = [NSString stringWithFormat:@"¥%@",deModel.sell_price];
     [cell sizeToFit];
     
     
@@ -94,7 +113,12 @@
 {
     //边距占5*4=20 ，2个
     //图片为正方形，边长：(fDeviceWidth-20)/2-5-5 所以总高(fDeviceWidth-20)/2-5-5 +20+30+5+5 label高20 btn高30 边
-    return CGSizeMake(SCREEN_WIDTH/2-6, (SCREEN_WIDTH-36)/2/169.5*105+24);//CGSizeMake(169.5+16, 105+28);
+    IndexTypeModel *deModel = modelArray[0];
+    if(iPadDevice)
+    {
+        return CGSizeMake((SCREEN_WIDTH-20)/2.5, (SCREEN_WIDTH-20)/2.5/[deModel.img_info floatValue]);
+    }
+    return CGSizeMake(SCREEN_WIDTH/2.5, SCREEN_WIDTH/2);//CGSizeMake(169.5+16, 105+28);
 }
 //定义每个UICollectionView 的间距
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section

@@ -13,9 +13,8 @@
 @property(nonatomic,strong)NSString *factory_img;
 @property(nonatomic,strong)NSString *factory_name;
 @property(nonatomic)NSInteger ID;
-@property(nonatomic)NSInteger cid;
+@property(nonatomic)NSInteger rid;
 @property(nonatomic)NSInteger lovenum;
-@property(nonatomic)NSInteger status;
+@property(nonatomic,strong)NSString* info;
 @property(nonatomic)NSInteger type;
-@property(nonatomic)NSInteger uid;
 @end

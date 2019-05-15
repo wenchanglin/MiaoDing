@@ -18,7 +18,6 @@
 
 @implementation DiyFirstViewController
 {
-    BaseDomain *getData;
     NSMutableArray *FLArray;
     NSMutableArray *detailArray;
     NSTimer *timer;
@@ -131,7 +130,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     ifShow = NO;
-    getData = [BaseDomain getInstance:NO];
     NSUserDefaults *userD = [NSUserDefaults standardUserDefaults];
     NSArray *array = [userD arrayForKey:@"FL"];
     FLArray = [NSMutableArray arrayWithArray:array];
@@ -139,37 +137,37 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapClickAction:) name:@"tapClick" object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(searchAction:) name:@"searchDZ" object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(searchAction:) name:@"searchDZ" object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(searchTK:) name:@"searchTK" object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(searchTK:) name:@"searchTK" object:nil];
     
     // Do n additional setup after loading the view.
     [self getDatas];
 }
 
--(void)searchTK:(NSNotification *)noti
-{
-    [self.rdv_tabBarController setSelectedIndex:2];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"searchTKRun" object:nil userInfo:noti.userInfo];
-}
-
--(void)searchAction:(NSNotification *)noti
-{
-    NSDictionary *dic = noti.userInfo;
-    
-    
-    for (NSDictionary *dict in detailArray) {
-        if ([[dict stringForKey:@"id"] isEqualToString:[dic stringForKey:@"goods_id"]]) {
-            DiyClothesDetailViewController *toButy = [[DiyClothesDetailViewController alloc] init];
-            [self hiddenview];
-            toButy.goodDic = [NSMutableDictionary dictionaryWithDictionary:dict];
-            [self.navigationController pushViewController:toButy animated:YES];
-        }
-    }
-    
-    
-    
-}
+//-(void)searchTK:(NSNotification *)noti
+//{
+//    [self.rdv_tabBarController setSelectedIndex:3];
+////    [[NSNotificationCenter defaultCenter] postNotificationName:@"searchTKRun" object:nil userInfo:noti.userInfo];
+//}
+//
+//-(void)searchAction:(NSNotification *)noti
+//{
+//    NSDictionary *dic = noti.userInfo;
+//    
+//    
+//    for (NSDictionary *dict in detailArray) {
+//        if ([[dict stringForKey:@"id"] isEqualToString:[dic stringForKey:@"goods_id"]]) {
+//            DiyClothesDetailViewController *toButy = [[DiyClothesDetailViewController alloc] init];
+//            [self hiddenview];
+//            toButy.goodDic = [NSMutableDictionary dictionaryWithDictionary:dict];
+//            [self.navigationController pushViewController:toButy animated:YES];
+//        }
+//    }
+//    
+//    
+//    
+//}
 
 
 -(void)tapClickAction:(NSNotification *)noti
@@ -187,15 +185,15 @@
     [params setObject:[FLArray[FLFlog] stringForKey:@"id"] forKey:@"classify_id"];
     [params setObject:@"1" forKey:@"page"];
     
-    [getData getData:URL_GetYouPingList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getData]) {
-            
-            detailArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
-            [self createPage];
-            [self createListFL];
-            
-        }
-    }];
+//    [getData getData:URL_GetYouPingList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+//        if ([self checkHttpResponseResultStatus:getData]) {
+//
+//            detailArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
+//            [self createPage];
+//            [self createListFL];
+//
+//        }
+//    }];
     
 }
 
@@ -239,15 +237,15 @@
     [params setObject:[FLArray[sender.tag - 80] stringForKey:@"id"] forKey:@"classify_id"];
     [params setObject:@"1" forKey:@"page"];
     
-    [getData getData:URL_GetYouPingList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getData]) {
-            
-            detailArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
-            [self pageReload];
-            
-            
-        }
-    }];
+//    [getData getData:URL_GetYouPingList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+//        if ([self checkHttpResponseResultStatus:getData]) {
+//
+//            detailArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
+//            [self pageReload];
+//
+//
+//        }
+//    }];
 }
 
 
@@ -261,15 +259,15 @@
     [params setObject:[FLArray[sender.tag - 50] stringForKey:@"id"] forKey:@"classify_id"];
     [params setObject:@"1" forKey:@"page"];
     
-    [getData getData:URL_GetYouPingList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getData]) {
-            
-            detailArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
-            [self pageReload];
-            
-            
-        }
-    }];
+//    [getData getData:URL_GetYouPingList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+//        if ([self checkHttpResponseResultStatus:getData]) {
+//            
+//            detailArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]];
+//            [self pageReload];
+//            
+//            
+//        }
+//    }];
 }
 
 

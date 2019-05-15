@@ -113,21 +113,14 @@
 
 }
 
--(void)setModel:(ClothesFroPay *)model
+-(void)setModel:(carListModel *)model
 {
     _model = model;
-    [clothesImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,model.clothesImage]]];
-    [clothesName setText:model.clothesName];
-    if([model.clotheType integerValue]==1)
-    {
-        clothesContent.text = @"定制款";
-    }
-    else if ([model.clotheType integerValue]==2)
-    {
-        clothesContent.text = model.sizeContent;
-    }
-    [clothesPrice setText:[NSString stringWithFormat:@"￥%@",model.clothesPrice]];
-    [clotesCount setText:[NSString stringWithFormat:@"%@",model.clothesCount]];
+    [clothesImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,model.img_info]]];
+    [clothesName setText:model.goods_name];
+    clothesContent.text = @"定制款";
+    [clothesPrice setText:[NSString stringWithFormat:@"￥%@",model.sell_price]];
+    [clotesCount setText:[NSString stringWithFormat:@"%@",model.goods_num]];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

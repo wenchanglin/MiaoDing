@@ -75,7 +75,6 @@ static CGFloat const headViewHeight = 320;
     NSMutableDictionary * parma = [NSMutableDictionary dictionary];
     [parma setObject:_desginerId forKey:@"uid"];
     [designerDomain getData:URL_GetDesignerDeetail PostParams:parma finish:^(BaseDomain *domain, Boolean success) {
-        WCLLog(@"%@",[domain.dataRoot objectForKey:@"data"]);
         [_storyArr addObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"story"]];
         [_bgViewArr addObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"bg_img"]];
         [_avatarArr addObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"avatar"]];
@@ -188,7 +187,7 @@ static CGFloat const headViewHeight = 320;
         [_headImageView setContentMode:UIViewContentModeScaleAspectFill];
         [_headImageView.layer setMasksToBounds:YES];
         
-        UIImageView * bgview = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 203)];
+        UIImageView * bgview = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH,iPadDevice?72:203)];
         bgview.userInteractionEnabled = YES;
         [bgview sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL,_bgViewArr[0]]]];
         [bgview setContentMode:UIViewContentModeScaleAspectFill];
@@ -241,7 +240,7 @@ static CGFloat const headViewHeight = 320;
         .bottomEqualToView(_headImageView)
         .heightIs(10);
         
-        UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(12,IsiPhoneX?HitoSafeAreaHeight:26, 33, 33)];
+        UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(12,[ShiPeiIphoneXSRMax isIPhoneX]?HitoSafeAreaHeight:26, 33, 33)];
         
         [buttonBack.layer setCornerRadius:33 / 2];
         [buttonBack.layer setMasksToBounds:YES];
@@ -253,7 +252,7 @@ static CGFloat const headViewHeight = 320;
         
         
         
-        UIButton *rightShare = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 45, IsiPhoneX?HitoSafeAreaHeight:26, 33, 33)];
+        UIButton *rightShare = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 45, [ShiPeiIphoneXSRMax isIPhoneX]?HitoSafeAreaHeight:26, 33, 33)];
         
         [rightShare.layer setCornerRadius:33 / 2];
         [rightShare.layer setMasksToBounds:YES];

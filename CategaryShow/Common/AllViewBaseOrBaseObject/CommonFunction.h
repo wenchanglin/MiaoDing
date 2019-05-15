@@ -10,7 +10,6 @@
 #import <UIKit/UIKit.h>
 
 @interface CommonFunction : NSObject
-
  /*!
  @brief 距离友好显示
  @param intDistance 距离值

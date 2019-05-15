@@ -67,9 +67,9 @@
 {
     _model = model;
     
-    [headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.avatar]]];
-    [designerName setText:model.uname];
-    [designerIntro setText:model.introduce];
+//    [headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.avatar]]];
+//    [designerName setText:model.uname];
+//    [designerIntro setText:model.introduce];
 }
 
 @end

@@ -17,6 +17,7 @@
         _positionImage = [UIImageView new];
         [self.contentView addSubview:_positionImage];
         [_positionImage mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerY.equalTo(self.contentView.mas_centerY);
             make.centerX.equalTo(self.contentView.mas_centerX);
             make.height.width.mas_equalTo(60);
         }];
@@ -26,11 +27,14 @@
         
         _chooseImage = [UIImageView new];
         [self.contentView addSubview:_chooseImage];
-        _chooseImage.sd_layout
-        .centerXEqualToView(self.contentView)
-        .topSpaceToView(self.contentView, 0)
-        .widthIs(60)
-        .heightIs(60);
+        [_chooseImage mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(_positionImage);
+        }];
+//        _chooseImage.sd_layout
+//        .centerXEqualToView(self.contentView)
+//        .topSpaceToView(self.contentView, 0)
+//        .widthIs(60)
+//        .heightIs(60);
         [_chooseImage.layer setCornerRadius:30];
         [_chooseImage.layer setMasksToBounds:YES];
         _nameLabel = [[UILabel alloc] init];

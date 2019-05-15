@@ -17,6 +17,7 @@
 #import "lowCollectionViewCell.h"
 #import "rightCollectionViewCell.h"
 #import "DiyWordInClothesViewController.h"
+#import "newDiyAllDataModel.h"
 @interface ChooseClothesStyleViewController ()<UICollectionViewDataSource, UICollectionViewDelegate>
 
 
@@ -34,8 +35,8 @@
     UIImageView *imageMengJing;
     NSMutableArray *pinImageArray;
     UIImageView *frontImage;
-    
-    
+    NSMutableDictionary*AllDict;
+    NSMutableDictionary*contentDict;
     UICollectionView *lowCollection;
     NSString *ClickWhat;
     NSMutableArray *picArray;
@@ -58,8 +59,6 @@
     NSInteger touchItem;
     NSInteger touchItemResult;
     BaseDomain *getData;
-    NSMutableArray *LowImageArray;
-    NSMutableArray *LowImageDetailArray;
     NSMutableArray *rightNomalArray;
     NSMutableArray *clothesPicIdArray;
     UIImageView *flameAnimation;
@@ -71,7 +70,7 @@
     UIButton *buttonXiuXi;
     NSMutableArray *arrayForXiuxi;
     NSMutableDictionary *xiuxiDic;
-    
+    NSMutableArray*LowImageArray;
     NSMutableArray *CantChoose;
     UIButton *resetButton;
     BOOL flogXiuxi;
@@ -80,7 +79,7 @@
     UIImageView *Yingdao;
     NSInteger flogTouch;
     NSMutableArray *contentIdArray;
-    NSMutableArray *contentArray;
+    NSMutableArray *contentArr;
     NSMutableArray *goodArray;
     NSMutableArray *flogDetailTouch;
 }
@@ -100,44 +99,46 @@
     getData = [BaseDomain getInstance:NO];
     contentIdArray = [NSMutableArray array];
     goodArray = [NSMutableArray array];
-    contentArray = [NSMutableArray array];
+    contentArr = [NSMutableArray array];
     NoOrYesArray = [NSMutableArray array];
     LowImageArray = [NSMutableArray array];
     clothesPicIdArray = [NSMutableArray array];
-    LowImageDetailArray = [NSMutableArray array];
     rightNomalArray = [NSMutableArray array];
+    contentDict = [NSMutableDictionary dictionary];
     picArray = [NSMutableArray array];
     arrayForXiuxi = [NSMutableArray array];
     pinImageArray = [NSMutableArray array];
     rightPicArray = [NSMutableArray array];
     CantChoose = [NSMutableArray array];
     flogDetailTouch= [NSMutableArray array];
+    AllDict = [NSMutableDictionary dictionary];
     closeType = NO;
-    buttonRightBarButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 30)];
-    [buttonRightBarButton setTitle:@"完成" forState:UIControlStateNormal];
-    [buttonRightBarButton.titleLabel setFont:[UIFont systemFontOfSize:14]];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRightBarButton];
-    [buttonRightBarButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 15, 0, -15)];
-    [buttonRightBarButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    buttonRightBarButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 65,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-184-154:SCREEN_HEIGHT -130-175, 60, 60)];
+    [buttonRightBarButton setImage:[UIImage imageNamed:@"下一步"] forState:UIControlStateNormal];
+    //    [buttonRightBarButton.titleLabel setFont:[UIFont systemFontOfSize:14]];
+    [self.view addSubview:buttonRightBarButton];
+    //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRightBarButton];
+    //    [buttonRightBarButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 15, 0, -15)];
+    [buttonRightBarButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [buttonRightBarButton addTarget:self action:@selector(nextStepClick) forControlEvents:UIControlEventTouchUpInside];
     [buttonRightBarButton setHidden:YES];
     
     
-    resetButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 60,IsiPhoneX?SCREEN_HEIGHT-184-104:SCREEN_HEIGHT -80-175, 40, 40)];
-    [resetButton setImage:[UIImage imageNamed:@"resetButton"] forState:UIControlStateNormal];;
+    resetButton = [[UIButton alloc] initWithFrame:CGRectMake(0,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-184-154:SCREEN_HEIGHT -130-175,60,60)];
+    [resetButton setImage:[UIImage imageNamed:@"resetButton"] forState:UIControlStateNormal];
     [resetButton setHidden:YES];
     [self.view addSubview:resetButton];
     [resetButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [resetButton addTarget:self action:@selector(resetImage) forControlEvents:UIControlEventTouchUpInside];
-   
     
-//    [self createCloteesPic];
+    
+    //    [self createCloteesPic];
     NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
     if ( [[userd stringForKey:@"firstEnterDetail"] isEqualToString:@""]) {
         flogTouch = 1;
         [self getYingDao];
     }
-
+    
     [self getDatas];
 }
 -(UIStatusBarStyle)preferredStatusBarStyle
@@ -186,14 +187,13 @@
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"4" forKey:@"id"];
-    [getYingDao getData:URL_GetYingDao PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getYingDao]) {
-            
-            YDImgArray = [NSMutableArray arrayWithArray:[[getYingDao.dataRoot objectForKey:@"data"] arrayForKey:@"img_urls"]];
+    [[wclNetTool sharedTools]request:GET urlString:[MoreUrlInterface URL_GetYinDaoForID_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            YDImgArray = [NSMutableArray arrayWithArray:[[responseObject objectForKey:@"data"] arrayForKey:@"img_urls"]];
             [self createYingDao];
-            
         }
     }];
+    
 }
 
 -(void)createYingDao
@@ -304,10 +304,10 @@
             rightPicArray = [NSMutableArray arrayWithArray:array];
             
             if (60 * [rightPicArray count] > SCREEN_WIDTH) {
-                [rightCollection setFrame:CGRectMake(10, IsiPhoneX?SCREEN_HEIGHT-64-84-80: SCREEN_HEIGHT - 120 -85, SCREEN_WIDTH, 65)];
+                [rightCollection setFrame:CGRectMake(10, [ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-84-80: SCREEN_HEIGHT - 120 -85, SCREEN_WIDTH, 65)];
             } else {
                 
-                [rightCollection setFrame:CGRectMake(SCREEN_WIDTH / 2 - (60 * [rightPicArray count] / 2), IsiPhoneX?SCREEN_HEIGHT-64-84-80: SCREEN_HEIGHT - 120-85, 60 * [rightPicArray count], 65)];
+                [rightCollection setFrame:CGRectMake(SCREEN_WIDTH / 2 - (60 * [rightPicArray count] / 2), [ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-84-80: SCREEN_HEIGHT - 120-85, 60 * [rightPicArray count], 65)];
             }
             
             [rightCollection reloadData];
@@ -317,7 +317,7 @@
         flogTouch ++;
     } else {
         
-        [Yingdao removeFromSuperview]; 
+        [Yingdao removeFromSuperview];
         NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
         [userd setObject:@"yes" forKey:@"firstEnterDetail"];
     }
@@ -330,114 +330,100 @@
 
 -(void)getDatas
 {
-    
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:[_goodDic stringForKey:@"id"] forKey:@"goods_id"];
-    [params setObject:@"3" forKey:@"phone_type"];
-    [params setObject:_price_Type forKey:@"price_type"];
-    
-    
-    [getData getData:[NSString stringWithFormat:@"%@%@",URL_HEADURL, URL_GetDingZhiPic] appendHostUrl:NO PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getData]) {
-            LowImageArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"spec_list"]];
-            for (NSDictionary *dic in LowImageArray) {
-                [contentIdArray addObject: [[[dic arrayForKey:@"list"] firstObject] stringForKey:@"id"]];
-                [contentArray addObject:[NSString stringWithFormat:@"%@:%@", [dic stringForKey:@"spec_name"], [[[dic arrayForKey:@"list"] firstObject] stringForKey:@"name"]]];
-                [goodArray addObject:[[dic arrayForKey:@"list"] firstObject]];
-            }
-
-            
-            for (int i = 0; i < LowImageArray.count  ; i ++) {
-                NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-                [dic setObject:@"0" forKey:@"flog"];
-                [flogDetailTouch addObject:dic];
-            }
-            
-            
-            
-            rightNomalArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"spec_ templets_recommend"]];
-            picArray = [NSMutableArray arrayWithArray:[LowImageArray valueForKey:@"img"]];
-            clothesPicIdArray = [NSMutableArray arrayWithArray:[LowImageArray valueForKey:@"img"]];
-            
-            
-            for (int i = 0 ; i < [LowImageArray count] ; i ++) {
-                [NoOrYesArray addObject:@"no"];
-                [CantChoose addObject:@""];
-            }
-            
-            [self createCloteesPic];
-            //[self createGif];
-            [self createLowCollection];
-            
-            
+    LowImageArray = _diyArray;
+    NSMutableArray*imageArr=[NSMutableArray array];
+    for (secondDataModel *twoModel in LowImageArray) {
+        rightPicArray =twoModel.son.mutableCopy;
+        [contentIdArray addObject: @(twoModel.type_id)];
+//        [goodArray addObject:twoModel.son];
+        [imageArr addObject:twoModel.android_min];
+        for (threeDataModel*threeModel in twoModel.son) {
+            [contentArr addObject:[NSString stringWithFormat:@"%@:%@",twoModel.type_name ,threeModel.part_name]];
         }
-    }];
+    }
     
-//    [getData getData:URL_GetDingZhiPic PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-//        
-//    }];
+    
+    for (int i = 0; i < LowImageArray.count ; i ++) {
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        [dic setObject:@"0" forKey:@"flog"];
+        [flogDetailTouch addObject:dic];
+    }
+    
+    
+    picArray = imageArr;
+    clothesPicIdArray = imageArr;
+    
+    for (int i = 0 ; i < [LowImageArray count] ; i ++) {
+        [NoOrYesArray addObject:@"no"];
+        [CantChoose addObject:@""];
+    }
+    
+    [self createCloteesPic];
+    [self createLowCollection];
+    
+    
     
 }
 
 
 -(void)resetImage
 {
-    NoOrYesArray = [NSMutableArray array];
-    LowImageArray = [NSMutableArray array];
-    clothesPicIdArray = [NSMutableArray array];
-    LowImageDetailArray = [NSMutableArray array];
-    rightNomalArray = [NSMutableArray array];
-    picArray = [NSMutableArray array];
-    arrayForXiuxi = [NSMutableArray array];
-    pinImageArray = [NSMutableArray array];
-    rightPicArray = [NSMutableArray array];
-    CantChoose = [NSMutableArray array];
+    [self settabTitle:@"私人定制"];
+    [NoOrYesArray removeAllObjects];
+    [clothesPicIdArray removeAllObjects];
+    [rightNomalArray removeAllObjects];
+    [flogDetailTouch removeAllObjects];
+    [contentArr removeAllObjects];
+    [picArray removeAllObjects];
+    [arrayForXiuxi removeAllObjects];
+    [pinImageArray removeAllObjects];
+    [rightPicArray removeAllObjects];
+    [CantChoose removeAllObjects];
     closeType = NO;
-//    contentArray = [NSMutableArray array];
-//    contentIdArray = [NSMutableArray array];
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:[_goodDic stringForKey:@"id"] forKey:@"goods_id"];
-    [params setObject:@"3" forKey:@"phone_type"];
-    [params setObject:_price_Type forKey:@"price_type"];
-    [getData getData:[NSString stringWithFormat:@"%@%@",URL_HEADURL, URL_GetDingZhiPic] appendHostUrl:NO PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getData]) {
-            LowImageArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"spec_list"]];
-            for (NSDictionary *dic in LowImageArray) {
-                [contentIdArray addObject: [[[dic arrayForKey:@"list"] firstObject] stringForKey:@"id"]];
-                [contentArray addObject:[NSString stringWithFormat:@"%@:%@", [dic stringForKey:@"spec_name"], [[[dic arrayForKey:@"list"] firstObject] stringForKey:@"name"]]];
-                
-            }
-            rightNomalArray = [NSMutableArray arrayWithArray:[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"spec_ templets_recommend"]];
-            picArray = [NSMutableArray arrayWithArray:[LowImageArray valueForKey:@"img"]];
-            clothesPicIdArray = [NSMutableArray arrayWithArray:[LowImageArray valueForKey:@"img"]];
-            
-            
-            for (int i = 0 ; i < [LowImageArray count] ; i ++) {
-                [NoOrYesArray addObject:@"no"];
-                [CantChoose addObject:@""];
-            }
-            [buttonFront setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-            [buttonIn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-            for (int i = 0; i < [LowImageArray count]; i ++) {
-                UIImageView *image = [self.view viewWithTag:100 + i];
-                if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"2"]) {
-                    [image setHidden:YES];
-                }else if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"3"]) {
-                    [image setHidden:YES];
-                } else {
-                    [image setHidden:NO];
-                }
-            }
-            [resetButton setHidden:YES];
-            [buttonRightBarButton setHidden:YES];
-            [lowCollection reloadData];
-            [rightCollection reloadData];
-            
+    NSMutableArray*imageArr=[NSMutableArray array];
+    for (secondDataModel *twoModel in LowImageArray) {
+        rightPicArray =twoModel.son.mutableCopy;
+        [contentIdArray addObject: @(twoModel.type_id)];
+//        [goodArray addObject:twoModel.son];
+        [imageArr addObject:twoModel.android_min];
+        for (threeDataModel*threeModel in twoModel.son) {
+//            [contentArr addObject:[NSString stringWithFormat:@"%@:%@",twoModel.type_name ,threeModel.part_name]];
         }
-    }];
-        
+    }
     
+    
+    for (int i = 0; i < LowImageArray.count ; i ++) {
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        [dic setObject:@"0" forKey:@"flog"];
+        [flogDetailTouch addObject:dic];
+    }
+    
+    
+    picArray = imageArr;
+    clothesPicIdArray = imageArr;
+    for (int i = 0 ; i < [LowImageArray count] ; i ++) {
+        [NoOrYesArray addObject:@"no"];
+        [CantChoose addObject:@""];
+    }
+    [buttonFront setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    [buttonIn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    for (int i = 0; i < [LowImageArray count]; i ++) {
+        UIImageView *image = [self.view viewWithTag:100 + i];
+        secondDataModel*smodle = LowImageArray[i];
+        if (smodle.img_mark==2) {
+            [image setHidden:YES];
+        }else if (smodle.img_mark==3) {
+            [image setHidden:YES];
+        } else {
+            [image setHidden:NO];
+        }
+    }
+    [resetButton setHidden:YES];
+    [buttonRightBarButton setHidden:YES];
+    [lowCollection reloadData];
+    rightCollection.hidden=YES;
+//    [rightCollection reloadData];
 }
 
 
@@ -447,85 +433,57 @@
     [[SDWebImageManager sharedManager] cancelAll];
     //清除内存中的图片
     [[SDWebImageManager sharedManager].imageCache clearMemory];
-    NSMutableDictionary *goodParams = [NSMutableDictionary dictionary];
-    [goodParams setObject:[_goodDic stringForKey:@"id"] forKey:@"goods_id"];
-    [goodParams setObject:[_goodDic stringForKey:@"name"] forKey:@"goods_name"];
-    [goodParams setObject:[[goodArray firstObject] stringForKey:@"mianliao_img"] forKey:@"goods_thumb"];
-    [goodParams setObject:[_goodDic stringForKey:@"type"] forKey:@"type"];
-    [goodParams setObject:[_price stringForKey:@"price"] forKey:@"price"];
-//    [goodParams setObject:mianId forKey:@"mianliao_id"];
-//    [goodParams setObject:MianLiaoImg forKey:@"mian_img"];
-//    [goodParams setObject:banXingId forKey:@"banxing_id"];
-    [goodParams setObject:_price_Type forKey:@"price_id"];
-    NSString *idString = [contentIdArray componentsJoinedByString:@","];
-    NSString *contentString = [contentArray componentsJoinedByString:@";"];
-    
-    ;
-    
-//    NSString *string = [NSString stringWithFormat:@"面料:%@;版型:%@",  [banMain objectForKey:@"mianliao"],[banMain objectForKey:@"banxing"]];
-//    
-    [goodParams setObject:idString forKey:@"spec_ids"];
-    [goodParams setObject:[NSString stringWithFormat:@"%@", contentString] forKey:@"spec_content"];
+    NSMutableString*idString = [[NSMutableString alloc]init];
+    [AllDict enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, threeDataModel* obj, BOOL * _Nonnull stop) {
+        secondDataModel*model9=LowImageArray[[key integerValue]];
+        [idString appendString:[NSString stringWithFormat:@"%@,",@(obj.part_id)]];
+        [contentDict setObject:obj forKey:model9.type_name];
+    }];
+    [idString deleteCharactersInRange:NSMakeRange(idString.length-1, 1)];
+    [_paramsClothes setObject:idString forKey:@"must_display_part_ids"];
     ChooseClothesResultViewController *result = [[ChooseClothesResultViewController alloc] init];
-        result.paramsClothes = _paramsClothes;
-        result.goodArray = goodArray;
-        result.goodDic = _goodDic;
-        result.paramsDic = goodParams;
-        result.dataDic =_dataDic;
-        result.price = _price;
-        result.mianliaoprice = _mianliaoprice;
-        result.xiuZiDic = _xiuZiDic;
-        result.dateId = _dateId;
-        result.dingDate = _dingDate;
-        result.banxingid = [_banxing objectForKey:@"id"];
-        result.ifTK = NO;
-//        result.defaultImg = _defaultImg;
-        result.diyArray = _diyArray;
-        result.diyDetailArray = _diydetailArray;
+    result.paramsClothes = _paramsClothes;
+    result.goodArray = LowImageArray;
+    result.goodDic = contentDict;
+    result.price = _price;
+//    result.xiuZiDic = _xiuZiDic;
+//    result.dateId = _dateId;
+//    result.dingDate = _dingDate;
+//    result.banxingid = [_banxing objectForKey:@"id"];
+    result.ifTK = NO;
+    //        result.defaultImg = _defaultImg;
+    result.diyArray = _diyArray;
+//    result.diyDetailArray = _diydetailArray;
     [self.navigationController pushViewController:result animated:YES];
     
     //    [self.navigationController pushViewController:result animated:YES];
-//    DiyWordInClothesViewController *diyClothes = [[DiyWordInClothesViewController alloc] init];
-//    diyClothes.goodDic = _goodDic;
-//    diyClothes.goodArray = goodArray;
-//    diyClothes.price = _price;
-//    diyClothes.xiuZiDic = xiuxiDic;
-//    diyClothes.class_id = _class_id;
-//    diyClothes.paramsDic = goodParams;
-//    [self.navigationController pushViewController:diyClothes animated:YES];
+    //    DiyWordInClothesViewController *diyClothes = [[DiyWordInClothesViewController alloc] init];
+    //    diyClothes.goodDic = _goodDic;
+    //    diyClothes.goodArray = goodArray;
+    //    diyClothes.price = _price;
+    //    diyClothes.xiuZiDic = xiuxiDic;
+    //    diyClothes.class_id = _class_id;
+    //    diyClothes.paramsDic = goodParams;
+    //    [self.navigationController pushViewController:diyClothes animated:YES];
     
-//    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-//    if (xiuxiDic) {
-//         [dic setObject:xiuxiDic forKey:@"xiuzi"];
-//    } else {
-//         [dic setObject:[NSMutableDictionary dictionary] forKey:@"xiuzi"];
-//    }
-//   
-//    [dic setObject:clothesPicIdArray forKey:@"clothes"];
-//    [[NSNotificationCenter defaultCenter] postNotificationName:@"change" object:nil userInfo:dic];
-//    [self.navigationController popViewControllerAnimated:YES];
+    //    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    //    if (xiuxiDic) {
+    //         [dic setObject:xiuxiDic forKey:@"xiuzi"];
+    //    } else {
+    //         [dic setObject:[NSMutableDictionary dictionary] forKey:@"xiuzi"];
+    //    }
+    //
+    //    [dic setObject:clothesPicIdArray forKey:@"clothes"];
+    //    [[NSNotificationCenter defaultCenter] postNotificationName:@"change" object:nil userInfo:dic];
+    //    [self.navigationController popViewControllerAnimated:YES];
     
     
 }
 
 -(void)createCloteesPic
 {
-
-    if ([_class_id integerValue] != 15) {
-        buttonFront = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 - 50, 26+NavHeight, 40, 20)];
-        [buttonFront addTarget:self action:@selector(FrontClick) forControlEvents:UIControlEventTouchUpInside];
-        [buttonFront.titleLabel setFont:[UIFont systemFontOfSize:14]];
-        [buttonFront setTitle:@"正面" forState:UIControlStateNormal];
-        [self.view addSubview:buttonFront];
-        [buttonFront setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        
-        buttonBehind = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 + 10, 26+NavHeight, 40, 20)];
-        [buttonBehind.titleLabel setFont:[UIFont systemFontOfSize:14]];
-        [buttonBehind addTarget:self action:@selector(behindClick) forControlEvents:UIControlEventTouchUpInside];
-        [buttonBehind setTitle:@"反面" forState:UIControlStateNormal];
-        [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-        [self.view addSubview:buttonBehind];
-    } else {
+    
+     if ([_class_id integerValue] == 280||[_class_id integerValue]==302) {//280风衣,302大衣
         buttonFront = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 -80, 26+NavHeight, 40, 20)];
         [self.view addSubview:buttonFront];
         [buttonFront addTarget:self action:@selector(FrontClick) forControlEvents:UIControlEventTouchUpInside];
@@ -533,7 +491,7 @@
         [buttonFront setTitle:@"正面" forState:UIControlStateNormal];
         
         [buttonFront setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    
+        
         buttonBehind = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 - 20, 26+NavHeight, 40, 20)];
         [buttonBehind.titleLabel setFont:[UIFont systemFontOfSize:14]];
         [buttonBehind addTarget:self action:@selector(behindClick) forControlEvents:UIControlEventTouchUpInside];
@@ -549,56 +507,61 @@
         [self.view addSubview:buttonIn];
         
     }
+    else {
+    buttonFront = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 - 50, 26+NavHeight, 40, 20)];
+    [buttonFront addTarget:self action:@selector(FrontClick) forControlEvents:UIControlEventTouchUpInside];
+    [buttonFront.titleLabel setFont:[UIFont systemFontOfSize:14]];
+    [buttonFront setTitle:@"正面" forState:UIControlStateNormal];
+    [self.view addSubview:buttonFront];
+    [buttonFront setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     
-    
-    
-//    
-//    UIImageView *image = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 375, 410)];
-//
-//    [image setUserInteractionEnabled:YES];
-//    [image setContentMode:UIViewContentModeScaleAspectFill];
-//    [image.layer setMasksToBounds:YES];
-//    [image setImage:[UIImage imageNamed:@"renren"]];
-//    image.center = CGPointMake(self.view.centerX, self.view.centerY - 20);
-//
-//
-//    [self.view addSubview:image];
-    
-    for (int i = 0; i < [LowImageArray count]; i ++) {
-        UIImageView *image = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 300, 325)];
-        [image setTag:100 + i];
-        [image setUserInteractionEnabled:YES];
-        [image setContentMode:UIViewContentModeScaleAspectFill];
-        [image.layer setMasksToBounds:YES];
-        [image sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [[[LowImageArray[i] arrayForKey:@"list"] firstObject] stringForKey:@"img_c"]]]];
-        image.center = CGPointMake(self.view.centerX, IsiPhoneX?self.view.centerY-104:self.view.centerY - 20-84);
-        
-        
-        [self.view addSubview:image];
+    buttonBehind = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 + 10, 26+NavHeight, 40, 20)];
+    [buttonBehind.titleLabel setFont:[UIFont systemFontOfSize:14]];
+    [buttonBehind addTarget:self action:@selector(behindClick) forControlEvents:UIControlEventTouchUpInside];
+    [buttonBehind setTitle:@"反面" forState:UIControlStateNormal];
+    [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    [self.view addSubview:buttonBehind];
     }
     
-    
-    
-    
     for (int i = 0; i < [LowImageArray count]; i ++) {
-        UIImageView *image = [self.view viewWithTag:100 + i];
-        if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"2"]) {
-            [image setHidden:YES];
-        }else if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"3"]) {
-             [image setHidden:YES];
-        } else {
-            [image setHidden:NO];
+        @autoreleasepool {
+            UIImageView *image = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 300, 325)];
+            [image setTag:100 + i];
+            [image setUserInteractionEnabled:YES];
+            [image setContentMode:UIViewContentModeScaleAspectFill];
+            [image.layer setMasksToBounds:YES];
+            secondDataModel*model2 = LowImageArray[i];
+            threeDataModel*model3= [model2.son firstObject];
+            [image sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model3.android_max]]];
+            image.center = CGPointMake(self.view.centerX, [ShiPeiIphoneXSRMax isIPhoneX]?self.view.centerY-104:self.view.centerY - 20-84);
+            [self.view addSubview:image];
         }
     }
     
-   
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        for (int i = 0; i < [LowImageArray count]; i ++) {
+            @autoreleasepool {
+                UIImageView *image = [self.view viewWithTag:100 + i];
+                secondDataModel*model4 = LowImageArray[i];
+                if (model4.img_mark==2) {
+                    [image setHidden:YES];
+                }else if (model4.img_mark==3) {
+                    [image setHidden:YES];
+                } else {
+                    [image setHidden:NO];
+                }
+            }
+        }
+    });
+    
+    
     
     frontImage =[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
     [self.view addSubview:frontImage];
     [frontImage setImage:[UIImage imageNamed:@"BGALPHA"]];
     [frontImage setHidden:YES];
     
-   
+    
     
 }
 
@@ -614,10 +577,12 @@
     [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
     [buttonIn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
     for (int i = 0; i < [LowImageArray count]; i ++) {
+        secondDataModel*model4 = LowImageArray[i];
+        
         UIImageView *image = [self.view viewWithTag:100 + i];
-        if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"2"]) {
+        if (model4.img_mark==2) {
             [image setHidden:YES];
-        }else if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"3"]) {
+        }else if(model4.img_mark==3) {
             [image setHidden:YES];
         } else {
             [image setHidden:NO];
@@ -632,13 +597,17 @@
     [buttonBehind setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [buttonIn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
     for (int i = 0; i < [LowImageArray count]; i ++) {
-        UIImageView *image = [self.view viewWithTag:100 + i];
-        if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"1"]) {
-            [image setHidden:YES];
-        }else if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"3"]) {
-            [image setHidden:YES];
-        } else {
-            [image setHidden:NO];
+        @autoreleasepool {
+            UIImageView *image = [self.view viewWithTag:100 + i];
+            secondDataModel*model4 = LowImageArray[i];
+            
+            if (model4.img_mark==1) {
+                [image setHidden:YES];
+            }else if(model4.img_mark==3) {
+                [image setHidden:YES];
+            } else {
+                [image setHidden:NO];
+            }
         }
     }
 }
@@ -649,71 +618,21 @@
     [buttonIn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
     for (int i = 0; i < [LowImageArray count]; i ++) {
-        UIImageView *image = [self.view viewWithTag:100 + i];
-        if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"1"]) {
-            [image setHidden:YES];
-        }else if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"3"]) {
-            [image setHidden:NO];
-        } else {
-            [image setHidden:YES];
+        @autoreleasepool {
+            UIImageView *image = [self.view viewWithTag:100 + i];
+            secondDataModel*model4 = LowImageArray[i];
+            if (model4.img_mark==1) {
+                [image setHidden:YES];
+            }else if(model4.img_mark==3) {
+                [image setHidden:NO];
+            } else {
+                [image setHidden:YES];
+            }
         }
     }
 }
 
--(void)createGif
-{
-//    flameAnimation = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 484/2, 15)];
-//    [flameAnimation setImage:[UIImage imageNamed:@"dian1"]];
-//    flameAnimation.center = CGPointMake(self.view.center.x, self.view.center.y + 110);
-//    [flameAnimation setHidden:YES];
-//    [self.view addSubview:flameAnimation];
-//    [flameAnimation setUserInteractionEnabled:YES];
-//    flameAnimation1 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 484/2, 15)];
-//    flameAnimation1.center = CGPointMake(self.view.center.x, self.view.center.y + 110);
-//    [flameAnimation1 setUserInteractionEnabled:YES];
-//    // load all the frames of our animation
-//    flameAnimation1.animationImages = [NSArray arrayWithObjects:
-//                                      [UIImage imageNamed:@"dian2"],
-//                                      [UIImage imageNamed:@"dian3"],
-//                                      nil];
-//     [flameAnimation1 setHidden:YES];
-//    // all frames will execute in 1.75 seconds
-//    flameAnimation1.animationDuration = 1.0;
-//    // repeat the annimation forever
-//    flameAnimation1.animationRepeatCount = 0;
-//    // start animating
-//    [flameAnimation1 startAnimating];
-//    // add the animation view to the main window
-//    [self.view addSubview:flameAnimation1];
-//    
-//    flameAnimation2 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 484/2, 15)];
-//    [flameAnimation2 setUserInteractionEnabled:YES];
-//    [flameAnimation2 setHidden:YES];
-//     flameAnimation2.center = CGPointMake(self.view.center.x, self.view.center.y + 110);
-//    
-//    // load all the frames of our animation
-//    flameAnimation2.animationImages = [NSArray arrayWithObjects:
-//                                      [UIImage imageNamed:@"dian1"],
-//                                      [UIImage imageNamed:@"dian2"],
-//                                      [UIImage imageNamed:@"dian3"],
-//                                      nil];
-//    // all frames will execute in 1.75 seconds
-//    flameAnimation2.animationDuration = 1.0;
-//    // repeat the annimation forever
-//    flameAnimation2.animationRepeatCount = 0;
-//    // start animating
-//    [flameAnimation2 startAnimating];
-//    // add the animation view to the main window
-//    [self.view addSubview:flameAnimation2];
-//    
-//    
-//    buttonXiuXi = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 300, 327.5)];
-//    buttonXiuXi.center = self.view.center;
-//    [buttonXiuXi setUserInteractionEnabled:YES];
-//    [self.view addSubview:buttonXiuXi];
-//    [buttonXiuXi setHidden:YES];
-//    [buttonXiuXi addTarget:self action:@selector(xiuxiClick) forControlEvents:UIControlEventTouchUpInside];
-}
+
 
 
 
@@ -804,56 +723,10 @@
     [rightCollection registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"ReusableView"];
     
     
-    [self rightButtonView];
     [self createBigImage];
 }
 
--(void)rightButtonView
-{
-    
-    
-    
-    for (int i = 0; i < [rightNomalArray count]; i ++) {
-        UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 64,  SCREEN_HEIGHT / 2 - (23 + ([rightNomalArray count] / 2) * (15 + 46)) + 61 * i, 64, 46)];
-        [button setTitle:[[rightNomalArray objectAtIndex:i] stringForKey:@"name"] forState:UIControlStateNormal];
-        [self.view addSubview:button];
-        [button addTarget:self action:@selector(rightBtnClick:) forControlEvents:UIControlEventTouchUpInside];
-        [button setTag:i + 500];
-        [button setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-        [button.layer setCornerRadius:1];
-        [button.layer setMasksToBounds:YES];
-        [button.layer setBorderColor:[UIColor lightGrayColor].CGColor];
-        [button.layer setBorderWidth:1];
-        
-    }
-    
-}
 
--(void)rightBtnClick:(UIButton *)sender
-{
-    
-    if (!flogXiuxi) {
-        NSMutableDictionary *dic = [rightNomalArray objectAtIndex:sender.tag - 500];
-        picArray = [NSMutableArray arrayWithArray:[[dic arrayForKey:@"list"] valueForKey:@"img_a"]];
-        [lowCollection reloadData];
-        
-        clothesPicIdArray = [NSMutableArray arrayWithArray:[dic arrayForKey:@"list"]];
-        
-        for (int i = 0; i < [[[dic arrayForKey:@"list"] valueForKey:@"img_c"] count]; i ++) {
-            UIImageView *image = [self.view viewWithTag:100 +i];
-            [image sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [[[dic arrayForKey:@"list"] valueForKey:@"img_c"] objectAtIndex:i]]]];
-            
-            [CantChoose replaceObjectAtIndex:i withObject:[dic stringForKey:@"notmatch_spec_ids"]];
-            [NoOrYesArray replaceObjectAtIndex:i withObject:@"yes"];
-        }
-        
-        [buttonRightBarButton setHidden:NO];
-        [flameAnimation setHidden:YES];;
-        [flameAnimation1 setHidden:YES];
-        [flameAnimation2 setHidden:YES];
-
-    }
-}
 
 -(void)createBigImage
 {
@@ -886,13 +759,13 @@
     for (int i = 0; i < [NoOrYesArray count]; i ++) {
         [NoOrYesArray replaceObjectAtIndex:i withObject:@"yes"];
     }
-
+    
 }
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     if (collectionView == lowCollection) {
-        return [picArray count];
+        return [LowImageArray count];//picArray
     } else return [rightPicArray count];
     
 }
@@ -910,27 +783,29 @@
     if (collectionView == lowCollection) {
         static NSString *identify = @"cell";
         lowCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
-        [cell.imageShow.layer setCornerRadius:25];
         [cell.imageShow sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,picArray[indexPath.item]]]];
         if ([NoOrYesArray[indexPath.row] isEqualToString:@"yes"]) {
             [cell.Alhpa setHidden:NO];
         } else {
-           [cell.Alhpa setHidden:YES];
+            [cell.Alhpa setHidden:YES];
         }
         [cell sizeToFit];
         reCell = cell;
     } else {
         static NSString *identify = @"cellRight";
+        threeDataModel*model2=rightPicArray[indexPath.item];
         rightCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
         [cell.bigButoon setTag:indexPath.item + 5];
-        [cell.bigButoon addTarget:self action:@selector(bigButonDown:) forControlEvents:UIControlEventTouchDown];
-        
+//        [cell.bigButoon addTarget:self action:@selector(bigButonDown:) forControlEvents:UIControlEventTouchDown];
+          UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(bigButonDown:)];
+        [cell addGestureRecognizer:longPress];
+
         [cell.bigButoon addTarget:self action:@selector(bigButoonUp:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.imageShow sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,[rightPicArray[indexPath.item] stringForKey:@"img_a"]]]];
+        [cell.imageShow sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,model2.android_middle]]];
         NSMutableDictionary *dic = flogDetailTouch[touchItem];
         if (indexPath.row == [dic integerForKey:@"flog"]) {
             [cell.Alhpa setHidden:NO];
-            
+//
         } else {
             [cell.Alhpa setHidden:YES];
         }
@@ -943,100 +818,118 @@
 }
 
 
--(void)bigButonDown:(UIButton *)sender
+-(void)bigButonDown:(UILongPressGestureRecognizer*)longpressgesture//(UIButton *)sender
 {
-    
-    if (!flogXiuxi) {
-        [bigImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [rightPicArray[sender.tag - 5] stringForKey:@"img_b"]]]];
-        
-        
-        UIImageView *image = [self.view viewWithTag:touchItem + 100];
-        [image sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [rightPicArray[sender.tag - 5] stringForKey:@"img_c"]]]];
-       
-        
-        
-        if ([[rightPicArray[sender.tag - 5] stringForKey:@"name"] rangeOfString:@"法式"].location == NSNotFound) {
-            [flameAnimation setHidden:YES];;
-            [flameAnimation1 setHidden:YES];
-            [flameAnimation2 setHidden:YES];
-            xiuxiDic = nil;
-            [buttonXiuXi setHidden:YES];
+    NSInteger sender = longpressgesture.view.tag;
+    if (longpressgesture.state == UIGestureRecognizerStateBegan) {
+        if (!flogXiuxi) {
+            threeDataModel*model = rightPicArray[sender];//sender.tag-5
+            [bigImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.android_min]]];
             
-        }else {
-            [flameAnimation setHidden:NO];
-            [flameAnimation1 setHidden:NO];
-            [flameAnimation2 setHidden:NO];
-            [buttonXiuXi setHidden:NO];
+            
+            UIImageView *image = [self.view viewWithTag:touchItem + 100];
+            [image sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.android_max]]];
+            
+            
+            
+            if ([model.part_name rangeOfString:@"法式"].location == NSNotFound) {
+                [flameAnimation setHidden:YES];;
+                [flameAnimation1 setHidden:YES];
+                [flameAnimation2 setHidden:YES];
+                xiuxiDic = nil;
+                [buttonXiuXi setHidden:YES];
+                
+            }else {
+                [flameAnimation setHidden:NO];
+                [flameAnimation1 setHidden:NO];
+                [flameAnimation2 setHidden:NO];
+                [buttonXiuXi setHidden:NO];
+            }
+            
+            arrayForXiuxi = model.child_list.count>0?model.child_list:@[].mutableCopy;//[NSMutableArray arrayWithArray:[rightPicArray[sender.tag - 5] arrayForKey:@"child_list"]];
         }
         
-        arrayForXiuxi = [NSMutableArray arrayWithArray:[rightPicArray[sender.tag - 5] arrayForKey:@"child_list"]];
+        [bigImg setHidden:NO];
+        
+        [frontImage setHidden:NO];
     }
-    
-    [bigImg setHidden:NO];
-    
-    [frontImage setHidden:NO];
-    
-    
+    else if (longpressgesture.state == UIGestureRecognizerStateEnded) {
+        //长按结束
+        bigImg.hidden=YES;
+        [frontImage setHidden:YES];
+
+    }
    
+    
+    
+    
     
 }
 
 -(void)bigButoonUp:(UIButton *)sender
 {
     if (!flogXiuxi) {
-        
+        threeDataModel*model = rightPicArray[sender.tag-5];
+        secondDataModel*model2= LowImageArray[touchItem];
         NSMutableDictionary *dic = [flogDetailTouch objectAtIndex:touchItem];
         [dic setObject:[NSString stringWithFormat:@"%ld", sender.tag - 5] forKey:@"flog"];
         
-        [picArray replaceObjectAtIndex:touchItem withObject:[rightPicArray[sender.tag - 5] stringForKey:@"img_a"]];
+        [picArray replaceObjectAtIndex:touchItem withObject:model.android_min];
         
-        [clothesPicIdArray replaceObjectAtIndex:touchItem withObject:rightPicArray[sender.tag - 5] ];
+        [clothesPicIdArray replaceObjectAtIndex:touchItem withObject:model ];
         
-         [CantChoose replaceObjectAtIndex:touchItem withObject:[rightPicArray[sender.tag - 5] stringForKey:@"notmatch_spec_ids"]];
+        //        [CantChoose replaceObjectAtIndex:touchItem withObject:[rightPicArray[sender.tag - 5] stringForKey:@"notmatch_spec_ids"]];
         [NoOrYesArray replaceObjectAtIndex:touchItem withObject:@"yes"];
         [lowCollection reloadData];
-        
-        [contentIdArray replaceObjectAtIndex:touchItem withObject:[rightPicArray[sender.tag - 5] stringForKey:@"id"]];
-        [contentArray replaceObjectAtIndex:touchItem withObject:[NSString stringWithFormat:@"%@:%@",[rightPicArray[sender.tag - 5] stringForKey:@"spec_name"],[rightPicArray[sender.tag - 5] stringForKey:@"name"] ]];
-        [goodArray replaceObjectAtIndex:touchItem withObject:rightPicArray[sender.tag - 5]];
-        
-        if ([[[LowImageArray objectAtIndex:touchItem] stringForKey:@"position_id"] isEqualToString:@"1"]) {
+        [AllDict setObject:model forKey:@(touchItem)];
+        if (model2.img_mark==1) {
             [buttonFront setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
             [buttonIn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-            if (touchItem != 0) {
+//            if (touchItem != 0) {
                 for (int i = 0; i < [LowImageArray count]; i ++) {
+                    @autoreleasepool {
+                        secondDataModel *model3 =LowImageArray[i];
+                        UIImageView *image = [self.view viewWithTag:100 + i];
+                        if (model3.img_mark==1) {
+                            
+                            if ([NoOrYesArray[i] isEqualToString:@"yes"]) {
+                                [image setHidden:NO];
+                            } else {
+                                [image setHidden:YES];
+                            }
+                            
+                        } else if(model3.img_mark==2) {
+                            [image setHidden:YES];
+                        }
+                        else if(model3.img_mark==3) {
+                            [image setHidden:YES];
+                        }
+                    }
+                }
+//            }
+            
+        }else if (model2.img_mark==2) {
+            [buttonFront setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+            [buttonBehind setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            [buttonIn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+            for (int i = 0; i < [LowImageArray count]; i ++) {
+                @autoreleasepool {
                     UIImageView *image = [self.view viewWithTag:100 + i];
-                    if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"1"]) {
-                        
+                    secondDataModel *model3 =LowImageArray[i];
+                    
+                    if (model3.img_mark==2) {
                         if ([NoOrYesArray[i] isEqualToString:@"yes"]) {
                             [image setHidden:NO];
                         } else {
                             [image setHidden:YES];
                         }
-                        
-                        
-                        
-                    } else {
+                    } else if(model3.img_mark==1) {
                         [image setHidden:YES];
                     }
-                }
-            }
-           
-        }else if ([[[LowImageArray objectAtIndex:touchItem] stringForKey:@"position_id"] isEqualToString:@"2"]) {
-            [buttonFront setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-            [buttonBehind setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            [buttonIn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-            for (int i = 0; i < [LowImageArray count]; i ++) {
-                UIImageView *image = [self.view viewWithTag:100 + i];
-                if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"2"]) {
-                    if ([NoOrYesArray[i] isEqualToString:@"yes"]) {
-                        [image setHidden:NO];
-                    } else {
+                    else if(model3.img_mark==3) {
                         [image setHidden:YES];
                     }
-                } else {
-                    [image setHidden:YES];
                 }
             }
         } else {
@@ -1044,15 +937,22 @@
             [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
             [buttonIn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             for (int i = 0; i < [LowImageArray count]; i ++) {
-                UIImageView *image = [self.view viewWithTag:100 + i];
-                if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"3"]) {
-                    if ([NoOrYesArray[i] isEqualToString:@"yes"]) {
-                        [image setHidden:NO];
-                    } else {
+                @autoreleasepool {
+                    UIImageView *image = [self.view viewWithTag:100 + i];
+                    secondDataModel *model3 =LowImageArray[i];
+                    
+                    if (model3.img_mark==3) {
+                        if ([NoOrYesArray[i] isEqualToString:@"yes"]) {
+                            [image setHidden:NO];
+                        } else {
+                            [image setHidden:YES];
+                        }
+                    } else if(model3.img_mark==2) {
                         [image setHidden:YES];
                     }
-                } else {
-                    [image setHidden:YES];
+                    else if(model3.img_mark==1) {
+                        [image setHidden:YES];
+                    }
                 }
             }
         }
@@ -1083,14 +983,15 @@
         }
         
     } else {
-        xiuxiDic = [NSMutableDictionary dictionaryWithDictionary:rightPicArray[sender.tag - 5]];
+#warning  待修改
+        //        xiuxiDic = [NSMutableDictionary dictionaryWithDictionary:rightPicArray[sender.tag - 5]];
     }
-        [bigImg setHidden:YES];
-        [frontImage setHidden:YES];
-
+    [bigImg setHidden:YES];
+    [frontImage setHidden:YES];
+    
     
     [rightCollection reloadData];
-   
+    
     
 }
 
@@ -1121,48 +1022,62 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (collectionView == lowCollection) {
+//    if (collectionView == lowCollection) {
+        rightCollection.hidden=NO;
         flogXiuxi = NO;
-       
-        [self settabTitle:[LowImageArray[indexPath.item] stringForKey:@"spec_name"]];
-        if ([[[LowImageArray objectAtIndex:indexPath.item] stringForKey:@"position_id"] isEqualToString:@"1"]) {
+        secondDataModel *model =LowImageArray[indexPath.item];
+        [self settabTitle: model.type_name];
+        if (model.img_mark==1) {
             [buttonFront setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
             [buttonIn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-            
-            if (indexPath.item != 0) {
+
+//            if (indexPath.item != 0) {
                 for (int i = 0; i < [LowImageArray count]; i ++) {
+                    @autoreleasepool {
+                        UIImageView *image = [self.view viewWithTag:100 + i];
+                        secondDataModel *model2 =LowImageArray[i];
+                        if (model2.img_mark==1) {
+                            if ([NoOrYesArray[i] isEqualToString:@"yes"]) {
+                                [image setHidden:NO];
+                                
+                            } else {
+                                [image setHidden:YES];
+                            }
+                            
+                            
+                        } else if(model2.img_mark==2) {
+                            [image setHidden:YES];
+                        }
+                        else if (model2.img_mark==3)
+                        {
+                            image.hidden=YES;
+                        }
+                    }
+                }
+//            }
+        }else if (model.img_mark==2) {
+
+            [buttonFront setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+            [buttonBehind setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            [buttonIn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+            for (int i = 0; i < [LowImageArray count]; i ++) {
+                @autoreleasepool {
                     UIImageView *image = [self.view viewWithTag:100 + i];
-                    if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"1"]) {
-                        
+                    secondDataModel *model2 =LowImageArray[i];
+                    if (model2.img_mark==2) {
                         if ([NoOrYesArray[i] isEqualToString:@"yes"]) {
                             [image setHidden:NO];
                         } else {
                             [image setHidden:YES];
                         }
-                        
-                        
-                        
-                    } else {
+                    } else if(model2.img_mark==1){
                         [image setHidden:YES];
                     }
-                }
-            }
-            
-        }else if ([[[LowImageArray objectAtIndex:indexPath.item] stringForKey:@"position_id"] isEqualToString:@"2"]) {
-            [buttonFront setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-            [buttonBehind setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            [buttonIn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-            for (int i = 0; i < [LowImageArray count]; i ++) {
-                UIImageView *image = [self.view viewWithTag:100 + i];
-                if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"2"]) {
-                    if ([NoOrYesArray[i] isEqualToString:@"yes"]) {
-                        [image setHidden:NO];
-                    } else {
-                        [image setHidden:YES];
+                    else if (model2.img_mark==3)
+                    {
+                        image.hidden=YES;
                     }
-                } else {
-                    [image setHidden:YES];
                 }
             }
         } else {
@@ -1170,15 +1085,23 @@
             [buttonBehind setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
             [buttonIn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             for (int i = 0; i < [LowImageArray count]; i ++) {
-                UIImageView *image = [self.view viewWithTag:100 + i];
-                if ([[[LowImageArray objectAtIndex:i] stringForKey:@"position_id"] isEqualToString:@"3"]) {
-                    if ([NoOrYesArray[i] isEqualToString:@"yes"]) {
-                        [image setHidden:NO];
-                    } else {
+                @autoreleasepool {
+                    UIImageView *image = [self.view viewWithTag:100 + i];
+                    secondDataModel *model2 =LowImageArray[i];
+                    
+                    if (model2.img_mark==3) {
+                        if ([NoOrYesArray[i] isEqualToString:@"yes"]) {
+                            [image setHidden:NO];
+                        } else {
+                            [image setHidden:YES];
+                        }
+                    } else if(model2.img_mark==1) {
                         [image setHidden:YES];
                     }
-                } else {
-                    [image setHidden:YES];
+                    else if (model2.img_mark==2)
+                    {
+                        image.hidden=YES;
+                    }
                 }
             }
         }
@@ -1194,19 +1117,19 @@
         
         
         NSMutableArray *array = [NSMutableArray array];
-        for (NSMutableDictionary *dic in [LowImageArray[indexPath.item] arrayForKey:@"list"]) {
+        for (threeDataModel*model6 in model.son) {
             
             NSString *string = [CantChoose componentsJoinedByString:@","];
             NSArray *tempArrayCant = [string componentsSeparatedByString:@","];
             NSInteger temp = 0;
             for (int i = 0 ; i < [tempArrayCant count]; i ++) {
                 NSString *str = tempArrayCant[i];
-                if ([str isEqualToString:[dic stringForKey:@"id"]]) {
+                if ([str integerValue]== model6.part_id) {
                     temp ++;
                 }
             }
             if (temp == 0) {
-                [array addObject:dic];
+                [array addObject:model6];
             }
             
         }
@@ -1214,20 +1137,20 @@
         rightPicArray = [NSMutableArray arrayWithArray:array];
         
         if (60 * [rightPicArray count] > SCREEN_WIDTH) {
-            [rightCollection setFrame:CGRectMake(10,IsiPhoneX?SCREEN_HEIGHT-64-94-80: SCREEN_HEIGHT - 120-95, SCREEN_WIDTH, 65)];
+            [rightCollection setFrame:CGRectMake(10,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-94-80: SCREEN_HEIGHT - 120-95, SCREEN_WIDTH, 65)];
         } else {
             
-            [rightCollection setFrame:CGRectMake(SCREEN_WIDTH / 2 - (60 * [rightPicArray count] / 2), IsiPhoneX?SCREEN_HEIGHT-64-94-80: SCREEN_HEIGHT - 120-95, 60 * [rightPicArray count], 65)];
+            [rightCollection setFrame:CGRectMake(SCREEN_WIDTH / 2 - (60 * [rightPicArray count] / 2), [ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-94-80: SCREEN_HEIGHT - 120-95, 60 * [rightPicArray count], 65)];
             
         }
         
         [rightCollection reloadData];
         
-    } else {
-        
-        
-        
-    }
+//    } else {
+//
+//        WCLLog(@"你走到这里了");
+//
+//    }
 }
 
 
@@ -1239,13 +1162,13 @@
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end

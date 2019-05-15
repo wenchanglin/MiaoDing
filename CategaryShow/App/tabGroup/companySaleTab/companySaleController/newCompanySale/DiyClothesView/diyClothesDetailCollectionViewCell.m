@@ -10,12 +10,12 @@
 #import "YYCycleScrollView.h"
 #import "pictureDIyCollectionViewCell.h"
 #import "footCollectionReusableView.h"
+#import "imgListModel.h"
 @implementation diyClothesDetailCollectionViewCell
 {    
 
     UILabel *nameLabel;
     UILabel *subNameLabel;
-    
     UIPageControl *page;
     
 }
@@ -24,7 +24,7 @@
     if (self = [super initWithFrame:frame]) {
         
         _banerArray = [NSMutableArray array];
-        
+            
     
         
         UICollectionViewFlowLayout *flowLayout=[[UICollectionViewFlowLayout alloc] init];
@@ -33,7 +33,6 @@
         flowLayout.footerReferenceSize = CGSizeMake(80, self.frame.size.height - 104);
         //        flowLayout.headerReferenceSize = CGSizeMake(self.frame.size.width, 0);//头部
         _clotehImageCollect = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height - 104) collectionViewLayout:flowLayout];
-        
         //设置代理
         _clotehImageCollect.delegate = self;
         _clotehImageCollect.dataSource = self;
@@ -83,22 +82,23 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *identify = @"cell";
+    imgListModel*model2=_banerArray[indexPath.row];
     pictureDIyCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
-    [cell.clothesIntroPic sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, _banerArray[indexPath.row] ]]];
+    [cell.clothesIntroPic sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model2.img]]];
     [cell sizeToFit];
     return cell;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    
     return CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT - 104);
+
 }
 
 -(void)setUp
 {
     UIView *contentView = self.contentView;
-    
-    
     nameLabel = [UILabel new];
     [contentView addSubview:nameLabel];
     [nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -126,10 +126,7 @@
     // 设置页码
     page.currentPage = pageNum;
     if (scrollView.contentOffset.x > SCREEN_WIDTH * ([_banerArray count] - 1) + 80) {
-        
         [[NSNotificationCenter defaultCenter] postNotificationName:@"showLowView" object:nil];
-        
-        
     }
 }
 // 设置headerView和footerView的
@@ -142,7 +139,7 @@
     reusableView.backgroundColor = [UIColor greenColor];
     if (kind == UICollectionElementKindSectionFooter)
     {
-        UICollectionReusableView *footerview = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:@"ReusableView" forIndexPath:indexPath];
+        footCollectionReusableView *footerview = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:@"ReusableView" forIndexPath:indexPath];
         footerview.backgroundColor = [UIColor whiteColor];
         reusableView = footerview;
     }
@@ -153,16 +150,13 @@
 -(void)setModel:(diyClothesDetailModel *)model
 {
     _model = model;
-    [subNameLabel setText:model.sub_name];
-    [nameLabel setText:model.clothesName];
+    [subNameLabel setText:model.content];
+    [nameLabel setText:model.name];
      page.numberOfPages = [_banerArray count];//指定页面个数
     [_clotehImageCollect reloadData];
 }
 
--(void)layoutSubviews
-{
-    [super layoutSubviews];
-}
+
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {

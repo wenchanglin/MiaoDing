@@ -10,136 +10,37 @@
 #import "NSDictionary+EmptyString.h"
 #import "JSONKit.h"
 #import "BaseDomain.h"
-
-static SelfPersonInfo * _personInfo;
-
+static NSString *const kUserModel     = @"bdUserModel";
 @implementation SelfPersonInfo
 
-+ (instancetype) getInstance {
-    
++ (instancetype)shareInstance {
+    static SelfPersonInfo *selfPersonInfo;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        if (_personInfo == nil) {
-            _personInfo = [[SelfPersonInfo alloc] init];
-            
-            [_personInfo setPersonInfoFromJsonData : nil];
-        }
+        selfPersonInfo = [[SelfPersonInfo alloc] init];
     });
-    
-    return _personInfo;
+    return selfPersonInfo;
 }
-
-/**
- * 初始化人物信息
- *
- * @param jsonData
- *            人物信息Json
- */
-- (void) setPersonInfoFromJsonData : (NSDictionary *) jsonData {
-    @try {
-        
-        if (jsonData == nil) {
-            jsonData = [self getPersonInfoJsonData];
-        }
-        
-        if (jsonData == nil) {
-            return;
-        }
-        
-        NSDictionary * jsonPeronData = [jsonData objectForKey:JSON_Header_DataObject];
-        
-        if (jsonPeronData != nil) {
-        
-            // 人物pKey
-            
-            self.personUserKey = [jsonPeronData stringForKey:@"uid"];
-            self.personImageUrl = [jsonPeronData stringForKey:@"avatar"];
-            
-            self.cnPersonUserName = [jsonPeronData stringForKey:@"name"];
-            self.personNickName = [jsonPeronData stringForKey:@"nickname"];
-            
-            self.personUserCode = [jsonPeronData stringForKey:@"account"];
-            
-            self.personYuYue = [jsonPeronData stringForKey:@"is_yuyue"];
-            
-            self.personPhone = [jsonPeronData stringForKey:@"phone"];
-            // 人物出生日期
-            self.personBirthday = [jsonPeronData stringForKey:@"birthday"];
-            self.personAge = [jsonPeronData stringForKey:@"age"];
-            
-            
-            
-            
-            self.personPassword = [jsonPeronData stringForKey:@"password"];
-            self.personAdminKey = [[jsonPeronData objectForKey:@"companyeo"] stringForKey:@"userKey"];
-            self.personCompanyLv = [[jsonPeronData objectForKey:@"companyeo"] stringForKey:@"lv"];
-            self.personRoleArray = [[jsonPeronData dictionaryForKey:@"role"] arrayForKey:@"purview"];
-            
-            self.roleName = [[jsonPeronData dictionaryForKey:@"role"] stringForKey:@"cnName"];
-            
-            self.personCompanyUrl = [[jsonPeronData objectForKey:@"companyeo"] stringForKey:@"imgUrl"];
-            // 人物所在城市Code
-            self.personCityName = [jsonPeronData stringForKey:@"city"];
-            self.personCompanyStatus = [jsonPeronData stringForKey:@"statusCompany"];
-            self.personCompanyKey = [jsonPeronData stringForKey:@"companyKey"];
-             self.personCompanyShow = [jsonPeronData stringForKey:@"companyShow"];
-            // 人物签名
-            self.personSignName = [jsonPeronData stringForKey:@"signing"];
-            // 人物性别 0 男 1 女
-            self.personSex = [jsonPeronData stringForKey:@"sex"];
-            
-            
-            self.personImageList = [jsonPeronData objectForKey:@"imageList"];
-            
-            self.personIdCardStatus = [jsonPeronData stringForKey:@"statusIdCard"];
-            
-            
-            self.personQQNumber = [jsonPeronData stringForKey:@"qq"];
-            self.personWeiChatNumber = [jsonPeronData stringForKey:@"weixin"];
-            
-            
-            self.personWeight = [jsonPeronData stringForKey:@"weight"];
-            self.personHeight= [jsonPeronData stringForKey:@"height"];
-            self.personJob= [jsonPeronData stringForKey:@"position"];
-            self.personConstellation= [jsonPeronData stringForKey:@"constellation"];
-            self.personZone= [jsonPeronData stringForKey:@"zone"];
-            self.personSchool= [jsonPeronData stringForKey:@"school"];
-            self.personProfession= [jsonPeronData stringForKey:@"profession"];
-            
-        }
-        
-    } @catch (NSException * ex) {
-        
-    }
+-(BOOL)isLoginStatus
+{
+    return self.userModel.username !=nil?YES:NO;
+}
+- (void)setUserModel:(userInfoModel *)userModel{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:userModel];
+    [userDefaults setObject:data forKey:kUserModel];
+    [userDefaults synchronize];
+}
+- (userInfoModel *)userModel{
+    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:kUserModel];
+    userInfoModel * userModel = [userInfoModel mj_objectWithKeyValues:[NSKeyedUnarchiver unarchiveObjectWithData:data]];
+    return userModel;
+}
+- (void)exitLogin
+{
+    [SelfPersonInfo shareInstance].userModel=nil;
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserModel];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"token"];
     
 }
-
-- (NSDictionary *) getPersonInfoJsonData {
-    
-    NSDictionary * jsonData = [[NSMutableDictionary alloc] initWithCapacity:5];
-    
-    @try {
-        
-        NSString * strJson = [[NSUserDefaults standardUserDefaults] stringForKey:PersonHistoryKey];
-        
-        NSData * nsData = [strJson JSONData];
-        
-        jsonData = [nsData objectFromJSONData];
-        
-    } @catch (NSException * ex) {
-        
-    }
-
-    return jsonData;
-}
-
-+ (NSString *) getPersonSexName : (int) intSex {
-    if (intSex == 0)
-        return NSLocalizedString(@"sex_boy", nil);
-    else
-        return NSLocalizedString(@"sex_girl", nil);
-}
-
-
-
 @end

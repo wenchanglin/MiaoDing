@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "LiangTiModel.h"
+#import "ClothesFroPay.h"
 @interface PhotoLiangTiCell : UITableViewCell
 @property(nonatomic,strong)UILabel * liangTiLabel;/**量体数据确认*/
 @property(nonatomic,strong)UILabel * nameLabel;/**量体人姓名*/
 @property(nonatomic,strong)UILabel * heightLabel;/**量体人身高*/
 @property(nonatomic,strong)UILabel * weightLabel;/**量体人体重*/
-@property(nonatomic,strong)LiangTiModel * models;
+@property(nonatomic,strong)ltArrModel * models;
 @end

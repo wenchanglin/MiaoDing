@@ -7,8 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "newDiyAllDataModel.h"
 
 @interface ClothDetailModel : NSObject
 @property (nonatomic, retain) NSString *detailName;
-@property (nonatomic, retain) NSString *detailContent;
+@property (nonatomic, retain) threeDataModel *sonModels;
 @end

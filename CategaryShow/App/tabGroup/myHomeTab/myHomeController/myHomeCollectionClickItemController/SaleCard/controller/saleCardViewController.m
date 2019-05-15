@@ -7,8 +7,8 @@
 //
 
 #import "saleCardViewController.h"
-#import "alertViewViewController.h"
-@interface saleCardViewController ()<alertChooseDelegate>
+#import "giftCardExchangeView.h"
+@interface saleCardViewController ()
 
 @end
 
@@ -19,43 +19,51 @@
     BaseDomain *postData;
     NSMutableDictionary *giftDic;
     UIImageView *nocard;
+    UIScrollView* scrollview;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self settabTitle:@"礼品卡"];
-    getData  = [BaseDomain getInstance:NO];
-    postData  = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self createView];
     [self getData];
-    // Do any additional setup after loading the view.
 }
-
+-(void)viewWillAppear:(BOOL)animated
+{
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+}
 -(void)getData
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [getData getData:URL_GetPoperLastMoney PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:domain]) {
-            giftDic = [NSMutableDictionary dictionaryWithDictionary:[domain.dataRoot dictionaryForKey:@"info"]];
+    [[wclNetTool sharedTools]request:GET urlString:URL_GiftBalance parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+//            WCLLog(@"%@",responseObject);
+            if (scrollview) {
+                [scrollview removeAllSubviews];
+                scrollview=nil;
+            }
+            giftDic = [responseObject[@"data"]mutableCopy];
             [self reloadView];
         }
+        
     }];
+
 }
 
 -(void)reloadData
 {
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [getData getData:URL_GetPoperLastMoney PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:domain]) {
-            giftDic = [NSMutableDictionary dictionaryWithDictionary:[domain.dataRoot dictionaryForKey:@"info"]];
-            if (_ifPayContrller) {
-                
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"cardSuccess" object:nil userInfo:giftDic];
-//                [self.navigationController popViewControllerAnimated:YES];
-            }
-            [self reloadView];
-        }
-    }];
+//    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+//    [getData getData:URL_GetPoperLastMoney PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+//        if ([self checkHttpResponseResultStatus:domain]) {
+//            giftDic = [NSMutableDictionary dictionaryWithDictionary:[domain.dataRoot dictionaryForKey:@"info"]];
+//            if (_ifPayContrller) {
+//
+//                [[NSNotificationCenter defaultCenter] postNotificationName:@"cardSuccess" object:nil userInfo:giftDic];
+////                [self.navigationController popViewControllerAnimated:YES];
+//            }
+//            [self reloadView];
+//        }
+//    }];
 }
 -(UIStatusBarStyle)preferredStatusBarStyle
 {
@@ -63,14 +71,15 @@
 }
 -(void)reloadView
 {
-    [moneyLabel setText:[NSString stringWithFormat:@"%.2f",[[giftDic stringForKey:@"gift_card"] floatValue]]];
+    [moneyLabel setText:[NSString stringWithFormat:@"%.2f",[[giftDic stringForKey:@"giftcard_money"] floatValue]]];
     
-    if ([[giftDic stringForKey:@"gift_card"] integerValue] > 0) {
+    if ([[giftDic stringForKey:@"giftcard_money"] integerValue] > 0) {
         [nocard setHidden:YES];
         UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, NavHeight + 165.0 /  667.0 * SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT  - (49.0 / 667.0 * SCREEN_HEIGHT +128 + 165.0 /  667.0 * SCREEN_HEIGHT))];
         [self.view addSubview:scroller];
+        scrollview = scroller;
         UIImageView *imageDetailDes = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-        [imageDetailDes sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [giftDic stringForKey:@"card_rule"]]] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+        [imageDetailDes sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [giftDic stringForKey:@"giftcard_rule"]]] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             CGFloat scan =imageDetailDes.image.size.width / imageDetailDes.image.size.height;
             scroller.contentSize=CGSizeMake(SCREEN_WIDTH,SCREEN_WIDTH / scan);
             [imageDetailDes setFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_WIDTH / scan)];
@@ -134,7 +143,7 @@
     .widthIs(130);
     [nocard setImage:[UIImage imageNamed:@"haveNoCard"]];
     
-    UIButton *addCard = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-88-25-49:SCREEN_HEIGHT  - 49-64, SCREEN_WIDTH, 49.0 )];
+    UIButton *addCard = [[UIButton alloc] initWithFrame:CGRectMake(0,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-88-25-49:SCREEN_HEIGHT  - 49-64, SCREEN_WIDTH, 49.0 )];
     [addCard setImage:[UIImage imageNamed:@"addCard"] forState:UIControlStateNormal];
     [addCard addTarget:self action:@selector(clickAddAction) forControlEvents:UIControlEventTouchUpInside];
     
@@ -144,27 +153,23 @@
 
 -(void)clickAddAction
 {
-    alertViewViewController *successVi = [[alertViewViewController alloc] init];
-    successVi.delegate = self;
-    successVi.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    successVi.modalPresentationStyle = UIModalPresentationOverFullScreen;
-    [self presentViewController:successVi animated:YES completion:nil];
-}
-
--(void)doneClickActin:(NSString *)code
-{
-    if (code.length > 0) {
+    __weak __typeof(self) weakSelf = self;
+    [giftCardExchangeView showGiftCardViewWithDoneBlock:^(NSString *card, NSString *code) {
+        WCLLog(@"%@--%@",card,code);
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
+        [params setObject:card forKey:@"giftcard_no"];
         [params setObject:code forKey:@"exchange_code"];
-        [postData postData:URL_GetPoper PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-            if ([self checkHttpResponseResultStatus:domain]) {
-                [self alertViewShowOfTime:@"兑换成功" time:1.0];
-                [self reloadData];
-                
+        [[wclNetTool sharedTools]request:POST urlString:URL_GetPoper parameters:params finished:^(id responseObject, NSError *error) {
+            WCLLog(@"%@",responseObject);
+            if ([weakSelf checkHttpResponseResultStatus:responseObject]) {
+                [weakSelf alertViewShowOfTime:@"兑换成功" time:1.0];
+                [weakSelf getData];
             }
         }];
-    }
+    }];
 }
+
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

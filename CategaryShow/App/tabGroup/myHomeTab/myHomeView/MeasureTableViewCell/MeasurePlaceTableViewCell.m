@@ -147,17 +147,16 @@
     [self.superview.superview setFrame:frame];
     
     [UIView commitAnimations];
-    
-    
-    
-    //    self.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    if ([_delegate respondsToSelector:@selector(endEdit:index:)]) {
+        [_delegate endEdit:textView.text index:self.tag];
+    }
 }
 
 
 -(void)textViewDidChange:(UITextView *)textView
 {
-    if ([_delegate respondsToSelector:@selector(placeDetail:)]) {
-        [_delegate placeDetail:textView.text];
+    if ([_delegate respondsToSelector:@selector(placeDetail: index:)]) {
+        [_delegate placeDetail:textView.text index:self.tag];
     }
 }
 

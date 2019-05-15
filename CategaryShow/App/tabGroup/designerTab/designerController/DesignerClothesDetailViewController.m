@@ -8,7 +8,6 @@
 
 
 
-#define URL_SHARE @"/web/jquery-obj/static/fx/html/chengping.html"
 
 #import "DesignerClothesDetailViewController.h"
 #import "DiyClothesDetailViewController.h"
@@ -31,6 +30,7 @@
 #import "CommentCollectionViewCell.h"
 #import "commentListViewController.h"
 #import "CircleScrollView.h"
+#import "designerDetailModel.h"
 @interface DesignerClothesDetailViewController ()<UICollectionViewDelegate, UICollectionViewDataSource,UIScrollViewDelegate,CircleScrollDelegate>
 
 @end
@@ -43,7 +43,7 @@
     NSMutableArray *pictureArray;
     NSMutableArray *prctureIntro;
     CircleScrollView* csview;
-    
+    designerDetailModel*models;
     UICollectionView *colthesCollect;
     
     UIScrollView *scrollerDetail;
@@ -71,9 +71,10 @@
     NSMutableArray *collectionArray;
     commentModel *modelComm;
     UIPageControl *page;
-    
+    NSString*kucunNum;
     NSString *lt_data;
-    
+    NSMutableString*idsStr1;
+    NSMutableString*idsStr2;
     UIButton *detailButton;
     UIButton *buttonClose;
     UIImageView *imageBg;
@@ -81,41 +82,28 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
-   
     datBegin = [NSDate dateWithTimeIntervalSinceNow:0];
     [self.navigationController setNavigationBarHidden:YES animated:animated];
 }
 
-//-(void)viewWillDisappear:(BOOL)animated
-//{
-//    [self.navigationController setNavigationBarHidden:NO animated:animated];
-//}
-
 -(void)shareClick
 {
-    NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-    
-    
-    NSString *goodsId;
-    if (_good_id) {
-        goodsId = _good_id;
-    } else {
-        goodsId = [_goodDic stringForKey:@"goods_id"];
-    }
     //1、创建分享参数（必要）
     NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-    NSArray* imageArray = @[[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [dataDictionary stringForKey:@"thumb"]]]];
-    [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
-    [shareParams SSDKSetupShareParamsByText:[dataDictionary stringForKey:@"content"]
-                                     images:imageArray
-                                        url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%@&shop_id=%@&market_id=%@&type=2&shareout_id=%@", URL_HEADURL,URL_SHARE, goodsId,_shopId,_marketId,[SelfPersonInfo getInstance].personUserKey]]
-                                      title:[dataDictionary stringForKey:@"name"]
-                                       type:SSDKContentTypeWebPage];
-    
-    [ShareCustom shareWithContent:shareParams];
-    
-    
-    
+    NSArray* imageArray = @[[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, _model.ad_img]]];
+    NSMutableDictionary*parameter = [NSMutableDictionary dictionary];
+    [parameter setObject:@(_model.ID) forKey:@"goods_id"];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_ShareUserForGoodsId_String] parameters:parameter finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
+            [shareParams SSDKSetupShareParamsByText:_model.content
+                                             images:imageArray
+                                                url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%@", URL_HeadForH5,URL_DingZHi, responseObject[@"goods_id"]]]
+                                              title:_model.name
+                                               type:SSDKContentTypeWebPage];
+            [ShareCustom shareWithContent:shareParams];
+        }
+    }];
 }
 
 
@@ -127,21 +115,37 @@
     flogSize = 0;
     flogSizeShow = 0;
     clothesCount = 1;
+    idsStr1 = [[NSMutableString alloc]init];
+    idsStr2 = [[NSMutableString alloc]init];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(turnToOrderAction) name:@"turnToOrder" object:nil];
-    
+    pictureArray = [NSMutableArray array];
+    prctureIntro=[NSMutableArray array];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(realToOrder) name:@"realToOrder" object:nil];
     sizeList = [NSMutableArray array];
     sizeShowDic = [NSMutableDictionary dictionary];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    getData = [BaseDomain getInstance:NO];
-    postData = [BaseDomain getInstance:NO];
-    designer = [designerModel new];
     [self createGetData];
-    
-    
-    // Do any additional setup after loading the view.
 }
 
+-(void)createBack{
+    UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(12, [ShiPeiIphoneXSRMax isIPhoneX]?HitoSafeAreaHeight+10:24, 33, 33)];
+    [buttonBack.layer setCornerRadius:33 / 2];
+    [buttonBack.layer setMasksToBounds:YES];
+    [buttonBack setImage:[UIImage imageNamed:@"baiBack"] forState:UIControlStateNormal];
+    [buttonBack addTarget:self action:@selector(backClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:buttonBack];
+    
+    [self.view bringSubviewToFront:buttonBack];
+    
+    UIButton *rightShare = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 45, [ShiPeiIphoneXSRMax isIPhoneX]?HitoSafeAreaHeight+10:24, 33, 33)];
+    [rightShare.layer setCornerRadius:33 / 2];
+    [rightShare.layer setMasksToBounds:YES];
+    [rightShare setImage:[UIImage imageNamed:@"shareRight"] forState:UIControlStateNormal];
+    [rightShare addTarget:self action:@selector(shareClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:rightShare];
+    
+    [self.view bringSubviewToFront:rightShare];
+}
 -(void)realToOrder
 {
     perentOrderViewController *perentOrder = [[perentOrderViewController alloc] init];
@@ -150,8 +154,6 @@
 
 -(void)turnToOrderAction
 {
-//    perentOrderViewController *perentOrder = [[perentOrderViewController alloc] init];
-//    [self.navigationController pushViewController:perentOrder animated:YES];
     paySuccessViewController *paySuccess = [[paySuccessViewController alloc] init];
     [self.navigationController pushViewController:paySuccess animated:YES];
 }
@@ -169,70 +171,49 @@
 {
     
     NSMutableDictionary *parmas = [NSMutableDictionary dictionary];
-    
-    if (_good_id) {
-        [parmas setObject:_good_id forKey:@"goods_id"];
-    } else {
-        [parmas setObject:[_goodDic stringForKey:@"goods_id"] forKey:@"goods_id"];
-
-    }
-    [getData getData:URL_GetYouPingDetailNew PostParams:parmas finish:^(BaseDomain *domain, Boolean success) {
-        
-        if ([self checkHttpResponseResultStatus:getData]) {
-            dataDictionary = [NSMutableDictionary dictionaryWithDictionary:[getData.dataRoot dictionaryForKey:@"data"]];
-            _class_id = [dataDictionary stringForKey:@"classify_id"];
-            pictureArray = [NSMutableArray arrayWithArray:[dataDictionary arrayForKey:@"img_list"]];
-            prctureIntro = [NSMutableArray arrayWithArray:[dataDictionary arrayForKey:@"img_introduce"]];
-//            WCLLog(@"%@",dataDictionary);
-            lt_data = [domain.dataRoot stringForKey:@"lt_data"];
-            designer.content = [dataDictionary stringForKey:@"content"];
-            designer.img = [dataDictionary stringForKey:@"img_often"];
-            designer.name = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"name"];
-            designer.avatar = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"avatar"];
-            designer.tag = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"tag"];
-            designer.name = [dataDictionary stringForKey:@"sub_name"];
-//            _model.good_Id = [dataDictionary stringForKey:@"uid"];
-            designer.detailClothesImg = [dataDictionary arrayForKey:@"img_list"][0];
-            designer.deginerID = [[dataDictionary dictionaryForKey:@"designer"] integerForKey:@"id"];
-            designer.introduce = [[dataDictionary dictionaryForKey:@"designer"] stringForKey:@"introduce"];
-            
-            new_comment = [NSMutableDictionary dictionaryWithDictionary:[dataDictionary dictionaryForKey:@"new_comment"]];
-            collectionArray = [NSMutableArray arrayWithArray:[dataDictionary arrayForKey:@"collect_user"]];
-            
-            
-            modelComm.collectArray = [NSMutableArray arrayWithArray:collectionArray];
-            modelComm.commentDic =[NSMutableDictionary dictionaryWithDictionary: new_comment];
-            modelComm.comentNum = [dataDictionary stringForKey:@"comment_num"];
-            
-            
-            if (_good_id) {
-                designer.goods_id = _good_id;
-            } else {
-                designer.goods_id = [_goodDic stringForKey:@"goods_id"];
-                
+    [parmas setObject:@(_model.ID) forKey:@"goods_id"];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_DingZhiDetailAndPeiJian_String] parameters:parmas finished:^(id responseObject, NSError *error) {
+        //        WCLLog(@"%@----%@",responseObject,error);
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            models = [designerDetailModel mj_objectWithKeyValues:responseObject[@"data"]];
+            NSArray*morepic = models.ad_img.mutableCopy;
+            for (imgListModel*modelsss in morepic) {
+                [pictureArray addObject:modelsss.img];
+                [prctureIntro addObject:modelsss.desc];
             }
-            
-            sizeList = [NSMutableArray arrayWithArray:[dataDictionary arrayForKey:@"size_list"]];
-            sizeShowDic = [[[sizeList firstObject] arrayForKey:@"size_list"] firstObject];
-            if ([sizeList count] > 0) {
-                sizeStr = [NSString stringWithFormat:@"尺寸:%@", [sizeList[0] stringForKey:@"size_name"]];
-                colorStr = [NSString stringWithFormat:@"颜色:%@", [[[sizeList[flogSize] arrayForKey:@"size_list"] firstObject] stringForKey:@"color_name"]];
-                sizeId = [sizeList[0] stringForKey:@"id"];
-            }
-            
-            
-            clothesPrice = [sizeShowDic stringForKey:@"price"];
+            skuOneModel*model1 = [models.sku firstObject];
+            skuTwoModel*model3 = model1.sku[0];
+            skuOneModel*model2 = models.sku[1];
+            skuTwoModel*model4 = model2.sku[0];
+            idsStr1 = [NSString stringWithFormat:@"%@",@(model3.ID)].mutableCopy;
+            idsStr2 = [NSString stringWithFormat:@"%@",@(model4.ID)].mutableCopy;
+            NSString*strlls=[NSString stringWithFormat:@"%@,%@",idsStr1,idsStr2];
             [self createView];
-//            [self createScroller];
+            [self createBack];
             [self createLowView];
+            [self createAlphaView];
+            [self kucunWithString:strlls];
             [self createAlphaBuyView];
             [self createDetailButton];
-            [self createAlphaView];
         }
-        
+        else
+        {
+            [self createBack];
+        }
+    }];
+    
+}
+-(void)kucunWithString:(NSString*)string{
+    NSMutableDictionary*parmaes = [NSMutableDictionary dictionary];
+    parmaes[@"sku_id_s"]=string;
+    parmaes[@"goods_id"]=@(models.ID);
+    [[wclNetTool sharedTools]request:GET urlString:[MoreUrlInterface URL_ChengPinKuCun_String] parameters:parmaes finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            kucunNum = responseObject[@"stock"];
+            [numberLabel setText:[NSString stringWithFormat:@"库存%@件",kucunNum]];
+        }
     }];
 }
-
 -(void)createDetailButton
 {
     
@@ -277,12 +258,12 @@
     [imageBg setAlpha:0];
     [imageBg addGestureRecognizer:tap];
     
-   
+    
     UILabel *detailLabel = [UILabel new];
-    if ([[dataDictionary stringForKey:@"chengping_canshu"] isEqualToString:@""]) {
+    if ([models.detail isEqualToString:@""]) {
         [detailLabel setText:@"暂无详情介绍"];
     } else {
-        [detailLabel setText:[dataDictionary stringForKey:@"chengping_canshu"]];
+        [detailLabel setText:models.detail];
     }
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:detailLabel.text];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
@@ -293,50 +274,13 @@
     
     [detailLabel setFont:[UIFont systemFontOfSize:14]];
     [detailLabel setTextColor:[UIColor whiteColor]];
-    
-    //    detailLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-//    CGSize maximumLabelSize = CGSizeMake(SCREEN_WIDTH - 40, 9999);//labelsize的最大值
-//    //关键语句
-//    CGSize expectSize = [detailLabel sizeThatFits:maximumLabelSize];
-    //别忘了把frame给回label，如果用xib加了约束的话可以只改一个约束的值
     detailLabel.frame = CGRectMake(20, 64, SCREEN_WIDTH - 40, SCREEN_HEIGHT - 64 - 100);
     [imageBg addSubview:detailLabel];
-    
-   
-    
-    //    scrollerClothesDetail.contentSize=CGSizeMake(SCREEN_WIDTH,SCREEN_WIDTH / scan);
-    
-    
-    
-    
 }
 
 
 -(void)createView
 {
-//    UICollectionViewFlowLayout *flowLayout=[[UICollectionViewFlowLayout alloc] init];
-//    [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
-//    flowLayout.minimumLineSpacing = 0;
-//    //        flowLayout.headerReferenceSize = CGSizeMake(self.frame.size.width, 0);//头部
-//    colthesCollect = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) collectionViewLayout:flowLayout];
-//
-//    //设置代理
-//    colthesCollect.delegate = self;
-//    colthesCollect.dataSource = self;
-//    [self.view addSubview:colthesCollect];
-//
-//    colthesCollect.showsHorizontalScrollIndicator = FALSE;
-//
-//    colthesCollect.backgroundColor = [UIColor whiteColor];
-//    //注册cell和ReusableView（相当于头部）
-////    colthesCollect.alwaysBounceVertical = YES;
-//    colthesCollect.pagingEnabled = YES ;
-//
-//    [colthesCollect registerClass:[designerForClothesCollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
-//
-//    [colthesCollect registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"ReusableView"];
-    
-    
     CircleScrollView *scr1 = [[CircleScrollView alloc]initWithImgUrls:pictureArray  fram:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) intro:prctureIntro];
     csview = scr1;
     scr1.circleScrollType = CircleScrollTypePageControl;
@@ -360,34 +304,11 @@
     return UIStatusBarStyleLightContent;
 }
 
-//-(void)createScroller
-//{
-//    scrollerDetail = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 50)];
-//    [self.view addSubview:scrollerDetail];
-//    scrollerDetail.delegate = self;
-//    
-//    UIImageView *imageDetailDes = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-//    [imageDetailDes sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [dataDictionary stringForKey:@"content2"]]] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-//        
-//        CGFloat scan = image.size.width / image.size.height;
-//        
-//        if (SCREEN_WIDTH / scan < SCREEN_HEIGHT) {
-//            scrollerDetail.contentSize=CGSizeMake(SCREEN_WIDTH,SCREEN_HEIGHT + 80);
-//            
-//        } else {
-//            scrollerDetail.contentSize=CGSizeMake(SCREEN_WIDTH,SCREEN_WIDTH / scan);
-//        }
-//        
-//        [imageDetailDes setFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_WIDTH / scan)];
-//        
-//    }];
-//    [scrollerDetail addSubview:imageDetailDes];
-//}
 
 
 -(void)createLowView
 {
-
+    
     UIButton* addCar = [UIButton new];
     [self.view addSubview:addCar];
     addCar.sd_layout
@@ -418,51 +339,19 @@
     [imageLine setImage:[UIImage imageNamed:@"imageLine"]];
     
     
-//    page = [UIPageControl new];
-//    [self.view addSubview:page];
-//    page.sd_layout
-//    .rightSpaceToView(self.view, 14)
-//    .bottomSpaceToView(self.view, 26)
-//    .heightIs(15)
-//    .widthIs(90);
-//    page.numberOfPages = [pictureArray count];//指定页面个数
-//    page.currentPage = 0;//指定pagecontroll的值，默认选中的小白点（第一个）
-//    page.pageIndicatorTintColor = [UIColor grayColor];// 设置非选中页的圆点颜色
-//    
-//    page.currentPageIndicatorTintColor = [UIColor whiteColor];
-    
-    
-    UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(12, IsiPhoneX?HitoSafeAreaHeight+10:24, 33, 33)];
-    
-    [buttonBack.layer setCornerRadius:33 / 2];
-    [buttonBack.layer setMasksToBounds:YES];
-    [buttonBack setImage:[UIImage imageNamed:@"baiBack"] forState:UIControlStateNormal];
-    [buttonBack addTarget:self action:@selector(backClick) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:buttonBack];
-    
-    [self.view bringSubviewToFront:buttonBack];
-    
-    UIButton *rightShare = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 45, IsiPhoneX?HitoSafeAreaHeight+10:24, 33, 33)];
-    
-    [rightShare.layer setCornerRadius:33 / 2];
-    [rightShare.layer setMasksToBounds:YES];
-    [rightShare setImage:[UIImage imageNamed:@"shareRight"] forState:UIControlStateNormal];
-    [rightShare addTarget:self action:@selector(shareClick) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:rightShare];
-    
-    [self.view bringSubviewToFront:rightShare];
     
 }
 
 
 -(void)createAlphaBuyView
 {
-    bgViewAlpha = [[UIView alloc] initWithFrame:CGRectMake(0,IsiPhoneX?self.view.frame.size.height-289-21: self.view.frame.size.height - 289, SCREEN_WIDTH,IsiPhoneX?310:289)];
+    bgViewAlpha = [[UIView alloc] initWithFrame:CGRectMake(0,[ShiPeiIphoneXSRMax isIPhoneX]?self.view.frame.size.height-289-21: self.view.frame.size.height - 289, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?310:289)];
     [bgViewAlpha setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
     [self.view addSubview:bgViewAlpha];
     UIImageView *imageHead = [[UIImageView alloc] initWithFrame:CGRectMake(20, -30, 70, 90)];
     imageHead.contentMode = UIViewContentModeScaleAspectFill;
-    [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL, [dataDictionary stringForKey:@"img_often"]]]];
+    imgListModel*model3 = [models.ad_img firstObject];
+    [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL, model3.img]]];
     [bgViewAlpha addSubview:imageHead];
     
     UIButton *btnClose = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 50, 5, 40, 40)];
@@ -471,12 +360,12 @@
     [bgViewAlpha addSubview:btnClose];
     
     priceLabel = [[UILabel alloc] initWithFrame:CGRectMake(110, 10, 200, 20)];
-    [priceLabel setText:[NSString stringWithFormat:@"¥ %@", [sizeShowDic stringForKey:@"price"]]];
+    [priceLabel setText:[NSString stringWithFormat:@"价格 ¥%@", models.sell_price]];
     [priceLabel setFont:Font_14];
     [bgViewAlpha addSubview:priceLabel];
     
     numberLabel = [[UILabel alloc] initWithFrame:CGRectMake(110, 35, 200, 20)];
-    [numberLabel setText:[NSString stringWithFormat:@"库存%@件",[sizeShowDic stringForKey:@"sku_num"]]];
+    //    [numberLabel setText:[NSString stringWithFormat:@"库存%@件",kucunNum]];
     [numberLabel setTextColor:[UIColor grayColor]];
     [numberLabel setFont:[UIFont systemFontOfSize:12]];
     [bgViewAlpha addSubview:numberLabel];
@@ -576,19 +465,17 @@
     [buttonAdd addTarget:self action:@selector(cutAndAdd:) forControlEvents:UIControlEventTouchUpInside];
     [bgViewAlpha addSubview:buttonAdd];
     
-    
-    
-    
-    
     UIButton *addBuyBag = [[UIButton alloc] initWithFrame:CGRectMake(0, 240, SCREEN_WIDTH / 2, 49)];
     [addBuyBag.titleLabel setFont:[UIFont systemFontOfSize:14]];
     [addBuyBag setBackgroundColor:getUIColor(Color_saveColor)];
     [bgViewAlpha addSubview:addBuyBag];
+    addBuyBag.qi_eventInterval=3;
     [addBuyBag addTarget:self action:@selector(addToBuyBag) forControlEvents:UIControlEventTouchUpInside];
     [addBuyBag setTitle:@"加入购物袋" forState:UIControlStateNormal];
     
     UIButton *BuyClick = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2, 240, SCREEN_WIDTH / 2, 49)];
     [BuyClick.titleLabel setFont:[UIFont systemFontOfSize:14]];
+    BuyClick.qi_eventInterval=3;
     [BuyClick setBackgroundColor:getUIColor(Color_buyColor)];
     [bgViewAlpha addSubview:BuyClick];
     [BuyClick addTarget:self action:@selector(buyClickAction) forControlEvents:UIControlEventTouchUpInside];
@@ -609,7 +496,7 @@
             }
             break;
         case 56:
-            if (clothesCount < [[sizeShowDic stringForKey:@"sku_num"] integerValue]) {
+            if (clothesCount < [kucunNum integerValue]) {
                 clothesCount++;
             }
             
@@ -624,105 +511,37 @@
 -(void)addToBuyBag
 {
     [self hiddenBuyChoose];
-    //
-    if (_marketId==nil) {
-        _marketId = @"";
-    }
-    if (_shopId==nil) {
-        _shopId = @"";
-    }
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:designer.goods_id forKey:@"goods_id"];
-    [params setObject:@"2" forKey:@"goods_type"];
-    [params setObject:clothesPrice forKey:@"price"];
-    [params setObject:[dataDictionary stringForKey:@"name"] forKey:@"goods_name"];
-    [params setObject:[NSString stringWithFormat:@"%@;%@", colorStr,sizeStr] forKey:@"size_content"];
-    [params setObject:[NSNumber numberWithInteger:clothesCount] forKey:@"num"];
-    [params setObject:[sizeShowDic stringForKey:@"id"] forKey:@"size_ids"];
-    [params setObject:[dataDictionary stringForKey:@"img_often"] forKey:@"goods_thumb"];
-    [params setObject:_marketId forKey:@"market_id"];
-    [params setObject:_shopId forKey:@"shop_id"];
-    if ([sizeShowDic integerForKey:@"type"] == 1) {
-        [params setObject:[sizeShowDic stringForKey:@"type"] forKey:@"size_type"];
-    } else {
-        [params setObject:[sizeShowDic stringForKey:@"type"] forKey:@"size_type"];
-        if (lt_data.length > 0) {
-             [params setObject:lt_data forKey:@"lt_data_id"];
+    NSMutableDictionary*parrment = [NSMutableDictionary dictionary];
+    NSString*string2=[NSString stringWithFormat:@"%@,%@",idsStr1,idsStr2];
+    [parrment setObject:string2 forKey:@"sku_id_s"];
+    [parrment setObject:@(clothesCount) forKey:@"goods_num"];
+    [parrment setObject:@(ShoppingCarTypeAdd) forKey:@"type"];
+    [parrment setObject:@(models.ID) forKey:@"goods_id"];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_AddShoppingCar_String] parameters:parrment finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            [self alertViewShowOfTime:@"添加购物车成功" time:1.5];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"addCarSuccess" object:nil];
         }
-       
-    }
-    [params setObject:@"2" forKey:@"type"];
-    [postData postData:URL_AddClothesCar PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
-        if (postData.result == 10001) {
-            [self getDateBeginHaveReturn:datBegin fatherView:@"收藏"];
-        } else if (postData.result == 1) {
-            [MobClick event:@"add_cart" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[dataDictionary stringForKey:@"name"]]];
-
-            [self alertViewShowOfTime:@"加入购物车成功" time:1.5];
-        }
-        
     }];
-    
-    
 }
 
 -(void)buyClickAction
 {
     [self hiddenBuyChoose];
-    if (_marketId==nil) {
-        _marketId = @"";
-    }
-    if (_shopId==nil) {
-        _shopId = @"";
-    }
-    
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:designer.goods_id forKey:@"goods_id"];
-    [params setObject:@"2" forKey:@"goods_type"];
-    [params setObject:clothesPrice forKey:@"price"];
-    [params setObject:[dataDictionary stringForKey:@"name"] forKey:@"goods_name"];
-    [params setObject:[NSString stringWithFormat:@"%@;%@", colorStr,sizeStr] forKey:@"size_content"];
-    [params setObject:[NSNumber numberWithInteger:clothesCount] forKey:@"num"];
-    [params setObject:[sizeShowDic stringForKey:@"id"] forKey:@"size_ids"];
-    [params setObject:[dataDictionary stringForKey:@"thumb"] forKey:@"goods_thumb"];
-    [params setObject:@"1" forKey:@"type"];
-    [params setObject:_marketId forKey:@"market_id"];
-    [params setObject:_shopId forKey:@"shop_id"];
-    if ([sizeShowDic integerForKey:@"type"] == 1) {
-        [params setObject:[sizeShowDic stringForKey:@"type"] forKey:@"size_type"];
-    } else {
-        [params setObject:[sizeShowDic stringForKey:@"type"] forKey:@"size_type"];
-        if (lt_data.length > 0) {
-            [params setObject:lt_data forKey:@"lt_data_id"];
-        }
-    }
-    
-    [postData postData:URL_AddClothesCar PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
-        if (postData.result == 10001) {
-            [self getDateBeginHaveReturn:datBegin fatherView:@"收藏"];
-        } else if (postData.result == 1) {
-            ClothesFroPay *model = [ClothesFroPay new];
-            model.clothesImage = [dataDictionary stringForKey:@"thumb"];
-            model.clothesCount = @"1";//[NSString stringWithFormat:@"%ld",clothesCount];
-            model.clothesName = [dataDictionary stringForKey:@"name"];
-            model.clothesPrice = clothesPrice;
-            model.clotheMaxCount = [sizeShowDic stringForKey:@"sku_num"];
-            NSMutableArray *array = [NSMutableArray arrayWithObjects:model, nil];
+    NSMutableDictionary*parrment = [NSMutableDictionary dictionary];
+    NSString*string2=[NSString stringWithFormat:@"%@,%@",idsStr1,idsStr2];
+    [parrment setObject:string2 forKey:@"sku_id_s"];
+    [parrment setObject:@(clothesCount) forKey:@"goods_num"];
+    [parrment setObject:@(ShoppingCarTypeAdd) forKey:@"type"];
+    [parrment setObject:@(models.ID) forKey:@"goods_id"];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_AddShoppingCar_String] parameters:parrment finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
             PayForClothesViewController *clothesPay = [[PayForClothesViewController alloc] init];
-            clothesPay.arrayForClothes = array;
-            [MobClick event:@"place_order" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[dataDictionary stringForKey:@"name"]]];
-
-            clothesPay.carId = [[postData.dataRoot objectForKey:@"data"] stringForKey:@"car_id"];
-            clothesPay.allPrice = [NSString stringWithFormat:@"%.2f",[clothesPrice floatValue] * clothesCount];
+            clothesPay.carId = [responseObject stringForKey:@"cart_id"];
+            clothesPay.allPrice = models.sell_price;
             [self.navigationController pushViewController:clothesPay animated:YES];
         }
-        
-
-        
     }];
-    
     
     
 }
@@ -773,48 +592,21 @@
 //    [self alertViewShowOfTime:@"客服不在线哦,请拨打电话:4009901213" time:1];
 //}
 
-
-//-(void)saveClothesClick
-//{
-//    //    [self showAlertWithTitle:@"提示" message:@"分享成功"];
-//    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-//    [params setObject:@"2" forKey:@"type"];
-//    [params setObject:designer.goods_id forKey:@"cid"];
-//    [getData postData:URL_AddSave PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-//
-//
-//        if (domain.result == 1) {
-//
-//            [buttonLike setImage:[UIImage imageNamed:@"fullHeart"] forState:UIControlStateNormal];
-//        } else if (domain.result == 10001) {
-//            [self getDateBeginHaveReturn:datBegin fatherView:@"收藏"];
-//        } else {
-//
-//            [buttonLike setImage:[UIImage imageNamed:@"Empty"] forState:UIControlStateNormal];
-//        }
-//
-//
-//
-//    }];
-//
-//}
-
-
-
-
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    
     if (collectionView == sizeCollection) {
-        return [sizeList count];
+        skuOneModel*onemodel = models.sku[0];
+        
+        return [onemodel.sku count];
     } else if (collectionView == sizeShowCollection) {
-        if ([sizeList count] > 0) {
-            return [[sizeList[flogSize] arrayForKey:@"size_list"] count];
+        if ([models.sku count] > 0) {
+            skuOneModel*onemodel = models.sku[1];
+            return [onemodel.sku count];
         } else
             return 0;
     } else {
-       
-            return [pictureArray count];
+        
+        return [pictureArray count];
     };
 }
 //定义展示的Section的个数
@@ -830,6 +622,9 @@
     if (collectionView == sizeCollection) {
         static NSString *identify = @"sizeCell";
         sizeAndColorCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
+        skuOneModel*onemodel = models.sku[0];
+        skuTwoModel*towmodel = onemodel.sku[indexPath.item];
+        
         if (indexPath.item == flogSize) {
             [cell.sizeAndColorLabel setBackgroundColor:getUIColor(Color_buyColor)];
         } else {
@@ -838,18 +633,21 @@
         [cell.sizeAndColorLabel setHidden:NO];
         [cell.colorImg setHidden:YES];
         [cell.whiteAlpha setHidden:YES];
-        [cell.sizeAndColorLabel setText:[sizeList[indexPath.item] stringForKey:@"size_name"]];
+        
+        [cell.sizeAndColorLabel setText:towmodel.name];
         [cell sizeToFit];
         recell = cell;
         
     } else if(collectionView == sizeShowCollection) {
         static NSString *identify = @"sizeShowCell";
         sizeAndColorCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
-       
-//        [cell.sizeAndColorLabel setText:[[[sizeList[flogSize] arrayForKey:@"size_list"] objectAtIndex:indexPath.item] stringForKey:@"name"]];
+        skuOneModel*onemodel = models.sku[1];
+        skuTwoModel*towmodel = onemodel.sku[indexPath.item];
+        
+        //        [cell.sizeAndColorLabel setText:[[[sizeList[flogSize] arrayForKey:@"size_list"] objectAtIndex:indexPath.item] stringForKey:@"name"]];
         [cell.sizeAndColorLabel setHidden:YES];
         [cell.colorImg setHidden:NO];
-        [cell.colorImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [[[sizeList[flogSize] arrayForKey:@"size_list"] objectAtIndex:indexPath.item] stringForKey:@"color_img"]]]];
+        [cell.colorImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, towmodel.img]]];
         
         if (indexPath.item == flogSizeShow) {
             [cell.whiteAlpha setHidden:NO];
@@ -868,24 +666,24 @@
         designerForClothesCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
         cell.pictureUrl = pictureArray[indexPath.row];
         cell.intro = prctureIntro[indexPath.row];
-        cell.model = designer;
+        cell.model = models;
         
         [cell.headButn addTarget:self action:@selector(designerClick) forControlEvents:UIControlEventTouchUpInside];
         [cell sizeToFit];
         recell = cell;
     }
-
+    
     return recell;
 }
 
 -(void)designerClick
 {
-    DesignerDetailIntroduce *introduce = [[DesignerDetailIntroduce alloc] init];
-    introduce.desginerId = [NSString stringWithFormat:@"%zd",designer.des_uid] ;
-    introduce.designerImage = designer.avatar;
-    introduce.designerName = designer.uname;
-    introduce.remark = designer.recommend_goods_ids;
-    [self.navigationController pushViewController:introduce animated:YES];
+    //    DesignerDetailIntroduce *introduce = [[DesignerDetailIntroduce alloc] init];
+    //    introduce.desginerId = [NSString stringWithFormat:@"%zd",designer.des_uid] ;
+    //    introduce.designerImage = designer.avatar;
+    //    introduce.designerName = designer.uname;
+    //    introduce.remark = designer.recommend_goods_ids;
+    //    [self.navigationController pushViewController:introduce animated:YES];
 }
 
 #pragma mark --UICollectionViewDelegateFlowLayout
@@ -896,10 +694,10 @@
     //图片为正方形，边长：(fDeviceWidth-20)/2-5-5 所以总高(fDeviceWidth-20)/2-5-5 +20+30+5+5 label高20 btn高30 边
     CGSize resize;
     if (collectionView == colthesCollect) {
-
+        
         return CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-
+        
+        
     }
     else {
         resize = CGSizeMake((SCREEN_WIDTH - 110) / 5, 45);
@@ -923,26 +721,28 @@
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     
+    
     if (collectionView == sizeCollection) {
-
-        sizeStr = [NSString stringWithFormat:@"尺寸:%@",[sizeList[indexPath.item] stringForKey:@"size_name"]];
-        sizeId = [sizeList[indexPath.item] stringForKey:@"id"];
+        skuOneModel*onemodel = models.sku[0];
+        skuTwoModel*towmodel = onemodel.sku[indexPath.item];
+        sizeStr = [NSString stringWithFormat:@"尺寸:%@",towmodel.name];
+        sizeId = [NSString stringWithFormat:@"%@",@(towmodel.ID)];
         flogSize = indexPath.item;
         
-        colorStr = [NSString stringWithFormat:@"颜色:%@" ,[[[sizeList[flogSize] arrayForKey:@"size_list"] firstObject] stringForKey:@"color_name"]];
-        
+        colorStr = [NSString stringWithFormat:@"颜色:%@" ,towmodel.name];
+        idsStr1 =[NSString stringWithFormat:@"%@",@(towmodel.ID)].mutableCopy;
         flogSizeShow = 0;
-        sizeShowDic = [[sizeList[indexPath.item] arrayForKey:@"size_list"] firstObject];
-        clothesPrice = [sizeShowDic stringForKey:@"price"];
+        //        sizeShowDic = [[sizeList[indexPath.item] arrayForKey:@"size_list"] firstObject];
+        clothesPrice = models.sell_price;
         
         [self reloadLowViewData];
         [sizeCollection reloadData];
         [sizeShowCollection reloadData];
     }else if (collectionView == sizeShowCollection) {
-
-        colorStr = [NSString stringWithFormat:@"颜色:%@" ,[[[sizeList[flogSize] arrayForKey:@"size_list"]objectAtIndex:indexPath.item] stringForKey:@"color_name"]];
-        sizeShowDic = [[sizeList[flogSize] arrayForKey:@"size_list"] objectAtIndex:indexPath.item];
-        clothesPrice = [sizeShowDic stringForKey:@"price"];
+        skuOneModel*onemodel = models.sku[1];
+        skuTwoModel*towmodel = onemodel.sku[indexPath.item];
+        colorStr = [NSString stringWithFormat:@"颜色:%@" ,towmodel.name];
+        idsStr2 =[NSString stringWithFormat:@"%@",@(towmodel.ID)].mutableCopy;
         flogSizeShow = indexPath.item;
         [sizeShowCollection reloadData];
     } else {
@@ -955,7 +755,8 @@
             }
         }
     }
-    
+    NSMutableString*str3 = [[NSMutableString alloc]initWithString:[NSString stringWithFormat:@"%@,%@",idsStr1,idsStr2]];
+    [self kucunWithString:str3];
 }
 
 -(void)reloadLowViewData
@@ -963,8 +764,8 @@
     
     clothesCount = 1;
     [countLabel setText:[NSString stringWithFormat:@"%ld",clothesCount]];
-    [priceLabel setText:[NSString stringWithFormat:@"价格 ¥%@", [sizeShowDic stringForKey:@"price"]]];
-    [numberLabel setText:[NSString stringWithFormat:@"库存%@件",[sizeShowDic stringForKey:@"sku_num"]]];
+    [priceLabel setText:[NSString stringWithFormat:@"价格 ¥%@", models.sell_price]];
+    [numberLabel setText:[NSString stringWithFormat:@"库存%@件",kucunNum]];
     
 }
 

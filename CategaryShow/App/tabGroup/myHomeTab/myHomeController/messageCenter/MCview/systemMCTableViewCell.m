@@ -29,6 +29,8 @@
 {
     UIView *contentView = self.contentView;
     titleLabel = [UILabel new];
+    [titleLabel setText:@"亲爱的用户"];
+
     [contentView addSubview:titleLabel];
     titleLabel.sd_layout
     .leftSpaceToView(contentView, 20)
@@ -74,9 +76,8 @@
 -(void)setModel:(messageListModel *)model
 {
     _model = model;
-    [titleLabel setText:model.mcTitle];
     
-    NSString *_test  = model.mcContent;
+    NSString *_test  = model.content;
     NSMutableParagraphStyle *paraStyle01 = [[NSMutableParagraphStyle alloc] init];
     
     //参数：（字体大小17号字乘以2，34f即首行空出两个字符）
@@ -88,24 +89,8 @@
     NSAttributedString *attrText = [[NSAttributedString alloc] initWithString:_test attributes:@{NSParagraphStyleAttributeName:paraStyle01}];
     textContent.attributedText = attrText;
 
-    [timeLable setText:[self dateToString:model.mcTime]];
+    [timeLable setText:model.create_time];
     [companyName setText:@"云工场科技有限公司"];
-}
-
--(NSString *)dateToString:(NSString *)dateString
-{
-
-    NSTimeInterval time=[dateString doubleValue]+28800;//因为时差问题要加8小时 == 28800 sec
-    NSDate *detaildate=[NSDate dateWithTimeIntervalSince1970:time];
-    
-    //实例化一个NSDateFormatter对象
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    //设定时间格式,这里可以设置成自己需要的格式
-    [dateFormatter setDateFormat:@"yyyy年MM月dd日"];
-    
-    NSString *currentDateStr = [dateFormatter stringFromDate: detaildate];
-    
-    return currentDateStr;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

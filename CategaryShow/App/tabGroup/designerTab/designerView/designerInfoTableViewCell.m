@@ -93,11 +93,11 @@
     
     _model = model;
     
-    [designerHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.avatar]]];
-    [designerName setText:model.uname];
-    [time setText:model.p_time];
-    [clothesName setText:model.name];
-    [clothesImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.img]]];
+//    [designerHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.avatar]]];
+//    [designerName setText:model.uname];
+//    [time setText:model.p_time];
+//    [clothesName setText:model.name];
+//    [clothesImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.img]]];
 }
 
 

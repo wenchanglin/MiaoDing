@@ -34,12 +34,13 @@
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:_detailId forKey:@"id"];
-    [getData getData:URL_HelpDetail PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:domain]) {
-            detailDic = [NSMutableDictionary dictionaryWithDictionary:[domain.dataRoot dictionaryForKey:@"data"]];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MineHelpDetail_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            detailDic = [NSMutableDictionary dictionaryWithDictionary:[responseObject dictionaryForKey:@"data"]];
             [self createView];
         }
     }];
+
 }
 
 -(void)createView

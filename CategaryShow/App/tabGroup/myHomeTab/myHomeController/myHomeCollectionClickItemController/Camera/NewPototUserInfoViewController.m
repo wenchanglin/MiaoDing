@@ -25,7 +25,7 @@
     [super viewDidLoad];
     [self settabTitle:@"用户信息"];
     dic = [NSMutableDictionary dictionary];
-
+    
     params = [NSMutableDictionary dictionary];
     [self.view setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
     titleArray = [NSMutableArray arrayWithObjects:[NSArray arrayWithObjects:@"姓   名：", @"手机号：",@"身   高：",@"体   重：", nil],[NSArray arrayWithObjects:@"店铺号：", @"胸   围：",@"腰   围：",@"臀   围：", nil], nil];
@@ -35,12 +35,16 @@
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
     [IQKeyboardManager sharedManager].enableAutoToolbar = YES;
-    [IQKeyboardManager sharedManager].shouldShowToolbarPlaceholder = YES;
+    [IQKeyboardManager sharedManager].shouldShowTextFieldPlaceholder = YES;
     
     
     
     
     [self CreateTableViewForInfo];
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
 }
 -(void)viewWillDisappear:(BOOL)animated
 {
@@ -49,18 +53,18 @@
 }
 -(void)CreateTableViewForInfo
 {
-    infoTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-64-74:SCREEN_HEIGHT - 64 - 49)];
-   
+    infoTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-74:SCREEN_HEIGHT - 64 - 49)];
+    
     infoTable.dataSource = self;
     infoTable.delegate = self;
     [self.view addSubview:infoTable];
     [infoTable setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
     [infoTable registerClass:[NewPhotoInfoTableViewCell class] forCellReuseIdentifier:@"infoUser"];
     
-//    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(endEditingAction)];
-//    [infoTable addGestureRecognizer:tap];
+    //    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(endEditingAction)];
+    //    [infoTable addGestureRecognizer:tap];
     
-    UIButton *buttonTake = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-74-64:SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
+    UIButton *buttonTake = [[UIButton alloc] initWithFrame:CGRectMake(0,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-74-64:SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
     [buttonTake setBackgroundColor:getUIColor(Color_TKClolor)];
     [buttonTake.titleLabel setFont:[UIFont systemFontOfSize:16]];
     [buttonTake addTarget:self action:@selector(takePhoto) forControlEvents:UIControlEventTouchUpInside];
@@ -99,8 +103,8 @@
     {
         [titleLabel setText:@"选填信息"];
         [titleSection addSubview:jiantouBtn];
-
-//        rightLabel.text = @"⊙帮助";
+        
+        //        rightLabel.text = @"⊙帮助";
     }
     if([dic[@"1"] integerValue]==1)
     {
@@ -164,7 +168,13 @@
     }
     return 9;
 }
-
+- (void)textFieldDidChange:(UITextField*)sender
+{
+    if (sender.text.length > 11)  // MAXLENGTH为最大字数
+    {
+        sender.text = [sender.text substringToIndex: 11]; // MAXLENGTH为最大字数
+    }
+}
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NewPhotoInfoTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"infoUser" forIndexPath:indexPath];
@@ -172,7 +182,10 @@
     [cell.titleLabel setText:[[titleArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]];
     if (indexPath.section == 0) {
         [cell.detailText setPlaceholder:@"请输入必填项"];
-        
+        if(indexPath.row==1)
+        {
+            [cell.detailText addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+        }
         if (indexPath.row == 2) {
             [cell.unitLabel setHidden:NO];
             [cell.unitLabel setText:@"cm"];
@@ -207,21 +220,21 @@
 -(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 0.5)];
-//    [titleView setBackgroundColor:getUIColor(Color_saveColor)];
-
-//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH - 12, 35)];
-//    [label setTextColor:[UIColor lightGrayColor]];
-//    if (section == 0) {
-//        [label setText:@"以上为必填信息"];
-//    } else {
-//        [label setText:@"以上为非必填信息"];
-//    }
-//    [label setFont:[UIFont systemFontOfSize:12]];
-//    [label setTextAlignment:NSTextAlignmentRight];
-//
-//    [titleView addSubview:label];
-
-
+    //    [titleView setBackgroundColor:getUIColor(Color_saveColor)];
+    
+    //    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH - 12, 35)];
+    //    [label setTextColor:[UIColor lightGrayColor]];
+    //    if (section == 0) {
+    //        [label setText:@"以上为必填信息"];
+    //    } else {
+    //        [label setText:@"以上为非必填信息"];
+    //    }
+    //    [label setFont:[UIFont systemFontOfSize:12]];
+    //    [label setTextAlignment:NSTextAlignmentRight];
+    //
+    //    [titleView addSubview:label];
+    
+    
     return titleView;
 }
 
@@ -247,7 +260,7 @@
                 [params setObject:detail forKey:@"weight"];
                 
                 break;
-            
+                
                 
             default:
                 break;
@@ -281,18 +294,45 @@
 {
     return UIStatusBarStyleLightContent;
 }
+- (BOOL)isMobileNumber:(NSString *)mobileNum
+{
+    /**
+     * 手机号码
+     * 移动：134 135 136 137 138 139 147 150 151 152 157 158 159 178 182 183 184 187 188 198
+     * 联通：130 131 132 145 155 156 166 171 175 176 185 186
+     * 电信：133 149 153 173 177 180 181 189 199
+     * 虚拟运营商: 170
+     */
+    NSString *target = @"^(0|86|17951)?(13[0-9]|15[012356789]|16[6]|19[89]]|17[01345678]|18[0-9]|14[579])[0-9]{8}$";
+    NSPredicate *targetPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", target];
+    if ([targetPredicate evaluateWithObject:mobileNum])
+    {
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
+}
 -(void)takePhoto{
     
     if ([[params stringForKey:@"height"] length] > 0 && [[params stringForKey:@"weight"] length] > 0 && [[params stringForKey:@"name"] length] > 0 &&[[params stringForKey:@"sh_phone"] length] > 0) {
-        tablePhotoViewController *takePhoto = [[tablePhotoViewController alloc] init];
-        takePhoto.params = params;
-        takePhoto.bodyHeight = [[params stringForKey:@"height"] floatValue];
-        [self.navigationController pushViewController:takePhoto animated:YES];
+        if([self isMobileNumber:[params stringForKey:@"sh_phone"]])
+        {
+            tablePhotoViewController *takePhoto = [[tablePhotoViewController alloc] init];
+            takePhoto.params = params;
+            takePhoto.bodyHeight = [[params stringForKey:@"height"] floatValue];
+            [self.navigationController pushViewController:takePhoto animated:YES];
+        }
+        else
+        {
+            [self alertViewShowOfTime:@"输入的电话号码有问题" time:1];
+        }
     } else {
-
+        
         [self alertViewShowOfTime:@"必填项不能为空" time:1];
     }
-
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -301,13 +341,13 @@
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end

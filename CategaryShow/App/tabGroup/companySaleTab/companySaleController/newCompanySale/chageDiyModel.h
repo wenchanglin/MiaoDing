@@ -9,12 +9,11 @@
 #import <Foundation/Foundation.h>
 
 @interface chageDiyModel : NSObject
-@property (nonatomic, retain) NSString *thumb;
 @property (nonatomic, retain) NSString *name;
-@property (nonatomic, retain) NSString *sub_name;
+@property (nonatomic, retain) NSString *content;
 @property(nonatomic,assign) NSInteger ID;
-@property(nonatomic,strong)NSString * img_info;
-@property(nonatomic,strong)NSString * img_new;
-@property(nonatomic,strong)NSString * price;
-@property(nonatomic,strong)NSNumber * type;
+@property(nonatomic,strong)NSString * ad_img_info;
+@property(nonatomic,strong)NSString * ad_img;
+@property(nonatomic,strong)NSString * sell_price;
+@property(nonatomic,assign)NSInteger is_new;
 @end

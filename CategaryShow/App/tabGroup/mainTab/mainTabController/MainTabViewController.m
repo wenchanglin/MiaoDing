@@ -94,16 +94,19 @@
 -(void)getPeiZhi
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [getPeiZhi getData:URL_GETPEIZHI PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-        [userd setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"privateKey"] forKey:@"privateKey"];
-        [userd setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"appid"] forKey:@"appId"];
-        [userd setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"login_img"] forKey:@"loginImage"];
-        [userd setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"price_remark"] forKey:@"price_remark"];
-        [userd setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"kf_tel"] forKey:@"kf_tel"];
-        [userd setObject:[domain.dataRoot stringForKey:@"cobbler_banner"] forKey:@"cobbler_banner"];
-        
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_UserLoginProtocol_String] parameters:nil finished:^(id responseObject, NSError *error) {
+//        WCLLog(@"%@",responseObject);
     }];
+//    [getPeiZhi getData:URL_GETPEIZHI PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+//        NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
+//        [userd setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"privateKey"] forKey:@"privateKey"];
+//        [userd setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"appid"] forKey:@"appId"];
+//        [userd setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"login_img"] forKey:@"loginImage"];
+//        [userd setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"price_remark"] forKey:@"price_remark"];
+//        [userd setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"kf_tel"] forKey:@"kf_tel"];
+//        [userd setObject:[domain.dataRoot stringForKey:@"cobbler_banner"] forKey:@"cobbler_banner"];
+//
+//    }];
 }
 
 
@@ -201,20 +204,20 @@
                 NSMutableArray *temp = [NSMutableArray array];
                 for (int j = 0; j < [arrayJ count]; j ++ ) {
                     NewMainModel *model  = [NewMainModel new];
-                    model.ImageUrl = [arrayJ[j] stringForKey:@"img"];
-                    model.linkUrl = [arrayJ[j] stringForKey:@"link"];
-                    model.LinkId = [arrayJ[j] stringForKey:@"id"];
-                    //                    model.titleContent = [arrayJ[j] stringForKey:@"title"];
-                    model.fenLei = [arrayJ[j] stringForKey:@"name"];
-                    model.name = [arrayJ[j] stringForKey:@"title"];
-                    model.tagName = [arrayJ[j] stringForKey:@"tag_name"];
-                    model.detail = [NSString stringWithFormat:@"%@·%@",[arrayJ[j] stringForKey:@"tag_name"], [arrayJ[j] stringForKey:@"sub_title"]];
-                    if (j == 0) {
-                        model.time = [arrayJ[j] stringForKey:@"p_time"];
-                        
-                        
-                        
-                    }
+//                    model.ImageUrl = [arrayJ[j] stringForKey:@"img"];
+//                    model.linkUrl = [arrayJ[j] stringForKey:@"link"];
+//                    model.LinkId = [arrayJ[j] stringForKey:@"id"];
+//                    //                    model.titleContent = [arrayJ[j] stringForKey:@"title"];
+//                    model.fenLei = [arrayJ[j] stringForKey:@"name"];
+//                    model.name = [arrayJ[j] stringForKey:@"title"];
+//                    model.tagName = [arrayJ[j] stringForKey:@"tag_name"];
+//                    model.detail = [NSString stringWithFormat:@"%@·%@",[arrayJ[j] stringForKey:@"tag_name"], [arrayJ[j] stringForKey:@"sub_title"]];
+//                    if (j == 0) {
+//                        model.time = [arrayJ[j] stringForKey:@"p_time"];
+//
+//
+//
+//                    }
                     
                     [temp addObject:model];
                 }
@@ -348,12 +351,12 @@
 {
     NewMainModel *model = [[self.modelArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     MainTabDetailViewController *MainDetail = [[MainTabDetailViewController alloc] init];
-    MainDetail.webId = model.LinkId;
-    MainDetail.imageUrl = model.ImageUrl;
-    MainDetail.linkUrl = model.linkUrl;
-    MainDetail.titleContent = model.name;
-    MainDetail.tagName = model.tagName;
-    [self getDateBegin:datBegin currentView:model.tagName fatherView:@"首页"];
+//    MainDetail.webId = model.LinkId;
+//    MainDetail.imageUrl = model.ImageUrl;
+//    MainDetail.linkUrl = model.linkUrl;
+//    MainDetail.titleContent = model.name;
+//    MainDetail.tagName = model.tagName;
+//    [self getDateBegin:datBegin currentView:model.tagName fatherView:@"首页"];
     [self.navigationController pushViewController:MainDetail animated:YES];
 }
 

@@ -33,7 +33,7 @@
     getData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self getDatas];
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(20,IsiPhoneX? SCREEN_HEIGHT-64-83:SCREEN_HEIGHT -64-50, SCREEN_WIDTH - 40, 40)];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(20,[ShiPeiIphoneXSRMax isIPhoneX]? SCREEN_HEIGHT-64-83:SCREEN_HEIGHT -64-50, SCREEN_WIDTH - 40, 40)];
     [button setBackgroundColor:getUIColor(Color_measureTableTitle)];
     [self.view addSubview:button];
     [button.layer setCornerRadius:1];
@@ -46,22 +46,17 @@
 {
     NSMutableDictionary *parms = [NSMutableDictionary dictionary];
     [parms setObject:@"3" forKey:@"type"];
-    
-    if ([SelfPersonInfo getInstance].personPhone) {
-        [parms setObject:[SelfPersonInfo getInstance].personPhone forKey:@"phone"];
-    }
-    [getData getData:URL_GetIntoDesignerImg PostParams:parms finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getData]) {
-            dataDic = [NSMutableDictionary dictionaryWithDictionary:[getData.dataRoot objectForKey:@"data"]];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_GetDesignerImg_String] parameters:parms finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            dataDic = [NSMutableDictionary dictionaryWithDictionary:[responseObject objectForKey:@"data"]];
             [self createScrollerView];
-            
         }
     }];
 }
 
 -(void)createScrollerView
 {
-    UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, IsiPhoneX?SCREEN_HEIGHT-64-83:SCREEN_HEIGHT - 60 - 64)];
+    UIScrollView *scroller = [[UIScrollView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, [ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-83:SCREEN_HEIGHT - 60 - 64)];
     [self.view addSubview:scroller];
 
     UIImageView *imageDetailDes = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];

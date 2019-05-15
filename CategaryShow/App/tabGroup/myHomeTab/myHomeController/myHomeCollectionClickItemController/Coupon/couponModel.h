@@ -9,13 +9,14 @@
 #import <Foundation/Foundation.h>
 
 @interface couponModel : NSObject
-@property (nonatomic, retain) NSString *price;
-@property (nonatomic, retain) NSString *imageName;
-@property (nonatomic, retain) NSString *useType;
-@property (nonatomic, retain) NSString *typeRemark;
-@property (nonatomic, retain) NSString *time;
-@property (nonatomic, retain) NSString *state;
-@property (nonatomic, retain) NSString *conPonId;
-@property (nonatomic, retain) NSString *minPrice;
-@property (nonatomic, retain) NSString *rightImg;
+@property(nonatomic,strong)NSString*cart_id_s;
+@property(nonatomic,assign)NSInteger ID;
+@property(nonatomic,strong)NSString* full_money;
+@property (nonatomic, retain) NSString *money;
+@property(nonatomic,strong)NSString*e_time;
+@property (nonatomic, retain) NSString *re_marks;
+@property (nonatomic, retain) NSString *s_time;
+@property (nonatomic, retain) NSString *status;
+@property (nonatomic, retain) NSString *sub_title;
+@property (nonatomic, retain) NSString *title;
 @end

@@ -9,5 +9,7 @@
 #import "mySavedModel.h"
 
 @implementation mySavedModel
-
++(NSDictionary *)mj_replacedKeyFromPropertyName{
+    return @{@"ID":@"id"};
+}
 @end

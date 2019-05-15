@@ -11,7 +11,6 @@
 
 @interface SCLSwitchView ()
 
-@property (strong, nonatomic) UISwitch *switchKnob;
 @property (strong, nonatomic) UILabel *switchLabel;
 
 @end

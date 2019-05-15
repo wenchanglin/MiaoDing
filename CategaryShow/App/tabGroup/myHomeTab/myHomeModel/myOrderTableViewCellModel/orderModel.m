@@ -9,5 +9,16 @@
 #import "orderModel.h"
 
 @implementation orderModel
-
++(NSDictionary *)mj_objectClassInArray
+{
+    return @{@"childOrders":@"childOrdersModel"};
+}
 @end
+@implementation childOrdersModel
++(NSDictionary *)mj_objectClassInArray
+{
+    return @{@"part":@"partModel",@"sku":@"skuModel"};
+}
+Description
+@end
+

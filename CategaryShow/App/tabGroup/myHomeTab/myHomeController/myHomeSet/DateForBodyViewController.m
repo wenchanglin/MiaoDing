@@ -44,19 +44,27 @@
 -(void)createDates
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@"1" forKey:@"page"];
-    [params setObject:@(_lt_id) forKey:@"lt_id"];
-    [getDate getData:URL_GetBodyDate PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:domain]) {
-            arrayData = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"data"]];
-            if ([arrayData count] > 0) {
-                [self createTable];
-            } else {
-                [self createViewNoDD];
-            }
-
+    [params setObject:@(_lt_id) forKey:@"id"];
+    [[wclNetTool sharedTools]request:POST urlString:URL_GetBodyDate parameters:params finished:^(id responseObject, NSError *error) {
+//        WCLLog(@"%@",responseObject);
+        arrayData = [NSMutableArray arrayWithArray:responseObject[@"data"]];
+        if ([arrayData count] > 0) {
+            [self createTable];
+        } else {
+            [self createViewNoDD];
         }
     }];
+   
+}
+
+-(void)createTable
+{
+    nameTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-70:SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    nameTable.delegate = self;
+    nameTable.dataSource = self;
+    [nameTable registerClass:[dateForBodyTableViewCell class] forCellReuseIdentifier:@"name"];
+    [nameTable setSeparatorColor : getUIColor(Color_myTabIconLineColor)];
+    [self.view addSubview:nameTable];
 }
 
 -(void)createViewNoDD    // 创建没有订单界面
@@ -88,20 +96,15 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    return 3;
+    return 0.001;
 }
-
--(void)createTable
+-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    return [UIView new];
+}
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    nameTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-70:SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
-   
-    nameTable.delegate = self;
-    nameTable.dataSource = self;
-    [nameTable registerClass:[dateForBodyTableViewCell class] forCellReuseIdentifier:@"name"];
-    [nameTable setSeparatorColor : getUIColor(Color_myTabIconLineColor)];
-    [self.view addSubview:nameTable];
+    return [UIView new];
 }
-
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return 1;
@@ -116,7 +119,7 @@
 {
     dateForBodyTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"name" forIndexPath:indexPath];
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    cell.titleLabel.text = [arrayData[indexPath.section]  stringForKey:@"name"];
+    cell.titleLabel.text = [arrayData[indexPath.section]  stringForKey:@"key"];
     
     cell.detailLabel.text = [arrayData[indexPath.section] stringForKey:@"value"];
     return cell;

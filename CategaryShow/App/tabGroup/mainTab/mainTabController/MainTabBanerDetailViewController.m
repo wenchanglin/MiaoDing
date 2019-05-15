@@ -31,8 +31,6 @@
 -(void)viewWillDisappear:(BOOL)animated
 {
     [self.navigationController setNavigationBarHidden:YES animated:animated];
-    
-    [self getDateBegin:datBegin currentView:@"首页" fatherView:@"baner"];
 }
 
 -(void)viewWillAppear:(BOOL)animated

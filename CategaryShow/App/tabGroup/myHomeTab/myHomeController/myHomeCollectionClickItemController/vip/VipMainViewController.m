@@ -196,7 +196,7 @@
     
     
     if (isGift == 2) {
-        if ([[SelfPersonInfo getInstance].personAge isEqualToString:@"0"]) {
+        if ([[SelfPersonInfo shareInstance].userModel.age isEqualToString:@"0"]) {
             myHomeSetViewController *set = [[myHomeSetViewController alloc] init];
             [self.navigationController pushViewController:set animated:YES];
         } else {
@@ -280,7 +280,7 @@
     .heightIs(80);
     [imageHead.layer setCornerRadius:40];
     [imageHead.layer setMasksToBounds:YES];
-    [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]]];
+    [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo shareInstance].userModel.avatar]]];
     
     _processView = [[LXGradientProcessView alloc] initWithFrame:CGRectMake(120, BGIMG.frame.size.height / 2 - 1.5, SCREEN_WIDTH - 170, 3)];
     [BGIMG addSubview:_processView];
@@ -298,7 +298,7 @@
     .bottomSpaceToView(_processView,3)
     .widthIs(80)
     .heightIs(20);
-    [nameLabel setText:[SelfPersonInfo getInstance].cnPersonUserName];
+    [nameLabel setText:[SelfPersonInfo shareInstance].userModel.username];
     
     
     UIImageView *vipImg = [UIImageView new];
@@ -425,7 +425,7 @@
     //设置代理
     ruleCollection.delegate = self;
     ruleCollection.dataSource = self;
-    [ruleCollection setBackgroundColor:[UIColor whiteColor]];
+    [ruleCollection setBackgroundColor:[UIColor cyanColor]];
 //    ruleCollection.pagingEnabled = YES ;
     
     [self.view addSubview:ruleCollection];
@@ -488,7 +488,7 @@
     
     if (isGift == 2) {
         
-        if ([[SelfPersonInfo getInstance].personAge isEqualToString:@"0"]) {
+        if ([[SelfPersonInfo shareInstance].userModel.age isEqualToString:@"0"]) {
             CGFloat height =  [self calculateTextHeight:[UIFont systemFontOfSize:14] givenText:@"· 完善生日资料后，过生日时可获得惊喜生日礼包一份\n· 礼包领取有效期：生日前三天及后四天" givenWidth:270];
             [alphaView setSize:CGSizeMake(300, 120 + height)];
             [closeButton setTitle:@"去设置" forState:UIControlStateNormal];

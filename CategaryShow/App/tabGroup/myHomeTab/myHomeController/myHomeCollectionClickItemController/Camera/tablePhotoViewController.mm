@@ -1,4 +1,4 @@
- //
+//
 //  tablePhotoViewController.m
 //  CategaryShow
 //
@@ -143,29 +143,28 @@ NSInteger flog;
 }
 -(void)backAction:(UIBarButtonItem *)item
 {
-//    WCLLog(@"你点击了我");
+    //    WCLLog(@"你点击了我");
     [photoCollection removeFromSuperview];
     [self.navigationController popViewControllerAnimated:YES];
     [photoTable removeFromSuperview];
     photoTable = nil;
     photoModelArray = nil;
     photoCollection =nil;
-
+    
 }
 -(CGFloat)getPPi
 {
-//    CGFloat scale_screen = [UIScreen mainScreen].scale;
+    //    CGFloat scale_screen = [UIScreen mainScreen].scale;
     CGFloat x;
     NSString *strDe = [self deviceVersion];
     if ([strDe isEqualToString:@"5S"] || [strDe isEqualToString:@"5"]) {
         x = sqrt(SCREEN_HEIGHT * SCREEN_HEIGHT + SCREEN_WIDTH *SCREEN_WIDTH) / 3.5;
     } else if ([strDe isEqualToString:@"6"] || [strDe isEqualToString:@"6S"]|| [strDe isEqualToString:@"7"]|| [strDe isEqualToString:@"8"]) {
-//         x = sqrt(SCREEN_HEIGHT *scale_screen * SCREEN_HEIGHT *scale_screen + SCREEN_WIDTH *scale_screen *SCREEN_WIDTH *scale_screen) / 4.5;
         x = 326;
         lowPoint = 190;
     } else if([strDe isEqualToString:@"6P"]||[strDe isEqualToString:@"6SP"]|| [strDe isEqualToString:@"7P"]|| [strDe isEqualToString:@"8P"])
     {
-//        x = sqrt(SCREEN_HEIGHT *scale_screen * SCREEN_HEIGHT *scale_screen + SCREEN_WIDTH *scale_screen *SCREEN_WIDTH *scale_screen) / 5.5;
+        //        x = sqrt(SCREEN_HEIGHT *scale_screen * SCREEN_HEIGHT *scale_screen + SCREEN_WIDTH *scale_screen *SCREEN_WIDTH *scale_screen) / 5.5;
         x = 401;
         lowPoint = 210;
     }
@@ -174,7 +173,7 @@ NSInteger flog;
         x= 458;
         lowPoint = 230;
     }
-
+    
     return x;
 }
 
@@ -215,7 +214,7 @@ NSInteger flog;
     [backgroundView setFrame:CGRectMake(0, 0, imagePickerController.view.frame.size.width, imagePickerController.view.frame.size.height)];
     [imagePickerController.view addSubview:backgroundView];
     
-   
+    
     
     shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 30, imagePickerController.view.frame.size.height - 80, 60, 60)];
     [shutMInebutton.layer setCornerRadius:30];
@@ -231,14 +230,14 @@ NSInteger flog;
     [helpBtn addTarget:self action:@selector(helpClick) forControlEvents:UIControlEventTouchUpInside];
     [imagePickerController.view addSubview:helpBtn];
     
-//    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 70 - 40, 5, 40, 40)];
-//    [title setFont:[UIFont systemFontOfSize:16]];
-//    [title setTextColor:[UIColor whiteColor]];
-//    [imagePickerController.view addSubview:title];
-//    [title setText:@"精细"];
-//    
-//    chooseSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 70, 10, 55, 40)];
-//    [imagePickerController.view addSubview:chooseSwitch];
+    //    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 70 - 40, 5, 40, 40)];
+    //    [title setFont:[UIFont systemFontOfSize:16]];
+    //    [title setTextColor:[UIColor whiteColor]];
+    //    [imagePickerController.view addSubview:title];
+    //    [title setText:@"精细"];
+    //
+    //    chooseSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 70, 10, 55, 40)];
+    //    [imagePickerController.view addSubview:chooseSwitch];
     
     CGFloat H = 29.0 / 3000.0 * _bodyHeight/ 0.81;
     UIView *lindDown = [[UIView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 - 90, imagePickerController.view.frame.size.height - lowPoint, 180, 1)];
@@ -263,7 +262,7 @@ NSInteger flog;
     [centerLine setBackgroundColor:[UIColor whiteColor]];
     [imagePickerController.view addSubview:centerLine];
     
-   
+    
     
     //[backgroundView setFrame:imagePickerController.view.frame];
     //    imagePickerController.cameraOverlayView = backgroundView;
@@ -292,14 +291,14 @@ NSInteger flog;
         [_leftLabel removeFromSuperview];
         [downLabel removeFromSuperview];
         [imagePickerController takePicture];
-
+        
     } else {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"拍摄问题" message:@"请确保手机垂直于地面（通过调整手机拍摄角度将左边与下边的蓝色小球移动至白色圈内）" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
     }
     
     
-//    [progressHud hideAnimated:YES];
+    //    [progressHud hideAnimated:YES];
     
     
 }
@@ -309,8 +308,8 @@ NSInteger flog;
     UIImage* imgTake = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
     UIImage *imageFix = [self fixOrientation:imgTake];
     UIImage *resImg = [self imageHog:imageFix];
-//    UIImageWriteToSavedPhotosAlbum(resImg, self, @selector(image:didFinishSavingWithError:contextInfo:), self);
-  
+    //    UIImageWriteToSavedPhotosAlbum(resImg, self, @selector(image:didFinishSavingWithError:contextInfo:), self);
+    
     if (resImg == nil) {
         [imagePickerController dismissViewControllerAnimated:NO completion:nil];
         
@@ -326,7 +325,7 @@ NSInteger flog;
             shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 30, imagePickerController.view.frame.size.height - 80, 60, 60)];
             [shutMInebutton.layer setCornerRadius:30];
             [shutMInebutton.layer setMasksToBounds:YES];
-//            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+            //            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
             [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
             [shutMInebutton addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
             [imagePickerController.view addSubview:shutMInebutton];
@@ -368,7 +367,7 @@ NSInteger flog;
         }
     } else {
         
-       
+        
         
         
         NSData *imgData = UIImageJPEGRepresentation(resImg, 1);
@@ -385,7 +384,7 @@ NSInteger flog;
         [imagePickerController dismissViewControllerAnimated:NO completion:nil];
         
         if (currentStep < 4) {
-           
+            
             imagePickerController = [[UIImagePickerController alloc] init];
             imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
             imagePickerController.delegate   = self;
@@ -401,12 +400,12 @@ NSInteger flog;
             shutMInebutton = [[UIButton alloc] initWithFrame:CGRectMake(imagePickerController.view.frame.size.width / 2 - 30, imagePickerController.view.frame.size.height - 80, 60, 60)];
             [shutMInebutton.layer setCornerRadius:30];
             [shutMInebutton.layer setMasksToBounds:YES];
-//            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+            //            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
             [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
             [shutMInebutton addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
             [imagePickerController.view addSubview:shutMInebutton];
             
-        
+            
             
             CGFloat H = 29.0 / 3000.0 * _bodyHeight/ 0.81;
             UIView *lindDown = [[UIView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 - 90, imagePickerController.view.frame.size.height - lowPoint, 180, 1)];
@@ -555,8 +554,8 @@ NSInteger flog;
 
 -(UIImage *)imageHog :(UIImage *)image{
     UIImage *reImg;
-   
-        
+    
+    
     CGFloat H = 29.0 / 3000.0 * _bodyHeight/ 0.81;
     
     CGFloat downScan = (lowPoint - 180 ) / (SCREEN_HEIGHT - 180 - 40);
@@ -573,26 +572,26 @@ NSInteger flog;
     reImg = [self convertToUIImage:pdst];
     cvReleaseImage(&psrc);
     cvReleaseImage(&pdst);
-
-   CGFloat re = [self showImage:reImg];
+    
+    CGFloat re = [self showImage:reImg];
     
     
-   if (re == 0) {
+    if (re == 0) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"注意" message:@"距离太近了或没有检测到参照物，请保证拍照者与墙的距离不小于2.5米；没有强烈光照；参照物与墙的颜色不相同" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
-//         [progressHud hideAnimated:YES];
+        //         [progressHud hideAnimated:YES];
         return nil;
-   } else if (re == 1) {
-       UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"注意" message:@"距离太远了哦亲~" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-       [alert show];
-       //         [progressHud hideAnimated:YES];
-       return nil;
-   } else if(re == 2) {
-       UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"注意" message:@"距离太近了哦亲~" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-       [alert show];
-       return nil;
-   }
-//     [progressHud hideAnimated:YES];
+    } else if (re == 1) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"注意" message:@"距离太远了哦亲~" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        [alert show];
+        //         [progressHud hideAnimated:YES];
+        return nil;
+    } else if(re == 2) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"注意" message:@"距离太近了哦亲~" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        [alert show];
+        return nil;
+    }
+    //     [progressHud hideAnimated:YES];
     
     [pisitonArray removeAllObjects];
     [areaArray removeAllObjects];
@@ -636,16 +635,16 @@ NSInteger flog;
                 _leftLabel.frame  = CGRectMake(LabelX, LeftLabelY + fTheta * 5, 15, 15);
                 downLabel.frame  = CGRectMake( DownLabelX + yTheta * 5, DownLabelY , 15, 15);
             }];
-                        if (fTheta > -5 && fTheta < 5 && yTheta < 1 && yTheta > -1){
-            
-                            canShut = YES;
-//                            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#90c551"];
-                            [shutMInebutton setImage:[UIImage imageNamed:@"shutten"] forState:UIControlStateNormal];
-                        } else {
-                            canShut = NO;
-//                            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
-                            [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
-                        }
+            if (fTheta > -5 && fTheta < 5 && yTheta < 1 && yTheta > -1){
+                
+                canShut = YES;
+                //                            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#90c551"];
+                [shutMInebutton setImage:[UIImage imageNamed:@"shutten"] forState:UIControlStateNormal];
+            } else {
+                canShut = NO;
+                //                            shutMInebutton.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+                [shutMInebutton setImage:[UIImage imageNamed:@"Noshutten"] forState:UIControlStateNormal];
+            }
             
         }];
     }
@@ -662,12 +661,10 @@ NSInteger flog;
     //首先判断当前设备的版本(主要是iOS9修改了camera界面底层的实现)
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 9.0) {
         //在相机界面中进行循环遍历出shutterButton
-       // NSLog(@"1:  %@", viewController.view.subviews);
+        // NSLog(@"1:  %@", viewController.view.subviews);
         for (UIView *tmpView in viewController.view.subviews) {
-         //   NSLog(@"2:   %@", tmpView.subviews);
-            
+            //   NSLog(@"2:   %@", tmpView.subviews);
             //删除拍照界面顶部的工具条 (iOS9之后设置topBar隐藏属性是不能够隐藏掉那个前置摄像头)
-            
             //获取重拍按钮
             for (UIView *tmpView2 in tmpView.subviews) {
                 if( [[[tmpView2 class]description]isEqualToString:@"PLCropOverlayBottomBar"])
@@ -742,7 +739,7 @@ NSInteger flog;
 -(void)takePhotoAgain
 {
     [self.navigationController popViewControllerAnimated:YES];
-
+    
 }
 
 -(void)setHiddenLabel
@@ -823,7 +820,7 @@ NSInteger flog;
 
 -(void)createPhotoTable
 {
-    photoTable = [[UITableView alloc] initWithFrame:CGRectMake(0,NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-74:SCREEN_HEIGHT - 64)];
+    photoTable = [[UITableView alloc] initWithFrame:CGRectMake(0,NavHeight, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-74:SCREEN_HEIGHT - 64)];
     photoTable.dataSource = self;
     photoTable.delegate = self;
     
@@ -882,12 +879,16 @@ NSInteger flog;
         }else if ([[self deviceVersion] integerValue] == 7) {
             [_params setObject:@"19.1415" forKey:@"actual_width"];
             area = [resultArray[j] floatValue];
+//            if (!BiLi) {
+//                BiLi = [NSString stringWithFormat:@"%.9f",21.0  / area * 0.9115];
+//            } else {
+//                BiLi = [NSString stringWithFormat:@"%@,%.9f",BiLi,21  / area * 0.9115];
+//            }
             if (!BiLi) {
-                BiLi = [NSString stringWithFormat:@"%.4f",21.0  / area * 0.9115];//-0.88532
+                BiLi = [NSString stringWithFormat:@"%.9f",21.0  / area * 0.9115];
             } else {
-                BiLi = [NSString stringWithFormat:@"%@,%.4f",BiLi,21  / area * 0.9115];
+                BiLi = [NSString stringWithFormat:@"%@,%.9f",BiLi,21  / area * 0.9115];
             }
-            
         } else if ([[self deviceVersion] integerValue] == 6) {
             area = [resultArray[j] floatValue];
             CGFloat TSScan = 1.0;
@@ -896,7 +897,7 @@ NSInteger flog;
                 TSScan = 0.8936;
             } else if ([[self deviceVersion] isEqualToString:@"6P"]) {
                 TSScan = 0.9013;//-0.012
-                 [_params setObject:@"18.9273" forKey:@"actual_width"];//62370
+                [_params setObject:@"18.9273" forKey:@"actual_width"];//62370
             } else if([[self deviceVersion] isEqualToString:@"6S"] ||[[self deviceVersion] isEqualToString:@"6SP"]) {
                 TSScan = 0.8967;
                 [_params setObject:@"18.8307" forKey:@"actual_width"];
@@ -905,11 +906,20 @@ NSInteger flog;
             if (!BiLi) {
                 BiLi = [NSString stringWithFormat:@"%.4f",21  / area * TSScan];
             } else {
-                
                 BiLi = [NSString stringWithFormat:@"%@,%.4f",BiLi,21  / area *TSScan];
                 
-                }
             }
+        }
+        else
+        {
+            [_params setObject:@"19.3305" forKey:@"actual_width"];
+            area = [resultArray[j] floatValue];
+            if (!BiLi) {
+                BiLi = [NSString stringWithFormat:@"%.4f",21.0  / area * 0.9205];
+            } else {
+                BiLi = [NSString stringWithFormat:@"%@,%.4f",BiLi,21  / area * 0.9205];
+            }
+        }
     }
     
     if ([[self deviceVersion] integerValue] == 7) {
@@ -921,64 +931,37 @@ NSInteger flog;
     {
         [_params setObject:@"0.9912" forKey:@"type_scale"];
     }
-    [_params setObject:[SelfPersonInfo getInstance].personPhone forKey:@"phone"];
+    [_params setObject:[SelfPersonInfo shareInstance].userModel.user_phone forKey:@"phone"];
     [_params setObject:BiLi forKey:@"scale"];
     [_params setObject:y_position forKey:@"y_position"];
     [_params setObject:[self deviceVersion] forKey:@"phone_type"];
     [self progressShow:@"上传中" animated:YES];
-    
-    [HttpRequestTool uploadMostImageWithURLString:[NSString stringWithFormat:@"%@%@", URL_HEADURL,URL_PHOTOTAKETEST] parameters:_params uploadDatas:photoDataArray success:^{
+    [HttpRequestTool uploadNewPicMostImageWithURLString:[NSString stringWithFormat:@"%@%@",[MoreUrlInterface URL_Server_String],[MoreUrlInterface URL_OnePicUpload_String]] parameters:@{}.mutableCopy uploadDatas:photoDataArray success:^(NSString *pics) {
+        if(pics.length>0)
+        {
+            [_params setObject:pics forKey:@"volume_img"];
+            [[wclNetTool sharedTools]request:GET urlString:[MoreUrlInterface URL_JingZhunSaveVolumes_String] parameters:_params finished:^(id responseObject, NSError *error) {
+                [self progressHide:YES];
+                if ([self checkHttpResponseResultStatus:responseObject]) {
+                    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"通知" message:@"新数据传输成功！" preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                        [self.navigationController popToRootViewControllerAnimated:YES];
+                    }];
+                    [alert addAction:defaultAction];
+                    [self presentViewController:alert animated:YES completion:nil];
+                }
+                
+            }];
+        }
+    } failure:^(NSError *error) {
         [self progressHide:YES];
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"通知" message:@"数据传输成功！" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-            [self.navigationController popToRootViewControllerAnimated:YES];
-        }];
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"通知" message:@"新数据上传失败，请重新点击上传按钮，请保证网络畅通！"
+          preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action) { }];
         [alert addAction:defaultAction];
         [self presentViewController:alert animated:YES completion:nil];
-    } failure:^(NSError *) {
-        [self progressHide:YES];
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"通知"
-                                                                               message:@"数据上传失败，请重新点击上传按钮，请保证网络畅通！"
-                                                                        preferredStyle:UIAlertControllerStyleAlert];
-        
-                UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault
-                                                                      handler:^(UIAlertAction * action) {
-        
-                                                                      }];
-                [alert addAction:defaultAction];
-                [self presentViewController:alert animated:YES completion:nil];
-            
     }];
-    
-//    [postData postData:URL_PHOTOTAKE PostParams:_params finish:^(BaseDomain *domain, Boolean success) {
-//    [self progressHide:YES];
-//    if ([[domain.dataRoot stringForKey:@"code"] integerValue] == 1) {
-//        
-//            UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"通知"
-//                                                                           message:@"数据传输成功！"
-//                                                                    preferredStyle:UIAlertControllerStyleAlert];
-//            
-//            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault
-//                                                                  handler:^(UIAlertAction * action) {
-//                                                                      [self.navigationController popToRootViewControllerAnimated:YES];
-//                                                                  }];
-//            [alert addAction:defaultAction];
-//            [self presentViewController:alert animated:YES completion:nil];
-//    } else {
-//        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"通知"
-//                                                                       message:@"数据成功失败，请重新点击上传按钮，请保证网络畅通！"
-//                                                                preferredStyle:UIAlertControllerStyleAlert];
-//        
-//        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault
-//                                                              handler:^(UIAlertAction * action) {
-//                                                                 
-//                                                              }];
-//        [alert addAction:defaultAction];
-//        [self presentViewController:alert animated:YES completion:nil];
-//    }
-//        
-//    }];
-    
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -1018,7 +1001,7 @@ NSInteger flog;
     [photoCollection setAlpha:1];
     [UIView commitAnimations];
 }
- //photo edit
+//photo edit
 
 
 -(int)cvThresholdOtsu:(IplImage*)src
@@ -1105,8 +1088,8 @@ NSInteger flog;
     UIImage * image = [self convertToUIImage:pdst];
     cvReleaseImage(&psrc);
     cvReleaseImage(&pdst);
-
-
+    
+    
     if ([[self deviceVersion] integerValue] == 6) {
         area = 0.0000;
         Mat temp1;
@@ -1116,22 +1099,14 @@ NSInteger flog;
         GaussianBlur(temp1, temp1, cv::Size(3,3), 15);
         cvtColor(temp1,gray_temp,CV_BGR2GRAY);
         equalizeHist(gray_temp, dst);
-
+        
         adaptiveThreshold(gray_temp, img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 5, -1);
         
         vector<vector<cv::Point>>contours1;
         vector<Vec4i> hierarchy;
         drawing = Mat::zeros( img.size(), CV_8UC3 );
-        //        [imagev removeFromSuperview];
-        //        flog=0;
-        //        imagev = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
-        //        [imagev setUserInteractionEnabled:YES];
-        //        [imagev setImage:[self MatToUIImage:img]];
-        //        [imagev setContentMode:UIViewContentModeScaleAspectFill];
-        //        [self.view addSubview:imagev];
-        //        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(chage:)];
-        //        [imagev addGestureRecognizer:tap];
-
+    
+        
         findContours( img, contours1, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
         Mat result1(img.size(), CV_8U, cv::Scalar(255));
         vector<RotatedRect> minRect( contours1.size() );
@@ -1139,7 +1114,7 @@ NSInteger flog;
             minRect[i] = minAreaRect(contours1[i]);
             CGFloat x = minRect[i].size.width * minRect[i].size.height;
             CGFloat y = minRect[i].size.width / minRect[i].size.height;
-            if (x > 30000 ) {
+            if (x > 30000) {
                 Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
                 Point2f rect_points[4]; minRect[i].points( rect_points );
                 for( int j = 0; j < 4; j++ )
@@ -1148,15 +1123,15 @@ NSInteger flog;
             if ([[self deviceVersion] isEqualToString:@"6"] || [[self deviceVersion] isEqualToString:@"6P"]) {
                 if ((y > 1.38 && y < 1.44) || (y > 0.694 && y < 0.7246)) {
                     if (x > 40000 && x < 70000) {
-//                        WCLLog(@"%f",x);
+                        //                        WCLLog(@"%f",x);
                         
                         CGFloat reMin = [self minBetweenA:minRect[i].size.height B:minRect[i].size.width];
-                       // WCLLog(@"x面积:%f-----%f---A:%f---B:%f", x,reMin,minRect[i].size.height,minRect[i].size.width);
-
+                        // WCLLog(@"x面积:%f-----%f---A:%f---B:%f", x,reMin,minRect[i].size.height,minRect[i].size.width);
+                        
                         [pisitonArray addObject:[NSNumber numberWithFloat:minRect[i].center.y]];
                         [areaArray addObject:[NSNumber numberWithFloat:reMin]];
                     } else if(x < 40000){
-                         area = 1;
+                        area = 1;
                     } else if (x > 70000) {
                         area = 2;
                     }
@@ -1164,12 +1139,12 @@ NSInteger flog;
                     area = 0;
                 }
                 
-
+                
             } else { //6s 6s plus
-
+                
                 if ((y > 1.38 && y < 1.44) || (y > 0.694 && y < 0.7246)) {
                     if (x > 65000 && x < 106000) {
-//                        WCLLog(@"%f",x);
+                        //                        WCLLog(@"%f",x);
                         CGFloat reMin = [self minBetweenA:minRect[i].size.height B:minRect[i].size.width];
                         [pisitonArray addObject:[NSNumber numberWithFloat:minRect[i].center.y]];
                         [areaArray addObject:[NSNumber numberWithFloat:reMin]];
@@ -1183,7 +1158,7 @@ NSInteger flog;
                 }
                 
                 
-
+                
             }
             
         }
@@ -1210,10 +1185,11 @@ NSInteger flog;
         if (area > 2) {
             model.photo = [self MatToUIImage:img];
         }
-//        WCLLog(@"%f", area);
+        //        WCLLog(@"%f", area);
         
-
+        
     } else if ([[self deviceVersion] integerValue] == 7) {
+        
         area = 0.0000;
         Mat temp1;
         Mat dst;
@@ -1225,48 +1201,46 @@ NSInteger flog;
         //
         equalizeHist(gray_temp, dst);
         
-        adaptiveThreshold(gray_temp, img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 7, -1);
-
-//        adaptiveThreshold(gray_temp, img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 13, -1);//13
-
+        //        adaptiveThreshold(gray_temp, img, 255, ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY, 3, 1);
+        adaptiveThreshold(gray_temp, img, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY_INV, 13, -1);//13
+        
         vector<vector<cv::Point>>contours1;
         vector<Vec4i> hierarchy;
-        drawing = Mat::zeros( img.size(), CV_8UC3 );
-//        [imagev removeFromSuperview];
-//        flog=0;
-//        imagev = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
-//        [imagev setUserInteractionEnabled:YES];
-//        [imagev setImage:[self MatToUIImage:img]];
-//        [imagev setContentMode:UIViewContentModeScaleAspectFill];
-//        [self.view addSubview:imagev];
-//        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(chage:)];
-//        [imagev addGestureRecognizer:tap];
-        //
+        drawing = Mat::zeros(img.size(), CV_8UC3 );
+        
+
+//                flog = 0;
+//                [imagev removeFromSuperview];
+//                imagev = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+//                [imagev setUserInteractionEnabled:YES];
+//                [imagev setImage:[self MatToUIImage:img]];
+//                [imagev setContentMode:UIViewContentModeScaleAspectFill];
+//                [self.view addSubview:imagev];
+        //        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(chage:)];
+        //        [imagev addGestureRecognizer:tap];
+        
         findContours( img, contours1, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
         Mat result1(img.size(), CV_8U, cv::Scalar(255));
-//无底图测量
+        
+        //无底图测量
         vector<RotatedRect> minRect( contours1.size() );
+        
         for (unsigned int i = 0; i < contours1.size(); i ++) {
             minRect[i] = minAreaRect(contours1[i]);
             CGFloat x = minRect[i].size.width * minRect[i].size.height;
             CGFloat y = minRect[i].size.width / minRect[i].size.height;
-//            NSLog(@"area :%f", x);
+            //            NSLog(@"area :%f", x);
             if (x > 30000 && x < 110000) {
+                //                NSLog(@"%f,%f", x, y);
                 Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
                 Point2f rect_points[4]; minRect[i].points( rect_points );
                 for( int j = 0; j < 4; j++ )
                     line( drawing, rect_points[j], rect_points[(j+1)%4], color, 1, 8 );
             }
-//            [iphone7Arr removeAllObjects];
-
+            
             if ((y > 1.38 && y < 1.44) || (y > 0.694 && y < 0.7246)) {
                 if (x > 60000 && x < 94000) {
-            //        WCLLog(@"%f", x);
-//                    [iphone7Arr addObject:@(x)];
                     CGFloat reMin = [self minBetweenA:minRect[i].size.height B:minRect[i].size.width];
-            //        WCLLog(@"x面积:%f-----%f---A:%f---B:%f", x,reMin,minRect[i].size.height,minRect[i].size.width);
-                   // [self alertViewShowOfTime:[NSString stringWithFormat:@"%f",sqrt(62370/x)] time:1];
-            //        WCLLog(@"%f",sqrt(62370/x));//210*297
                     [pisitonArray addObject:[NSNumber numberWithFloat:minRect[i].center.y]];
                     [areaArray addObject:[NSNumber numberWithFloat:reMin]];
                 } else if(x < 60000){
@@ -1278,9 +1252,10 @@ NSInteger flog;
                 area = 0;
             }
             
-           
-           
+            
         }
+        
+        
         
         [self.view addSubview:imagev];
         
@@ -1296,22 +1271,21 @@ NSInteger flog;
                     }
                 }
             }
+            
+            
             [resultArray addObject:[NSNumber numberWithFloat:area]];
-            WCLLog(@"%f",21/area);
+            
         }
         
         
         photoModel *model = photoModelArray[currentStep - 1];
         if (area > 2) {
             model.photo = [self MatToUIImage:img];
-//            [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
-//                        PHAssetChangeRequest *req = [PHAssetChangeRequest creationRequestForAssetFromImage:model.photo];
-//            } completionHandler:^(BOOL success, NSError * _Nullable error) {
-//                WCLLog(@"success = %d ,error =%@",success,error);
-//            }];
         }
+        
 
-
+//
+        
     }
     else if ([[self deviceVersion] integerValue] == 8) {
         
@@ -1344,20 +1318,20 @@ NSInteger flog;
             CGFloat y = minRect[i].size.width / minRect[i].size.height;
             if(x>30000&&x<110000)
             {
-               
+                
                 Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
                 Point2f rect_points[4]; minRect[i].points( rect_points );
                 for( int j = 0; j < 4; j++ )
                     line( drawing, rect_points[j], rect_points[(j+1)%4], color, 1, 8 );
             }
-
+            
             if ((y > 1.38 && y < 1.44) || (y > 0.694 && y < 0.7246)) {
-
+                
                 if (x > 60000 && x < 94000) {
                     CGFloat reMin = [self minBetweenA:minRect[i].size.height B:minRect[i].size.width];
-                    WCLLog(@"x面积:%f-----%f---A:%f---B:%f", x,reMin,minRect[i].size.height,minRect[i].size.width);
+//                    WCLLog(@"x面积:%f-----%f---A:%f---B:%f", x,reMin,minRect[i].size.height,minRect[i].size.width);
                     
-                    WCLLog(@"%f",sqrt(62370/x));//210*297 -0.03
+//                    WCLLog(@"%f",sqrt(62370/x));//210*297 -0.03
                     [pisitonArray addObject:[NSNumber numberWithFloat:minRect[i].center.y]];
                     [areaArray addObject:[NSNumber numberWithFloat:reMin]];
                 } else if(x < 60000){
@@ -1388,7 +1362,7 @@ NSInteger flog;
                     }
                 }
             }
-            WCLLog(@"%f",21/area);//155.465
+//            WCLLog(@"%f",21/area);//155.465
             [resultArray addObject:[NSNumber numberWithFloat:area]];
             
         }
@@ -1401,8 +1375,8 @@ NSInteger flog;
         
         
     }
-    else if ([[self deviceVersion] isEqualToString:@"X"]) {
-        
+    else //if ([[self deviceVersion] isEqualToString:@"X"]) {
+    {
         area = 0.0000;
         Mat temp1;
         Mat dst;
@@ -1431,21 +1405,21 @@ NSInteger flog;
             CGFloat y = minRect[i].size.width / minRect[i].size.height;
             if(x>30000&&x<110000)
             {
-               // WCLLog(@"%f",x);
-
+                // WCLLog(@"%f",x);
+                
                 Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
                 Point2f rect_points[4]; minRect[i].points( rect_points );
                 for( int j = 0; j < 4; j++ )
                     line( drawing, rect_points[j], rect_points[(j+1)%4], color, 1, 8 );
             }
-//
+            //
             if ((y > 1.38 && y < 1.44) || (y > 0.694 && y < 0.7246)) {
-
+                
                 if (x > 60000 && x < 94000) {
                     CGFloat reMin = [self minBetweenA:minRect[i].size.height B:minRect[i].size.width];
-                    WCLLog(@"x面积:%f-----%f---A:%f---B:%f", x,reMin,minRect[i].size.height,minRect[i].size.width);
-
-                    WCLLog(@"%f",sqrt(62370/x));//210*297
+//                    WCLLog(@"x面积:%f-----%f---A:%f---B:%f", x,reMin,minRect[i].size.height,minRect[i].size.width);
+                    
+//                    WCLLog(@"%f",sqrt(62370/x));//210*297
                     [pisitonArray addObject:[NSNumber numberWithFloat:minRect[i].center.y]];
                     [areaArray addObject:[NSNumber numberWithFloat:reMin]];
                 } else if(x < 60000){
@@ -1476,7 +1450,7 @@ NSInteger flog;
                     }
                 }
             }
-            WCLLog(@"%f",21/area);
+//            WCLLog(@"%f",21/area);
             [resultArray addObject:[NSNumber numberWithFloat:area]];
             
         }
@@ -1490,7 +1464,7 @@ NSInteger flog;
         
     }
     return area;
-
+    
 }
 
 
@@ -1533,32 +1507,32 @@ NSInteger flog;
 -(Mat)MatchingMethod:(int)x y:(void*)y {
     Mat img_display;
     img.copyTo( img_display );
-
+    
     /// 创建输出结果的矩阵
     int result_cols =  img.cols - templ.cols + 1;
     int result_rows = img.rows - templ.rows + 1;
-
+    
     result.create( result_cols, result_rows, CV_32FC1 );
-
+    
     /// 进行匹配和标准化
     matchTemplate( img, templ, result, CV_TM_SQDIFF_NORMED );
     normalize( result, result, 0, 1, NORM_MINMAX, -1, Mat() );
-
+    
     /// 通过函数 minMaxLoc 定位最匹配的位置
     double minVal; double maxVal; cv::Point minLoc; cv::Point maxLoc;
     cv::Point matchLoc;
-
+    
     minMaxLoc( result, &minVal, &maxVal, &minLoc, &maxLoc, Mat() );
-
+    
     /// 对于方法 SQDIFF 和 SQDIFF_NORMED, 越小的数值代表更高的匹配结果. 而对于其他方法, 数值越大匹配越好
-
+    
     matchLoc = minLoc;
     /// 让我看看您的最终结果
     rectangle( img_display, matchLoc, cv::Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), Scalar::all(170), 2, 8, 0 );
     rectangle( result, matchLoc, cv::Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), Scalar::all(170), 2, 8, 0 );
-
+    
     pointSize = CGPointMake(matchLoc.x, matchLoc.y);
-
+    
     //    imshow( image_window, img_display );
     //    imshow( result_window, result );
     

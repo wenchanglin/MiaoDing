@@ -67,7 +67,7 @@
     .leftSpaceToView(content, 20)
     .rightSpaceToView(content, 20)
     .heightIs(1)
-    .topSpaceToView(textContent, 0);
+    .topSpaceToView(imageContent, 0);
     [lineView setBackgroundColor:getUIColor(Color_background)];
     
     UILabel *detail = [UILabel new];
@@ -78,7 +78,7 @@
     .widthIs(100)
     .bottomEqualToView(content)
     .topSpaceToView(lineView, 0);
-    [detail setFont:[UIFont systemFontOfSize:10]];
+    [detail setFont:[UIFont systemFontOfSize:14]];
     [detail setText:@"查看详情"];
 
     
@@ -87,9 +87,9 @@
 -(void)setModel:(messageListModel *)model
 {
     _model = model;
-    [titleLabel setText:model.mcTitle];
-    [imageContent sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.mcImg]]];
-    [textContent setText:model.mcContent];
+    [titleLabel setText:model.goods_name];
+    [imageContent sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.car_img]]];
+//    [textContent setText:model.goods_name];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

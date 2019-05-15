@@ -10,6 +10,7 @@
 #import "PlaceholderTextView.h"
 #import "PhotoCollectionViewCell.h"
 #import "TZImagePickerController.h"
+#import "HttpRequestTool.h"
 #define kTextBorderColor     RGBCOLOR(227,224,216)
 
 #undef  RGBCOLOR
@@ -27,7 +28,7 @@
 //上传图片的个数
 @property (nonatomic, strong)NSMutableArray *photoArrayM;
 
-@property (nonatomic, retain) NSString *photoDataArray;
+@property (nonatomic, retain) NSMutableArray *photoDataArray;
 
 //上传图片的button
 @property (nonatomic, strong)UIButton *photoBtn;
@@ -50,7 +51,6 @@
 
 @implementation UserFeedBackViewController
 {
-    BaseDomain *postData;
     NSMutableArray *selectedAssets;
 }
 //懒加载数组
@@ -77,7 +77,7 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    postData = [BaseDomain getInstance:NO];
+    _photoDataArray = [NSMutableArray array];
     self.view.backgroundColor = [UIColor whiteColor];
     self.aView = [[UIView alloc]init];
     _aView.backgroundColor = [UIColor whiteColor];
@@ -121,7 +121,6 @@
     self.photoBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     self.photoBtn.frame = CGRectMake(10 , 154 - 5, 65, 65);
     [_photoBtn setBackgroundImage:[UIImage imageNamed:@"add"] forState:UIControlStateNormal];
-    //[_photoBtn setBackgroundColor:[UIColor redColor]];
     
     [_photoBtn addTarget:self action:@selector(picureUpload:) forControlEvents:UIControlEventTouchUpInside];
     [self.aView addSubview:_photoBtn];
@@ -129,36 +128,13 @@
 
 ///图片上传
 -(void)picureUpload:(UIButton *)sender{
-
-
     TZImagePickerController *imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:4 columnNumber:4 delegate:self pushPhotoPickerVc:YES];
     imagePickerVc.selectedAssets = selectedAssets;
     [self presentViewController:imagePickerVc animated:YES completion:nil];
 
 }
-//上传图片的协议与代理方法
-//- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
-//{
-//    UIImage *image=[info objectForKey:UIImagePickerControllerOriginalImage];
-////    [self.btn setImage:image forState:UIControlStateNormal];
-//    [self.photoArrayM addObject:image];
-//    
-//    NSData * imageData = UIImageJPEGRepresentation(image, 0.3);
-//    
-//    NSString * base64 = [imageData base64EncodedStringWithOptions:kNilOptions];
-//    
-//    if ([_photoDataArray length] > 0) {
-//        _photoDataArray = [NSString stringWithFormat:@"%@,%@",_photoDataArray,base64];
-//    } else {
-//        _photoDataArray = base64;
-//    }
-//    //选取完图片之后关闭视图
-//    [self dismissViewControllerAnimated:YES completion:nil];
-//}
-
 
 - (void)imagePickerController:(TZImagePickerController *)picker didFinishPickingPhotos:(NSArray *)photos sourceAssets:(NSArray *)assets isSelectOriginalPhoto:(BOOL)isSelectOriginalPhoto {
-    _photoDataArray = @"";
     _photoArrayM = [NSMutableArray arrayWithArray:photos];
     selectedAssets = [NSMutableArray arrayWithArray:assets];
     if ([photos count] > 0) {
@@ -169,21 +145,11 @@
    
     for (UIImage *imageP in photos) {
         NSData * imageData = UIImageJPEGRepresentation(imageP, 0.3);
-        //
-        NSString * base64 = [imageData base64EncodedStringWithOptions:kNilOptions];
-    
-        if ([_photoDataArray length] > 0) {
-            _photoDataArray = [NSString stringWithFormat:@"%@,%@",_photoDataArray,base64];
-        } else {
-            _photoDataArray = base64;
-        }
+        [_photoDataArray addObject:imageData];
 
     }
     
     [_collectionV reloadData];
-    // _collectionView.contentSize = CGSizeMake(0, ((_selectedPhotos.count + 2) / 3 ) * (_margin + _itemWH));
-    
-    // 1.打印图片名字
     
 }
 
@@ -245,7 +211,7 @@
     _textField.leftView=imageViewCheck;
     _textField.leftViewMode=UITextFieldViewModeAlways;
     _textField.font = [UIFont systemFontOfSize:14.f];
-    _textField.placeholder = @"   你的联系方式(手机号，QQ号或电子邮箱)";
+    _textField.placeholder = @"     你的联系方式(手机号，QQ号或电子邮箱)";
     _textField.keyboardType = UIKeyboardTypeTwitter;
 //    [_textView.layer setBorderColor:getUIColor(Color_loginBackViewColor).CGColor];
 //    [_textView.layer setBorderWidth:1];
@@ -323,30 +289,48 @@
             
             NSMutableDictionary *params = [NSMutableDictionary dictionary];
             [params setObject:self.textView.text forKey:@"content"];
-            [params setObject:self.textField.text forKey:@"contect"];
+            [params setObject:self.textField.text forKey:@"contact"];
             
-            if([_photoDataArray isEqualToString:@""]||_photoDataArray==nil)
+            if(_photoDataArray.count>0)
             {
-                _photoDataArray =@"";
+                [HttpRequestTool uploadNewPicMostImageWithURLString:[NSString stringWithFormat:@"%@%@",[MoreUrlInterface URL_Server_String],[MoreUrlInterface URL_OnePicUpload_String]] parameters:nil uploadDatas:_photoDataArray success:^(NSString *pics) {
+                    [params setObject:pics forKey:@"img_list"];
+                    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MineHelpAddSuggest_String] parameters:params finished:^(id responseObject, NSError *error) {
+                        if ([self checkHttpResponseResultStatus:responseObject]) {
+                            [MobClick endEvent:@"feedback" label:[SelfPersonInfo shareInstance].userModel.username];
+                            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"意见反馈" message:@"亲你的意见我们已经收到，我们会尽快处理" preferredStyle:UIAlertControllerStyleAlert];
+                            
+                            UIAlertAction *album = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                                
+                                [self.navigationController popViewControllerAnimated:YES];
+                                
+                            }];
+                            UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+                            [alertController addAction:album];
+                            [alertController addAction:cancel];
+                            [self presentViewController:alertController animated:YES completion:nil];
+                        }
+                    }];
+                } failure:nil];
             }
-            
-            [params setObject:_photoDataArray forKey:@"img_list"];
-            
-            [postData postData:URL_SuggestPost PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-                [MobClick endEvent:@"feedback" label:[SelfPersonInfo getInstance].cnPersonUserName];
-                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"意见反馈" message:@"亲你的意见我们已经收到，我们会尽快处理" preferredStyle:UIAlertControllerStyleAlert];
-                
-                UIAlertAction *album = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                    
-                    [self.navigationController popViewControllerAnimated:YES];
-                    
+            else
+            {
+                [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MineHelpAddSuggest_String] parameters:params finished:^(id responseObject, NSError *error) {
+                    if ([self checkHttpResponseResultStatus:responseObject]) {
+                        [MobClick endEvent:@"feedback" label:[SelfPersonInfo shareInstance].userModel.username];
+                        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"意见反馈" message:@"亲你的意见我们已经收到，我们会尽快处理" preferredStyle:UIAlertControllerStyleAlert];
+                        UIAlertAction *album = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                            
+                            [self.navigationController popViewControllerAnimated:YES];
+                            
+                        }];
+                        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+                        [alertController addAction:album];
+                        [alertController addAction:cancel];
+                        [self presentViewController:alertController animated:YES completion:nil];
+                    }
                 }];
-                UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
-                [alertController addAction:album];
-                [alertController addAction:cancel];
-                [self presentViewController:alertController animated:YES completion:nil];
-                
-            }];
+            }
         }
         else{
             UIAlertController *alertC = [UIAlertController alertControllerWithTitle:@"通知" message:@"你输入的邮箱，QQ号或者手机号错误,请重新输入" preferredStyle:UIAlertControllerStyleAlert];

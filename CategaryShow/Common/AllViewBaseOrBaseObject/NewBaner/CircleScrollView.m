@@ -8,7 +8,7 @@
 
 #import "CircleScrollView.h"
 #import "ImageContentView.h"
-
+#import "imgListModel.h"
 @interface CircleScrollView()
 
 @property(nonatomic,retain)NSArray *imgArr;
@@ -54,8 +54,8 @@
             self.scrollView.contentOffset = CGPointMake(frame.size.width, 0);
             
             for (int i = 0; i<urlStrArr.count; i++) {
-                
-                ImageContentView *contentView = [[ImageContentView alloc]initWithContentFrame:CGRectMake(frame.size.width*(i+1),0,frame.size.width,frame.size.height) andimgUrlStr:urlStrArr [i] andIntroStr:stringArr[i] andBtnBlock:^(void) {
+                NSString*picStr = urlStrArr[i];
+                ImageContentView *contentView = [[ImageContentView alloc]initWithContentFrame:CGRectMake(frame.size.width*(i+1),0,frame.size.width,frame.size.height) andimgUrlStr:picStr andIntroStr:stringArr[i] andBtnBlock:^(void) {
                     
                     if (weakSelf.scrollView.delegate&&[weakSelf.circleDelegate respondsToSelector:@selector(circleScroll:selectIndex:)]) {
                         [weakSelf.circleDelegate circleScroll:weakSelf selectIndex:i];

@@ -10,6 +10,6 @@
 
 @implementation messageTypeModel
 
-
+Description
 
 @end

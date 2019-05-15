@@ -17,14 +17,14 @@
 
 @implementation VipDetailViewController
 {
-    BaseDomain *getData;
     NSMutableArray *modelArray;
     UITableView *growTable;
+    NSInteger page;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    getData = [BaseDomain getInstance:NO];
     modelArray = [NSMutableArray array];
+    page=1;
     UIButton *buttonRight = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
     [buttonRight setImage:[UIImage imageNamed:@"RuleImg"] forState:UIControlStateNormal];
     if (@available(iOS 11.0, *)) {
@@ -52,33 +52,60 @@
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@"1" forKey:@"page"];
-    [getData getData:URL_VipGrow PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:domain]) {
-            //NSLog(@"%@", domain.dataRoot);
-            for (NSDictionary *dic in [domain.dataRoot arrayForKey:@"data"]) {
-                VipGrowModel *model = [VipGrowModel new];
-                model.time = [self dateToString:[dic stringForKey:@"c_time"]];
-                model.name = [dic stringForKey:@"name"];
-                model.addCount = [NSString stringWithFormat:@"+%@", [dic stringForKey:@"credit"]];
-                [modelArray addObject:model];
+    [params setObject:@(page) forKey:@"page"];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MineUserCreditRecord_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            [growTable.mj_footer resetNoMoreData];
+            [growTable.mj_header endRefreshing];
+            modelArray = [VipGrowModel mj_objectArrayWithKeyValuesArray:responseObject[@"data"][@"data"]];
+            if (growTable) {
+                [growTable reloadData];
             }
-            
-            [self createTable];
+            else
+            {
+                [self createTable];
+            }
+        }
+    }];
+}
+-(void)reloadDatas
+{
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [params setObject:@(page) forKey:@"page"];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MineUserCreditRecord_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            if ([responseObject[@"data"][@"data"]count]>0&&page>1) {
+                [growTable.mj_footer endRefreshing];
+                NSMutableArray*arr = [VipGrowModel mj_objectArrayWithKeyValuesArray:responseObject[@"data"][@"data"]];
+                [modelArray addObjectsFromArray:arr];
+            }
+            else
+            {
+                [growTable.mj_footer endRefreshingWithNoMoreData];
+            }
+            [growTable reloadData];
+
         }
     }];
 }
 
-
 -(void)createTable
 {
-    growTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-84:SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
-   
+    growTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-84:SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
     growTable.dataSource = self;
     growTable.delegate = self;
     [growTable registerClass:[FirstSectionTableViewCell class] forCellReuseIdentifier:@"firstSection"];
     [growTable registerClass:[growListTableViewCell class] forCellReuseIdentifier:@"growListSection"];
     [self.view addSubview:growTable];
+    growTable.mj_footer.hidden=NO;
+    [WCLMethodTools footerNormalRefreshWithTableView:growTable completion:^{
+        page+=1;
+        [self reloadDatas];
+    }];
+    [WCLMethodTools headerRefreshWithTableView:growTable completion:^{
+        page=1;
+        [self getDatas];
+    }];
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -124,7 +151,6 @@
     UITableViewCell *reCell;
     if (indexPath.section == 0) {
         FirstSectionTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"firstSection" forIndexPath:indexPath];
-        
         [cell.vipCount setText:_vipCount];
         reCell = cell;
         

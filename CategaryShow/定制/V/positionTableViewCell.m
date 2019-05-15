@@ -8,6 +8,7 @@
 
 #import "positionTableViewCell.h"
 #import "positionCollectionViewCell.h"
+#import "newDiyAllDataModel.h"
 @implementation positionTableViewCell
 {
     UICollectionView *position;
@@ -38,7 +39,7 @@
 //    [flowLayout setMinimumLineSpacing:15];
 //    [flowLayout setMinimumInteritemSpacing:43];
     //        flowLayout.headerReferenceSize = CGSizeMake(self.frame.size.width, 0);//头部
-    position = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 12, SCREEN_WIDTH,  (SCREEN_WIDTH - 60) / 4+20) collectionViewLayout:flowLayout];
+    position = [[UICollectionView alloc]initWithFrame:CGRectMake(0, -10, SCREEN_WIDTH,  (SCREEN_WIDTH - 60) / 4+35) collectionViewLayout:flowLayout];
     
     //设置代理
     position.delegate = self;
@@ -67,9 +68,10 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *identify = @"cell";
+    threeDataModel*model = _positionArray[indexPath.item];
     positionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
-    [cell.positionImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_positionArray[indexPath.item] stringForKey:@"img"]]]];
-    [cell.nameLabel setText:[_positionArray[indexPath.item] stringForKey:@"name"]];
+    [cell.positionImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.part_img]]];
+    [cell.nameLabel setText:model.part_name];
     [cell sizeToFit];
     
     if (indexPath.item == flog) {

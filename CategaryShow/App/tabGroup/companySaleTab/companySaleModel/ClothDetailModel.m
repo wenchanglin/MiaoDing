@@ -9,5 +9,5 @@
 #import "ClothDetailModel.h"
 
 @implementation ClothDetailModel
-
+Description
 @end

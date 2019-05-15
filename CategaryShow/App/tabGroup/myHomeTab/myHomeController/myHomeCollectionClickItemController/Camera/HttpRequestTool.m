@@ -20,22 +20,19 @@
 
                  uploadData:(NSData *)uploadData
 
-                 uploadName:(NSString *)uploadName
+                 uploadName:(NSString *)uploadName fileName:(NSString*)filename
 
-                    success:(void (^)())success
-
-                    failure:(void (^)(NSError *))failure {
+                   success:(picSuccessBackBlock)success failure:(void (^)(NSError *))failure{
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json",@"text/json", @"text/plain", @"text/html", nil];
     
     [manager POST:URLString parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        [formData appendPartWithFileData:uploadData name:uploadName fileName:uploadName mimeType:@"image/png"];
+        [formData appendPartWithFileData:uploadData name:uploadName fileName:filename mimeType:@"image/png"];
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
         if (success) {
-            
-            success(responseObject);
+            success(responseObject[@"info"]);
             
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -72,14 +69,12 @@
         
         for (int i=0; i<[uploadDatas count]; i++) {
             NSData *image = uploadDatas[i];
-            
             [formData appendPartWithFileData:image name:[NSString stringWithFormat:@"photos[%d]",i] fileName:[NSString stringWithFormat:@"image%d.png",i] mimeType:@"image/png"];
-            
         }
         
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
         if (success) {
-            
+            WCLLog(@"老照片%@",responseObject);
             success(responseObject);
             
         }
@@ -95,5 +90,34 @@
     
     
 }
-
++(void)uploadNewPicMostImageWithURLString:(NSString *)URLString parameters:(id)parameters uploadDatas:(NSArray *)uploadDatas success:(picSuccessBackBlock)success failure:(void (^)(NSError *))failure
+{
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json",@"text/json", @"text/plain", @"text/html", nil];
+    
+    [manager POST:URLString parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        
+        for (int i=0; i<[uploadDatas count]; i++) {
+            NSData *image = uploadDatas[i];
+            
+            [formData appendPartWithFileData:image name:@"file[]" fileName:[NSString stringWithFormat:@"image%d.png",i] mimeType:@"image/png"];
+            
+        }
+        
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+        if (success) {
+            success(responseObject[@"info"]);
+            WCLLog(@"新照片：%@",responseObject);
+            
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if (failure) {
+            
+            failure(error);
+            
+        }
+        
+    }];
+}
 @end

@@ -1,10 +1,3 @@
-/* 
-  Localizable.strings
-  TakeAuto
-
-  Created by 黄 梦炜 on 15/6/29.
-  Copyright (c) 2015年 黄 梦炜. All rights reserved.
-*/
 
 // new
 "hometab_0_title"="CarManager";
@@ -81,6 +74,7 @@
 "seek_xianshixinxi" = "ShowYourInfo";
 "seek_beizhu" = "Remark";
 // old
+"test" = "测试";
 
 "app_name"="CongestionOfGod";
 
@@ -90,7 +84,6 @@
 "navbar_leftbutton_text"="返回";
 "navbar_title_text"="标题";
 
-"splashform_getweatherfail"="获取天气失败：";
 
 
 "release_text"="发布";
@@ -115,7 +108,7 @@
 "quitAlertMessage"="确定退出程序?";
 
 "registertel_title"="注册新用户";
-"registertel_usernamehint"="请输入6-13位用户名";
+"registertel_usernamehint"="请输入11位手机号码";
 "registertel_buttonnext_title"="下一步";
 "registertel_username_checkerror"="用户名长度不得小于6位！";
 "registertel_labeltel_title"="用户名：";
@@ -134,13 +127,10 @@
 
 
 
-"homemore_blacklist_title"="黑名单";
 "homemore_photo_title"="相册";
 "homemore_setting_title"="设置";
 "homemore_checkupdate_title"="检查更新";
 "homemore_selfinfo_title"="个人资料";
-"homemore_clearmsgrecords_title"="清空聊天记录";
-"homemore_clearmsgrecords_tip"="确实要清空所有聊天记录么？";
 "homemore_zhuxiao_title"="注销";
 "homemore_zhuxiao_tip"="确实要注销么？";
 
@@ -155,22 +145,14 @@
 "homefujin_search_age_title"="年龄：";
 "homefujin_search_shengao_title"="身高：";
 "homefujin_search_tizhong_title"="体重：";
-"homefujin_search_xingzuo_title"="星座：";
-"homefujin_search_diqu_title"="地区：";
-"homefujin_search_xuexiao_title"="学校：";
-"homefujin_search_zhuanye_title"="专业：";
-"homefujin_search_zhiyefangxiang_title"="职业方向：";
 "homefujin_search_guanzhu_title"="我的关注：";
-"homefujin_search_fensi_title"="我的粉丝：";
 "homefujin_search_photo_title"="有照片：";
 "homefujin_search_select_title"="请选择";
 
 
-"releasedynamic_textview_hint"="请输入一段心情...";
 
 "hometucao_release_button_title"="发布吐槽";
 "hometucao_nav_right_button_title"="发布";
-"hometucao_mytucao_button_title"="我的吐槽";
 "hometucao_deletetucao_button_title"="删除吐槽";
 "hometucao_release_imageiszero_tip"="请至少分享一张图片再进行发布！";
 "hometucao_release_contextisempty_tip"="请输入文字说明再进行发布！";
@@ -183,11 +165,8 @@
 "personinfoform_attention_label"="关注数:";
 "personinfoform_attention_button_title"="取消关注";
 "personinfoform_attention_button_title_un"="关注";
-"personinfoform_black_button_title_add"="加入黑名单";
-"personinfoform_black_button_title_del"="拉出黑名单";
 "personinfoform_layout_cell_imagelist_title"="个人相册";
 "personinfoform_layout_cell_city_title"="所在城市";
-"personinfoform_layout_cell_sign_title"="个人签名";
 
 "selfpersoninfo_navbar_rightbuttontitle"="保存";
 "selfpersoninfo_birthday_isempty"="未设置";
@@ -211,7 +190,6 @@
 "selfpersoninfo_weight_dialog_hint"="体重以公斤为单位";
 "selfpersoninfo_school_title"="学校";
 "selfpersoninfo_profession_title"="专业";
-"selfpersoninfo_job_title"="职业方向";
 "selfpersoninfo_zone_title"="地区";
 "selfpersoninfo_constellation_title"="星座";
 
@@ -223,10 +201,7 @@
 "myprivatemessagechat_button_sendtext_title"="发送";
 "myprivatemessagechat_button_sendimage_title"="图片";
 
-"blacklist_form_title"="黑名单";
 
-"hometucao_button_all"="附 近";
-"hometucao_button_friends"="好 友";
 
 "baseform_progress_waittip"="请稍候...";
 "baseform_message_title"="提示";
@@ -239,21 +214,16 @@
 "baseform_progress_LoadDataMessage"="请求数据中...";
 
 "base_weather_Temperature"="℃";
-"base_weather_WindDir"="风";
-"base_weather_WindPower"="级";
-"base_weather_Humidity"="%";
 
 "unit_time_hour"="小时";
 "unit_time_minute"="分钟";
 
 "base_undefine_title"="未定义";
 
-"base_searchtext_hit"="请输入搜索条件";
 "base_search_title"="搜索";
 
 "base_fuhao_xin"="❤️";
 
-"pull_up_label_alldata"="已加载全部数据";
 "pull_up_label_normal"="上拉进行刷新";
 
 "sex_boy"="男";

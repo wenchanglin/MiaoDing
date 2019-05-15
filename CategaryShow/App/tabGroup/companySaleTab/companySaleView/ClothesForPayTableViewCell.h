@@ -10,7 +10,7 @@
 #import "ClothesFroPay.h"
 @interface ClothesForPayTableViewCell : UITableViewCell
 
-@property (nonatomic, strong) ClothesFroPay *model;
+@property (nonatomic, strong) carListModel *model;
 
 @property (nonatomic, retain) UIButton *cutButton;
 @property (nonatomic, retain) UIButton *upButton;

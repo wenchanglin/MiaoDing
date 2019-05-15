@@ -66,7 +66,7 @@
     }
     
     // 跳转到下一个控制器时，contentInset可能会变
-     _scrollViewOriginalInset = self.scrollView.mj_inset;
+     _scrollViewOriginalInset = self.scrollView.contentInset;
     
     // 当前的contentOffset
     CGFloat offsetY = self.scrollView.mj_offsetY;

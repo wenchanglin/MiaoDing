@@ -24,7 +24,6 @@
 #import "RDVTabBarController.h"
 #import "RDVTabBarItem.h"
 #import <objc/runtime.h>
-#define IsiPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
 
 @interface UIViewController (RDVTabBarControllerItemInternal)
 
@@ -191,7 +190,23 @@
     }
     return _contentView;
 }
-
+-(BOOL)isIPhoneX{
+    BOOL iPhoneX = NO;
+    /// 先判断设备是否是iPhone/iPod
+    if (UIDevice.currentDevice.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
+        return iPhoneX;
+    }
+    
+    if (@available(iOS 11.0, *)) {
+        /// 利用safeAreaInsets.bottom > 0.0来判断是否是iPhone X。
+        UIWindow *mainWindow = [[[UIApplication sharedApplication] delegate] window];
+        if (mainWindow.safeAreaInsets.bottom > 0.0) {
+            iPhoneX = YES;
+        }
+    }
+    
+    return iPhoneX;
+}
 - (void)setTabBarHidden:(BOOL)hidden animated:(BOOL)animated {
     _tabBarHidden = hidden;
     
@@ -204,7 +219,7 @@
         CGFloat tabBarHeight = CGRectGetHeight([[weakSelf tabBar] frame]);
 #pragma mark - 这里设置rdvtabbar高度
         if (!tabBarHeight) {
-            tabBarHeight =IsiPhoneX?83:49;
+            tabBarHeight =[self isIPhoneX]?83:49;
         }
         
         if (!hidden) {

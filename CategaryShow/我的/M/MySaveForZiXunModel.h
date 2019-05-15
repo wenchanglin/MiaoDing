@@ -9,12 +9,10 @@
 #import <Foundation/Foundation.h>
 
 @interface MySaveForZiXunModel : NSObject
-@property(nonatomic) NSInteger c_time;
-@property(nonatomic) NSInteger cid;
+@property(nonatomic,strong) NSString* tags_name;
 @property(nonatomic) NSInteger ID;
-@property(nonatomic) NSInteger status;
 @property(nonatomic) NSInteger type;
-@property(nonatomic) NSInteger uid;
+@property(nonatomic) NSInteger rid;
 @property(nonatomic,strong) NSString * img;
 @property(nonatomic,strong) NSString * img_info;
 @property(nonatomic,strong)NSString * link;

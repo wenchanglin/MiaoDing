@@ -13,6 +13,7 @@
 #endif
 
 @interface SCLSwitchView : UIView
+@property (strong, nonatomic) UISwitch *switchKnob;
 
 @property (strong, nonatomic) UIColor *tintColor UI_APPEARANCE_SELECTOR;
 @property (strong, nonatomic) UIColor *labelColor UI_APPEARANCE_SELECTOR;

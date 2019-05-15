@@ -102,7 +102,6 @@
                                         url:[NSURL URLWithString:[NSString stringWithFormat:@"%@?id=%@&type=2", URL_WEB, _good_Id]]
                                       title:[dataDictionary stringForKey:@"name"]
                                        type:SSDKContentTypeWebPage];
-    
     [ShareCustom shareWithContent:shareParams];    
     
     
@@ -412,23 +411,23 @@
     
     
     
-    QYSource *source = [[QYSource alloc] init];
-    source.title =  @"私人顾问";
-
-    QYSessionViewController *vc = [[QYSDK sharedSDK] sessionViewController];
-    vc.sessionTitle = @"私人顾问";
-    vc.source = source;
-
-
-    if (iPadDevice) {
-        UINavigationController* navi = [[UINavigationController alloc]initWithRootViewController:vc];
-        navi.modalPresentationStyle = UIModalPresentationFormSheet;
-        [self presentViewController:navi animated:YES completion:nil];
-    }
-    else{
-        vc.hidesBottomBarWhenPushed = YES;
-        [self.navigationController pushViewController:vc animated:YES];
-    }
+//    QYSource *source = [[QYSource alloc] init];
+//    source.title =  @"私人顾问";
+//
+//    QYSessionViewController *vc = [[QYSDK sharedSDK] sessionViewController];
+//    vc.sessionTitle = @"私人顾问";
+//    vc.source = source;
+//
+//
+//    if (iPadDevice) {
+//        UINavigationController* navi = [[UINavigationController alloc]initWithRootViewController:vc];
+//        navi.modalPresentationStyle = UIModalPresentationFormSheet;
+//        [self presentViewController:navi animated:YES completion:nil];
+//    }
+//    else{
+//        vc.hidesBottomBarWhenPushed = YES;
+//        [self.navigationController pushViewController:vc animated:YES];
+//    }
 //    [self alertViewShowOfTime:@"客服不在线哦,请拨打电话:4009901213" time:1];
 }
 
@@ -799,11 +798,11 @@
         
         if ([self checkHttpResponseResultStatus:postData]) {
             ClothesFroPay *model = [ClothesFroPay new];
-            model.clothesImage = [dataDictionary stringForKey:@"thumb"];
-            model.clothesCount = [NSString stringWithFormat:@"%ld",clothesCount];
-            model.clothesName = [dataDictionary stringForKey:@"name"];
-            model.clothesPrice = clothesPrice;
-            model.clotheMaxCount = [sizeShowDic stringForKey:@"sku_num"];
+//            model.clothesImage = [dataDictionary stringForKey:@"thumb"];
+//            model.clothesCount = [NSString stringWithFormat:@"%ld",clothesCount];
+//            model.clothesName = [dataDictionary stringForKey:@"name"];
+//            model.clothesPrice = clothesPrice;
+//            model.clotheMaxCount = [sizeShowDic stringForKey:@"sku_num"];
             NSMutableArray *array = [NSMutableArray arrayWithObjects:model, nil];
             PayForClothesViewController *clothesPay = [[PayForClothesViewController alloc] init];
             clothesPay.arrayForClothes = array;

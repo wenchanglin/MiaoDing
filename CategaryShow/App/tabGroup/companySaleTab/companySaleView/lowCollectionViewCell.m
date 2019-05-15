@@ -16,7 +16,7 @@
         
         
         _imageShow = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, self.frame.size.width - 10, self.frame.size.height - 10)];
-        
+//        _imageShow.backgroundColor=[UIColor blueColor];
         _imageShow.contentMode = UIViewContentModeScaleAspectFill;
         [_imageShow.layer setMasksToBounds:YES];
         [self.contentView addSubview:_imageShow];

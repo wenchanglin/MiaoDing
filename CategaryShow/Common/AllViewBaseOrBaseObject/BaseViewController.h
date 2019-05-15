@@ -33,7 +33,7 @@
 
 - (void)progressHide:(BOOL)animated;
 
-- (Boolean) checkHttpResponseResultStatus:(BaseDomain*) domain;
+- (Boolean) checkHttpResponseResultStatus:(id) domain;
 
 - (void)setExtraCellLineHidden: (UITableView *)tableView;
 
@@ -57,7 +57,6 @@
 - (CGFloat)cellContentViewWith;
 -(Boolean)userHaveLogin;
 
--(void)showAlertWithTitle:(NSString *)title message:(NSString *)message;
 -(BOOL)networking;
 -(void)showJiaZaiAlert;
 

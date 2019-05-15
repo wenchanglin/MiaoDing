@@ -10,8 +10,8 @@
 
 @interface VipGrowModel : NSObject
 
-@property (nonatomic, retain) NSString *name;
-@property (nonatomic, retain) NSString *time;
-@property (nonatomic, retain) NSString *addCount;
+@property (nonatomic, retain) NSString *type_name;
+@property (nonatomic, retain) NSString *create_time;
+@property (nonatomic, retain) NSString *credit;
 
 @end

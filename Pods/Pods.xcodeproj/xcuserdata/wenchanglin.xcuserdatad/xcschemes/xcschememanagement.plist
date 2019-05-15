@@ -124,6 +124,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>UMengAnalytics-NO-IDFA.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>XHWebImageAutoSize.xcscheme</key>
 		<dict>
 			<key>isShown</key>

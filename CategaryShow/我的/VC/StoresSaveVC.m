@@ -17,13 +17,11 @@
 @implementation StoresSaveVC
 {
     NSMutableArray *modelArray;
-    BaseDomain *getData;
     UITableView *mainTabTable;
     NSInteger page;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    getData = [BaseDomain getInstance:NO];
     modelArray = [NSMutableArray array];
     page = 1;
     [self createGetData];
@@ -32,51 +30,48 @@
 -(void)createGetData
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@"3" forKey:@"type"];
+    [params setObject:@(MyCollectTypeStore) forKey:@"type"];
     [params setObject:@"1" forKey:@"page"];
-    [getData getData:URL_SaveList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
-        if ([self checkHttpResponseResultStatus:getData]) {
-            [mainTabTable.mj_header endRefreshing];
-            if ([[getData.dataRoot arrayForKey:@"data"] count] == 0) {
-                [self createNoSave];
-            } else {
-                modelArray = [StoreSaveModel mj_objectArrayWithKeyValuesArray:[domain.dataRoot arrayForKey:@"data"]];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MyCollect_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            if ([responseObject[@"data"][@"collections"]count]>0) {
+                modelArray = [StoreSaveModel mj_objectArrayWithKeyValuesArray:responseObject [@"data"][@"collections"]];
                 [self createView];
             }
-            
+            else
+            {
+                [mainTabTable removeFromSuperview];
+                [self createNoSave];
+            }
         }
-        
     }];
+
 }
 -(void)reloadAddData
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@"3" forKey:@"type"];
+    [params setObject:@(MyCollectTypeStore) forKey:@"type"];
     [params setObject:@(page) forKey:@"page"];
-    [getData getData:URL_SaveList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getData]) {
-            [mainTabTable.mj_footer endRefreshing];
-            [mainTabTable.mj_header endRefreshing];
-        }if ([[getData.dataRoot arrayForKey:@"data"] count] == 0&&page!=1)
-        {
-            [mainTabTable.mj_footer endRefreshingWithNoMoreData];
-            [mainTabTable reloadData];
-        }
-        else {
-            for (NSDictionary *dic in [getData.dataRoot objectForKey:@"data"]) {
-                StoreSaveModel *model  = [StoreSaveModel mj_objectWithKeyValues:dic];
-                [modelArray addObject:model];
-            }
-            
-            [mainTabTable reloadData];
-            
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MyCollect_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+//            if ([responseObject[@"data"]count]>0&&page>1) {
+                NSMutableArray*arr = [StoreSaveModel mj_objectArrayWithKeyValuesArray:responseObject[@"data"][@"collections"]];
+                [modelArray addObjectsFromArray:arr];
+                [mainTabTable reloadData];
+//            }
+//            else
+//            {
+//                [mainTabTable removeFromSuperview];
+//                [self createNoSave];
+//            }
         }
     }];
+
 }
 -(void)createNoSave
 {
     UIView *bgNoDingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+    bgNoDingView.backgroundColor=[UIColor whiteColor];
     [self.view addSubview:bgNoDingView];
     
     UIImageView *NoDD = [UIImageView new];
@@ -111,7 +106,7 @@
 }
 -(void)createView
 {
-    mainTabTable = [[UITableView alloc] initWithFrame:CGRectMake(0,NavHeight+3, SCREEN_WIDTH, SCREEN_HEIGHT  - 64 - 43) style:UITableViewStyleGrouped];
+    mainTabTable = [[UITableView alloc] initWithFrame:CGRectMake(0,NavHeight, SCREEN_WIDTH, [ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT  - 88 - 60:SCREEN_HEIGHT  - 64 - 40) style:UITableViewStyleGrouped];
     if (@available(iOS 11.0, *)) {
         mainTabTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     } else {
@@ -123,38 +118,10 @@
     mainTabTable.dataSource = self;
     [self.view addSubview:mainTabTable];
     [mainTabTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-    NSMutableArray *headerImages = [NSMutableArray array];
-    for (int i = 1; i <= 60; i++) {
-        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%d",i]];
-        [headerImages addObject:image];
-    }
-    __weak StoresSaveVC *weakSelf = self;
-
-    MJRefreshGifHeader * header = [MJRefreshGifHeader headerWithRefreshingBlock:^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [weakSelf createGetData];
-        });
-        
+    [WCLMethodTools footerAutoGifRefreshWithTableView:mainTabTable completion:^{
+        page+=1;
+        [self reloadAddData];
     }];
-    header.stateLabel.hidden = YES;
-    header.lastUpdatedTimeLabel.hidden = YES;
-    [header setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
-    [header setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
-    mainTabTable.mj_header = header;
-    
-    MJRefreshAutoGifFooter * footer = [MJRefreshAutoGifFooter footerWithRefreshingBlock:^{
-        // 模拟延迟加载数据，因此2秒后才调用（真实开发中，可以移除这段gcd代码）
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            page += 1;
-            [weakSelf reloadAddData];
-            
-        });
-    }];
-    footer.stateLabel.hidden =YES;
-    footer.refreshingTitleHidden = YES;
-    [footer setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
-    [footer setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
-    mainTabTable.mj_footer = footer;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {

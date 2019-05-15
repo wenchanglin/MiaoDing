@@ -13,4 +13,5 @@
 @property (nonatomic, retain) NSString *titleContent;
 @property (nonatomic, retain) NSString *imageUrl;
 @property (nonatomic, retain) NSString *shareLink;
+
 @end

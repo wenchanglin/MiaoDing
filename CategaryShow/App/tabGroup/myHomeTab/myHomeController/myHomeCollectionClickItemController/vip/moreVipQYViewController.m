@@ -37,7 +37,7 @@
             
             QYArray = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"data"]];
             [self createView];
-            NSLog(@"%@", domain.dataRoot);
+//            NSLog(@"%@", domain.dataRoot);
         }
     }];
     

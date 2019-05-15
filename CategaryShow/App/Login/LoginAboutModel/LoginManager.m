@@ -8,7 +8,6 @@
 #import "sys/utsname.h"
 
 #import "LoginManager.h"
-#import "BaseDomain.h"
 #import "UrlManager.h"
 #import "SelfPersonInfo.h"
 #import "AppDelegate.h"
@@ -19,7 +18,6 @@ static LoginManager * _loginCheck;
 
 @interface LoginManager()
 
-@property (nonatomic,retain) BaseDomain * loginDomain;
 @property (nonatomic, retain) userInfoModel *userInfo;
 
 @end
@@ -28,14 +26,11 @@ static LoginManager * _loginCheck;
 
 
 + (instancetype) getInstance {
-   
+    
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         if (_loginCheck == nil) {
             _loginCheck = [[LoginManager alloc] init];
-            
-            _loginCheck.loginDomain = [BaseDomain getInstance:NO];
-            _loginCheck.userInfo = [userInfoModel getInstance];
             [_loginCheck initUserDefalutsValue];
         }
     });
@@ -88,21 +83,20 @@ static LoginManager * _loginCheck;
     
     [params setValue:self.userPassword forKey:@"password"];
     
-    [self.loginDomain postData:URL_LoginAuth PostParams:params finish:^(BaseDomain * domain,Boolean success) {
-        if (self.loginDomain.result == 0) {
-            
-            [[SelfPersonInfo getInstance] setPersonInfoFromJsonData:self.loginDomain.dataRoot];
-            
-            resultValue = YES;
-            
-            postFinish = YES;
-        }
-        else {
-            resultValue = NO;
-            
-            postFinish = YES;
-        }
-    }];
+//    [self.loginDomain postData:URL_LoginAuth PostParams:params finish:^(BaseDomain * domain,Boolean success) {
+//        if (self.loginDomain.result == 0) {
+//
+//
+//            resultValue = YES;
+//
+//            postFinish = YES;
+//        }
+//        else {
+//            resultValue = NO;
+//
+//            postFinish = YES;
+//        }
+//    }];
     
     while (!postFinish)
         [NSThread sleepForTimeInterval:0.1];
@@ -112,36 +106,23 @@ static LoginManager * _loginCheck;
 - (void) postLoginAuth:(NSString*) userName userPwd:(NSString*) userPassword loginId:(NSString *)loginId  isAuto:(Boolean) isAutoLogin finish:(void (^)(Boolean)) finish {
     
     NSMutableDictionary * params = [NSMutableDictionary dictionary];
-    NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-    [params setValue:[userd stringForKey:@"token"] forKey:@"token"];
-    [params setValue:userName forKey:@"phone"];
-    [params setValue:userPassword forKey:@"code"];
+    [params setValue:userName forKey:@"user_phone"];
+    [params setValue:userPassword forKey:@"sms"];
     [params setValue:loginId forKey:@"id"];
-    [params setValue:[userd stringForKey:@"cId"] forKey:@"device_id"];
     [params setValue:@"2" forKey:@"phone_type"];
-    [params setValue:[self deviceVersion] forKey:@"device_type"];
-    
-    WCLLog(@"%@", URL_LoginAuth);
-    [self.loginDomain postData:URL_LoginAuth PostParams:params finish:^(BaseDomain * domain,Boolean success) {
-        WCLLog(@"root == %@", domain.dataRoot);
-        
-        if (self.loginDomain.result == 1) {
+    [[wclNetTool sharedTools]request:POST urlString:URL_LoginAuth parameters:params finished:^(id responseObject, NSError *error) {
+        WCLLog(@"root == %@", responseObject);
+        if ([responseObject[@"code"]integerValue]==10000) {
+             userInfoModel * infomodel = [userInfoModel mj_objectWithKeyValues:responseObject[@"data"]];
+            [SelfPersonInfo shareInstance].userModel=infomodel;
             NSUserDefaults *used = [NSUserDefaults standardUserDefaults];
-            [used setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"token"] forKey:@"token"];
-            NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
-            [user setObject:@"login" forKey:@"status"];
-            [self saveLoginData:userName userPwd:userPassword isAuto:isAutoLogin];
-            [self.userInfo saveLoginData:userName userImg:userPassword];
-            [[SelfPersonInfo getInstance] setPersonInfoFromJsonData:self.loginDomain.dataRoot];
-            
-            [[userInfoModel getInstance] saveLoginData:userName userImg:@""];
-            
+            [used setObject:[responseObject[@"data"] stringForKey:@"token"] forKey:@"token"];
             if (finish) {
                 finish(YES);
             }
         }
         else {
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"dialog_title_tip", nil) message:self.loginDomain.resultMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"dialog_button_okknow", nil) otherButtonTitles: nil];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"dialog_title_tip", nil) message:responseObject[@"msg"] delegate:nil cancelButtonTitle:NSLocalizedString(@"dialog_button_okknow", nil) otherButtonTitles: nil];
             
             [alertView show];
             
@@ -150,6 +131,7 @@ static LoginManager * _loginCheck;
             }
         }
     }];
+    
 }
 - (void) postLoginAuth:(NSString*) userName userPwd:(NSString*) userPassword loginId:(NSString *)loginId userId:(NSString *)userid icon:(NSString *)icon nickName:(NSString*)nickname isType:(NSInteger)is_type isAuto:(Boolean) isAutoLogin finish:(void (^)(Boolean)) finish {
     
@@ -168,34 +150,34 @@ static LoginManager * _loginCheck;
     [params setValue:[self deviceVersion] forKey:@"device_type"];
     
     WCLLog(@"%@", URL_LoginAuth);
-    [self.loginDomain postData:URL_LoginAuth PostParams:params finish:^(BaseDomain * domain,Boolean success) {
-        WCLLog(@"root == %@", domain.dataRoot);
-        
-        if (self.loginDomain.result == 1) {
-            NSUserDefaults *used = [NSUserDefaults standardUserDefaults];
-            [used setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"token"] forKey:@"token"];
-            NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
-            [user setObject:@"login" forKey:@"status"];
-            [self saveLoginData:userName userPwd:userPassword isAuto:isAutoLogin];
-            [self.userInfo saveLoginData:userName userImg:userPassword];
-            [[SelfPersonInfo getInstance] setPersonInfoFromJsonData:self.loginDomain.dataRoot];
-            
-            [[userInfoModel getInstance] saveLoginData:userName userImg:@""];
-            
-            if (finish) {
-                finish(YES);
-            }
-        }
-        else {
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"dialog_title_tip", nil) message:self.loginDomain.resultMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"dialog_button_okknow", nil) otherButtonTitles: nil];
-            
-            [alertView show];
-            
-            if (finish) {
-                finish(NO);
-            }
-        }
-    }];
+//    [self.loginDomain postData:URL_LoginAuth PostParams:params finish:^(BaseDomain * domain,Boolean success) {
+//        WCLLog(@"root == %@", domain.dataRoot);
+//        
+//        if (self.loginDomain.result == 1) {
+//            NSUserDefaults *used = [NSUserDefaults standardUserDefaults];
+//            [used setObject:[[domain.dataRoot objectForKey:@"data"] stringForKey:@"token"] forKey:@"token"];
+//            NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
+//            [user setObject:@"login" forKey:@"status"];
+//            [self saveLoginData:userName userPwd:userPassword isAuto:isAutoLogin];
+////            [self.userInfo saveLoginData:userName userImg:userPassword];
+////            [[SelfPersonInfo shareInstance].userModel setPersonInfoFromJsonData:self.loginDomain.dataRoot];
+////
+////            [[userInfoModel getInstance] saveLoginData:userName userImg:@""];
+//            
+//            if (finish) {
+//                finish(YES);
+//            }
+//        }
+//        else {
+//            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"dialog_title_tip", nil) message:self.loginDomain.resultMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"dialog_button_okknow", nil) otherButtonTitles: nil];
+//            
+//            [alertView show];
+//            
+//            if (finish) {
+//                finish(NO);
+//            }
+//        }
+//    }];
 }
 
 - (NSString*)deviceVersion

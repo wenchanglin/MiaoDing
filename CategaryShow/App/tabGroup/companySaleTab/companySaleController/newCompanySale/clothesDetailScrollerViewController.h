@@ -9,16 +9,7 @@
 #import "BaseViewController.h"
 
 @interface clothesDetailScrollerViewController : BaseViewController
+@property(nonatomic,strong)NSMutableArray*picArr;
+@property (nonatomic, retain) NSMutableArray *allDataArr;
 
-@property (nonatomic, retain) NSMutableDictionary *dataDictionary;
-
-@property (nonatomic, retain) NSMutableDictionary *goodParams;
-
-@property (nonatomic, retain) NSMutableDictionary *goodDic;
-@property (nonatomic, retain) NSString *good_id;
-@property (nonatomic, retain) NSString *class_id;
-@property (nonatomic, retain) NSString *type_id;
-@property (nonatomic, retain) NSMutableArray *goodArray;
-@property (nonatomic, retain) NSString *default_price;;
-@property (nonatomic, retain) NSString *goodDufaultImg;
 @end

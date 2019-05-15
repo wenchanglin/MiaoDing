@@ -92,15 +92,15 @@
 -(void)setModel:(NewMainModel *)model
 {
     _model = model;
-    [mainImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,model.ImageUrl]]];
+    [mainImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,model.img]]];
     mainImg.contentMode = UIViewContentModeScaleAspectFill;
     [mainImg.layer setMasksToBounds:YES];
     
     
     
     [nameLabel setText:model.name];
-    [nameContent setText:model.titleContent];
-    [numberWatch setText:model.detail];
+    [nameContent setText:model.title];
+    [numberWatch setText:model.sub_title];
     
 }
 

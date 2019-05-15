@@ -18,6 +18,7 @@
 #import "DateForBodyViewController.h"
 #import "SuggestViewController.h"
 #import "LiangTiSureViewController.h"
+#import "HttpRequestTool.h"
 @interface myHomeSetViewController ()<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, LTSDateChooseDelegate>
 @property (nonatomic, retain) userInfoModel *userInfo;
 @end
@@ -26,16 +27,17 @@
 {
     NSArray *arrayTitle;
     UITableView *setTable;
-    BaseDomain *postData;
-    //    AwAlertView *alertView;
     UITextField *nickName;
-    BaseDomain *getData;
     UIView *nickBgName;
     UIImageView *alphaImage;
     NSString *birthday;
     NSString *age;
     UIDatePicker *datePick;
     
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -46,8 +48,7 @@
     else{
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
-    postData = [BaseDomain getInstance:NO];
-    getData = [BaseDomain getInstance:NO];
+    
     [self.view setBackgroundColor:[UIColor whiteColor]];
     NSArray *array = [NSArray arrayWithObjects:@"头像",@"昵称",@"年龄", nil];
     arrayTitle = [NSArray arrayWithObjects:array,@"量体数据", @"收货地址", @"清除缓存",@"帮助与反馈", @"关于妙定", nil];
@@ -61,8 +62,8 @@
 
 -(void)createTable
 {
-   
-    setTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-88-74:SCREEN_HEIGHT - 64-49) style:UITableViewStyleGrouped];
+    
+    setTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-88-74:SCREEN_HEIGHT - 64-49) style:UITableViewStyleGrouped];
     [setTable setSeparatorColor :[UIColor colorWithHexString:@"#EDEDED"]];
     setTable.dataSource = self;
     setTable.delegate = self;
@@ -72,7 +73,7 @@
     
     
     
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-88-74:SCREEN_HEIGHT-64- 49, SCREEN_WIDTH, 49)];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-88-74:SCREEN_HEIGHT-64- 49, SCREEN_WIDTH, 49)];
     [button setTitle:@"退出登录" forState:UIControlStateNormal];
     [button setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:UIControlStateNormal];
     [button.titleLabel setFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14]];
@@ -85,18 +86,18 @@
 -(void)exitLoginClick
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-    [params setValue:[userd stringForKey:@"cId"] forKey:@"device_id"];
-    [getData getData:URL_ExitLogin PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
-        if ([self checkHttpResponseResultStatus:domain]) {
+    [[wclNetTool sharedTools]request:POST urlString:URL_ExitLogin parameters:params finished:^(id responseObject, NSError *error) {
+        //        WCLLog(@"%@",responseObject);
+        if ([responseObject[@"code"]integerValue]==10000) {
             [[NSNotificationCenter defaultCenter] postNotificationName:@"exitLogin" object:nil];
             [self.navigationController popViewControllerAnimated:YES];
-            [self.userInfo saveLoginData:@"" userImg:@""];
-            NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-            [userd setObject:@"" forKey:@"token"];
+            [[SelfPersonInfo shareInstance] exitLogin];
         }
+        
     }];
+    
+    
+    
     
 }
 
@@ -155,12 +156,12 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         if (indexPath.row == 0) {
             HomeSetForHeadImageTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"setImage" forIndexPath:indexPath];
             [cell.titleLabel setText:[[arrayTitle objectAtIndex:indexPath.section] objectAtIndex:indexPath.row]];
-            if ([[SelfPersonInfo getInstance].personImageUrl hasPrefix:@"http"]) {
-                 [cell.headImage sd_setImageWithURL:[NSURL URLWithString:[SelfPersonInfo getInstance].personImageUrl] placeholderImage:[UIImage imageNamed:@"headImage"]];
+            if ([[SelfPersonInfo shareInstance].userModel.avatar hasPrefix:@"http"]) {
+                [cell.headImage sd_setImageWithURL:[NSURL URLWithString:[SelfPersonInfo shareInstance].userModel.avatar] placeholderImage:[UIImage imageNamed:@"headImage"]];
             }
             else
             {
-            [cell.headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]] placeholderImage:[UIImage imageNamed:@"headImage"]];
+                [cell.headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo shareInstance].userModel.avatar]] placeholderImage:[UIImage imageNamed:@"headImage"]];
             }
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
@@ -175,9 +176,18 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
             
             if (indexPath.row == 1) {
-                [cell.detaiLabel setText:[SelfPersonInfo getInstance].cnPersonUserName];
+                [cell.detaiLabel setText:[SelfPersonInfo shareInstance].userModel.username];
             } else {
-                [cell.detaiLabel setText:[SelfPersonInfo getInstance].personAge];
+                if([SelfPersonInfo shareInstance].userModel.birthday.length==0)
+                {
+                    [cell.detaiLabel setText:[SelfPersonInfo shareInstance].userModel.age];
+                }
+                else
+                {
+                    NSString*ageString = [self ageWithString:[SelfPersonInfo shareInstance].userModel.birthday];
+                    [cell.detaiLabel setText:ageString];
+                    
+                }
             }
             
             
@@ -194,7 +204,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         if ([[arrayTitle objectAtIndex:indexPath.section] isEqualToString:@"清除缓存"]) {
             [cell.detaiLabel setText:[NSString stringWithFormat:@"%.2fM", [self filePath]  / 2]];
         }
-    
+        
         reCell = cell;
     }
     
@@ -202,7 +212,22 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     
     return reCell;
 }
-
+//通过日期字符串计算年龄
+-(NSString*)ageWithString:(NSString*)birth{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+    //生日
+    NSDate *birthDay = [dateFormatter dateFromString:birth];
+    //当前时间
+    NSString *currentDateStr = [dateFormatter stringFromDate:[NSDate date]];
+    NSDate *currentDate = [dateFormatter dateFromString:currentDateStr];
+    //    NSLog(@"currentDate %@ birthDay %@",currentDateStr,birth);
+    NSTimeInterval time=[currentDate timeIntervalSinceDate:birthDay];
+    int age = ((int)time)/(3600*24*365);
+    //    WCLLog(@"age %d",age);
+    NSString*ageString = [NSString stringWithFormat:@"%d",age];
+    return ageString;
+}
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {
@@ -210,23 +235,21 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         {
             if (indexPath.row == 0) {
                 [self showCanEdit:YES photo:^(UIImage *photo) {
-                    
-                    NSData * imageData = UIImageJPEGRepresentation(photo, 0.7);
-                    
-                    NSString * base64 = [imageData base64EncodedStringWithOptions:kNilOptions];
                     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-                    [params setObject:base64 forKey:@"avatar"];
-                    
-                    [postData postData:URL_UpdateUserInfo PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-                        
-                        if ([self checkHttpResponseResultStatus:postData]) {
-                            [SelfPersonInfo getInstance].personImageUrl = [[domain.dataRoot objectForKey:@"data"] stringForKey:@"avatar"];
-                            
-                            [setTable reloadData];
-                            
+                    NSData * imageData = UIImageJPEGRepresentation(photo, 0.7);
+                    [HttpRequestTool uploadWithURLString:[NSString stringWithFormat:@"%@%@",[MoreUrlInterface URL_Server_String],[MoreUrlInterface URL_OnePicUpload_String]] parameters:@{}.mutableCopy uploadData:imageData uploadName:@"file[]" fileName:@"image1.png" success:^(NSString *pics) {
+                        if (pics.length>0) {
+                            [params setObject:pics forKey:@"avatar"];
+                            [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_EditUserInfo_String] parameters:params finished:^(id responseObject, NSError *error) {
+                                if ([self checkHttpResponseResultStatus:responseObject]) {
+                                    userInfoModel * infomodel = [userInfoModel mj_objectWithKeyValues:responseObject];
+                                    [SelfPersonInfo shareInstance].userModel=infomodel;
+                                    [setTable reloadData];
+                                }
+                            }];
                         }
                         
-                    }];
+                    } failure:nil];
                     
                 }];
                 
@@ -259,7 +282,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
             break;
         case 1:
         {
-//            DateForBodyViewController *dateBD = [[DateForBodyViewController alloc] init];
+            //            DateForBodyViewController *dateBD = [[DateForBodyViewController alloc] init];
             LiangTiSureViewController* dateBD = [[LiangTiSureViewController alloc]init];
             dateBD.comefromwode = YES;
             [self.navigationController pushViewController:dateBD animated:YES];
@@ -312,15 +335,13 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:birthday forKey:@"birthday"];
-    [params setObject:age forKey:@"age"];
-    [postData postData:URL_UpdateUserInfo PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
-        if ([self checkHttpResponseResultStatus:postData]) {
-            [SelfPersonInfo getInstance].personBirthday = birthday;
-            [SelfPersonInfo getInstance].personAge = age;
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_EditUserInfo_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            userInfoModel * infomodel = [userInfoModel mj_objectWithKeyValues:responseObject];
+            infomodel.age = age;
+            [SelfPersonInfo shareInstance].userModel=infomodel;
             [setTable reloadData];
         }
-        
     }];
 }
 
@@ -434,24 +455,17 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     
     if ([nickName.text length] > 0) {
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
-        [params setObject:nickName.text forKey:@"name"];
-        
-        [postData postData:URL_UpdateUserInfo PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-            
-            if ([self checkHttpResponseResultStatus:postData]) {
-                [SelfPersonInfo getInstance].cnPersonUserName = nickName.text;
+        [params setObject:nickName.text forKey:@"username"];
+        [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_EditUserInfo_String] parameters:params finished:^(id responseObject, NSError *error) {
+            if ([self checkHttpResponseResultStatus:responseObject]) {
+                userInfoModel * infomodel = [userInfoModel mj_objectWithKeyValues:responseObject];
+                [SelfPersonInfo shareInstance].userModel=infomodel;
                 [nickName resignFirstResponder];
-                [UIView beginAnimations:nil context:nil];
-                [UIView setAnimationDuration:0.4];
                 [alphaImage setAlpha:0];
-                [UIView commitAnimations];
-                
-                
                 [setTable reloadData];
-                
             }
-            
         }];
+        
     }
     
 }

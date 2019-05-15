@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
+typedef void (^picSuccessBackBlock)(NSString*pics);
 @interface HttpRequestTool : NSObject
 
 
@@ -21,15 +21,13 @@
 
                  uploadData:(NSData *)uploadData
 
-                 uploadName:(NSString *)uploadName
+                 uploadName:(NSString *)uploadName fileName:(NSString*)filename
 
-                    success:(void (^)())success
+                    success:(picSuccessBackBlock)success
 
-                    failure:(void (^)(NSError *))failure;
+                    failure:(void (^)(NSError *error))failure;
 
-
-// 上传多张图片
-
+// 上传多张图片 旧
 + (void)uploadMostImageWithURLString:(NSString *)URLString
 
                           parameters:(id)parameters
@@ -40,6 +38,15 @@
 
                              failure:(void (^)(NSError *))failure;
 
++ (void)uploadNewPicMostImageWithURLString:(NSString *)URLString
+
+                          parameters:(id)parameters
+
+                         uploadDatas:(NSArray *)uploadDatas
+
+                             success:(picSuccessBackBlock)success
+
+                             failure:(void (^)(NSError *error))failure;
 
 
 @end

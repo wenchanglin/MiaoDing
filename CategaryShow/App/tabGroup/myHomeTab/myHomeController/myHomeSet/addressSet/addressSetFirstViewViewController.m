@@ -50,50 +50,48 @@
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"1" forKey:@"page"];
-    [getData getData:URL_AddressGet PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getData]) {
-            
-            if ([[getData.dataRoot arrayForKey:@"data"] count] >0) {
-                [modelArray removeAllObjects];
-                
-                detailArray = [NSMutableArray arrayWithArray:[getData.dataRoot arrayForKey:@"data"]];
-                for (NSDictionary *dic in [getData.dataRoot arrayForKey:@"data"]) {
-                    
-                   AddressModel* model = [AddressModel new];
-                    model.userAddress = [NSString stringWithFormat:@"%@%@%@%@", [dic stringForKey:@"province"],[dic stringForKey:@"city"],[dic stringForKey:@"area"],[dic stringForKey:@"address"]];
-                    model.userPhone = [dic stringForKey:@"phone"];
-                    model.userName = [dic stringForKey:@"name"];
-                    model.addressId = [dic stringForKey:@"id"];
-                    model.addressDefault = [dic stringForKey:@"is_default"];
-                    
-                    
-                    if ([[dic stringForKey:@"is_default"] isEqualToString:@"1"]) {
-                        NSMutableDictionary *addDic = [NSMutableDictionary dictionaryWithDictionary:dic];
-                        [addDic removeObjectForKey:@"zip_code"];
-                        NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-                        [userd setObject:addDic forKey:@"Address"];
-                    }
-                    
-                    [modelArray addObject:model];
-                }
-                
-                if (addressTable) {
-                    [addressTable reloadData];
-                } else {
-                    [self createTable];
+    [[wclNetTool sharedTools]request:GET urlString:[MoreUrlInterface URL_GetAddressList_String] parameters:params finished:^(id responseObject, NSError *error) {
+         if ([responseObject[@"data"] count] >0) {
+         [modelArray removeAllObjects];
+         detailArray = [NSMutableArray arrayWithArray:responseObject[@"data"]];
+         for (NSDictionary *dic in responseObject[@"data"]) {
+             WCLLog(@"%@",dic);
 
-                }
-                
-            } else {
-                
-                [addressTable removeFromSuperview];
-                addressTable = nil;
-                [buttonAdd removeFromSuperview];
-                [self createAddressView];
-            }
-            
-        }
+         AddressModel* model = [AddressModel mj_objectWithKeyValues:dic];
+         model.address = [NSString stringWithFormat:@"%@%@%@%@", [dic stringForKey:@"province"],[dic stringForKey:@"city"],[dic stringForKey:@"area"],[dic stringForKey:@"address"]];
+         model.is_default = [[dic stringForKey:@"is_default"] integerValue];
+         
+         
+         if ([[dic stringForKey:@"is_default"] isEqualToString:@"1"]) {
+         NSMutableDictionary *addDic = [NSMutableDictionary dictionaryWithDictionary:dic];
+         [addDic removeObjectForKey:@"zip_code"];
+         NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
+         [userd setObject:addDic forKey:@"Address"];
+         }
+         
+         [modelArray addObject:model];
+         }
+         
+         if (addressTable) {
+         [addressTable reloadData];
+         } else {
+         [self createTable];
+         
+         }
+         
+         } else {
+         
+         [addressTable removeFromSuperview];
+         addressTable = nil;
+         [buttonAdd removeFromSuperview];
+         [self createAddressView];
+         }
+         
+        
     }];
+ 
+            
+    
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -138,7 +136,7 @@
     [self.view addSubview:addressTable];
 
     
-    buttonAdd = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-64-92:SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
+    buttonAdd = [[UIButton alloc] initWithFrame:CGRectMake(0,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-92:SCREEN_HEIGHT -64- 49, SCREEN_WIDTH, 49)];
     [self.view addSubview:buttonAdd];
     [buttonAdd setBackgroundColor:getUIColor(Color_DZClolor)];
     [buttonAdd setTitle:@"新增地址" forState:UIControlStateNormal];
@@ -154,9 +152,7 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
     return  110;
-    
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -174,14 +170,12 @@
 {
     AddressModel *model = modelArray[item];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:model.addressId forKey:@"id"];
-    
-    [postData postData:URL_ChooseAddress PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:domain]) {
+    [params setObject:@(model.ID) forKey:@"id"];
+    [[wclNetTool sharedTools]request:POST urlString:URL_ChooseAddress parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
             [self reloadAddress];
         }
     }];
-    
 }
 
 -(void)clickUpdateAddress:(NSInteger)item
@@ -244,14 +238,14 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         AddressModel *model= modelArray[indexPath.section];
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
-        [params setObject:model.addressId forKey:@"id"];
-        
-        [getData postData:URL_AddressDelete PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-            if ([self checkHttpResponseResultStatus:getData]) {
+        [params setObject:@(model.ID) forKey:@"id"];
+        [[wclNetTool sharedTools]request:POST urlString:URL_AddressDelete parameters:params finished:^(id responseObject, NSError *error) {
+            if ([responseObject[@"code"]integerValue]==10000) {
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"deleteAddress" object:nil];
                 [self reloadAddress];
             }
         }];
+       
         
        
         

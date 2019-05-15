@@ -7,8 +7,9 @@
 //
 
 #import "BaseViewController.h"
-
+#import "diyClothesDetailModel.h"
 @interface NewDiyPersonalityVC : BaseViewController
+@property(nonatomic,strong)diyClothesDetailModel*diyDetailModel;
 @property (nonatomic, retain) NSMutableArray *goodArray;
 @property (nonatomic, retain) NSMutableDictionary *goodDic;
 @property (nonatomic, retain) NSDictionary *price;
@@ -16,7 +17,6 @@
 @property (nonatomic, retain) NSString *price_type;
 @property (nonatomic, retain) NSMutableDictionary *xiuZiDic;
 @property (nonatomic, retain) NSString *class_id;
-
 @property (nonatomic, retain) NSMutableDictionary *paramsDic;
 
 @property (nonatomic, retain) NSString *dateId;

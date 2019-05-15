@@ -33,10 +33,11 @@
 #import "WXApi.h"
 //新浪微博SDK头文件
 #import "WeiboSDK.h"
-
+#import "PageControlView.h"
 #import <AMapFoundationKit/AMapFoundationKit.h>
 #import "APIKey.h"
-
+#import "WCLPrivacyView.h"
+#import "WCLPrivacyH5ViewController.h"
 #import <GTSDK/GeTuiSdk.h>    // GetuiSdk头文件应用
 
 // iOS10 及以上需导入 UserNotifications.framework
@@ -58,7 +59,7 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
 @interface AppDelegate ()<UIAlertViewDelegate,RDVTabBarControllerDelegate,UIApplicationDelegate, GeTuiSdkDelegate, UNUserNotificationCenterDelegate>
 @property (nonatomic, retain) NSString *payloadId;
 @property (nonatomic, assign) int lastPayloadIndex;
-
+@property(strong , nonatomic)PageControlView *pageControlV;
 @property (nonatomic, assign) SystemSoundID soundID;
 
 @property (assign,nonatomic) Boolean threadIsRun;
@@ -108,7 +109,14 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     [[NSNotificationCenter defaultCenter] postNotificationName:@"messageReceive" object:nil];
     
 }
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
+{
+    return (UIInterfaceOrientationMaskPortrait);
+}
+-(void)first{
+    [self runMainViewController : nil];
 
+}
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
     [user setObject:@"login" forKey:@"status"];
@@ -121,13 +129,15 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024 diskCapacity:20 * 1024 * 1024 diskPath:nil];
     [NSURLCache setSharedURLCache:URLCache];
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(first) name:@"showmoney" object:nil];
+
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [self.window setBackgroundColor:[UIColor whiteColor]];
     if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
         
     }
-    [self runMainViewController : nil];
+    [self tokenValid];
     IQKeyboardManager *keyboardManager = [IQKeyboardManager sharedManager]; // 获取类库的单例变量
     
     keyboardManager.enable = YES; // 控制整个功能是否启用
@@ -137,27 +147,32 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     keyboardManager.shouldToolbarUsesTextFieldTintColor = YES; // 控制键盘上的工具条文字颜色是否用户自定义
     keyboardManager.enableAutoToolbar = NO; // 控制是否显示键盘上的工具条
     
-    keyboardManager.shouldShowToolbarPlaceholder = YES; // 是否显示占位文字
+    keyboardManager.shouldShowTextFieldPlaceholder = YES; // 是否显示占位文字
     
     [self checkAppUpdate];
-    
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"everLaunched"]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"everLaunched"];
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"firstLaunch"];
+        [self runWhiteVC];
+        // 这里判断是否第一次
+        WCLPrivacyView*privacyView = [[WCLPrivacyView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+        [self.window.rootViewController.view addSubview:privacyView];
+        __weak __typeof(self) weakSelf =self;
+        [privacyView setAgreeBlock:^{
+            [weakSelf showGuideView];
+        }];
+        [privacyView setPrivacyBlock:^(NSInteger index) {
+            WCLPrivacyH5ViewController*h5 =[[WCLPrivacyH5ViewController alloc]init];
+            h5.url = [NSString stringWithFormat:@"%@/yishi.html",URL_YINSIZCURL];
+            JYHNavigationController*jhv = [[JYHNavigationController alloc]initWithRootViewController:h5];
+            [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:jhv animated:NO completion:nil];
+        }];
     }
     else{
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"firstLaunch"];
+        [self runMainViewController : nil];
+
     }
-    
-    //    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]) {
-    //        // 这里判断是否第一次
-    //        hDisplayView *hvc = [[hDisplayView alloc]initWithFrame:CGRectMake(0, 0, MainScreen_width, MainScreen_height)];
-    //        [self.window.rootViewController.view addSubview:hvc];
-    //        [UIView animateWithDuration:0.25 animations:^{
-    //            hvc.frame = CGRectMake(0, 0, MainScreen_width, MainScreen_height);
-    //        }];
-    //    }
-    
     [self _setupUMfenxi];
     [self configureAPIKey];
     [self registerShareSdk];
@@ -165,18 +180,41 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     [GeTuiSdk startSdkWithAppId:kGtAppId appKey:kGtAppKey appSecret:kGtAppSecret delegate:self];
     // 注册 APNs
     [self registerRemoteNotification];
-    
-    [[QYSDK sharedSDK] registerAppId:@"e98a79aca99f25ebf9bacbc8c334b76b"
-                             appName:@"云工场"];
     [WXApi registerApp:@"wx07c2173e7686741e" withDescription:@"demo 2.0"];
-//    getDataIcon = [BaseDomain getInstance:NO];
-//    NSMutableDictionary *parmas = [NSMutableDictionary dictionary];
-//    [parmas setObject:@"2" forKey:@"type"];
-//    [getDataIcon getData:URL_getIcon PostParams:parmas finish:^(BaseDomain *domain, Boolean success) {
-//
-//    }];
     
     return YES;
+}
+-(void)tokenValid{
+    [[wclNetTool sharedTools]request:GET urlString:URL_IsVaild parameters:@{}.mutableCopy finished:^(id responseObject, NSError *error) {
+        WCLLog(@"%@",responseObject);
+        if ([responseObject[@"code"]intValue]==10000) {
+           
+        }
+        else if ([responseObject[@"code"]intValue]==10004)
+        {
+            
+        }
+        else
+        {
+            UIAlertView*alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"登录信息已过期，请重新登录" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+            [alert show];
+            
+            [[SelfPersonInfo shareInstance] exitLogin];
+          
+        }
+    }];
+}
+
+- (void)showGuideView{
+    
+    NSMutableArray *imageArray = [NSMutableArray array];
+    for (int i = 1; i < 4; i++) {
+        NSString *imageName = [ShiPeiIphoneXSRMax isIPhoneX]?[NSString stringWithFormat:@"img_guideview_%@X",@(i)]:[NSString stringWithFormat:@"%@%@",@"LaunchIntrudutionImage",@(i)];
+        [imageArray addObject:imageName];
+    }
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    _pageControlV = [[PageControlView instance] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) andImageList:imageArray];
+    [window addSubview:self.pageControlV];
 }
 -(void)_setupUMfenxi
 {
@@ -198,7 +236,7 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
         }
         NSError *error;
         NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
-        // NSLog(@"jsonDic%@",jsonDict);
+//         WCLLog(@"jsonDic%@",jsonDict);
         jsonDict = [jsonDict[@"results"] firstObject];
         
         if (!error && jsonDict) {
@@ -310,7 +348,7 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
                                            appKey:@"gAccBmTUz0l6yNti"
                                          authType:SSDKAuthTypeBoth];
                       break;
-                    case SSDKPlatformTypeSinaWeibo:
+                    case SSDKPlatformTypeSinaWeibo://
                       [appInfo SSDKSetupSinaWeiboByAppKey:@"476026790" appSecret:@"2cfaca499726dbff5202dca18b7787b5" redirectUri:@"http://www.sharesdk.cn" authType:SSDKAuthTypeBoth];
                       break;
                   default:
@@ -378,7 +416,15 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     
     [self.window makeKeyAndVisible];
 }
-
+-(void)runWhiteVC{
+    UIViewController * viewController = [[UIViewController alloc] init];
+    
+    self.mainViewController = [[JYHNavigationController alloc] initWithRootViewController:viewController];
+    
+    [self.window setRootViewController:self.mainViewController];
+    
+    [self.window makeKeyAndVisible];
+}
 
 
 
@@ -390,8 +436,8 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
 
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    NSInteger count = [[[QYSDK sharedSDK] conversationManager] allUnreadCount];
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:count];
+//    NSInteger count = [[[QYSDK sharedSDK] conversationManager] allUnreadCount];
+//    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:count];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
@@ -410,7 +456,7 @@ NSString* const NotificationActionTwoIdent = @"ACTION_TWO";
     // 向个推服务器注册deviceToken
     [GeTuiSdk registerDeviceToken:token];
     
-    [[QYSDK sharedSDK] updateApnsToken:deviceToken];
+//    [[QYSDK sharedSDK] updateApnsToken:deviceToken];
 }
 
 - (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {

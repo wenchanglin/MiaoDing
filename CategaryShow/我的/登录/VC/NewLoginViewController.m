@@ -142,8 +142,8 @@
                     {
                         NSUserDefaults *used = [NSUserDefaults standardUserDefaults];
                         [used setObject:responseObject[@"data"][@"token"] forKey:@"token"];
-                        [[userInfoModel getInstance] saveLoginData:responseObject[@"data"][@"name"] userImg:@""];
-                        [[SelfPersonInfo getInstance] setPersonInfoFromJsonData:responseObject[@"data"]];
+//                        [[userInfoModel getInstance] saveLoginData:responseObject[@"data"][@"name"] userImg:@""];
+//                        [[SelfPersonInfo shareInstance].userModel setPersonInfoFromJsonData:responseObject[@"data"]];
                         [self dismissViewControllerAnimated:YES completion:nil];
                         [[NSNotificationCenter defaultCenter] postNotificationName:@"loginSuccess" object:nil];
 
@@ -176,8 +176,8 @@
                     {
                         NSUserDefaults *used = [NSUserDefaults standardUserDefaults];
                         [used setObject:responseObject[@"data"][@"token"] forKey:@"token"];
-                        [[userInfoModel getInstance] saveLoginData:responseObject[@"data"][@"name"] userImg:@""];
-                        [[SelfPersonInfo getInstance] setPersonInfoFromJsonData:responseObject[@"data"]];
+//                        [[userInfoModel getInstance] saveLoginData:responseObject[@"data"][@"name"] userImg:@""];
+//                        [[SelfPersonInfo shareInstance].userModel setPersonInfoFromJsonData:responseObject[@"data"]];
                         [self dismissViewControllerAnimated:YES completion:nil];
                         [[NSNotificationCenter defaultCenter] postNotificationName:@"loginSuccess" object:nil];
                         
@@ -209,8 +209,8 @@
                     {
                         NSUserDefaults *used = [NSUserDefaults standardUserDefaults];
                         [used setObject:responseObject[@"data"][@"token"] forKey:@"token"];
-                        [[userInfoModel getInstance] saveLoginData:responseObject[@"data"][@"name"] userImg:@""];
-                        [[SelfPersonInfo getInstance] setPersonInfoFromJsonData:responseObject[@"data"]];
+//                        [[userInfoModel getInstance] saveLoginData:responseObject[@"data"][@"name"] userImg:@""];
+//                        [[SelfPersonInfo shareInstance].userModel setPersonInfoFromJsonData:responseObject[@"data"]];
                         [self dismissViewControllerAnimated:YES completion:nil];
                         [[NSNotificationCenter defaultCenter] postNotificationName:@"loginSuccess" object:nil];
                         

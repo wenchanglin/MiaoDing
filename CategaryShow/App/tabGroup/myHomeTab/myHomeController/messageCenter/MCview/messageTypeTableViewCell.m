@@ -37,23 +37,7 @@
     .centerYEqualToView(contentView)
     .widthIs(25)
     .heightIs(25);
-//    [messageHead.layer setCornerRadius:25];
-//    [messageHead.layer setMasksToBounds:YES];
-    
-//    labelCount = [UILabel new];
-//    [contentView addSubview:labelCount];
-//    [labelCount setTextAlignment:NSTextAlignmentCenter];
-//    [labelCount setFont:[UIFont systemFontOfSize:12]];
-//    labelCount.sd_layout
-//    .leftSpaceToView(contentView, 45)
-//    .topSpaceToView(contentView, 13)
-//    .heightIs(15)
-//    .widthIs(15);
-//    [labelCount.layer setCornerRadius:(7.5)];
-//    [labelCount.layer setMasksToBounds:YES];
-//    [labelCount setBackgroundColor:[UIColor redColor]];
-//    [labelCount setTextColor:[UIColor whiteColor]];
-//    
+
     messageName = [UILabel new];
     [messageName setFont:[UIFont fontWithName:@"PingFangSC-Light" size:16]];
     messageName.textColor = [UIColor colorWithHexString:@"#222222"];
@@ -80,29 +64,7 @@
         make.right.mas_equalTo(-12.6);
         make.centerY.equalTo(messageName.mas_centerY);
     }];
-//
-//    messageTime = [UILabel new];
-//    [contentView addSubview:messageTime];
-//    messageTime.sd_layout
-//    .leftSpaceToView(messageName, 10)
-//    .rightSpaceToView(contentView, 11)
-//    .heightIs(15)
-//    .topSpaceToView(contentView, 13);
-//    [messageTime setFont:[UIFont systemFontOfSize:12]];
-//    [messageTime setTextColor:getUIColor(Color_saveColor)];
-//    [messageTime setTextAlignment:NSTextAlignmentRight];
-    
-    
-//    messageContent = [UILabel new];
-//     [contentView addSubview:messageContent];
-//    messageContent.sd_layout
-//    .leftSpaceToView(messageHead,10)
-//    .bottomSpaceToView(contentView, 12)
-//    .heightIs(15)
-//    .rightSpaceToView(contentView, 11);
-//    [messageContent setFont:[UIFont systemFontOfSize:13]];
-//    [messageContent setTextColor:getUIColor(Color_active)];
-    
+ 
 
     
     
@@ -111,29 +73,15 @@
 
 -(void)setModel:(messageTypeModel *)model
 {
-    [messageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL, model.messageImage]]];
-    [messageName setText:model.messageName];
-    if ([[model.messageLastMsg stringForKey:@"title"] length] > 0) {
-        [messageContent setText:[model.messageLastMsg stringForKey:@"title"]];
-    } else {
-        [messageContent setText:@"暂无通知"];
-
-    }
-    
-    if ([[model.messageLastMsg stringForKey:@"c_time"] length] > 0) {
-        [messageTime setText:[self dateToString:[model.messageLastMsg stringForKey:@"c_time"]]];
-    } else {
-        [messageTime setText:@""];
-    }
-    [labelCount setText:model.unReadCount];
-    if ([model.unReadCount integerValue] > 0) {
+    [messageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL, model.img]]];
+    [messageName setText:model.name];
+    [labelCount setText:[NSString stringWithFormat:@"%@",@(model.unread_message_num)]];
+    if (model.unread_message_num > 0) {
         [labelCount setHidden:NO];
     } else {
         [labelCount setHidden:YES];
     }
-    
-    
-    
+
 }
 
 -(NSString *)dateToString:(NSString *)dateString

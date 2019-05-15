@@ -7,7 +7,7 @@
 //
 
 #import "QYDemoConfig.h"
-#import "QYSDK.h"
+//#import "QYSDK.h"
 
 @interface QYDemoConfig ()
 @end
@@ -44,7 +44,7 @@
 {
     if (fromConfig)
     {
-        [[QYSDK sharedSDK] performSelector:@selector(readEnvironmentConfig)];
+//        [[QYSDK sharedSDK] performSelector:@selector(readEnvironmentConfig)];
     }
 }
 

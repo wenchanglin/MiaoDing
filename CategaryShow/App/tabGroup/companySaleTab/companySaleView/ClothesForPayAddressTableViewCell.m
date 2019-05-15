@@ -83,10 +83,10 @@
 -(void)setModel:(AddressModel *)model
 {
     _model = model;
-    [userName setText:model.userName];
-    [userPhone setText:model.userPhone];
-    [userAddress setText:model.userAddress];
-    if ([model.addressDefault isEqualToString:@"0"]) {
+    [userName setText:model.accept_name];
+    [userPhone setText:model.phone];
+    [userAddress setText:model.address];
+    if(model.is_default==0) {
         [defaultAddress setHidden:YES];
         
     } else {

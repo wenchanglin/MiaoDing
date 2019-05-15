@@ -44,16 +44,18 @@
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [getData getData:URL_HelpType PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:domain]) {
-            for (NSDictionary *dic in [domain.dataRoot arrayForKey:@"data"]) {
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MineHelpClassify_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            for (NSDictionary *dic in responseObject[@"data"]) {
                 [[titleArray firstObject] addObject:[dic stringForKey:@"name"]];
                 [[titleImgArray firstObject] addObject:@"alphaTitleImg"];
                 [arrayClassId addObject:[dic stringForKey:@"id"]];
             }
-            [suggestTable reloadData];
+                [suggestTable reloadData];
+
         }
     }];
+ 
 }
 -(UIStatusBarStyle)preferredStatusBarStyle
 {
@@ -157,29 +159,28 @@
     } else {
         if ( indexPath.row == 0) {
             NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-            
             NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"tel://%@",[userd stringForKey:@"kf_tel"]]];
             [[UIApplication sharedApplication] openURL:url];
         } else {
             {
-                QYSource *source = [[QYSource alloc] init];
-                source.title =  @"私人顾问";
-                source.urlString = @"https://8.163.com/";
-
-
-                QYSessionViewController *vc = [[QYSDK sharedSDK] sessionViewController];
-                vc.sessionTitle = @"私人顾问";
-                vc.source = source;
-
-                if (iPadDevice) {
-                    UINavigationController* navi = [[UINavigationController alloc]initWithRootViewController:vc];
-                    navi.modalPresentationStyle = UIModalPresentationFormSheet;
-                    [self presentViewController:navi animated:YES completion:nil];
-                }
-                else{
-                    vc.hidesBottomBarWhenPushed = YES;
-                    [self.navigationController pushViewController:vc animated:YES];
-                }
+//                QYSource *source = [[QYSource alloc] init];
+//                source.title =  @"私人顾问";
+//                source.urlString = @"https://8.163.com/";
+//
+//
+//                QYSessionViewController *vc = [[QYSDK sharedSDK] sessionViewController];
+//                vc.sessionTitle = @"私人顾问";
+//                vc.source = source;
+//
+//                if (iPadDevice) {
+//                    UINavigationController* navi = [[UINavigationController alloc]initWithRootViewController:vc];
+//                    navi.modalPresentationStyle = UIModalPresentationFormSheet;
+//                    [self presentViewController:navi animated:YES completion:nil];
+//                }
+//                else{
+//                    vc.hidesBottomBarWhenPushed = YES;
+//                    [self.navigationController pushViewController:vc animated:YES];
+//                }
 //                [self alertViewShowOfTime:@"客服不在线哦,请拨打电话:4009901213" time:1];
             }
         }

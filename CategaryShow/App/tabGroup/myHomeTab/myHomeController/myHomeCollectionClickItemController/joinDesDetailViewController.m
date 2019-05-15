@@ -12,6 +12,7 @@
 #import "joinDesTableViewCell.h"
 #import "joinDesResultViewController.h"
 #import "TZImagePickerController.h"
+#import "HttpRequestTool.h"
 @interface joinDesDetailViewController ()<UITableViewDelegate, UITableViewDataSource, measureLabelAndTextDelegate, joinDesDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate,TZImagePickerControllerDelegate>
 
 @end
@@ -21,6 +22,9 @@
     UITableView *applyTable;
     NSMutableArray *modelArray;
     NSMutableArray *photoArray;
+    NSMutableArray *photoArray1;
+    NSMutableArray *photoArray2;
+
     NSString *photoProjectInfo;
     NSString *photoWorkRoom;
     NSInteger flog;
@@ -35,6 +39,8 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self settabTitle:@"申请入驻"];
     params = [NSMutableDictionary dictionary];
+    photoArray1=[NSMutableArray array];
+    photoArray2=[NSMutableArray array];
     UIImage *image = [UIImage imageNamed:@"add"];
     NSMutableArray *array = [NSMutableArray arrayWithObjects:image, nil];
     NSMutableArray *array1 = [NSMutableArray arrayWithObjects:image, nil];
@@ -56,7 +62,7 @@
 }
 -(void)createTable
 {
-    applyTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-64-83: SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    applyTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-83: SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
     applyTable.dataSource = self;
     applyTable.delegate = self;
     [applyTable setBackgroundColor:[UIColor whiteColor]];
@@ -66,7 +72,7 @@
     [applyTable registerClass:[joinDesTableViewCell class] forCellReuseIdentifier:NSStringFromClass([joinDesTableViewCell class])];
     [self.view addSubview:applyTable];
     
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(20,IsiPhoneX?SCREEN_HEIGHT-64-83:SCREEN_HEIGHT -64- 50, SCREEN_WIDTH - 40,40)];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(20,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-83:SCREEN_HEIGHT -64- 50, SCREEN_WIDTH - 40,40)];
     [button setBackgroundColor:getUIColor(Color_measureTableTitle)];
     [self.view addSubview:button];
     [button.layer setCornerRadius:1];
@@ -105,8 +111,9 @@
 {
     if (indexPath.section == 0) {
         return 50;
-    } else 
-    return 100;
+    }
+    else 
+        return iPadDevice?200:100;
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -147,7 +154,6 @@
         cell.delegate = self;
         cell.tag = indexPath.row + 100;
         [cell.remarkLabel setText:arrayTitle[indexPath.row]];
-        [cell.collectionV reloadData];
         reCell = cell;
 
     }
@@ -188,7 +194,7 @@
         
         for (UIImage *image in photos) {
             NSData * imageData = UIImageJPEGRepresentation(image, 0.3);
-            
+            [photoArray1 addObject:imageData];
             NSString * base64 = [imageData base64EncodedStringWithOptions:kNilOptions];
             
             if ([photoProjectInfo length] > 0) {
@@ -205,7 +211,7 @@
         
         for (UIImage *image in photos) {
             NSData * imageData = UIImageJPEGRepresentation(image, 0.3);
-            
+            [photoArray2 addObject:imageData];
             NSString * base64 = [imageData base64EncodedStringWithOptions:kNilOptions];
             
             if ([photoWorkRoom length] > 0) {
@@ -284,15 +290,66 @@
 
 -(void)applyClick
 {
-    [postData postData:URL_PostDesignerApply PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:postData]) {
-            
-            joinDesResultViewController *joinDes = [[joinDesResultViewController alloc] init];
-            [self.navigationController pushViewController:joinDes animated:YES];
-            
-            
-        }
+    
+    if(photoArray1.count>0&&photoArray2.count>0)
+    {
+        [HttpRequestTool uploadNewPicMostImageWithURLString:[NSString stringWithFormat:@"%@%@",[MoreUrlInterface URL_Server_String],[MoreUrlInterface URL_OnePicUpload_String]] parameters:@{}.mutableCopy uploadDatas:photoArray1 success:^(NSString *pics) {
+            [params setObject:pics forKey:@"img_list1"];
+            [HttpRequestTool uploadNewPicMostImageWithURLString:[NSString stringWithFormat:@"%@%@",[MoreUrlInterface URL_Server_String],[MoreUrlInterface URL_OnePicUpload_String]] parameters:@{}.mutableCopy uploadDatas:photoArray2 success:^(NSString *pics) {
+                [params setObject:pics forKey:@"img_list2"];
+                [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_DesignerApplyIn_String] parameters:params finished:^(id responseObject, NSError *error) {
+//                    WCLLog(@"%@",responseObject);
+                    if ([self checkHttpResponseResultStatus:responseObject]) {
+                        joinDesResultViewController *joinDes = [[joinDesResultViewController alloc] init];
+                        [self.navigationController pushViewController:joinDes animated:YES];
+                    }
+                }];
+            } failure:^(NSError *error) {
+                [self alertViewShowOfTime:@"工作室照片上传失败，请检查网络后重试" time:1.5];
+            }];
+    } failure:^(NSError *error) {
+        [self alertViewShowOfTime:@"作品照片上传失败，请检查网络后重试" time:1.5];
     }];
+    }
+   else if (photoArray2.count>0)
+    {
+        [HttpRequestTool uploadNewPicMostImageWithURLString:[NSString stringWithFormat:@"%@%@",[MoreUrlInterface URL_Server_String],[MoreUrlInterface URL_OnePicUpload_String]] parameters:@{}.mutableCopy uploadDatas:photoArray2 success:^(NSString *pics) {
+            [params setObject:pics forKey:@"img_list2"];
+            [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_DesignerApplyIn_String] parameters:params finished:^(id responseObject, NSError *error) {
+                if ([self checkHttpResponseResultStatus:responseObject]) {
+                    joinDesResultViewController *joinDes = [[joinDesResultViewController alloc] init];
+                    [self.navigationController pushViewController:joinDes animated:YES];
+                }
+            }];
+        } failure:^(NSError *error) {
+            [self alertViewShowOfTime:@"工作室照片上传失败，请检查网络后重试" time:1.5];
+
+        }];
+    }
+    else if(photoArray1.count>0)
+    {
+        [HttpRequestTool uploadNewPicMostImageWithURLString:[NSString stringWithFormat:@"%@%@",[MoreUrlInterface URL_Server_String],[MoreUrlInterface URL_OnePicUpload_String]] parameters:@{}.mutableCopy uploadDatas:photoArray1 success:^(NSString *pics) {
+            [params setObject:pics forKey:@"img_list1"];
+            [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_DesignerApplyIn_String] parameters:params finished:^(id responseObject, NSError *error) {
+                if ([self checkHttpResponseResultStatus:responseObject]) {
+                    joinDesResultViewController *joinDes = [[joinDesResultViewController alloc] init];
+                    [self.navigationController pushViewController:joinDes animated:YES];
+                }
+            }];
+        } failure:^(NSError *error) {
+            [self alertViewShowOfTime:@"作品照片上传失败，请检查网络后重试" time:1.5];
+        }];
+    }
+    else
+    {
+        [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_DesignerApplyIn_String] parameters:params finished:^(id responseObject, NSError *error) {
+//            WCLLog(@"%@",responseObject);
+            if ([self checkHttpResponseResultStatus:responseObject]) {
+                joinDesResultViewController *joinDes = [[joinDesResultViewController alloc] init];
+                [self.navigationController pushViewController:joinDes animated:YES];
+            }
+        }];
+    }
 }
 
 - (void)didReceiveMemoryWarning {

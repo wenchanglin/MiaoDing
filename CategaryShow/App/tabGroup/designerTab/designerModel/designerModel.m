@@ -11,6 +11,7 @@
 @implementation designerModel
 +(NSDictionary *)mj_replacedKeyFromPropertyName
 {
-    return @{@"designerID":@"id"};
+    return @{@"ID":@"id"};
 }
+Description
 @end

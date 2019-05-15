@@ -61,9 +61,9 @@
 {
     _model = model;
     
-    [clothesImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.clothesImg]]];
-    [clothesName setText:model.clothesName];
-    [clothesDetail setText:model.subName];
+//    [clothesImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.car_img]]];
+//    [clothesName setText:model.name];
+//    [clothesDetail setText:model.content];
     
     
 }

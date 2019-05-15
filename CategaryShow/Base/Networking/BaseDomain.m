@@ -73,7 +73,7 @@
     
     NSString * urlString;
     if (isAppendHostUrl) {
-        urlString = [NSString stringWithFormat:@"%@%@",URL_Server_String,url];
+        urlString = [NSString stringWithFormat:@"%@%@",[MoreUrlInterface URL_Server_String],url];
     }
     else {
         urlString = url;
@@ -83,16 +83,11 @@
         [parameters setObject:[userd stringForKey:@"token"] forKey:@"token"];
     }
 
-    
     self.httpTask = [self.httpManager POST:urlString parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         // 整合数据
         self.data = responseObject;
-        
-        
-        
-        
         [self parsDataWithDictionary:self.data];
-
+//        WCLLog(@"%@-->%@",urlString,self.dataRoot);
         // 传递结果
         if (success)
         {
@@ -127,7 +122,7 @@
     
     NSString * urlString;
     if (isAppendHostUrl) {
-        urlString = [NSString stringWithFormat:@"%@%@",URL_Server_String,url];//URL_Server_String
+        urlString = [NSString stringWithFormat:@"%@%@",[MoreUrlInterface URL_Server_String],url];
     }
     else {
         urlString = url;
@@ -139,12 +134,12 @@
     }
     
     self.httpTask = [self.httpManager GET:urlString parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSLog(@"143:%@::%@",responseObject,urlString);
         // 整合数据
         self.data = responseObject;
-    
+
         [self parsDataWithDictionary:self.data];
-        
+//        WCLLog(@"%@-->%@",urlString,self.dataRoot);
+
         // 传递结果
         if (success)
         {
@@ -209,9 +204,6 @@
     {
         if (nsData)
         {
-            
-            
-            
             NSDictionary * datas = [nsData objectFromJSONData];
             
             self.dataRoot = [[NSMutableDictionary alloc] initWithDictionary:datas copyItems:YES];
@@ -251,7 +243,7 @@
             NSDictionary * tmpDataObject = [datas objectForKey:JSON_Header_DataObject];
             
             if((NSNull *)tmpDataObject != [NSNull null] && [tmpDataObject count] > 0)
-                self.dataObject = [[NSMutableDictionary alloc] initWithDictionary:tmpDataObject copyItems:YES];
+                  self.dataObject = [[NSMutableDictionary alloc] initWithDictionary:tmpDataObject copyItems:YES];
             
             self.isLoadAll = YES;
             

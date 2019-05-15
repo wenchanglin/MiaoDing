@@ -15,12 +15,10 @@
 @implementation vipRuleViewController
 {
     NSMutableArray *listArray;
-    BaseDomain *getData;
-}
+    }
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self settabTitle:@"会员制度"];
-    getData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     listArray = [NSMutableArray array];
     [self getDatas];
@@ -32,10 +30,9 @@
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [getData getData:URL_Viphelp PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:domain]) {
-            listArray = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"data"]];
-            
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MineUserHelp_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            listArray = [NSMutableArray arrayWithArray:[responseObject arrayForKey:@"data"]];
             [self createTable];
         }
     }];
@@ -70,7 +67,7 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 3;
+    return listArray.count;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section

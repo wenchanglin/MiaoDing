@@ -14,4 +14,6 @@
 @property (nonatomic, retain) NewMainDesigner *designer;
 @property (nonatomic, retain) UIImageView *imageDesigner;
 @property (nonatomic, retain) UILabel *nameLabel;
+@property (nonatomic, retain) UILabel *priceLabel;
+
 @end

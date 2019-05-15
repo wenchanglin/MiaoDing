@@ -14,7 +14,7 @@
 
 @end
 
-@interface fontTableViewCell : UITableViewCell
+@interface fontTableViewCell : UITableViewCell<UICollectionViewDelegate,UICollectionViewDataSource>
 @property (nonatomic, weak)id<fontDelegate>delegate;
 @property (nonatomic, retain) NSMutableArray *fontArray;
 

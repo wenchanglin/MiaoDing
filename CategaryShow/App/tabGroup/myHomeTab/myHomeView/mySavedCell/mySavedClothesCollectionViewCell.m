@@ -46,32 +46,37 @@
     }];
     
     titleLabel = [UILabel new];
-    titleLabel.numberOfLines = 0;
+    titleLabel.numberOfLines = 1;
+    titleLabel.textAlignment=NSTextAlignmentCenter;
     [bgView addSubview:titleLabel];
-    titleLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:14];
-    titleLabel.textColor = [UIColor colorWithHexString:@"#3D3D3D"];
+    titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
+    titleLabel.textColor = [UIColor colorWithHexString:@"#333333"];
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(imgView.mas_bottom).offset(12);
         make.left.mas_equalTo(9);
+        make.right.mas_equalTo(-20);
         make.height.mas_equalTo(20);
     }];
     
     tagLabel = [UILabel new];
-    tagLabel.textColor = [UIColor colorWithHexString:@"#3D3D3D"];
-    tagLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:12];
+    tagLabel.textAlignment=NSTextAlignmentCenter;
+    tagLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+    tagLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:11];
     [bgView addSubview:tagLabel];
     [tagLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(titleLabel.mas_bottom).offset(10);
-        make.left.mas_equalTo(titleLabel);
+        make.top.equalTo(titleLabel.mas_bottom).offset(2);
+        make.centerX.equalTo(titleLabel.mas_centerX);
         make.height.mas_equalTo(17);
     }];
     priceLabel = [UILabel new];
-    priceLabel.textColor = [UIColor colorWithHexString:@"#3D3D3D"];
-    priceLabel.font = [UIFont fontWithName:@"PingFangSC-Light" size:12];
+    priceLabel.textAlignment=NSTextAlignmentCenter;
+    priceLabel.textColor = [UIColor colorWithHexString:@"#333333"];
+    priceLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:14];
     [bgView addSubview:priceLabel];
     [priceLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(tagLabel.mas_bottom).offset(2);
         make.right.mas_equalTo(-9);
-        make.centerY.equalTo(tagLabel.mas_centerY);
+        make.centerX.equalTo(titleLabel.mas_centerX);
     }];
     
    
@@ -82,10 +87,17 @@
 -(void)setModel:(mySavedModel *)model
 {
     _model = model;
-    [imgView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.clothesImg]]];
-    [titleLabel setText:model.clothesName];
-    tagLabel.text = model.subName;
-    [priceLabel setText:[NSString stringWithFormat:@"%@", model.clothesPrice]];
+    [imgView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.car_img]]];
+    [titleLabel setText:model.name];
+    tagLabel.text = model.content;
+    [priceLabel setText:[NSString stringWithFormat:@"%@", model.sell_price]];
 }
-
+-(void)setModel2:(myCollectModel *)model2
+{
+    _model2 = model2;
+    [imgView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model2.img]]];
+    [titleLabel setText:model2.name];
+    tagLabel.text = model2.sub_name;
+    [priceLabel setText:[NSString stringWithFormat:@"%@", model2.price]];
+}
 @end

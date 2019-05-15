@@ -7,7 +7,7 @@
 //
 
 #import "clothesForSaveViewController.h"
-#import "mySavedModel.h"
+#import "myCollectModel.h"
 #import "mySavedClothesCollectionViewCell.h"
 #import "ToBuyCompanyClothes(SecondPlan)ViewController.h"
 #import "DesignersClothesViewController.h"
@@ -24,12 +24,10 @@
     UICollectionView *haveSaveCollection;
     NSMutableArray *modelArray;
     NSInteger page;
-    BaseDomain *getData;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     //我的收藏-商品
-    getData = [BaseDomain getInstance:NO];
     page =1;
     
     [self.view setBackgroundColor:[UIColor whiteColor]];
@@ -38,7 +36,10 @@
     
     [self createGetData];
 }
-
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
+}
 -(void)viewWillAppear:(BOOL)animated
 {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
@@ -51,78 +52,44 @@
 -(void)reloadData
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@"2" forKey:@"type"];
+    [params setObject:@(MyCollectTypeShopping) forKey:@"type"];
     [params setObject:@(page) forKey:@"page"];
-    [getData getData:URL_SaveList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
-        if ([self checkHttpResponseResultStatus:getData]) {
-            [haveSaveCollection.mj_footer endRefreshing];
-            [haveSaveCollection.mj_header endRefreshing];
-            if ([[getData.dataRoot arrayForKey:@"data"] count] == 0&&page==1) {
-                [haveSaveTable removeFromSuperview];
-                [self createNoSave];
-            }
-            else if ([[getData.dataRoot arrayForKey:@"data"] count] == 0&&page!=1)
-            {
-                [haveSaveCollection.mj_footer endRefreshingWithNoMoreData];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MyCollect_String] parameters:params finished:^(id responseObject, NSError *error) {
+        [haveSaveCollection.mj_footer endRefreshing];
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+                NSMutableArray*arr = [myCollectModel mj_objectArrayWithKeyValuesArray:responseObject[@"data"][@"collections"]];
+                [modelArray addObjectsFromArray:arr];
                 [haveSaveCollection reloadData];
-            }
-            else {
-                for (NSDictionary *dis in [getData.dataRoot arrayForKey:@"data"] ) {
-                    mySavedModel *model = [[mySavedModel alloc] init];
-                    model.clothesPrice = [dis stringForKey:@"price2"];
-                    model.clothesName = [dis stringForKey:@"name"];
-                    model.clothesImg = [dis stringForKey:@"thumb"];
-                    model.goodId = [dis stringForKey:@"cid"];
-                    model.type = [dis stringForKey:@"goods_type"];
-                    model.subName = [dis stringForKey:@"sub_name"];
-                    [modelArray addObject:model];
-                }
-                
-                [haveSaveTable reloadData];
-            }
-            
         }
-        
     }];
-    
 }
 
 -(void)createGetData
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@"2" forKey:@"type"];
+    [params setObject:@(MyCollectTypeShopping)forKey:@"type"];
     [params setObject:@"1" forKey:@"page"];
-    [getData getData:URL_SaveList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getData]) {
-            [haveSaveCollection.mj_header endRefreshing];
-
-            if ([[getData.dataRoot arrayForKey:@"data"] count] == 0) {
-                [self createNoSave];
-            } else {
-                [modelArray removeAllObjects];
-                for (NSDictionary *dis in [getData.dataRoot arrayForKey:@"data"] ) {
-                    mySavedModel *model = [[mySavedModel alloc] init];
-                    model.clothesPrice = [dis stringForKey:@"price2"];
-                    model.clothesName = [dis stringForKey:@"name"];
-                    model.clothesImg = [dis stringForKey:@"thumb"];
-                    model.goodId = [dis stringForKey:@"cid"];
-                    model.type = [dis stringForKey:@"goods_type"];
-                    model.subName = [dis stringForKey:@"sub_name"];
-                    [modelArray addObject:model];
-                }
-                
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MyCollect_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            if ([responseObject[@"data"][@"collections"]count]>0) {
+                modelArray= [myCollectModel mj_objectArrayWithKeyValuesArray:responseObject[@"data"][@"collections"]];
                 [self createHaveSave];
+
             }
-            
+            else
+            {
+                [haveSaveTable removeFromSuperview];
+                [self createNoSave];
+            }
         }
-        
     }];
+
 }
 
 -(void)createNoSave
 {
    UIView *bgNoDingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+    bgNoDingView.backgroundColor=[UIColor whiteColor];
     [self.view addSubview:bgNoDingView];
     
     UIImageView *NoDD = [UIImageView new];
@@ -159,90 +126,13 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"LookClothes" object:nil];
 }
 
-//-(void)createHaveSave
-//{
-//    haveSaveTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH, SCREEN_HEIGHT - 64 - 50) style:UITableViewStyleGrouped];
-//    if (@available(iOS 11.0, *)) {
-//        haveSaveTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-//    } else {
-//        self.automaticallyAdjustsScrollViewInsets = NO;
-//    }
-//
-//    haveSaveTable.delegate = self;
-//    haveSaveTable.dataSource = self;
-//    [haveSaveTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-//    [haveSaveTable registerClass:[saveTableViewCell class] forCellReuseIdentifier:@"save"];
-//    [self.view addSubview:haveSaveTable];
-//}
-
-//-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-//{
-//    return [modelArray count];
-//}
-//
-//-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-//{
-//    return 1;
-//}
-//
-//-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    return 104;
-//}
-//
-//-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    saveTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"save" forIndexPath:indexPath];
-//    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-//    cell.model = modelArray[indexPath.section];
-//    return cell;
-//}
-//
-//-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-//{
-//    return 0.001;
-//}
-//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-//    return [[UIView alloc] init];
-//}
-//- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-//    return [[UIView alloc] init];
-//}
-//-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-//{
-//    return 8;
-//}
-//
-//-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    mySavedModel *model = modelArray[indexPath.section];
-//        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-//        [dic setObject:model.goodId forKey:@"id"];
-//        [dic setObject:model.clothesName forKey:@"name"];
-//        [dic setObject:model.clothesImg forKey:@"thumb"];
-//        [dic setObject:model.type forKey:@"type"];
-//        if ([model.type integerValue]== 1) {
-//
-//            DiyClothesDetailViewController *toButy = [[DiyClothesDetailViewController alloc] init];
-//            toButy.goodDic =dic;
-//            [self.navigationController pushViewController:toButy animated:YES];
-//
-//        } else {
-//            DesignerClothesDetailViewController *designerClothes = [[DesignerClothesDetailViewController alloc] init];
-//            designerClothes.good_id = model.goodId;
-//
-//            [self.navigationController pushViewController:designerClothes animated:YES];
-//
-//        }
-//}
-
 -(void)createHaveSave
 {
     UICollectionViewFlowLayout *flowLayout1=[[UICollectionViewFlowLayout alloc] init];
     [flowLayout1 setScrollDirection:UICollectionViewScrollDirectionVertical];
     flowLayout1.minimumLineSpacing = 0;
     //        flowLayout.headerReferenceSize = CGSizeMake(self.frame.size.width, 0);//头部
-    haveSaveCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH , SCREEN_HEIGHT - 64 - 49) collectionViewLayout:flowLayout1];
+    haveSaveCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH , [ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT  - 88 - 60:SCREEN_HEIGHT  - 64 - 40) collectionViewLayout:flowLayout1];
     if (@available(iOS 11.0, *)) {
         haveSaveCollection.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;//UIScrollView也适用
     }else {
@@ -258,37 +148,10 @@
     
     [haveSaveCollection registerClass:[mySavedClothesCollectionViewCell class] forCellWithReuseIdentifier:@"mysaveClothes"];
     [haveSaveCollection registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"ReusableView"];
-    NSMutableArray *headerImages = [NSMutableArray array];
-    for (int i = 1; i <= 60; i++) {
-        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%d",i]];
-        [headerImages addObject:image];
-    }
-    __weak clothesForSaveViewController *weakSelf = self;
-
-    MJRefreshGifHeader * header = [MJRefreshGifHeader headerWithRefreshingBlock:^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [weakSelf createGetData];
-        });
-        
+    [WCLMethodTools footerAutoGifRefreshWithTableView:haveSaveCollection completion:^{
+        page +=1;
+        [self reloadData];
     }];
-    header.stateLabel.hidden = YES;
-    header.lastUpdatedTimeLabel.hidden = YES;
-    [header setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
-    [header setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
-    haveSaveCollection.mj_header = header;
-    MJRefreshAutoGifFooter * footer = [MJRefreshAutoGifFooter footerWithRefreshingBlock:^{
-        // 模拟延迟加载数据，因此2秒后才调用（真实开发中，可以移除这段gcd代码）
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            page += 1;
-            [weakSelf reloadData];
-            
-        });
-    }];
-    footer.stateLabel.hidden =YES;
-    footer.refreshingTitleHidden = YES;
-    [footer setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
-    [footer setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
-    haveSaveCollection.mj_footer = footer;
 }
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
@@ -307,7 +170,7 @@
     static NSString *identify = @"mysaveClothes";
     mySavedClothesCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
     [cell setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
-    cell.model = modelArray[indexPath.item];
+    cell.model2 = modelArray[indexPath.item];
     [cell sizeToFit];
 
     
@@ -318,10 +181,7 @@
 //定义每个UICollectionView 的大小
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    //边距占5*4=20 ，2个
-    //图片为正方形，边长：(fDeviceWidth-20)/2-5-5 所以总高(fDeviceWidth-20)/2-5-5 +20+30+5+5 label高20 btn高30 边
-    
-    return CGSizeMake(SCREEN_WIDTH / 2-6 , 266);//-6
+    return CGSizeMake(SCREEN_WIDTH / 2-6 , (SCREEN_WIDTH / 2 - 6)+73.8);//-6
 }
 //定义每个UICollectionView 的间距
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
@@ -336,47 +196,21 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    mySavedModel *model = modelArray[indexPath.item];
+    myCollectModel *model = modelArray[indexPath.item];
     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-    [dic setObject:model.goodId forKey:@"id"];
-    [dic setObject:model.clothesName forKey:@"name"];
-    [dic setObject:model.clothesImg forKey:@"thumb"];
-    [dic setObject:model.type forKey:@"type"];
-    if ([model.type integerValue]== 1) {
-//        ToBuyCompanyClothes_SecondPlan_ViewController *toBuy = [[ToBuyCompanyClothes_SecondPlan_ViewController alloc] init];
-//        toBuy.goodDic = dic;
-//        [self.navigationController pushViewController:toBuy animated:YES];
-        
+    [dic setObject:@(model.rid) forKey:@"id"];
+    [dic setObject:model.name forKey:@"name"];
+    [dic setObject:model.img forKey:@"thumb"];
+    [dic setObject:@(model.type) forKey:@"type"];
+    if (model.goods_type == 1) {
         DiyClothesDetailViewController *toButy = [[DiyClothesDetailViewController alloc] init];
         toButy.goodDic =dic;
         [self.navigationController pushViewController:toButy animated:YES];
-        
     } else {
-        
-//        DesignersClothesViewController *designerClothes = [[DesignersClothesViewController alloc] init];
-//        designerClothes.imageUrl = model.clothesImg;
-//        designerClothes.good_Id = model.goodId;
-//        [self.navigationController pushViewController:designerClothes animated:YES];
-        
-//        designerModel *dmodel = [[designerModel alloc] init];
-//        dmodel.clothesImage = [dic stringForKey:@"img"];
-//        dmodel.titlename = [dic stringForKey:@"name"];
-//        dmodel.good_Id = [dic stringForKey:@"goods_id"];
-//        dmodel.desginer_Id = [dic stringForKey:@"uid"];
-//        dmodel.detailClothesImg = [dic stringForKey:@"thumb"];
-//        dmodel.designerHead = [dic stringForKey:@"avatar"];
-//        dmodel.remark = [dic stringForKey:@"remark"];
-//        dmodel.designerName = [dic stringForKey:@"username"];
-//        dmodel.p_time = [dic stringForKey:@"p_time"];
-//        dmodel.tag = [dic stringForKey:@"tag"];
-//        dmodel.introduce = [dic stringForKey:@"introduce"];
-        
-        
         DesignerClothesDetailViewController *designerClothes = [[DesignerClothesDetailViewController alloc] init];
-        designerClothes.good_id = model.goodId;
-        
+        designerClothes.good_id = [NSString stringWithFormat:@"%@",@(model.rid)];
         [self.navigationController pushViewController:designerClothes animated:YES];
-        
+
     }
     
 }

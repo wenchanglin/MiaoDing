@@ -11,6 +11,7 @@
 #import "MCListViewController.h"
 #import "mcSaleViewController.h"
 #import "mcWuLiuViewController.h"
+#import "mcYuYueListViewController.h"
 @interface MCMainViewController ()<UITableViewDelegate, UITableViewDataSource>
 
 @end
@@ -31,26 +32,16 @@
     [self createTableMc];
     [self getDatas];
 }
-
+-(void)viewWillAppear:(BOOL)animated
+{
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+}
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [getData getData:URL_MessageType PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:domain]) {
-            
-            
-            NSArray *array = [domain.dataRoot arrayForKey:@"data"];
-            for (NSDictionary *dic in array) {
-                messageTypeModel *model = [messageTypeModel new];
-                model.messageLastMsg = [NSMutableDictionary dictionaryWithDictionary:[dic dictionaryForKey:@"last_msg"]];
-                model.messageName = [dic stringForKey:@"name"];
-                model.messageImage = [dic stringForKey:@"img"];
-                model.messageId = [dic stringForKey:@"id"];
-                model.messageType = [dic stringForKey:@"type"];
-                model.unReadCount = [dic stringForKey:@"num"];
-                [modelArray addObject:model];
-            }
-            
+    [[wclNetTool sharedTools]request:GET urlString:[MoreUrlInterface URL_NoticationType_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            modelArray = [messageTypeModel mj_objectArrayWithKeyValuesArray:responseObject[@"data"]];
             [messageTypeTable reloadData];
         }
     }];
@@ -67,7 +58,6 @@
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
-
     messageTypeTable.dataSource = self;
     messageTypeTable.delegate = self;
     [messageTypeTable registerClass:[messageTypeTableViewCell class] forCellReuseIdentifier:@"messageType"];
@@ -114,19 +104,25 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    messageTypeModel *model = modelArray[indexPath.section];
+    messageTypeModel *model = modelArray[indexPath.row];
     
-    if ([model.messageType integerValue] == 1) {
+    if (model.type == 1) {
         MCListViewController *list = [[MCListViewController alloc] init];
-        list.mc_Id = model.messageId;
+        list.mc_Id = [NSString stringWithFormat:@"%@",@(model.type)];
         [self.navigationController pushViewController:list animated:YES];
-    } else if ([model.messageType integerValue] == 2) {
+    } else if (model.type == 2) {
         mcSaleViewController *list = [[mcSaleViewController alloc] init];
-        list.mc_Id = model.messageId;
+        list.mc_Id = [NSString stringWithFormat:@"%@",@(model.type)];
         [self.navigationController pushViewController:list animated:YES];
-    } else if ([model.messageType integerValue] == 3) {
+    } else if (model.type == 3) {
         mcWuLiuViewController *list = [[mcWuLiuViewController alloc] init];
-        list.mc_Id = model.messageId;
+        list.mc_Id = [NSString stringWithFormat:@"%@",@(model.type)];
+        [self.navigationController pushViewController:list animated:YES];
+    }
+    else if (model.type==4)
+    {
+        mcYuYueListViewController *list = [[mcYuYueListViewController alloc] init];
+        list.mc_Id = [NSString stringWithFormat:@"%@",@(model.type)];
         [self.navigationController pushViewController:list animated:YES];
     }
     
@@ -140,13 +136,13 @@
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end

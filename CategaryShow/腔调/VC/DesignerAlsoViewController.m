@@ -59,7 +59,7 @@
     [MobClick endLogPageView:@"腔调"];
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad   {
     [super viewDidLoad];
     getBaner = [BaseDomain getInstance:NO];
     [self.view addSubview:self.mainTableView];
@@ -70,7 +70,7 @@
 
 //-(void)getDataBaner
 //{
-//    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+//    NSMutableDictionary *params = [NSMutableDictionary dictionary];  
 //    [params setObject:@(1) forKey:@"page"];
 //    [getBaner getData:URL_getDesignerBaner PostParams:params finish:^(BaseDomain *domain, Boolean success) {
 //
@@ -166,7 +166,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    return IsiPhoneX?Main_Screen_Height-88:Main_Screen_Height - 64;
+    return [ShiPeiIphoneXSRMax isIPhoneX]?Main_Screen_Height-88:Main_Screen_Height - 64;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -197,9 +197,9 @@
         
         NSArray *controllers=@[First];//,Third];
         
-        NSArray *titleArray =@[@"腔调"];//,@"设计师"];
+        NSArray *titleArray =@[@"好物"];//,@"设计师"];
         
-        MySegMentViewNew * rcs=[[MySegMentViewNew alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, Main_Screen_Height) controllers:controllers titleArray:titleArray ParentController:self lineWidth:25 lineHeight:2.0 butHeight:30 viewHeight:IsiPhoneX?88:64 showLine:NO];
+        MySegMentViewNew * rcs=[[MySegMentViewNew alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width, Main_Screen_Height) controllers:controllers titleArray:titleArray ParentController:self lineWidth:25 lineHeight:2.0 butHeight:30 viewHeight:[ShiPeiIphoneXSRMax isIPhoneX]?88:64 showLine:NO];
         _RCSegView = rcs;
     }
     return _RCSegView;

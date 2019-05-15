@@ -12,6 +12,8 @@
 #import "vipListItemCollectionViewCell.h"
 #import "moreVipQYViewController.h"
 #import "myHomeSetViewController.h"
+#import "userGradeModel.h"
+#import "userPrivilegeModel.h"
 @interface VipMainNewViewController ()<UICollectionViewDelegate, UICollectionViewDataSource>
 
 @end
@@ -24,7 +26,6 @@
     UILabel *nameLabel;
     UIImageView *vipImg;
     LXGradientProcessView *processView;
-    BaseDomain *getData;
     NSMutableDictionary *userInfo;
     NSMutableArray *userGrade;
     NSMutableArray *userPrivilege;
@@ -42,7 +43,6 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    getData = [BaseDomain getInstance:NO];
     postData = [BaseDomain getInstance:NO];
     userInfo = [NSMutableDictionary dictionary];
     userGrade = [NSMutableArray array];
@@ -53,7 +53,10 @@
     
     [self getData];
 }
-
+-(void)viewWillAppear:(BOOL)animated
+{
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+}
 -(UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;
@@ -150,34 +153,29 @@
     
     
     if (isGift == 2) {
-        if ([[SelfPersonInfo getInstance].personAge isEqualToString:@"0"]) {
+        if ([[SelfPersonInfo shareInstance].userModel.age isEqualToString:@"0"]) {
             myHomeSetViewController *set = [[myHomeSetViewController alloc] init];
             [self.navigationController pushViewController:set animated:YES];
         } else {
             NSMutableDictionary *params = [NSMutableDictionary dictionary];
-            [postData postData:URL_GetBirthday PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-                
-                if ([self checkHttpResponseResultStatus:domain]) {
+            [[wclNetTool sharedTools]request:POST urlString:URL_GetBirthday parameters:params finished:^(id responseObject, NSError *error) {
+                if ([self checkHttpResponseResultStatus:responseObject]) {
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"领取成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
                     [alert show];
                 }
             }];
             
+            
         }
     } else if (isGift == 3) {
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
-        [postData postData:URL_GetVipUp PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-            
-            if ([self checkHttpResponseResultStatus:domain]) {
+        [[wclNetTool sharedTools]request:POST urlString:URL_GetVipUp parameters:params finished:^(id responseObject, NSError *error) {
+            if ([self checkHttpResponseResultStatus:responseObject]) {
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"领取成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
                 [alert show];
             }
         }];
-        
     }
-  
-    
-    
 }
 
 
@@ -194,40 +192,25 @@
 -(void)getData
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@"1" forKey:@"page"];
-    [getData getData:URL_VIPUSERPRIVILEGE PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:domain]) {
-            userInfo = [NSMutableDictionary dictionaryWithDictionary:[[domain.dataRoot objectForKey:@"data"] dictionaryForKey:@"user_info"]];
-            for (NSDictionary *dic in [[domain.dataRoot objectForKey:@"data"] arrayForKey:@"user_grade"]) {
-                NSMutableDictionary *dice = [NSMutableDictionary dictionaryWithDictionary:dic];
-                [userGrade addObject:dice];
-            }
-            
-            userPrivilege = [NSMutableArray arrayWithArray:[[domain.dataRoot objectForKey:@"data"] arrayForKey:@"user_privilege"]];
-            
-            
-            
-            
-            
-            for (int i = 0; i < [userGrade count]; i ++) {
-                NSArray *idArray = [[[userGrade objectAtIndex:i] stringForKey:@"user_privilege_ids"] componentsSeparatedByString:@","];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MineUserPrivilege_String] parameters:params finished:^(id responseObject, NSError *error) {
+//        WCLLog(@"%@",responseObject);
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            userInfo =[[[responseObject objectForKey:@"data"] dictionaryForKey:@"user_info"]mutableCopy];
+            userGrade =[userGradeModel mj_objectArrayWithKeyValuesArray:responseObject[@"data"][@"user_grade"]];
+            userPrivilege = [userPrivilegeModel mj_objectArrayWithKeyValuesArray:responseObject[@"data"][@"user_privilege"]];
+            for (userGradeModel*gradeModel in userGrade) {
+                NSArray*idArr=[gradeModel.user_privilege_ids componentsSeparatedByString:@","];
                 NSMutableArray *detailArray = [NSMutableArray array];
-                for (int j = 0 ; j < [idArray count]; j ++) {
-                    for (NSDictionary *dic in userPrivilege) {
-                        if ([[idArray objectAtIndex:j] integerValue] == [[dic stringForKey:@"id"] integerValue]) {
-                            [detailArray addObject:dic];
+                for (int j=0; j<idArr.count; j++) {
+                    for (userPrivilegeModel*privilegeModel in userPrivilege) {
+                        if ([idArr[j]integerValue]==privilegeModel.ID) {
+                            [detailArray addObject:privilegeModel];
                         }
                     }
                 }
-                
-                [[userGrade objectAtIndex:i] setObject:detailArray forKey:@"listOfDetail"];
-                
-                
+                gradeModel.listOfDetail = detailArray;
             }
-            
-            
-            showArray  = [NSMutableArray arrayWithArray:[[userGrade firstObject] arrayForKey:@"listOfDetail"]];
-            
+            showArray = [((userGradeModel*)[userGrade firstObject]).listOfDetail mutableCopy];
             [self createView];
             [self createSecondBack];
             [self alphaView];
@@ -261,12 +244,12 @@
     .widthIs(68);
     [headImg.layer setCornerRadius:34];
     [headImg.layer setMasksToBounds:YES];
-    if ([[SelfPersonInfo getInstance].personImageUrl hasPrefix:@"http"]) {
-        [headImg sd_setImageWithURL:[NSURL URLWithString:[SelfPersonInfo getInstance].personImageUrl ]];
+    if ([[SelfPersonInfo shareInstance].userModel.avatar hasPrefix:@"http"]) {
+        [headImg sd_setImageWithURL:[NSURL URLWithString:[SelfPersonInfo shareInstance].userModel.avatar ]];
     }
     else
     {
-    [headImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]]];
+    [headImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo shareInstance].userModel.avatar]]];
     }
     nameLabel = [UILabel new];
     [firstBack addSubview:nameLabel];
@@ -277,7 +260,7 @@
     }];
     
     [nameLabel setFont:Font_20];
-    [nameLabel setText:[SelfPersonInfo getInstance].cnPersonUserName];
+    [nameLabel setText:[SelfPersonInfo shareInstance].userModel.username];
     [nameLabel setTextColor:[UIColor blackColor]];
 
     vipImg = [UIImageView new];
@@ -292,11 +275,9 @@
     }];
     [vipImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [[userInfo dictionaryForKey:@"user_grade"] stringForKey:@"img2"]]]];
     
-    
     processView = [[LXGradientProcessView alloc] initWithFrame:CGRectMake(25,88, self.view.frame.size.width - 13 * 2 - 25 * 2, 4)];
     [firstBack addSubview:processView];
-//    [processView setBackgroundColor:[UIColor lightGrayColor]];
-    processView.percent = [[userInfo stringForKey:@"credit"] floatValue] / [[[userInfo objectForKey:@"user_grade"] stringForKey:@"max_credit"] floatValue] * 100;
+    processView.percent = [[userInfo stringForKey:@"exp"] floatValue] / [[[userInfo objectForKey:@"user_grade"] stringForKey:@"max_credit"] floatValue] * 100;
     
     UILabel *vipCountright = [UILabel new];
     [firstBack addSubview:vipCountright];
@@ -316,7 +297,7 @@
         make.top.equalTo(processView.mas_bottom).with.offset(4);
         make.height.equalTo(@10);
     }];
-    [vipCountLeft setText:[NSString stringWithFormat:@"%.f", [[userInfo stringForKey:@"credit"] floatValue]]];
+    [vipCountLeft setText:[NSString stringWithFormat:@"%.f", [[userInfo stringForKey:@"exp"] floatValue]]];
     [vipCountLeft setFont:Font_12];
     [vipCountLeft setTextColor:[UIColor blackColor]];
     
@@ -345,7 +326,7 @@
     secondBack.sd_layout
     .leftSpaceToView(self.view, 13)
     .rightSpaceToView(self.view, 13)
-    .topSpaceToView(firstBack, 10)
+    .topSpaceToView(firstBack, 10)  
     .heightIs(287.0 / 667.0 * SCREEN_HEIGHT);
     secondBack.backgroundColor = [UIColor whiteColor];
     secondBack.layer.masksToBounds = NO;
@@ -353,41 +334,18 @@
     [[secondBack layer] setShadowRadius:4];                // 阴影扩散的范围控制
     [[secondBack layer] setShadowOpacity:0.5];               // 阴影透明度
     [[secondBack layer] setShadowColor:[UIColor lightGrayColor].CGColor];
-    
-//    UILabel *titleName = [UILabel new];
-//    [secondBack addSubview:titleName];
-//    
-//    titleName.sd_layout
-//    .leftSpaceToView(secondBack, 25)
-//    .topSpaceToView(secondBack, 25)
-//    .heightIs(20)
-//    .rightSpaceToView(secondBack, 25);
-//    [titleName setText:[NSString stringWithFormat:@"当前所享受权益（%@）",[[userInfo dictionaryForKey:@"user_grade"] stringForKey:@"name"]]];
-//    [titleName setFont:Font_16];
-    
     for (int i = 0; i < [userGrade count]; i ++) {
+        userGradeModel*model1 = userGrade[i];
         UIButton *buttonGrade = [[UIButton alloc] initWithFrame:CGRectMake((SCREEN_WIDTH - 26)/[userGrade count] * i, 21, (SCREEN_WIDTH - 26) / [userGrade count], 30)];
         buttonGrade.tag = i + 5;
-        [buttonGrade setTitle:[NSString stringWithFormat:@"%@权益",[[userGrade objectAtIndex:i] stringForKey:@"name"] ]forState:UIControlStateNormal];
-        
+        [buttonGrade setTitle:[NSString stringWithFormat:@"%@权益",model1.name] forState:UIControlStateNormal];
         [buttonGrade.titleLabel setFont:Font_14];
-//        UIImageView *image = [[UIImageView alloc] initWithFrame:CGRectMake(buttonGrade.frame.size.width / 2 - 7.5, 13, 25, 11)];
-//        [image sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,[[userGrade objectAtIndex:i] stringForKey:@"img"]]] ];
-//        [buttonGrade addSubview:image];
         [buttonGrade addTarget:self action:@selector(pageClick:) forControlEvents:UIControlEventTouchUpInside];
-//        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 33, buttonGrade.frame.size.width, 20)];
-//        [label setText:[[userGrade objectAtIndex:i] stringForKey:@"name"]];
-//        [label setFont:[UIFont systemFontOfSize:12]];
-//        [label setTag:100+i];
         if (i == 0) {
             [buttonGrade setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         } else {
             [buttonGrade setTitleColor:getUIColor(Color_loginNoUserName) forState:UIControlStateNormal];
-            
-            
         }
-//        [label setTextAlignment:NSTextAlignmentCenter];
-//        [buttonGrade addSubview:label];
         [secondBack addSubview:buttonGrade];
     }
     
@@ -405,30 +363,12 @@
     .topSpaceToView(secondBack, 60)
     .rightEqualToView(secondBack)
     .bottomEqualToView(secondBack);
-    
-    
-    
     collection.delegate = self;
     collection.dataSource = self;
     collection.showsHorizontalScrollIndicator = NO;
     [collection setBackgroundColor:[UIColor whiteColor]];
     [collection registerClass:[vipListItemCollectionViewCell class] forCellWithReuseIdentifier:@"vipItem"];
     [collection registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"ReusableView"];
-    
-    
-    
-    
-//    UIButton *buttonMore = [UIButton new];
-//    [self.view addSubview:buttonMore];
-//    buttonMore.sd_layout
-//    .centerXEqualToView(self.view)
-//    .topSpaceToView(secondBack, 25)
-//    .heightIs(15)
-//    .widthIs(200);
-//    [buttonMore setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-//    [buttonMore setTitle:@"查看更多权益 >>" forState:UIControlStateNormal];
-//    [buttonMore.titleLabel setFont:[UIFont systemFontOfSize:10]];
-//    [buttonMore addTarget:self action:@selector(QYClick) forControlEvents:UIControlEventTouchUpInside];
 }
 
 -(void)pageClick:(UIButton *)sender
@@ -444,12 +384,10 @@
             [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         } else {
             [btn setTitleColor:getUIColor(Color_loginNoUserName) forState:UIControlStateNormal];
-            
-            
         }
     }
     
-    showArray  = [NSMutableArray arrayWithArray:[[userGrade objectAtIndex:sender.tag - 5] arrayForKey:@"listOfDetail"]];
+    showArray  = ((userGradeModel*)userGrade[sender.tag-5]).listOfDetail.mutableCopy;
     [collection reloadData];
     
 }
@@ -469,15 +407,11 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *identify = @"vipItem";
+    userPrivilegeModel*model1 = showArray[indexPath.item];
     vipListItemCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
-    
-    [cell.imgView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [[showArray objectAtIndex:indexPath.item] stringForKey:@"img"]]]];
-    cell.text.text = [[showArray objectAtIndex:indexPath.item] stringForKey:@"name"];
-
-    
+    [cell.imgView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model1.img]]];
+    cell.text.text = model1.name;
     [cell sizeToFit];
-    
-    
     return cell;
 }
 
@@ -487,7 +421,8 @@
 {
     //边距占5*4=20 ，2个
     //图片为正方形，边长：(fDeviceWidth-20)/2-5-5 所以总高(fDeviceWidth-20)/2-5-5 +20+30+5+5 label高20 btn高30 边
-    return CGSizeMake((SCREEN_WIDTH - 26) / 3, (287.0 / 667.0 * SCREEN_HEIGHT - 60) / 2);
+   
+    return CGSizeMake((SCREEN_WIDTH - 26) / 3,iPadDevice?(200 / 667.0 * SCREEN_HEIGHT - 60) / 2:(287 / 667.0 * SCREEN_HEIGHT - 60) / 2);
 }
 //定义每个UICollectionView 的间距
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
@@ -506,20 +441,15 @@
     [alphaView setAlpha:1];
     [alphaBgview setAlpha:1];
     [UIView commitAnimations];
-    WCLLog(@"%@",[[userPrivilege objectAtIndex:indexPath.item] stringForKey:@"desc"]);
-    CGFloat height =  [self calculateTextHeight:[UIFont systemFontOfSize:14] givenText:[[userPrivilege objectAtIndex:indexPath.item] stringForKey:@"desc"] givenWidth:270];
+    userPrivilegeModel*model2 = userPrivilege[indexPath.item];
+    CGFloat height =  [self calculateTextHeight:[UIFont systemFontOfSize:14] givenText:model2.desc givenWidth:270];
     [alphaView setSize:CGSizeMake(300, 120 + height)];
-    
-    
-    
-    [alphaImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [userPrivilege[indexPath.item] stringForKey:@"img"]]]];
-    
-    
-    isGift = [[userPrivilege[indexPath.item] stringForKey:@"is_get"] integerValue];
+    [alphaImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model2.img]]];
+    isGift = [model2.is_get integerValue];
     
     if (isGift == 2) {
         
-        if ([[SelfPersonInfo getInstance].personAge isEqualToString:@"0"]) {
+        if ([[SelfPersonInfo shareInstance].userModel.age isEqualToString:@"0"]) {
             CGFloat height =  [self calculateTextHeight:[UIFont systemFontOfSize:14] givenText:@"· 完善生日资料后，过生日时可获得惊喜生日礼包一份\n· 礼包领取有效期：生日前三天及后四天" givenWidth:270];
             [alphaView setSize:CGSizeMake(300, 120 + height)];
             [closeButton setTitle:@"去设置" forState:UIControlStateNormal];
@@ -527,33 +457,26 @@
             [alphaDetail setText:@"· 完善生日资料后，过生日时可获得惊喜生日礼包一份\n· 礼包领取有效期：生日前三天及后四天"];
         } else {
             [closeButton setTitle:@"领取" forState:UIControlStateNormal];
-            [alphaDetail setText:[userPrivilege[indexPath.item] stringForKey:@"desc"]];
+            [alphaDetail setText:model2.desc];
         }
         
     } else if (isGift == 3) {
         [closeButton setTitle:@"领取" forState:UIControlStateNormal];
-        [alphaDetail setText:[userPrivilege[indexPath.item] stringForKey:@"desc"]];
+        [alphaDetail setText:model2.desc];
     } else {
         [closeButton setTitle:@"关闭" forState:UIControlStateNormal];
-        [alphaDetail setText:[userPrivilege[indexPath.item] stringForKey:@"desc"]];
+        [alphaDetail setText:model2.desc];
     }
     
     
 }
 
-
 -(void)MoreAction
 {
     VipDetailViewController *vipDetail = [[VipDetailViewController alloc] init];
-    vipDetail.vipCount = [userInfo stringForKey:@"credit"];
+    vipDetail.vipCount = [userInfo stringForKey:@"exp"];
     [self.navigationController pushViewController:vipDetail animated:YES];
 }
-
-//-(void)QYClick
-//{
-//    moreVipQYViewController *moreV = [[moreVipQYViewController alloc] init];
-//    [self.navigationController pushViewController:moreV animated:YES];
-//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

@@ -9,7 +9,7 @@
 #define screen_height [UIScreen mainScreen].bounds.size.height
 #import "JZAlbumViewController.h"
 #import "UIImageView+WebCache.h"
-//#import "MBProgressHUD.h"
+#import "imgListModel.h"
 #import "PhotoView.h"
 
 @interface JZAlbumViewController ()<UIScrollViewDelegate,PhotoViewDelegate>
@@ -98,8 +98,9 @@
     id currentPhotoView = [_subViewList objectAtIndex:index];
     if (![currentPhotoView isKindOfClass:[PhotoView class]]) {
         //url数组
+        imgListModel*model = [self.imgArr objectAtIndex:index];
         CGRect frame = CGRectMake(index*_scrollView.frame.size.width, 0, self.view.frame.size.width, self.view.frame.size.height);
-        PhotoView *photoV = [[PhotoView alloc] initWithFrame:frame withPhotoUrl:[self.imgArr objectAtIndex:index]];
+        PhotoView *photoV = [[PhotoView alloc] initWithFrame:frame withPhotoUrl:model.img];
         photoV.delegate = self;
         [self.scrollView insertSubview:photoV atIndex:0];
         [_subViewList replaceObjectAtIndex:index withObject:photoV];

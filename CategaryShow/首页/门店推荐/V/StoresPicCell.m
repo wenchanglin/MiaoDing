@@ -19,12 +19,12 @@
 }
 -(void)createUI
 {
-        _picIMgView = [UIImageView new];
-        _picIMgView.contentMode = UIViewContentModeScaleAspectFill;
-        [self.contentView addSubview:_picIMgView];
-        [_picIMgView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.equalTo(self.contentView);
-        }];
+    _picIMgView = [UIImageView new];
+    _picIMgView.contentMode = UIViewContentModeScaleAspectFill;
+    [self.contentView addSubview:_picIMgView];
+    [_picIMgView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.contentView);
+    }];
 }
 -(void)setmodel:(StoresDetailModel *)models WithIndex:(NSIndexPath *)indexPath{
     _models = models;

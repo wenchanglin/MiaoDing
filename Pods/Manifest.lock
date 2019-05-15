@@ -31,7 +31,7 @@ PODS:
     - FMDB/standard (= 2.6.2)
   - FMDB/standard (2.6.2)
   - HexColors (2.2.1)
-  - IQKeyboardManager (5.0.7)
+  - IQKeyboardManager (4.0.8)
   - JazzHands (2.0.8)
   - JSONKit (1.5pre)
   - JSONModel (1.7.0)
@@ -39,12 +39,11 @@ PODS:
   - MAThemeKit (1.0)
   - MBProgressHUD (1.0.0)
   - MJExtension (3.0.13)
-  - MJRefresh (3.1.13)
-  - QIYU_iOS_SDK (3.11.2)
+  - MJRefresh (3.1.12)
   - RDVTabBarController (1.1.9)
   - RKNotificationHub (2.0.4)
   - SCLAlertView-Objective-C (1.0.6)
-  - SDAutoLayout (2.1.9)
+  - SDAutoLayout (2.1.7)
   - SDCycleScrollView (1.65):
     - SDWebImage (~> 3.7)
   - SDWebImage (3.8.2):
@@ -53,7 +52,7 @@ PODS:
   - TSMessages (0.9.12):
     - HexColors (~> 2.2.0)
   - UMengAnalytics-NO-IDFA (4.2.5)
-  - XHWebImageAutoSize (1.1.2)
+  - XHWebImageAutoSize (1.0.2)
 
 DEPENDENCIES:
   - AFNetworking (~> 2.6.3)
@@ -71,16 +70,43 @@ DEPENDENCIES:
   - MBProgressHUD
   - MJExtension
   - MJRefresh
-  - QIYU_iOS_SDK (~> 3.11.0)
   - RDVTabBarController (~> 1.1.9)
   - RKNotificationHub (~> 2.0.4)
   - SCLAlertView-Objective-C (~> 1.0.6)
   - SDAutoLayout (~> 2.1.7)
-  - SDCycleScrollView (~> 1.61)
+  - SDCycleScrollView
   - SDWebImage (~> 3.8.1)
   - TSMessages (~> 0.9.12)
   - UMengAnalytics-NO-IDFA
-  - XHWebImageAutoSize (~> 1.1.0)
+  - XHWebImageAutoSize
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - AFNetworking
+    - BlockAlertsAnd-ActionSheets
+    - CBZSplashView
+    - DTKDropdownMenu
+    - FLAnimatedImage
+    - FMDB
+    - HexColors
+    - IQKeyboardManager
+    - JazzHands
+    - JSONKit
+    - JSONModel
+    - Masonry
+    - MAThemeKit
+    - MBProgressHUD
+    - MJExtension
+    - MJRefresh
+    - RDVTabBarController
+    - RKNotificationHub
+    - SCLAlertView-Objective-C
+    - SDAutoLayout
+    - SDCycleScrollView
+    - SDWebImage
+    - TSMessages
+    - UMengAnalytics-NO-IDFA
+    - XHWebImageAutoSize
 
 SPEC CHECKSUMS:
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
@@ -90,7 +116,7 @@ SPEC CHECKSUMS:
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
   HexColors: abfd172e329dab59888614ccba6f216cec59289d
-  IQKeyboardManager: 0bfa4607d39924116b5c0c8b55b5d789288b5cba
+  IQKeyboardManager: 1a8189fa153bf09044355ee0ad36826f6767e7f7
   JazzHands: 355dc5c2b6fc38ee460d0ed7836c69539263f477
   JSONKit: bae313ce6a6c444f40489a6c0b023f399888871f
   JSONModel: 840bc0fcffb24b8454d2c026bf26fea454b8e98d
@@ -98,18 +124,17 @@ SPEC CHECKSUMS:
   MAThemeKit: 559acc98ceadc051cccb1b6bb0c4ca28475eb021
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
   MJExtension: 5932755f451458eefa24239358817f8d291240c7
-  MJRefresh: 56a28aa628c9895e97a518dabaecf70b18f92f32
-  QIYU_iOS_SDK: b8b94211d6b9bd66132dd546f3afd7da30e8e60c
+  MJRefresh: b96cdb21c4aa75a7b07654311ab2f315c497e806
   RDVTabBarController: 67794f7a7a37f8e32f046f85ac67d06ab92d624a
   RKNotificationHub: 3765424499139c3d3885b681bb0837f072d12ae6
   SCLAlertView-Objective-C: ca78280817e66e74366b78579350dee2ff277e23
-  SDAutoLayout: 6b6f4db0d009dfc46cef14ef710dbb164e86616c
+  SDAutoLayout: e9b36d04b8c0b504762a04d76fbbe5108944297a
   SDCycleScrollView: f72904c77698a7f93a41bcbbc2d78b073bf7326c
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   TSMessages: c8cc7b80f2a833af533872cd02010cac061532cc
   UMengAnalytics-NO-IDFA: 16666e32edce5be44ae5b14aaaa7f3582e09d6ab
-  XHWebImageAutoSize: 8e5d7bf036f960885769dbe3410579024d3ac1a1
+  XHWebImageAutoSize: b58704e53d1d444b632d76d8c314f18933c9fbbb
 
-PODFILE CHECKSUM: 8d49da608739b8eb2f485136dcaf455da424d0d2
+PODFILE CHECKSUM: af0076d89727eb6ea9b103a2b8c2e07b691742ad
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.7.0.beta.2

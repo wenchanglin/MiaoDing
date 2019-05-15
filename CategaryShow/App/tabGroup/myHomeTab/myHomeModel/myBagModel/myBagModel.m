@@ -9,5 +9,15 @@
 #import "myBagModel.h"
 
 @implementation myBagModel
-
++(NSDictionary *)mj_objectClassInArray
+{
+    return @{@"part":@"partModel",@"sku":@"skuModel"};
+}
+Description
+@end
+@implementation partModel
+Description
+@end
+@implementation skuModel
+Description
 @end

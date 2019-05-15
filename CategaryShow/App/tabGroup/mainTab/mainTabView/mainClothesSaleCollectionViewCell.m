@@ -21,54 +21,45 @@
 -(void)setUp
 {
     UIView *contentView = self.contentView;
-    
     UIImageView *shadowView = [UIImageView new];
-    shadowView.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
+//    shadowView.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
     [contentView addSubview:shadowView];
     [shadowView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(contentView);
     }];
-//    [shadowView setImage:[UIImage imageNamed:@"slideBack"]];
-  
-    
-    
-    
-    
-//    _imageDesigner = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, self.frame.size.width - 20, self.frame.size.height - 20)];
-//    [shadowView addSubview:_imageDesigner];
-//    
-//    [_imageDesigner.layer setCornerRadius:2];
-//    [_imageDesigner.layer setMasksToBounds:YES];
-//    [_imageDesigner setContentMode:UIViewContentModeScaleAspectFill];
     
     _imageDesigner = [UIImageView new];
-    
+    _imageDesigner.contentMode=UIViewContentModeScaleAspectFill;
+    [_imageDesigner.layer setMasksToBounds:YES];
     [shadowView addSubview:_imageDesigner];
     [_imageDesigner mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(12);
-        make.left.mas_equalTo(6);
-        make.right.mas_equalTo(-6);
-        make.bottom.mas_equalTo(-12);
+        make.top.mas_equalTo(6);
+        make.left.mas_equalTo(10);
+        make.right.mas_equalTo(-10);
+        make.height.mas_equalTo(146);
     }];
-//    _imageDesigner.sd_layout
-//    .centerXEqualToView(shadowView)
-//    .centerYEqualToView(shadowView)
-//    .widthIs(169.5)
-//    .heightIs(105);
-    [_imageDesigner.layer setCornerRadius:3];
-    [_imageDesigner.layer setMasksToBounds:YES];
-    
-//    _nameLabel = [UILabel new]; 
-//    [shadowView addSubview:_nameLabel];
-//    _nameLabel.sd_layout
-//    .rightSpaceToView(_imageDesigner, 10)
-//    .leftSpaceToView(shadowView, 20)
-//    .centerYEqualToView(shadowView)
-//    .heightIs(20);
-//    [_nameLabel setFont:[UIFont boldSystemFontOfSize:18]];
-//    [_nameLabel setTextColor:[UIColor blackColor]];
-//    [_nameLabel setTextAlignment:NSTextAlignmentCenter];
-    
+   
+    _nameLabel = [UILabel new];
+    [_nameLabel setFont:[UIFont fontWithName:@"PingFangTC-Regular" size:12]];
+    [_nameLabel setTextColor:[UIColor colorWithHexString:@"#202020"]];
+    [_nameLabel setTextAlignment:NSTextAlignmentCenter];
+    [shadowView addSubview:_nameLabel];
+    [_nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_imageDesigner.mas_bottom).offset(2.5);
+        make.centerX.equalTo(_imageDesigner.mas_centerX);
+        make.height.mas_equalTo(20);
+    }];
+   
+    _priceLabel = [UILabel new];
+    [_priceLabel setFont:[UIFont fontWithName:@"PingFangSC-Medium" size:14]];
+    [_priceLabel setTextColor:[UIColor colorWithHexString:@"#333333"]];
+    [_priceLabel setTextAlignment:NSTextAlignmentCenter];
+    [shadowView addSubview:_priceLabel];
+    [_priceLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_nameLabel.mas_bottom).offset(4);
+        make.centerX.equalTo(_imageDesigner.mas_centerX);
+        make.height.mas_equalTo(20);
+    }];
 }
 
 

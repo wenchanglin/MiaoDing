@@ -18,19 +18,38 @@
         [_remarkLabel setFont:[UIFont systemFontOfSize:14]];
         [self.contentView addSubview:_remarkLabel];
         
+       
+        
+    }
+    
+    return self;
+}
+
+
+-(void)setPhotoArrayM:(NSMutableArray *)photoArrayM
+{
+    _photoArrayM = photoArrayM;
+    if(self.collectionV)
+    {
+        [self.collectionV reloadData];
+    }
+    else
+    {
         UICollectionViewFlowLayout *flowL = [[UICollectionViewFlowLayout alloc]init];
         [flowL setScrollDirection:UICollectionViewScrollDirectionHorizontal];
         //设置每一个item的大小
-        flowL.itemSize = CGSizeMake((self.frame.size.width - 60 -15) / 5 , (self.frame.size.width - 60 - 15) / 5 );
-        flowL.sectionInset = UIEdgeInsetsMake(5, 10, 5, 10);
-        //列
-        flowL.minimumInteritemSpacing = 10;
-        //行
-        flowL.minimumLineSpacing = 10;
+        
         //创建集合视图
-        self.collectionV = [[UICollectionView alloc]initWithFrame:CGRectMake(12, 30, SCREEN_WIDTH - 30, ([UIScreen mainScreen].bounds.size.width - 60 - 18) / 5 + 10) collectionViewLayout:flowL];
+        if(iPadDevice)
+        {
+        self.collectionV = [[UICollectionView alloc]initWithFrame:CGRectMake(12, 30, SCREEN_WIDTH - 24, 170) collectionViewLayout:flowL];
+        }
+        else
+        {
+
+             self.collectionV = [[UICollectionView alloc]initWithFrame:CGRectMake(12, 30, SCREEN_WIDTH - 30, ([UIScreen mainScreen].bounds.size.width - 60 - 18) / 5 + 10) collectionViewLayout:flowL];
+        }
         _collectionV.backgroundColor = [UIColor whiteColor];
-        // NSLog(@"-----%f",([UIScreen mainScreen].bounds.size.width - 60) / 5);
         _collectionV.delegate = self;
         _collectionV.dataSource = self;
         //添加集合视图
@@ -38,18 +57,8 @@
         
         //注册对应的cell
         [_collectionV registerClass:[PhotoCollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
-        
     }
-    
-    return self;
 }
-
--(void)layoutSubviews
-{
-    [super layoutSubviews];
-    
-}
-
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
     if (_photoArrayM.count == 0) {
         return 0;
@@ -62,11 +71,27 @@
 //返回每一个cell
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
     PhotoCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cell" forIndexPath:indexPath];
-    
     cell.photoV.image = self.photoArrayM[indexPath.item];
     return cell;
 }
-
+-(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (iPadDevice) {
+        return CGSizeMake((SCREEN_WIDTH - 60-20) / 5, (SCREEN_WIDTH -60-20) / 5 );//
+    }
+    else
+    {
+        return CGSizeMake((SCREEN_WIDTH - 60 -20) / 5 , (SCREEN_WIDTH - 60 - 20) / 5 );
+    }
+}
+//定义每个UICollectionView 的间距
+-(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
+{
+    if (iPadDevice) {
+        return UIEdgeInsetsMake(5, 10, 10, 10);
+    }
+    return UIEdgeInsetsMake(5, 5, 5, 5);
+}
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([_delegate respondsToSelector:@selector(collectionClick::)]) {

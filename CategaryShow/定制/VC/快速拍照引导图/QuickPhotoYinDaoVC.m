@@ -55,9 +55,12 @@
 {
     NSMutableDictionary * parames = [NSMutableDictionary dictionary];
     [parames setObject:@"7" forKey:@"id"];
-    [[wclNetTool sharedTools]request:GET urlString:URL_GetYingDao parameters:parames finished:^(id responseObject, NSError *error) {
-        [photoArray addObject:responseObject[@"data"][@"img_urls"]];
-        [photoCollection reloadData];
+    [[wclNetTool sharedTools]request:GET urlString:[MoreUrlInterface URL_GetYinDaoForID_String] parameters:parames finished:^(id responseObject, NSError *error) {
+        WCLLog(@"%@",responseObject);
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            [photoArray addObjectsFromArray:responseObject[@"data"][@"img_urls"]];
+            [photoCollection reloadData];
+        }
     }];
 
 }
@@ -67,7 +70,7 @@
     [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
     flowLayout.minimumLineSpacing = 0;
     //        flowLayout.headerReferenceSize = CGSizeMake(self.frame.size.width, 0);//头部
-    photoCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0,NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-88:SCREEN_HEIGHT-64) collectionViewLayout:flowLayout];
+    photoCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0,NavHeight, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-88:SCREEN_HEIGHT-64) collectionViewLayout:flowLayout];
     
     //设置代理
     photoCollection.delegate = self;
@@ -81,7 +84,7 @@
     photoCollection.pagingEnabled = YES ;
     [photoCollection registerClass:[QuickPhotoCell class] forCellWithReuseIdentifier:@"quickcell"];
     [photoCollection registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"ReusableView"];
-    page = [[UIPageControl alloc]initWithFrame:CGRectMake(10, IsiPhoneX?SCREEN_HEIGHT-88:SCREEN_HEIGHT-64, SCREEN_WIDTH-20, 40)];
+    page = [[UIPageControl alloc]initWithFrame:CGRectMake(10, [ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-88:SCREEN_HEIGHT-64, SCREEN_WIDTH-20, 40)];
     [self.view addSubview:page];
     [self.view bringSubviewToFront:page];
     
@@ -90,26 +93,10 @@
     page.pageIndicatorTintColor = [UIColor grayColor];// 设置非选中页的圆点颜色
     
     page.currentPageIndicatorTintColor = [UIColor whiteColor];
-//
-//    UIButton *buttonBack = [[UIButton alloc] initWithFrame:CGRectMake(0,IsiPhoneX?HitoSafeAreaHeight:20, 45, 45)];
-//    
-//    [buttonBack.layer setCornerRadius:33 / 2];
-//    [buttonBack.layer setMasksToBounds:YES];
-//    [buttonBack setImage:[UIImage imageNamed:@"baiBack"] forState:UIControlStateNormal];
-//    [buttonBack addTarget:self action:@selector(backClick) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:buttonBack];
-//    
-//    [self.view bringSubviewToFront:buttonBack];
+
 }
 -(void)backClick
 {
-//    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-//    [params setObject:dateId forKey:@"id"];
-//    [params setObject:[_goodDic stringForKey:@"id"] forKey:@"goods_id"];
-//    [params setObject:[_goodDic stringForKey:@"name"] forKey:@"goods_name"];
-//    [params setObject:@"0" forKey:@"click_dingzhi"];
-//    [params setObject:@"0" forKey:@"click_pay"];
-//    [self getDateDingZhi:params beginDate:datBegin ifDing:NO];
     [self.navigationController popViewControllerAnimated:YES];
 
 }
@@ -127,7 +114,7 @@
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     if (photoArray.count>0) {
-        return [photoArray[0] count];
+        return [photoArray count];
     }
     return 0;
 }
@@ -146,14 +133,14 @@
     UICollectionViewCell *reCell;
     NSString *identify = @"quickcell";
     QuickPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
-    [cell.imagePhoto sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL,photoArray[0][indexPath.item]]]];
+    [cell.imagePhoto sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",PIC_HEADURL,[photoArray[indexPath.item] stringForKey:@"img"]]]];
     if (_ishelp==YES) {
         [[cell viewWithTag:10234] removeFromSuperview];
     }
     else
     {
     if (indexPath.item==3) {
-        UIButton *nextStep = [[UIButton alloc]initWithFrame:CGRectMake(SCREEN_WIDTH-140,IsiPhoneX?SCREEN_HEIGHT-84-64:SCREEN_HEIGHT-64-40, 120, 40)];
+        UIButton *nextStep = [[UIButton alloc]initWithFrame:CGRectMake(SCREEN_WIDTH-140,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-84-64:SCREEN_HEIGHT-64-40, 120, 40)];
         nextStep.backgroundColor = [UIColor colorWithHexString:@"#90c551"];
         nextStep.layer.cornerRadius =3;
         nextStep.tag = 10234;
@@ -171,7 +158,6 @@
 }
 -(void)next:(UIButton *)btn
 {
-//    WCLLog(@"你点击了我");
     if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
     {
         

@@ -24,10 +24,10 @@
 -(void)setUp
 {
     _bigImage = [UIButton new];
-//    _bigImage.backgroundColor = [UIColor blueColor];
     [self.contentView addSubview:_bigImage];
     [_bigImage mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(self.contentView.mas_centerX);
+        make.centerY.equalTo(self.contentView.mas_centerY);
         make.height.width.mas_equalTo(60);
     }];
     _colorImage = [UIImageView new];
@@ -36,17 +36,14 @@
     _colorImage.layer.borderWidth =1;
     [self.contentView addSubview:_colorImage];
     [_colorImage mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self.contentView.mas_centerX);
-        make.height.width.mas_equalTo(60);
+        make.edges.equalTo(_bigImage);
     }];
     
     _colorChoose = [UIImageView new];
     [self.contentView addSubview:_colorChoose];
-    _colorChoose.sd_layout
-    .centerXEqualToView(self.contentView)
-    .topSpaceToView(self.contentView, 0)
-    .heightIs(60)
-    .widthIs(60);
+    [_colorChoose mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(_colorImage);
+    }];
     
     _colorName = [UILabel new];
     [self.contentView addSubview:_colorName];

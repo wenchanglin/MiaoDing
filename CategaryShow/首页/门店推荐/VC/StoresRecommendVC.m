@@ -62,56 +62,28 @@
     _storeTableView.delegate = self;
     _storeTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_storeTableView];
-    
+    __weak __typeof(self)weakSelf = self;
+    [WCLMethodTools headerRefreshWithTableView:_storeTableView completion:^{
+        [weakSelf loadNewData];
+    }];
+    [WCLMethodTools footerAutoGifRefreshWithTableView:_storeTableView completion:^{
+        page += 1;
+        [weakSelf getData];
+    }];
     UISearchBar *searchbar=[[UISearchBar alloc]init];
     self.searchbar=searchbar;
     searchbar.delegate=self;
     searchbar.tintColor=[UIColor colorWithHexString:@"#A6A6A6"];// 设置搜索框内按钮文字颜色，以及搜索光标颜色。
-
     searchbar.placeholder=@"请输入定制店名称、关键字";
     searchbar.frame=CGRectMake(0, 10, self.view.frame.size.width, 44);
     [searchbar setImage:[UIImage imageNamed:@"icon_search"] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
     [searchbar setBackgroundImage:[self imageWithColor:[UIColor colorWithHexString:@"#EDEDED"]]];
     [self.view addSubview:searchbar];
-   // self.storeTableView.tableHeaderView=searchbar;
     [searchbar setReturnKeyType:UIReturnKeyDone];
     UIButton * button = [[UIButton alloc]initWithFrame:searchbar.frame];
     [self.view addSubview:button];
     [button addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];
-    
-//
-    NSMutableArray *headerImages = [NSMutableArray array];
-    for (int i = 1; i <= 60; i++) {
-        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%d",i]];
-        [headerImages addObject:image];
-    }
-    __weak StoresRecommendVC *weakSelf = self;
-
-    MJRefreshGifHeader * header = [MJRefreshGifHeader headerWithRefreshingBlock:^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [weakSelf loadNewData];
-        });
-        
-    }];
-    header.stateLabel.hidden = YES;
-    header.lastUpdatedTimeLabel.hidden = YES;
-    [header setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
-    [header setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
-    _storeTableView.mj_header = header;
-    
-    MJRefreshAutoGifFooter * footer = [MJRefreshAutoGifFooter footerWithRefreshingBlock:^{
-        // 模拟延迟加载数据，因此2秒后才调用（真实开发中，可以移除这段gcd代码）
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            page += 1;
-            [weakSelf getData];
-        });
-    }];
-    footer.stateLabel.hidden =YES;
-    footer.refreshingTitleHidden = YES;
-    [footer setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
-    [footer setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
-    _storeTableView.mj_footer = footer;    
-
+   
 }
 -(UIStatusBarStyle)preferredStatusBarStyle
 {
@@ -146,7 +118,7 @@
         }
         else
         {
-        WCLLog(@"%@",responseObject[@"data"]);
+//        WCLLog(@"%@",responseObject[@"data"]);
         [self.storeTableView.mj_footer endRefreshing];
         NSMutableArray * array1 = [StoreListModel mj_objectArrayWithKeyValuesArray:responseObject[@"data"]];
         [_storeArray addObjectsFromArray:array1];
@@ -165,14 +137,11 @@
 {
     NSString * cellIdentifier = @"mendiancell" ;
     StoreListModel * models = self.storeArray[indexPath.row];
-   
     StoreListCell * cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (!cell) {
         cell = [[StoreListCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
-    
     cell.model = models;
-
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }

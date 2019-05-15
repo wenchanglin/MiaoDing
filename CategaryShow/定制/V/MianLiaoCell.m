@@ -8,6 +8,7 @@
 
 #import "MianLiaoCell.h"
 #import "colorChooseCollectionViewCell.h"
+#import "newDiyMianLiaoModel.h"
 @implementation MianLiaoCell
 
 {
@@ -41,7 +42,7 @@
     //  [flowLayout setMinimumLineSpacing:15];
     //  [flowLayout setMinimumInteritemSpacing:43];
     //  flowLayout.headerReferenceSize = CGSizeMake(self.frame.size.width, 0);//头部
-    mianliao = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 12, SCREEN_WIDTH,  (SCREEN_WIDTH - 60) / 4+20) collectionViewLayout:flowLayout];
+    mianliao = [[UICollectionView alloc]initWithFrame:CGRectMake(0, -10, SCREEN_WIDTH,  (SCREEN_WIDTH - 60) / 4+35) collectionViewLayout:flowLayout];
     //设置代理
     mianliao.delegate = self;
     mianliao.dataSource = self;
@@ -67,12 +68,13 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *identify = @"cell";
+    newDiyMianLiaoModel*model = _mianLiaoArray[indexPath.item];
     colorChooseCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identify forIndexPath:indexPath];
-    [cell.colorImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_mianLiaoArray[indexPath.item] stringForKey:@"img_b"]]]];
+    [cell.colorImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.img]]];
     cell.bigImage.tag = indexPath.item +2000;
     [cell.bigImage addTarget:self action:@selector(up:) forControlEvents:UIControlEventTouchUpInside];
     [cell.bigImage addTarget:self action:@selector(down:) forControlEvents:UIControlEventTouchDown];
-    NSString * string1 = [_mianLiaoArray[indexPath.item] stringForKey:@"name"];
+    NSString * string1 = model.name;
     NSString * string2;
     if (string1.length>4) {
         string2 = [string1 substringWithRange:NSMakeRange(0, 4)];
@@ -113,8 +115,9 @@
 {
     window= [UIApplication sharedApplication].keyWindow;
     bigImageView = [[UIImageView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-110, 128, 220, 220)];
-    
-    [bigImageView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [_mianLiaoArray[btn.tag-2000] stringForKey:@"img_b"]]]];
+    newDiyMianLiaoModel*model = _mianLiaoArray[btn.tag-2000];
+
+    [bigImageView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.img]]];
     [window addSubview:bigImageView];
 //    WCLLog(@"你按下了我");
     

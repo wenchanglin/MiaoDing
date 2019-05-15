@@ -158,56 +158,56 @@
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:AddressText.text forKey:@"address"];
     
-    [getData postData:URL_YuYue PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
-        if ([self checkHttpResponseResultStatus:domain]) {
-            
-            for (UIView *view in self.view.subviews) {
-                [view removeFromSuperview];
-            }
-            
-            [self createHadYuYueView];
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"YYSuccess" object:nil];
-            
-//            NSArray *buttons = [NSArray arrayWithObjects:@"返回",@"调整细节", nil];
+//    [getData postData:URL_YuYue PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+//        
+//        if ([self checkHttpResponseResultStatus:domain]) {
+//            
+//            for (UIView *view in self.view.subviews) {
+//                [view removeFromSuperview];
+//            }
+//            
+//            [self createHadYuYueView];
+//            
+//            [[NSNotificationCenter defaultCenter] postNotificationName:@"YYSuccess" object:nil];
+//            
+////            NSArray *buttons = [NSArray arrayWithObjects:@"返回",@"调整细节", nil];
+////            
+////            
+////            STAlertView *alert = [[STAlertView alloc] initWithTitle:@"提示"image:[UIImage imageNamed:@""] message:@"您已经预约成功，您想继续调整细节吗？"buttonTitles:buttons];
+////            
+////            alert.hideWhenTapOutside = YES;
+////            [alert setDidShowHandler:^{
+////                NSLog(@"显示了");
+////            }];
+////            [alert setDidHideHandler:^{
+////                NSLog(@"消失了");
+////            }];
+////            [alert setActionHandler:^(NSInteger index) {
+////                switch (index) {
+////                    case 0:
+////                    {
+////                        [self.navigationController popToRootViewControllerAnimated:YES];
+////                    }
+////                        break;
+////                    case 1:
+////                    {
+////                        [self.navigationController popViewControllerAnimated:YES];
+////                        [[NSNotificationCenter defaultCenter] postNotificationName:@"YYSuccess" object:nil];
+////                    }
+////                        break;
+////                    default:
+////                        break;
+////                }
+////            }];
+////            [alert show:YES];
+//
+//            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您已经预约成功" delegate:self cancelButtonTitle:@"返回" otherButtonTitles:@"继续", nil];
+//            [alert show];
 //            
 //            
-//            STAlertView *alert = [[STAlertView alloc] initWithTitle:@"提示"image:[UIImage imageNamed:@""] message:@"您已经预约成功，您想继续调整细节吗？"buttonTitles:buttons];
-//            
-//            alert.hideWhenTapOutside = YES;
-//            [alert setDidShowHandler:^{
-//                NSLog(@"显示了");
-//            }];
-//            [alert setDidHideHandler:^{
-//                NSLog(@"消失了");
-//            }];
-//            [alert setActionHandler:^(NSInteger index) {
-//                switch (index) {
-//                    case 0:
-//                    {
-//                        [self.navigationController popToRootViewControllerAnimated:YES];
-//                    }
-//                        break;
-//                    case 1:
-//                    {
-//                        [self.navigationController popViewControllerAnimated:YES];
-//                        [[NSNotificationCenter defaultCenter] postNotificationName:@"YYSuccess" object:nil];
-//                    }
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            }];
-//            [alert show:YES];
-
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您已经预约成功" delegate:self cancelButtonTitle:@"返回" otherButtonTitles:@"继续", nil];
-            [alert show];
-            
-            
-        }
-        
-    }];
+//        }
+//        
+//    }];
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -238,7 +238,7 @@
     [success setTextAlignment:NSTextAlignmentCenter];
     [self.view addSubview:success];
     [self.view setBackgroundColor:getUIColor(Color_background)];
-    [SelfPersonInfo getInstance].personYuYue = @"1";
+    [SelfPersonInfo shareInstance].userModel.is_yuyue = @"1";
     self.title = @"预约结果";
 }
 

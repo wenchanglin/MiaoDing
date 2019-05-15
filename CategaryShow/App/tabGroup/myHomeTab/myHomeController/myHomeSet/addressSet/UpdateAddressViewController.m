@@ -1,4 +1,4 @@
-//
+    //
 //  UpdateAddressViewController.m
 //  CategaryShow
 //
@@ -37,7 +37,7 @@
     [params setObject:[_addressDic stringForKey:@"province"] forKey:@"province"];
     [params setObject:[_addressDic stringForKey:@"city"] forKey:@"city"];
     [params setObject:[_addressDic stringForKey:@"area"] forKey:@"area"];
-    [params setObject:[_addressDic stringForKey:@"name"] forKey:@"name"];
+    [params setObject:[_addressDic stringForKey:@"accept_name"] forKey:@"accept_name"];
     [params setObject:[_addressDic stringForKey:@"phone"] forKey:@"phone"];
     [params setObject:[_addressDic stringForKey:@"id"] forKey:@"id"];
     [self settabTitle:@"修改地址"];
@@ -55,7 +55,7 @@
     
     NSArray *arrayDetail = [NSArray arrayWithObjects:@"请输入收货人姓名", @"请输入收货人的手机号码",  @"请输入详细地址", nil];
     
-    NSArray *contentDetail = [NSArray arrayWithObjects:[_addressDic stringForKey:@"name"],[_addressDic stringForKey:@"phone"],[_addressDic stringForKey:@"address"], nil];
+    NSArray *contentDetail = [NSArray arrayWithObjects:[_addressDic stringForKey:@"accept_name"],[_addressDic stringForKey:@"phone"],[_addressDic stringForKey:@"address"], nil];
     
     for (int i = 0; i < [arrayTitle count]; i ++) {
         MeasureLabelAndTextFieldModel *model = [[MeasureLabelAndTextFieldModel alloc] init];
@@ -82,7 +82,7 @@
     
     [addressTable endEditing:YES];
     
-    if ([[params stringForKey:@"name"] isEqualToString:@""] || [[params stringForKey:@"phone"] isEqualToString:@""] ||[[params stringForKey:@"address"] isEqualToString:@""] ||[[params stringForKey:@"province"] isEqualToString:@""]) {
+    if ([[params stringForKey:@"accept_name"] isEqualToString:@""] || [[params stringForKey:@"phone"] isEqualToString:@""] ||[[params stringForKey:@"address"] isEqualToString:@""] ||[[params stringForKey:@"province"] isEqualToString:@""]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请输入完整的地址信息" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
     } else {
@@ -98,13 +98,13 @@
                 NSUserDefaults *userD = [NSUserDefaults standardUserDefaults];
                 [userD setObject:params forKey:@"Address"];
                 [params setObject:@"1" forKey:@"is_default"];
-                [postData postData:URL_AddressAdd PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-                    if ([self checkHttpResponseResultStatus:postData]) {
-                        
+                [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_UpdateAddress_String] parameters:params finished:^(id responseObject, NSError *error) {
+                    if ([self checkHttpResponseResultStatus:responseObject]) {
                         [[NSNotificationCenter defaultCenter] postNotificationName:@"createAddress" object:nil];
                         [self.navigationController popViewControllerAnimated:YES];
                     }
                 }];
+               
             }
             
             
@@ -124,11 +124,8 @@
                     [params setObject:@"0" forKey:@"is_default"];
                 }
                 
-                
-                
-                [postData postData:URL_AddressAdd PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-                    if ([self checkHttpResponseResultStatus:postData]) {
-                        
+                [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_UpdateAddress_String] parameters:params finished:^(id responseObject, NSError *error) {
+                    if ([self checkHttpResponseResultStatus:responseObject]) {
                         [[NSNotificationCenter defaultCenter] postNotificationName:@"createAddress" object:nil];
                         [self.navigationController popViewControllerAnimated:YES];
                     }
@@ -207,50 +204,6 @@
     return [[UIView alloc] init];
 }
 
-//-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-//{
-//    UIView *footView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 400)];
-//    [footView setBackgroundColor:[UIColor whiteColor]];
-//    [footView setUserInteractionEnabled:YES];
-//    
-//    addressNomal = [[UIButton alloc] initWithFrame:CGRectMake(25, 15, 40, 40)];
-//    
-//    if ([flogNomal integerValue] == 0) {
-//         [addressNomal setImage:[UIImage imageNamed:@"noChoose"] forState:UIControlStateNormal];
-//    } else {
-//         [addressNomal setImage:[UIImage imageNamed:@"choose"] forState:UIControlStateNormal];
-//    }
-//    
-//   
-//    
-//    [addressNomal addTarget:self action:@selector(chooseNomal) forControlEvents:UIControlEventTouchUpInside];
-//    [footView addSubview:addressNomal];
-//    
-//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(70, 20, 200, 30)];
-//    [footView addSubview:label];
-//    
-//    [label setText:@"是否设置为默认"];
-//    [label setFont:[UIFont systemFontOfSize:14]];
-//    
-//    
-//    
-//    
-//
-//    
-//    
-//    UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(20, 100, SCREEN_WIDTH - 40, 40)];
-//    [btn setTitle:@"保存地址" forState:UIControlStateNormal];
-//    [btn.titleLabel setFont:[UIFont systemFontOfSize:14]];
-//    [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-//    [btn addTarget:self action:@selector(handOnClick) forControlEvents:UIControlEventTouchUpInside];
-//    [btn setBackgroundColor:[UIColor blackColor]];
-//    [btn.layer setCornerRadius:3];
-//    [btn.layer setMasksToBounds:YES];
-//    [footView addSubview:btn];
-//    return footView;
-//
-//}
-
 -(void)chooseNomal
 {
     if ([flogNomal integerValue] == 0) {
@@ -278,6 +231,7 @@
             cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass(currentClass)];
             cell.delegate = self;
             cell.model = model;
+            cell.tag=indexPath.row;
             reCell = cell;
         }else {
             Class currentClass = [MeasureLabelAndTextField class];
@@ -307,18 +261,24 @@
 -(void)textDetail:(NSString *)detail :(NSInteger)index
 {
     if (index == 5) {
-        [params setObject:detail forKey:@"name"];
+        [params setObject:detail forKey:@"accept_name"];
     } else if (index == 6) {
         [params setObject:detail forKey:@"phone"];
     }
 }
 
--(void)placeDetail:(NSString *)detail
+-(void)placeDetail:(NSString *)detail index:(NSInteger)index
 {
     [params setObject:detail forKey:@"address"];
     
 }
-
+-(void)endEdit:(NSString *)edit index:(NSInteger)index
+{
+    [params setObject:edit forKey:@"address"];
+    MeasureLabelAndTextFieldModel *model = modelArray[index];
+    model.ContentText=edit;
+    [addressTable reloadData];
+}
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {

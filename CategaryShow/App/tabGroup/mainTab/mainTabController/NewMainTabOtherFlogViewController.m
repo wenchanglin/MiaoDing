@@ -50,15 +50,7 @@
     [getData getData:URL_OtherMain PostParams:parms finish:^(BaseDomain *domain, Boolean success) {
         if ([self checkHttpResponseResultStatus:getData]) {
             for (NSDictionary *dic in [[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]) {
-                NewMainModel *model  = [NewMainModel new];
-                model.ImageUrl = [dic stringForKey:@"img"];
-                model.linkUrl = [dic stringForKey:@"link"];
-                model.LinkId = [dic stringForKey:@"id"];
-//                model.titleContent = [dic stringForKey:@"title"];
-                model.fenLei = [dic stringForKey:@"name"];
-                model.name = [dic stringForKey:@"title"];
-                model.detail = [dic stringForKey:@"sub_title"];
-                model.tagName = [dic stringForKey:@"tags_name"];
+                NewMainModel *model  = [NewMainModel mj_objectWithKeyValues:dic];
                 [modelArray addObject:model];
             }
             [self createView];
@@ -137,15 +129,7 @@
             
             if ([[[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"] count] > 0) {
                 for (NSDictionary *dic in [[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]) {
-                    NewMainModel *model  = [NewMainModel new];
-                    model.ImageUrl = [dic stringForKey:@"img"];
-                    model.linkUrl = [dic stringForKey:@"link"];
-                    model.LinkId = [dic stringForKey:@"id"];
-                    //                model.titleContent = [dic stringForKey:@"title"];
-                    model.fenLei = [dic stringForKey:@"name"];
-                    model.name = [dic stringForKey:@"title"];
-                    model.detail = [dic stringForKey:@"sub_title"];
-                    model.tagName = [dic stringForKey:@"tags_name"];
+                    NewMainModel *model  = [NewMainModel mj_objectWithKeyValues:dic];
                     [modelArray addObject:model];
                 }
                 
@@ -175,15 +159,7 @@
             
             [modelArray removeAllObjects];
             for (NSDictionary *dic in [[getData.dataRoot objectForKey:@"data"] arrayForKey:@"data"]) {
-                NewMainModel *model  = [NewMainModel new];
-                model.ImageUrl = [dic stringForKey:@"img"];
-                model.linkUrl = [dic stringForKey:@"link"];
-                model.LinkId = [dic stringForKey:@"id"];
-                //                model.titleContent = [dic stringForKey:@"title"];
-                model.fenLei = [dic stringForKey:@"name"];
-                model.name = [dic stringForKey:@"title"];
-                model.detail = [dic stringForKey:@"sub_title"];
-                model.tagName = [dic stringForKey:@"tags_name"];
+                NewMainModel *model  = [NewMainModel mj_objectWithKeyValues:dic];
                 [modelArray addObject:model];
             }
             page = 1;
@@ -262,11 +238,11 @@
 {
     NewMainModel *model = [modelArray objectAtIndex:indexPath.section];
     MainTabDetailViewController *MainDetail = [[MainTabDetailViewController alloc] init];
-    MainDetail.webId = model.LinkId;
-    MainDetail.imageUrl = model.ImageUrl;
+    MainDetail.webId = [NSString stringWithFormat:@"%@",@(model.ID)];
+    MainDetail.imageUrl = model.img;
     MainDetail.titleContent = model.name;
-    MainDetail.tagName = model.tagName;
-    [self getDateBegin:datBegin currentView:model.tagName fatherView:@"首页"];
+    MainDetail.tagName = model.title;
+    [self getDateBegin:datBegin currentView:model.title fatherView:@"首页"];
     [self.navigationController pushViewController:MainDetail animated:YES];
 }
 

@@ -39,7 +39,7 @@
     .rightEqualToView(contentView)
     .topEqualToView(contentView)
     .bottomEqualToView(contentView);
-
+    
     useTypeLabel = [UILabel new];
     useTypeLabel.font= [UIFont fontWithName:@"PingFangSC-Semibold" size:18];
     useTypeLabel.textColor = [UIColor colorWithHexString:@"#4F4F4F"];
@@ -74,7 +74,7 @@
     [contentView addSubview:priceLabel];
     [priceLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(typeRemarkLabel.mas_centerY);
-        make.right.mas_equalTo(-25);
+        make.right.mas_equalTo(-15);
     }];
     
     rightImg = [UIImageView new];
@@ -90,19 +90,21 @@
 -(void)setModel:(couponModel *)model
 {
     _model = model;
-    [priceLabel setText:[NSString stringWithFormat:@"%@%@", @"¥", model.price]];
-    [useTypeLabel setText:model.useType];
-    [typeRemarkLabel setText:model.typeRemark];
-    [timeLabel setText:model.time];
-    [imageBack setImage:[UIImage imageNamed:model.imageName]];
-//    [rightImg setImage:[UIImage imageNamed:model.rightImg]];
-    
+    [priceLabel setText:[NSString stringWithFormat:@"%@%@", @"¥", model.money]];
+    [useTypeLabel setText:model.title];
+    [typeRemarkLabel setText:model.re_marks];
+    timeLabel.text=[NSString stringWithFormat:@"有效期:%@至%@",[self dateToString:model.s_time], [self dateToString:model.e_time]];
+    [imageBack setImage:[UIImage imageNamed:@"优惠券卡片"]];    
 }
-
+-(NSString *)dateToString:(NSString *)dateString
+{
+    NSArray*timeArr =[dateString componentsSeparatedByString:@" "];
+    NSString *currentDateStr = [timeArr firstObject];
+    return currentDateStr;
+}
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
+    
 }
 
 @end

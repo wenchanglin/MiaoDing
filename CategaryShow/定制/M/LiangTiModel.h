@@ -14,5 +14,6 @@
 @property(nonatomic,assign) NSInteger height;
 @property(nonatomic,assign)NSInteger weight;
 @property(nonatomic,strong)NSString * img_list;
-@property(nonatomic,assign)NSInteger is_index;
+@property(nonatomic,assign)NSInteger is_default;
 @end
+

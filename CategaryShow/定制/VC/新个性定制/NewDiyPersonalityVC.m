@@ -24,18 +24,29 @@
 #import "QuickPhotoYinDaoVC.h"
 #import "QuickPhotoVC.h"
 #import "LiangTiModel.h"
+#import "HttpRequestTool.h"
+#import "newDiyAllDataModel.h"
+#import "newDiyMianLiaoModel.h"
+#import "SingleNavigationController.h"
 @interface NewDiyPersonalityVC ()<UITableViewDelegate, UITableViewDataSource, positionDelegate, colorDelegate, fontDelegate,UITextFieldDelegate,banXingDelegate,mianLiaoDelegate>
 @property (nonatomic, retain) NSMutableDictionary *paramsClothes;
+@property(nonatomic,assign)BOOL isHaveDian;
+
+@property(nonatomic,assign)BOOL isFirstZero;
 
 @end
 
 @implementation NewDiyPersonalityVC
 {
     BaseDomain *postData;
-    BaseDomain *getData;
     UITableView *diyTable;
     NSMutableArray * twodiyArr;
-    NSMutableDictionary *dataDic;
+    NSMutableArray *dataArr;
+    NSMutableArray*banxingArr;
+    NSMutableArray*mianliaoArr;
+    NSMutableArray*positionArr;
+    NSMutableArray*colorArr;
+    NSMutableArray*fontArr;
     NSMutableArray *diyArray;
     NSMutableDictionary *dic;//创建一个字典进行判断收缩还是展开
     NSInteger banxingtag;
@@ -55,39 +66,55 @@
     BOOL is_english;
     NSMutableArray *YDImgArray;
     UIImageView *imag;
-    
+    UIView *titleView;
+    UIView *lineView;
+    UIButton *seleBtn;
+
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO animated:animated];
+    self.rdv_tabBarController.tabBarHidden=YES;
     [MobClick beginLogPageView:@"新个性定制"];
+    
+}
+-(void)clickAction:(UIButton *)sender
+{
+    [seleBtn setSelected:NO];
+    seleBtn = sender;
+    [seleBtn setSelected:YES];
+    [UIView commitAnimations];
+    if (sender.tag ==81) {
+        [self moreDiy:sender];
+    }
+    
 }
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    for (UIView * view in [UIApplication sharedApplication].keyWindow.subviews) {
-        if ([view isKindOfClass:[UIImageView class]]) {
-            view.hidden =YES;
-            [view removeFromSuperview];
-        }
-    }
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
     [MobClick endLogPageView:@"新个性定制"];
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     postData = [BaseDomain getInstance:NO];
     is_english = YES;
+    banxingArr = [NSMutableArray array];
+    mianliaoArr = [NSMutableArray array];
+    positionArr=[NSMutableArray array];
+    colorArr= [NSMutableArray array];
+    fontArr=[NSMutableArray array];
     [IQKeyboardManager sharedManager].enableAutoToolbar = YES;
-    [IQKeyboardManager sharedManager].shouldShowToolbarPlaceholder = YES;
+    [IQKeyboardManager sharedManager].shouldShowTextFieldPlaceholder = YES;
     dic = [NSMutableDictionary dictionary];
     heightAndWeightDic = [NSMutableDictionary dictionary];
-    dataDic = [NSMutableDictionary dictionary];
+    dataArr = [NSMutableArray array];
     _paramsClothes = [NSMutableDictionary dictionary];
     diyArray = [NSMutableArray array];
     twodiyArr = [NSMutableArray array];
     YDImgArray = [NSMutableArray array];
-    getData = [BaseDomain getInstance:NO];
     isViewYFisrt = YES;
     banxingtag = 0;
     mianliaotag = 0;
@@ -98,16 +125,35 @@
     _banxing = [NSDictionary dictionary];
     textFildString = [NSMutableDictionary dictionary];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    [self settabTitle:@"个性定制"];
-    UIButton *rightBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-    [rightBtn setTitle:@"更多" forState:UIControlStateNormal];
-    [rightBtn.titleLabel setFont:[UIFont systemFontOfSize:14]];
-    [rightBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
-    [rightBtn addTarget:self action:@selector(moreDiy:) forControlEvents:UIControlEventTouchUpInside];
+    if (!titleView) {
+        NSArray* array = @[@"快速定制",@"个性定制"];
+        titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0,iPadDevice?SCREEN_WIDTH/2:80 * array.count, 40)];
+        lineView = [[UIView alloc] initWithFrame:CGRectMake(1, 31, 60, 2)];
+        [titleView addSubview:lineView];
+        [lineView setBackgroundColor:[UIColor colorWithHexString:@"#FFFFFF"]];
+        
+        UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(iPadDevice?-15:-15,5, 80, 30)];
+        [titleView addSubview:button];
+        [button.titleLabel setFont:[UIFont fontWithName:@"PingFangSC-Semibold" size:14]];
+        [button setTitle:array[0] forState:UIControlStateNormal];
+        [button setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:(UIControlStateNormal)];
+        button.tag =  80;
+        seleBtn = button;
+        [seleBtn setSelected:YES];
+        [button addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
+        lineView.centerX = seleBtn.centerX;
+        UIButton *button2 = [[UIButton alloc] initWithFrame:CGRectMake(iPadDevice?SCREEN_WIDTH/3:100,5, 80, 30)];
+        [titleView addSubview:button2];
+        [button2.titleLabel setFont:[UIFont fontWithName:@"PingFangSC-Semibold" size:14]];
+        [button2 setTitle:array[1] forState:UIControlStateNormal];
+        [button2 setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:(UIControlStateNormal)];
+        button2.tag =  81;
+        [button2 addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
+
+    }
+    self.navigationItem.titleView = titleView;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeClothes:) name:@"change" object:nil];
     [self getDatas];
-    [self getMoreYinDao];
 }
 
 -(void)request:(NSNotification*)notification
@@ -119,95 +165,31 @@
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@(8) forKey:@"id"];
-    [[BaseDomain getInstance:NO] getData:URL_GetYingDao PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:domain]) {
-            YDImgArray = [NSMutableArray arrayWithArray:[[domain.dataRoot objectForKey:@"data"] arrayForKey:@"img_urls"]];
+    [[wclNetTool sharedTools]request:GET urlString:[MoreUrlInterface URL_GetYinDaoForID_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            YDImgArray = [NSMutableArray arrayWithArray:[[responseObject objectForKey:@"data"] arrayForKey:@"img_urls"]];
             [self createNewUser];
-        }
-    }];
+        }}];
 }
 -(void)moreDiy:(UIButton *)button
 {
-    if (isopencv==1) {
-        if ([[heightAndWeightDic stringForKey:@"name"] length]>0) {
-        if([[heightAndWeightDic stringForKey:@"height"] length]>0)
-        {
-            if ([[heightAndWeightDic stringForKey:@"weight"]length]>0) {
-                if (isopencv==1) {
-                    [self alertViewShowOfTime:@"请拍照身体四个面的照片" time:1.5];
-                }
-                else if (isopencv==2)
-                {
+
                     ChooseClothesStyleViewController *chooseStyleCon = [[ChooseClothesStyleViewController alloc] init];
-                    chooseStyleCon.banxing = _banxing;
-                    chooseStyleCon.price_Type = [_price stringForKey:@"id"];
+//                    chooseStyleCon.banxing = _banxing;
+//                    chooseStyleCon.price_Type = [_price stringForKey:@"id"];
                     chooseStyleCon.price = _price;
-                    chooseStyleCon.class_id = _class_id;
+                    chooseStyleCon.class_id = [NSString stringWithFormat:@"%@",@([_paramsClothes integerForKey:@"class_id"])];
                     chooseStyleCon.paramsClothes = _paramsClothes;
-                    chooseStyleCon.xiuZiDic = _xiuZiDic;
-                    if([textFildString objectForKey:@"name"] ==nil)
-                    {
-                        
-                        chooseStyleCon.diydetailArray = twodiyArr;
-                    }
-                    else
-                    {
-                        chooseStyleCon.diydetailArray = diydetailArray;
-                    }
-                    chooseStyleCon.mianliaoprice = [_price objectForKey:@"price"];
-                    chooseStyleCon.goodDic = _goodDic;
-                    chooseStyleCon.dataDic = dataDic;
-                    chooseStyleCon.banxingtag =banxingtag;
+//                    chooseStyleCon.xiuZiDic = _xiuZiDic;
+//                    chooseStyleCon.mianliaoprice = [_price objectForKey:@"price"];
+//                    chooseStyleCon.goodDic = _goodDic;
+//                    chooseStyleCon.dataDic = dataDic;
+//                    chooseStyleCon.banxingtag =banxingtag;
                     chooseStyleCon.diyArray =diyArray;
-                    chooseStyleCon.dateId =_dateId;
-                    chooseStyleCon.dingDate = _dingDate;
+//                    chooseStyleCon.dateId =_dateId;
+//                    chooseStyleCon.dingDate = _dingDate;
                     [self.navigationController pushViewController:chooseStyleCon animated:YES];
-                }
-            }
-            else
-            {
-                [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
-                
-            }
-        }
-        else
-        {
-            [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
-        }
-        }
-        else
-        {
-            [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
-        }
-    }
-    else if(isopencv==2)
-    {
-        ChooseClothesStyleViewController *chooseStyleCon = [[ChooseClothesStyleViewController alloc] init];
-        chooseStyleCon.banxing = _banxing;
-        chooseStyleCon.price_Type = [_price stringForKey:@"id"];
-        chooseStyleCon.price = _price;
-        chooseStyleCon.class_id = _class_id;
-        chooseStyleCon.paramsClothes = _paramsClothes;
-        chooseStyleCon.xiuZiDic = _xiuZiDic;
-        if([textFildString objectForKey:@"name"] ==nil)
-        {
-            
-            chooseStyleCon.diydetailArray = twodiyArr;
-        }
-        else
-        {
-            chooseStyleCon.diydetailArray = diydetailArray;
-        }
-        chooseStyleCon.mianliaoprice = [_price objectForKey:@"price"];
-        chooseStyleCon.goodDic = _goodDic;
-        chooseStyleCon.dataDic = dataDic;
-        chooseStyleCon.banxingtag =banxingtag;
-        chooseStyleCon.diyArray =diyArray;
-        chooseStyleCon.dateId =_dateId;
-        chooseStyleCon.dingDate = _dingDate;
-        [self.navigationController pushViewController:chooseStyleCon animated:YES];
-    }
-    
+
 }
 -(void)changeClothes:(NSNotification *)noti
 {
@@ -229,67 +211,44 @@
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:_class_id forKey:@"classify_id"];
-    [params setObject:[_goodDic stringForKey:@"id"] forKey:@"goods_id"];
-    [params setObject:@"6" forKey:@"phone_type"];
-    [getData getData:URL_GetDiyData PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getData]) {
-            dataDic = [NSMutableDictionary dictionaryWithDictionary:[getData.dataRoot dictionaryForKey:@"data"]];
-            //            WCLLog(@"%@",domain.dataRoot);
-            isopencv = [domain.dataRoot integerForKey:@"is_opencv"];
-            heightStr = [[domain.dataRoot dictionaryForKey:@"cv"] stringForKey:@"height"];
-            weightStr = [[domain.dataRoot dictionaryForKey:@"cv"] stringForKey:@"weight"];
-            nameStr =[[domain.dataRoot dictionaryForKey:@"cv"] stringForKey:@"name"];
-            //            diydetailArray = [NSMutableArray arrayWithObjects:[[dataDic arrayForKey:@"position"] firstObject],[[dataDic arrayForKey:@"color"] firstObject],[[dataDic arrayForKey:@"font"] firstObject], nil];
-            diydetailArray = [NSMutableArray array];
-            if ([[dataDic arrayForKey:@"classify_id"] count] > 0) {
-                [diydetailArray addObject:[[dataDic arrayForKey:@"classify_id"]firstObject]];
-                [twodiyArr addObject:[[dataDic arrayForKey:@"classify_id"]firstObject]];
-            }
-            else
-            {
-                [diydetailArray addObject:[NSDictionary dictionary]];
-            }
-            if ([[dataDic arrayForKey:@"mianliao"]count]>0) {
-                [diydetailArray addObject:[[dataDic arrayForKey:@"mianliao"]firstObject]];
-                [twodiyArr addObject:[[dataDic arrayForKey:@"mianliao"]firstObject]];
-            }
-            else
-            {
-                [diydetailArray addObject:[NSDictionary dictionary]];
-            }
-            if ([[dataDic arrayForKey:@"position"] count] > 0) {
-                [diydetailArray addObject:[[dataDic arrayForKey:@"position"] firstObject]];
-            } else {
-                [diydetailArray addObject:[NSDictionary dictionary]];
-            }
-            
-            if ([[dataDic arrayForKey:@"color"] count] > 0) {
-                [diydetailArray addObject:[[dataDic arrayForKey:@"color"] firstObject]];
-            }else {
-                [diydetailArray addObject:[NSDictionary dictionary]];
-            }
-            
-            if ([[dataDic arrayForKey:@"font"] count] > 0) {
-                [diydetailArray addObject:[[dataDic arrayForKey:@"font"] firstObject]];
-            }else {
-                [diydetailArray addObject:[NSDictionary dictionary]];
-            }
-            
-            
-            //            _goodArray = [NSMutableArray arrayWithArray:[[[dataDic arrayForKey:@"spec_templets_recommend"] firstObject] arrayForKey:@"list"]];
-            
-            
-            for (NSDictionary *dic in diydetailArray) {
-                [diyArray addObject:[NSString stringWithFormat:@"%@:%@", [dic stringForKey:@"a_name"],[dic stringForKey:@"name"]]];
+    [params setObject:@(_diyDetailModel.ID) forKey:@"goods_id"];
+    [[wclNetTool sharedTools]request:GET urlString:[MoreUrlInterface URL_DingZhiDetailAndPeiJian_String] parameters:params finished:^(id responseObject, NSError *error) {
+//        WCLLog(@"%@",responseObject);
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            newDiyAllDataModel*model = [newDiyAllDataModel mj_objectWithKeyValues:responseObject[@"data"]];
+            [dataArr addObject:model];
+            diyArray = model.must_display_part.mutableCopy;
+            mianliaoArr = model.fabric.mutableCopy;
+            _price = @{@"price":model.sell_price};
+            newDiyMianLiaoModel*model5 = [mianliaoArr firstObject];
+            [_paramsClothes setObject:@(model.if_liz) forKey:@"class_id"];
+            [_paramsClothes setObject:@(model5.ID) forKey:@"mianliao"];
+            [_paramsClothes setObject:model5.name forKey:@"mianliao2"];
+            [_paramsClothes setObject:@(model.ID) forKey:@"goods_id"];
+            for (secondDataModel*model2 in model.special_mark_part) {
+                if (model2.special_mark==1) { //1版型2绣花位置3绣花字体4绣花颜色
+                    [banxingArr addObjectsFromArray:model2.son];
+                    [_paramsClothes setObject:model2.son[0] forKey:@"banxing"];
+                }
+                else if(model2.special_mark==2)
+                {
+                    [positionArr addObjectsFromArray:model2.son];
+                    [_paramsClothes setObject:model2.son[0] forKey:@"position"];
+                }
+                else if (model2.special_mark==4)
+                {
+                    [colorArr addObjectsFromArray:model2.son];
+                    [_paramsClothes setObject:model2.son[0] forKey:@"color"];
+                }
+                else//3
+                {
+                    [fontArr addObjectsFromArray:model2.son];
+                    [_paramsClothes setObject:model2.son[0] forKey:@"font"];
+                }
             }
             [self createDiyView];
-            
-            //            [diyTable reloadData];
-            
         }
     }];
-    
 }
 -(void)createNewUser
 {
@@ -303,7 +262,7 @@
         [imag sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, YDImgArray[0]]] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             if (image) {
                 CGFloat scan = image.size.width / image.size.height;
-                imag.frame = CGRectMake(0,IsiPhoneX?20:0, SCREEN_WIDTH,IsiPhoneX?150+SCREEN_WIDTH/scan: SCREEN_WIDTH/scan);
+                imag.frame = CGRectMake(0,[ShiPeiIphoneXSRMax isIPhoneX]?20:0, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?150+SCREEN_WIDTH/scan: SCREEN_WIDTH/scan);
             }
             else
             {
@@ -326,7 +285,7 @@
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
-    diyTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT - 64 - 50) style:UITableViewStyleGrouped];
+    diyTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT - 64 - 50) style:UITableViewStyleGrouped];
     diyTable.dataSource = self;
     diyTable.delegate = self;
     [diyTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -357,294 +316,85 @@
     //    [self.view addSubview:priceLowView];
     
     
-    UILabel *priceDetail = [[UILabel alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-64-95:SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3-10, 50)];
+    UILabel *priceDetail = [[UILabel alloc] initWithFrame:CGRectMake(0,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-95:SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3-10, 50)];
     priceDetail.tag = 6000;
-    priceDetail.textAlignment = NSTextAlignmentRight;
+    priceDetail.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:priceDetail];
-    [priceDetail setText:[NSString stringWithFormat:@"合计:¥%@",[[[dataDic arrayForKey:@"mianliao"]objectAtIndex:0] objectForKey:@"price"]]];
+    newDiyAllDataModel*model2 = [dataArr firstObject];
+    [priceDetail setText:[NSString stringWithFormat:@"合计:¥%@",model2.sell_price]];
     priceDetail.textColor= [UIColor colorWithHexString:@"#222222"];
     [priceDetail setFont:[UIFont fontWithName:@"SanFranciscoDisplay-Regular" size:16]];
     
-    
-    //    UILabel *priceTitle = [UILabel new];
-    //    [self.view addSubview:priceTitle];
-    //    priceTitle.sd_layout
-    //    .centerYEqualToView(priceLowView)
-    //    .rightSpaceToView(priceDetail,0)
-    //    .widthIs(40)
-    //    .autoHeightRatio(20);
-    //    [priceTitle setText:@"合计:"];
-    //    [priceTitle setFont:[UIFont systemFontOfSize:14]];
-    
-    
-    
-    
-    UIButton *buttonSave = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3,IsiPhoneX?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
+    UIButton *buttonSave = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
     [buttonSave setBackgroundColor:getUIColor(Color_DZClolor)];
     [self.view addSubview:buttonSave];
     [buttonSave addTarget:self action:@selector(saveTheClothes) forControlEvents:UIControlEventTouchUpInside];
     [buttonSave.titleLabel setFont:[UIFont systemFontOfSize:14]];
     [buttonSave setTitle:@"加入购物袋" forState:UIControlStateNormal];
+    buttonSave.qi_eventInterval=3;
     
-    
-    UIButton *buttonBuy = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3 * 2,IsiPhoneX?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
+    UIButton *buttonBuy = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3 * 2,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
     [buttonBuy setBackgroundColor:getUIColor(Color_TKClolor)];
+    buttonBuy.qi_eventInterval=3;
     [self.view addSubview:buttonBuy];
     [buttonBuy addTarget:self action:@selector(payForClothes) forControlEvents:UIControlEventTouchUpInside];
     [buttonBuy.titleLabel setFont:[UIFont systemFontOfSize:14]];
     [buttonBuy setTitle:@"立即购买" forState:UIControlStateNormal];
-    
 }
 -(void)payForClothes
 {
-    if (isopencv==1) {
-        if ([[heightAndWeightDic stringForKey:@"name"] length]>0) {
-            if([[heightAndWeightDic stringForKey:@"height"] length]>0)
-            {
-            if ([[heightAndWeightDic stringForKey:@"weight"]length]>0) {
-                if (isopencv==1) {
-                    [self alertViewShowOfTime:@"请拍照身体四个面的照片" time:1.5];
-                }
-                else if (isopencv==2)
-                {
-                    [_paramsClothes setObject:@"1" forKey:@"goods_type"];
-                    [_paramsClothes setObject:@"1" forKey:@"type"];
-                    [_paramsClothes setObject:[_price objectForKey:@"price_id"] forKey:@"price_id"];
-                    [_paramsClothes setObject:[_goodDic objectForKey:@"id"] forKey:@"goods_id"];
-                    [_paramsClothes setObject:[_price objectForKey:@"price"] forKey:@"price"];
-                    [_paramsClothes setObject:[_goodDic objectForKey:@"name"] forKey:@"goods_name"];
-                    if (diyArray != nil) {
-                        [_paramsClothes setObject:[diyArray componentsJoinedByString:@";"] forKey:@"diy_content"];
-                    }
-                    if ([[_price objectForKey:@"goods_img"] length]>0) {
-                        [_paramsClothes setObject:[_price objectForKey:@"goods_img"] forKey:@"goods_thumb"];
-                    }
-                    else
-                    {
-                        [_paramsClothes setObject:[_goodDic objectForKey:@"thumb"] forKey:@"goods_thumb"];
-                    }
-                    [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
-                    [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
-                    [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
-                    [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
-                    if (_ifTK) {
-                        [_paramsClothes setObject:@"1" forKey:@"is_scan"];
-                    } else {
-                        [_paramsClothes setObject:@"0" forKey:@"is_scan"];
-                    }
-                    [_paramsClothes setObject:@"1" forKey:@"num"];
-                    [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
-                        // WCLLog(@"%@",domain.dataRoot);
-                        if ([self checkHttpResponseResultStatus:postData]) {
-                            [MobClick event:@"place_order" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
-                            ClothesFroPay *model = [ClothesFroPay new];
-                            if ([_paramsClothes stringForKey:@"mian_img"].length > 0) {
-                                model.clothesImage = [_paramsClothes stringForKey:@"mian_img"];
-                            } else {
-                                model.clothesImage = [_paramsClothes stringForKey:@"goods_thumb"];
-                            }
-                            
-                            model.clothesCount = @"1";
-                            model.clothesName = [_goodDic stringForKey:@"name"];
-                            model.clothesPrice = [_price objectForKey:@"price"];
-                            model.clotheMaxCount = @"100";
-                            NSMutableArray *array = [NSMutableArray arrayWithObjects:model, nil];
-                            PayForClothesViewController *clothesPay = [[PayForClothesViewController alloc] init];
-                            clothesPay.dateId = [_goodDic stringForKey:@"id"];
-                            clothesPay.dingDate =  [NSDate dateWithTimeIntervalSinceNow:0];
-                            clothesPay.arrayForClothes = array;
-                            clothesPay.carId = [[domain.dataRoot objectForKey:@"data"] stringForKey:@"car_id"];
-                            clothesPay.allPrice = [_price objectForKey:@"price"];
-                            [self.navigationController pushViewController:clothesPay animated:YES];
-                        }
-                        
-                    }];
-                }
-            }
-            else
-            {
-                [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
-            }
-            
+    NSMutableString*string = [[NSMutableString alloc]init];
+    threeDataModel*banxingmodel = [_paramsClothes objectForKey:@"banxing"];
+    [string appendString:[NSString stringWithFormat:@"%@,",@(banxingmodel.part_id)]];
+    threeDataModel*positionmodel = [_paramsClothes objectForKey:@"position"];
+    [string appendString:[NSString stringWithFormat:@"%@,",@(positionmodel.part_id)]];
+    threeDataModel*colormodel = [_paramsClothes objectForKey:@"color"];
+    [string appendString:[NSString stringWithFormat:@"%@,",@(colormodel.part_id)]];
+    threeDataModel*fontmodel = [_paramsClothes objectForKey:@"font"];
+    [string appendString:[NSString stringWithFormat:@"%@",@(fontmodel.part_id)]];
+    NSMutableDictionary*parrment = [NSMutableDictionary dictionary];
+    [parrment setObject:string forKey:@"special_mark_part_ids"];
+    [parrment setObject:@"1" forKey:@"goods_num"];
+    [parrment setObject:@(ShoppingCarTypeBuy) forKey:@"type"];
+    [parrment setObject:[_paramsClothes stringForKey:@"goods_id"] forKey:@"goods_id"];
+    [parrment setObject:[_paramsClothes stringForKey:@"mianliao"] forKey:@"fabric_id"];
+    [parrment setObject:[[_paramsClothes dictionaryForKey:@"re_marks"]stringForKey:@"name"] forKey:@"re_marks"];
+    newDiyAllDataModel*models = [dataArr firstObject];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_AddShoppingCar_String] parameters:parrment finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+             [MobClick event:@"place_order" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo shareInstance].userModel.username,models.name]];//cart_id
+            PayForClothesViewController *clothesPay = [[PayForClothesViewController alloc] init];
+            clothesPay.carId = [responseObject stringForKey:@"cart_id"];
+            clothesPay.allPrice = models.sell_price;
+            [self.navigationController pushViewController:clothesPay animated:YES];
         }
-        else
-        {
-            [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
-        }
-        }
-        else
-        {
-             [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
-        }
-    }
-    else if(isopencv==2)
-    {
-        
-        [_paramsClothes setObject:@"1" forKey:@"goods_type"];
-        [_paramsClothes setObject:@"1" forKey:@"type"];
-        [_paramsClothes setObject:[_price objectForKey:@"price_id"] forKey:@"price_id"];
-        [_paramsClothes setObject:[_goodDic objectForKey:@"id"] forKey:@"goods_id"];
-        [_paramsClothes setObject:[_price objectForKey:@"price"] forKey:@"price"];
-        [_paramsClothes setObject:[_goodDic objectForKey:@"name"] forKey:@"goods_name"];
-        if (diyArray != nil) {
-            [_paramsClothes setObject:[diyArray componentsJoinedByString:@";"] forKey:@"diy_content"];
-        }
-        if ([[_price objectForKey:@"goods_img"] length]>0) {
-            [_paramsClothes setObject:[_price objectForKey:@"goods_img"] forKey:@"goods_thumb"];
-        }
-        else
-        {
-            [_paramsClothes setObject:[_goodDic objectForKey:@"thumb"] forKey:@"goods_thumb"];
-        }
-        [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
-        [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
-        [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
-        [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
-        if (_ifTK) {
-            [_paramsClothes setObject:@"1" forKey:@"is_scan"];
-        } else {
-            [_paramsClothes setObject:@"0" forKey:@"is_scan"];
-        }
-        [_paramsClothes setObject:@"1" forKey:@"num"];
-        [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
-            // WCLLog(@"%@",domain.dataRoot);
-            if ([self checkHttpResponseResultStatus:postData]) {
-                [MobClick event:@"place_order" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
-                ClothesFroPay *model = [ClothesFroPay new];
-                if ([_paramsClothes stringForKey:@"mian_img"].length > 0) {
-                    model.clothesImage = [_paramsClothes stringForKey:@"mian_img"];
-                } else {
-                    model.clothesImage = [_paramsClothes stringForKey:@"goods_thumb"];
-                }
-                
-                model.clothesCount = @"1";
-                model.clothesName = [_goodDic stringForKey:@"name"];
-                model.clothesPrice = [_price objectForKey:@"price"];
-                model.clotheMaxCount = @"100";
-                NSMutableArray *array = [NSMutableArray arrayWithObjects:model, nil];
-                PayForClothesViewController *clothesPay = [[PayForClothesViewController alloc] init];
-                clothesPay.dateId = [_goodDic stringForKey:@"id"];
-                clothesPay.dingDate =  [NSDate dateWithTimeIntervalSinceNow:0];
-                clothesPay.arrayForClothes = array;
-                clothesPay.carId = [[domain.dataRoot objectForKey:@"data"] stringForKey:@"car_id"];
-                clothesPay.allPrice = [_price objectForKey:@"price"];
-                [self.navigationController pushViewController:clothesPay animated:YES];
-            }
-            
-        }];
-    }
-    
-    
-    
+    }];
 }
 -(void)saveTheClothes
 {
-    if (isopencv==1) {
-        if ([[heightAndWeightDic stringForKey:@"name"] length]>0) {
-        if([[heightAndWeightDic stringForKey:@"height"] length]>0)
-        {
-            if ([[heightAndWeightDic stringForKey:@"weight"]length]>0) {
-                if (isopencv==1) {
-                    [self alertViewShowOfTime:@"请拍照身体四个面的照片" time:1.5];
-                }
-                else if (isopencv==2)
-                {
-                    [_paramsClothes setObject:@"1" forKey:@"goods_type"];
-                    [_paramsClothes setObject:@"2" forKey:@"type"];
-                    [_paramsClothes setObject:[_price objectForKey:@"price_id"] forKey:@"price_id"];
-                    [_paramsClothes setObject:[_goodDic objectForKey:@"id"] forKey:@"goods_id"];
-                    [_paramsClothes setObject:[_price objectForKey:@"price"] forKey:@"price"];
-                    [_paramsClothes setObject:[_goodDic objectForKey:@"name"] forKey:@"goods_name"];
-                    if ([[_price objectForKey:@"goods_img"] length]>0) {
-                        [_paramsClothes setObject:[_price objectForKey:@"goods_img"] forKey:@"goods_thumb"];
-                    }
-                    else
-                    {
-                        [_paramsClothes setObject:[_goodDic objectForKey:@"thumb"] forKey:@"goods_thumb"];
-                    }
-                    [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
-                    [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
-                    [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
-                    [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
-                    if (diyArray != nil) {
-                        [_paramsDic setObject:[diyArray componentsJoinedByString:@";"] forKey:@"diy_content"];
-                    }
-                    [_paramsClothes setObject:@"1" forKey:@"num"];
-                    
-                    if (_ifTK) {
-                        [_paramsClothes setObject:@"1" forKey:@"is_scan"];
-                    } else {
-                        [_paramsClothes setObject:@"0" forKey:@"is_scan"];
-                    }
-                    
-                    [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
-                        //        WCLLog(@"%@",domain.dataRoot);
-                        if ([self checkHttpResponseResultStatus:postData]) {
-                            [MobClick event:@"add_cart" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
-                            [self alertViewShowOfTime:domain.resultMessage time:1.5];
-                            [[NSNotificationCenter defaultCenter] postNotificationName:@"addCarSuccess" object:nil];
-                        }
-                        
-                    }];
-                }
-            }
-            else
-            {
-                [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
-            }
-            
-        }
-        else
-        {
-            [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
-        }
-        }
-        else
-        {
-             [self alertViewShowOfTime:@"请完善基本信息和拍照量体的4张照片" time:1];
-        }
+    NSMutableString*string = [[NSMutableString alloc]init];
+    threeDataModel*banxingmodel = [_paramsClothes objectForKey:@"banxing"];
+    [string appendString:[NSString stringWithFormat:@"%@,",@(banxingmodel.part_id)]];
+    threeDataModel*positionmodel = [_paramsClothes objectForKey:@"position"];
+    [string appendString:[NSString stringWithFormat:@"%@,",@(positionmodel.part_id)]];
+    threeDataModel*colormodel = [_paramsClothes objectForKey:@"color"];
+    [string appendString:[NSString stringWithFormat:@"%@,",@(colormodel.part_id)]];
+    threeDataModel*fontmodel = [_paramsClothes objectForKey:@"font"];
+    [string appendString:[NSString stringWithFormat:@"%@",@(fontmodel.part_id)]];
+    NSMutableDictionary*parrment = [NSMutableDictionary dictionary];
+    [parrment setObject:string forKey:@"special_mark_part_ids"];
+    [parrment setObject:@"1" forKey:@"goods_num"];
+    [parrment setObject:@(ShoppingCarTypeAdd) forKey:@"type"];
+    [parrment setObject:[_paramsClothes stringForKey:@"goods_id"] forKey:@"goods_id"];
+    [parrment setObject:[_paramsClothes stringForKey:@"mianliao"] forKey:@"fabric_id"];
+    [parrment setObject:[[_paramsClothes dictionaryForKey:@"re_marks"]stringForKey:@"name"] forKey:@"re_marks"];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_AddShoppingCar_String] parameters:parrment finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+        [MobClick event:@"add_cart" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo shareInstance].userModel.username,[_goodDic stringForKey:@"name"]]];
+        [self alertViewShowOfTime:@"添加购物车成功" time:1.5];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"addCarSuccess" object:nil];
     }
-    else if (isopencv==2)
-    {
-        [_paramsClothes setObject:@"1" forKey:@"goods_type"];
-        [_paramsClothes setObject:@"2" forKey:@"type"];
-        [_paramsClothes setObject:[_price objectForKey:@"price_id"] forKey:@"price_id"];
-        [_paramsClothes setObject:[_goodDic objectForKey:@"id"] forKey:@"goods_id"];
-        [_paramsClothes setObject:[_price objectForKey:@"price"] forKey:@"price"];
-        [_paramsClothes setObject:[_goodDic objectForKey:@"name"] forKey:@"goods_name"];
-        if ([[_price objectForKey:@"goods_img"] length]>0) {
-            [_paramsClothes setObject:[_price objectForKey:@"goods_img"] forKey:@"goods_thumb"];
-        }
-        else
-        {
-            [_paramsClothes setObject:[_goodDic objectForKey:@"thumb"] forKey:@"goods_thumb"];
-        }
-        [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_ids"] forKey:@"spec_ids"];
-        [_paramsClothes setObject:[_paramsDic objectForKey:@"spec_content"] forKey:@"spec_content"];
-        [_paramsClothes setObject:[_price objectForKey:@"id"] forKey:@"mianliao_id"];
-        [_paramsDic setObject:[[dataDic arrayForKey:@"classify_id"]objectAtIndex:banxingtag]  forKey:@"banxing_id"];
-        if (diyArray != nil) {
-            [_paramsDic setObject:[diyArray componentsJoinedByString:@";"] forKey:@"diy_content"];
-        }
-        [_paramsClothes setObject:@"1" forKey:@"num"];
-        
-        if (_ifTK) {
-            [_paramsClothes setObject:@"1" forKey:@"is_scan"];
-        } else {
-            [_paramsClothes setObject:@"0" forKey:@"is_scan"];
-        }
-        
-        [postData postData:URL_AddClothesCar PostParams:_paramsClothes finish:^(BaseDomain *domain, Boolean success) {
-            //        WCLLog(@"%@",domain.dataRoot);
-            if ([self checkHttpResponseResultStatus:postData]) {
-                [MobClick event:@"add_cart" label:[NSString stringWithFormat:@"%@--%@",[SelfPersonInfo getInstance].cnPersonUserName,[_goodDic stringForKey:@"name"]]];
-                [self alertViewShowOfTime:domain.resultMessage time:1.5];
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"addCarSuccess" object:nil];
-            }
-            
-        }];
-    }
-    
+    }];
 }
 
 -(void)changeStep
@@ -676,59 +426,29 @@
     [titleSection addSubview:rightLabel];
     [titleSection addSubview:titleLabel];
     UIButton * jiantouBtn = [[UIButton alloc]initWithFrame:CGRectMake(SCREEN_WIDTH-27, 17, 14, 10)];
-    if(section==0)
-    {
-        [titleLabel setText:@"输入基本信息"];
-        rightLabel.frame = CGRectMake(CGRectGetMaxX(titleLabel.frame)-55, 0, 250, 42);
-        rightLabel.textAlignment = NSTextAlignmentLeft;
-        rightLabel.textColor = [UIColor colorWithHexString:@"#B10909"];
-        rightLabel.font =[UIFont fontWithName:@"PingFangSC-Light" size:10];
-        rightLabel.text = @"为了确保衣服合身，请准确输入你的净身高、净体重";
+    if (section==0) {
+        titleLabel.hidden=YES;
+        rightLabel.hidden=YES;
+        titleSection.hidden=YES;
     }
-    else if (section==1)
-    {
-        [titleLabel setText:@"拍照量体"];
-        UILabel * centerLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(titleLabel.frame)-95, 0, 250, 42)];
-        [titleSection addSubview:centerLabel];
-        centerLabel.textAlignment = NSTextAlignmentLeft;
-        centerLabel.textColor = [UIColor colorWithHexString:@"#B10909"];
-        centerLabel.font =[UIFont fontWithName:@"PingFangSC-Light" size:10];
-        centerLabel.text = @"若不方便即时拍照量体可稍后与客服确认体型数据";
-        rightLabel.text = @"⊙帮助";
-    }
-    else if (section == 2) {
+    else if (section == 1) {
         [titleLabel setText:@"选择版型"];
         rightLabel.tag = 2222;
-        if ([[dataDic arrayForKey:@"classify_id"] count]>0) {
-            rightLabel.text =[[[dataDic arrayForKey:@"classify_id"] objectAtIndex:banxingtag] stringForKey:@"name"];
-            _banxing = [[dataDic arrayForKey:@"classify_id"] objectAtIndex:banxingtag];
-            NSMutableDictionary * dic1 = [NSMutableDictionary dictionaryWithDictionary:[[dataDic arrayForKey:@"classify_id"] objectAtIndex:banxingtag]];
-            [dic1 setObject:@"版型" forKey:@"a_name"];
-            [diydetailArray replaceObjectAtIndex:0 withObject:dic1];
-            [twodiyArr replaceObjectAtIndex:0 withObject:dic1];
-            
-        }
-    } else if (section == 3) {
+        threeDataModel*model1 = banxingArr[0];
+        rightLabel.text = model1.part_name;
+    } else if (section == 2) {
         [titleLabel setText:@"选择面料(长按可看大图)"];
         rightLabel.tag =2223;
-        if ([[dataDic arrayForKey:@"mianliao"]count]>0) {
-            rightLabel.text = [[[dataDic arrayForKey:@"mianliao"] objectAtIndex:mianliaotag] stringForKey:@"name"];
-            _price = [[dataDic arrayForKey:@"mianliao"]objectAtIndex:mianliaotag];
-            //            [[[[dataDic arrayForKey:@"mianliao"] objectAtIndex:mianliaotag] copy] setObject:@"面料" forKey:@"a_name"];
-            NSMutableDictionary * dic2 = [NSMutableDictionary dictionaryWithDictionary:[[dataDic arrayForKey:@"mianliao"]objectAtIndex:mianliaotag]];
-            [dic2 setObject:@"面料" forKey:@"a_name"];
-            [diydetailArray replaceObjectAtIndex:1 withObject:dic2];
-            [twodiyArr replaceObjectAtIndex:1 withObject:dic2];
-            
-        }
+        newDiyMianLiaoModel*model2 = mianliaoArr[0];
+        rightLabel.text =model2.name;
     }
-    else//4
+    else//3
     {
         titleLabel.text = @"选择刺绣";
         [titleSection addSubview:jiantouBtn];
         
     }
-    if([dic[@"4"] integerValue]==1)
+    if([dic[@"3"] integerValue]==1)
     {
         [jiantouBtn setImage:[UIImage imageNamed:@"收起"] forState:UIControlStateNormal];
     }
@@ -743,13 +463,7 @@
     return titleSection;
 }
 - (void)action_tap:(UIGestureRecognizer *)tap{
-    if(tap.view.tag==301)
-    {
-        QuickPhotoYinDaoVC * qvc = [[QuickPhotoYinDaoVC alloc]init];
-        qvc.ishelp = YES;
-        [self.navigationController pushViewController:qvc animated:YES];
-    }
-    if (tap.view.tag ==304) {
+    if (tap.view.tag ==303) {
         NSString *str = [NSString stringWithFormat:@"%ld",tap.view.tag-300];
         if ([dic[str] integerValue] == 0) {//如果是0，就把1赋给字典,打开cell
             [dic setObject:@"1" forKey:str];
@@ -761,6 +475,9 @@
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
+    if (section==0) {
+        return 0.01;
+    }
     return 43;
 }
 
@@ -777,13 +494,13 @@
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 5;
+    return 4;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     
-    if (section==4) {
+    if (section==3) {
         NSString *string = [NSString stringWithFormat:@"%ld",section];
         if ([dic[string] integerValue] == 1 ) {  //打开cell返回数组的count
             return 8;
@@ -796,18 +513,18 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == 0) {
-        return 109;
+//    if (indexPath.section == 0) {
+//        return 109;
+//    }
+     if (indexPath.section==0)
+    {
+        return 0.01;
     }
     else if (indexPath.section==1)
     {
-        return 87;
-    }
-    else if (indexPath.section==2)
-    {
         return 3+(SCREEN_WIDTH-60)/4;
     }
-    else if(indexPath.section==4)
+    else if(indexPath.section==3)
     {
         if (indexPath.row==0||indexPath.row==2||indexPath.row==4||indexPath.row==6) {
             return 38;
@@ -817,79 +534,48 @@
             return  35+(SCREEN_WIDTH-60)/4;
         }
     }
-    
     return 35+(SCREEN_WIDTH-60)/4;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *reCell;
-    
-    if(indexPath.section==0)
-    {
-        HeightAndWeightCell * cell = [tableView dequeueReusableCellWithIdentifier:@"heightandweight"];
-        cell.weightTextField.delegate = self;
-        cell.heightTextField.delegate = self;
-        cell.nameTextField.delegate = self;
-        if (weightStr.length>0) {
-            cell.weightTextField.text = weightStr;
+    if (indexPath.section==0) {
+        UITableViewCell*cell = [tableView dequeueReusableCellWithIdentifier:@"cess"];
+        if (!cell) {
+            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cess"];
         }
-        if (heightStr.length>0) {
-            cell.heightTextField.text = heightStr;
-        }
-        if (nameStr.length>0) {
-            cell.nameTextField.text = nameStr;
-        }
-        [cell.nameTextField addTarget:self action:@selector(weighttextfieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-        [cell.weightTextField addTarget:self action:@selector(weighttextfieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-        [cell.heightTextField addTarget:self action:@selector(weighttextfieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-        reCell = cell;
+        cell.imageView.backgroundColor= [UIColor magentaColor];
+        reCell=cell;
     }
-    else if(indexPath.section==1)
-    {
-        PaiZhaoTestCell * cell = [tableView dequeueReusableCellWithIdentifier:@"paizhaotest"];
-        if (isopencv==1) {
-            [cell.photoImageView setImage:[UIImage imageNamed:@"xiangji"] forState:UIControlStateNormal];
-            cell.shuomingLabel.text = @"图像拍摄后会自动对脸部进行模糊处理，请放心拍摄。";
-            
-        }
-        else if(isopencv==2)
-        {
-            [cell.photoImageView setImage:[UIImage imageNamed:@"JuXC"] forState:UIControlStateNormal];
-            cell.shuomingLabel.text = @"图像拍摄后会自动对脸部进行模糊处理，请放心拍摄。";
-        }
-        [cell.photoImageView addTarget:self action:@selector(xiangji:) forControlEvents:UIControlEventTouchUpInside];
-        
-        reCell = cell;
-        
-    }
-    else if (indexPath.section == 2) {
+    else if (indexPath.section == 1) {
         BanXingTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"banxing" forIndexPath:indexPath];
-        cell.banXingArray = [NSMutableArray arrayWithArray:[dataDic arrayForKey:@"classify_id"]];
+        cell.banXingArray = banxingArr;
         cell.delegate = self;
         reCell =cell;
         
     }
-    else if (indexPath.section == 3)
+    else if (indexPath.section == 2)
     {
         MianLiaoCell * cell = [tableView dequeueReusableCellWithIdentifier:@"mianliao" forIndexPath:indexPath];
-        cell.mianLiaoArray =  [NSMutableArray arrayWithArray:[dataDic arrayForKey:@"mianliao"]];
+        cell.mianLiaoArray = mianliaoArr;
         cell.delegate = self;
         reCell = cell;
     }
-    else //4组
+    else //3组
     {
         if (indexPath.row==0) {
             DiyHeadCell * cell = [tableView dequeueReusableCellWithIdentifier:@"diyHead" forIndexPath:indexPath];
             cell.leftLabel.text = @"选择刺绣位置";
             cell.tag = 1000;
             cell.firstView.hidden= YES;
-            cell.rightLabel.text = [[[dataDic arrayForKey:@"position"] objectAtIndex:positiontag] stringForKey:@"name"];
+            threeDataModel*model0 = positionArr[positiontag];
+            cell.rightLabel.text = model0.part_name;
             reCell = cell;
         }
         else if (indexPath.row==1) {
             positionTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"position" forIndexPath:indexPath];
-            cell.positionArray = [NSMutableArray arrayWithArray:[dataDic arrayForKey:@"position"]];
+            cell.positionArray = positionArr;
             cell.delegate = self;
             reCell = cell;
         }
@@ -898,22 +584,24 @@
             DiyHeadCell * cell = [tableView dequeueReusableCellWithIdentifier:@"diyHead" forIndexPath:indexPath];
             cell.tag =1002;
             cell.leftLabel.text = @"选择字体颜色";
-            cell.rightLabel.text = [[[dataDic arrayForKey:@"color"] objectAtIndex:colortag] stringForKey:@"name"];
+            threeDataModel*model2 = colorArr[colortag];
+            cell.rightLabel.text =model2.part_name;
             reCell = cell;
         }
         else if (indexPath.row==3)
         {
             colorChooseTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"color" forIndexPath:indexPath];
-            cell.colorArray = [NSMutableArray arrayWithArray:[dataDic arrayForKey:@"color"]];
+            cell.colorArray = colorArr;
             cell.delegate = self;
             reCell = cell;
         }
         else if (indexPath.row==4)
         {
             DiyHeadCell * cell = [tableView dequeueReusableCellWithIdentifier:@"diyHead" forIndexPath:indexPath];
+            threeDataModel*model4 = fontArr[fonttag];
             cell.leftLabel.text = @"选择字体";
             cell.tag = 1004;
-            cell.rightLabel.text = [[[dataDic arrayForKey:@"font"] objectAtIndex:fonttag] stringForKey:@"name"];
+            cell.rightLabel.text = model4.part_name;
             cell.endView.hidden =NO;
             reCell = cell;
         }
@@ -921,7 +609,7 @@
         {
             fontTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"font" forIndexPath:indexPath];
             cell.delegate = self;
-            cell.fontArray = [NSMutableArray arrayWithArray:[dataDic arrayForKey:@"font"]];
+            cell.fontArray = fontArr;
             reCell = cell;
         }
         else if (indexPath.row==6)
@@ -938,6 +626,7 @@
             textFieldWordDiyTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"textField" forIndexPath:indexPath];
             cell.wordDiy .delegate = self;
             [cell.wordDiy addTarget:self action:@selector(textfieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+            [cell.wordDiy addTarget:self action:@selector(textFieldShouldReturn:) forControlEvents:UIControlEventEditingDidEnd];
             cell.isenglish = is_english;
             reCell = cell;
         }
@@ -946,309 +635,98 @@
     [reCell setSelectionStyle:UITableViewCellSelectionStyleNone];
     return reCell;
 }
--(void)xiangji:(UIButton*)btn
-{
-    
-//    [heightAndWeightDic setObject:[SelfPersonInfo getInstance].cnPersonUserName forKey:@"name"];
-    [heightAndWeightDic setObject:[SelfPersonInfo getInstance].personPhone forKey:@"phone"];
-    
-    if(isopencv==1)
-    {
-        if ([[heightAndWeightDic stringForKey:@"name"] length]>0) {
-            if([[heightAndWeightDic stringForKey:@"height"] length]>0)
-            {
-                if ([[heightAndWeightDic stringForKey:@"weight"]length]>0) {
-                    if (isopencv==1) {
-                        if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
-                            QuickPhotoYinDaoVC * vc = [[QuickPhotoYinDaoVC alloc]init];
-                            vc.params = heightAndWeightDic;
-                            vc.comefromGeXingDingZhi = YES;
-                            vc.bodyHeight = [[heightAndWeightDic stringForKey:@"height"] floatValue];
-                            [self.navigationController pushViewController:vc animated:YES];
-                        }
-                        else
-                        {
-                            [self alertViewShowOfTime:@"该设备不支持相机功能" time:1];
-                        }
-                        
-                    }
-                }
-                else
-                {
-                    [self alertViewShowOfTime:@"体重不能为空" time:1];
-                    
-                }
-            }
-            else
-            {
-                [self alertViewShowOfTime:@"身高不能为空" time:1];
-            }
-        }
-        else
-        {
-            [self alertViewShowOfTime:@"姓名或昵称不能为空" time:1];
-            
-        }
-    }
-    else if (isopencv==2)
-    {
-        if ([heightAndWeightDic stringForKey:@"name"].length>0) {
-            [heightAndWeightDic setObject:[heightAndWeightDic stringForKey:@"name"] forKey:@"name"];
-        }
-        else
-        {
-            [heightAndWeightDic setObject:nameStr forKey:@"name"];
-        }
-        if ([heightAndWeightDic stringForKey:@"height"].length>0) {
-            [heightAndWeightDic setObject:[heightAndWeightDic stringForKey:@"height"] forKey:@"height"];
-        }
-        else
-        {
-            [heightAndWeightDic setObject:heightStr forKey:@"height"];
-        }
-        if ([heightAndWeightDic stringForKey:@"weight"].length>0) {
-            [heightAndWeightDic setObject:[heightAndWeightDic stringForKey:@"weight"] forKey:@"weight"];
-        }
-        else
-        {
-            [heightAndWeightDic setObject:weightStr forKey:@"weight"];
-        }
-        if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
-            QuickPhotoVC * qvc = [[QuickPhotoVC alloc]init];
-            qvc.params = heightAndWeightDic;
-            qvc.comefromGeXingDingZhi= YES;
-            qvc.bodyHeight = [[heightAndWeightDic stringForKey:@"height"] floatValue];
-            [self.navigationController pushViewController:qvc animated:YES];
-        }
-        else
-        {
-            [self alertViewShowOfTime:@"该设备暂不支持相机功能" time:1];
-        }
-    }
-}
--(void)weighttextfieldDidChange:(UITextField *)textfield
-{
-    if (textfield.text.length>0) {
-        if (textfield.tag==990) {
-            [heightAndWeightDic setObject:textfield.text forKey:@"name"];
-        }
-        if (textfield.tag==991) {
-            [heightAndWeightDic setObject:textfield.text forKey:@"height"];
-        }
-        else if (textfield.tag==992)
-        {
-            //            [heightAndWeightDic removeObjectForKey:@"weight"];
-            [heightAndWeightDic setObject:textfield.text forKey:@"weight"];
-            
-        }
-    }
-    else
-    {
-        switch (textfield.tag) {
-            case 990:
-            {
-                [heightAndWeightDic removeObjectForKey:@"name"];
-            }
-                break;
-            case 991:
-            {
-                [heightAndWeightDic removeObjectForKey:@"height"];
-            }
-                break;
-            case 992:
-            {
-                [heightAndWeightDic removeObjectForKey:@"weight"];
-            }
-                break;
-                
-            default:
-                break;
-        }
-    }
-}
+
+
 -(void)textfieldDidChange:(UITextField *)textfield
 {
     if (textfield.tag==993) {
-        [diydetailArray removeObject:textFildString];
+        [_paramsClothes removeObjectForKey:@"re_marks"];
         if (textfield.text.length>0) {
             [textFildString setObject:@"文字" forKey:@"a_name"];
             [textFildString setObject:textfield.text forKey:@"name"];
-            [diydetailArray addObject:textFildString];
+            [_paramsClothes setObject:textFildString forKey:@"re_marks"];
         }
     }
     
 }
-
-
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     if (textField.text.length>0) {
-        if (textField.tag ==990) {
-            [heightAndWeightDic setObject:textField.text forKey:@"name"];
-            
-        }
-        if (textField.tag==991) {
-            
-            [heightAndWeightDic setObject:textField.text forKey:@"height"];
-        }
-        else if (textField.tag==992)
-        {
-            [heightAndWeightDic setObject:textField.text forKey:@"weight"];
-            
-        }
-        else if (textField.tag==993) {
-            [diydetailArray removeObject:textFildString];
+      if (textField.tag==993) {
+          [_paramsClothes removeObjectForKey:@"re_marks"];
             if (textField.text.length>0) {
                 [textFildString setObject:@"文字" forKey:@"a_name"];
                 [textFildString setObject:textField.text forKey:@"name"];
-                [diydetailArray addObject:textFildString];
+                [_paramsClothes setObject:textFildString forKey:@"re_marks"];
             }
         }
     }
-    else
-    {
-        switch (textField.tag) {
-            case 990:
-            {
-                [heightAndWeightDic removeObjectForKey:@"name"];
-                
-            }
-                break;
-            case 991:
-            {
-                [heightAndWeightDic removeObjectForKey:@"height"];
-            }
-                break;
-            case 992:
-            {
-                [heightAndWeightDic removeObjectForKey:@"weight"];
-            }
-                break;
-                
-            default:
-                break;
-        }
-    }
+    
     [textField resignFirstResponder];
     return YES;
 }
+-(void)showMyMessage:(NSString*)aInfo {
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:aInfo delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    
+    [alertView show];
+    
+}
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    return YES;
+}
+
 -(void)banXingClick:(NSInteger)index
 {
-    [diyArray replaceObjectAtIndex:0 withObject:[NSString stringWithFormat:@"%@:%@",[[[dataDic arrayForKey:@"classify_id"] objectAtIndex:index] stringForKey:@"a_name"],[[[dataDic arrayForKey:@"classify_id"] objectAtIndex:index] stringForKey:@"name"]]];
-    _banxing = [[dataDic arrayForKey:@"classify_id"]objectAtIndex:index];
+    threeDataModel*model1= banxingArr[index];
+    [_paramsClothes setObject:model1 forKey:@"banxing"];
     UILabel *Label = [self.view viewWithTag:2222];
-    Label.text = [[[dataDic arrayForKey:@"classify_id"] objectAtIndex:index] stringForKey:@"name"];
+    Label.text = model1.part_name;
     banxingtag = index;
-    NSMutableDictionary * banxingDic = [NSMutableDictionary dictionaryWithDictionary:[[dataDic arrayForKey:@"classify_id"] objectAtIndex:index]]  ;
-    [banxingDic setObject:@"版型" forKey:@"a_name"];
-    [diydetailArray replaceObjectAtIndex:0 withObject:banxingDic];
-    [twodiyArr replaceObjectAtIndex:0 withObject:banxingDic];
 }
 -(void)mianLiaoClick:(NSInteger)index
 {
-    [diyArray replaceObjectAtIndex:1 withObject:[NSString stringWithFormat:@"%@:%@",[[[dataDic arrayForKey:@"mianliao"] objectAtIndex:index] stringForKey:@"a_name"],[[[dataDic arrayForKey:@"mianliao"] objectAtIndex:index] stringForKey:@"name"]]];
-    _price = [[dataDic arrayForKey:@"mianliao"]objectAtIndex:index];
-    UILabel * label1 = [self.view viewWithTag:6000];
-    label1.text = [NSString stringWithFormat:@"合计:¥%@",[_price objectForKey:@"price"]];
+    newDiyMianLiaoModel*model1= mianliaoArr[index];
+    [_paramsClothes setObject:@(model1.ID) forKey:@"mianliao"];
+    [_paramsClothes setObject:model1.name forKey:@"mianliao2"];
     UILabel *Label = [self.view viewWithTag:2223];
-    Label.text = [[[dataDic arrayForKey:@"mianliao"] objectAtIndex:index] stringForKey:@"name"];
+    Label.text = model1.name;
     mianliaotag = index;
-    NSMutableDictionary * mianliaoDic = [NSMutableDictionary dictionaryWithDictionary:[[dataDic arrayForKey:@"mianliao"] objectAtIndex:index]];
-    [mianliaoDic setObject:@"面料" forKey:@"a_name"];
-    [diydetailArray replaceObjectAtIndex:1 withObject:mianliaoDic];
-    [twodiyArr replaceObjectAtIndex:1 withObject:mianliaoDic];
 }
 -(void)positionClick:(NSInteger)index
 {
-    [diyArray replaceObjectAtIndex:2 withObject:[NSString stringWithFormat:@"%@:%@",[[[dataDic arrayForKey:@"position"] objectAtIndex:index] stringForKey:@"a_name"],[[[dataDic arrayForKey:@"position"] objectAtIndex:index] stringForKey:@"name"]]];
+    threeDataModel*model3 = positionArr[index];
+    [_paramsClothes setObject:model3 forKey:@"position"];
     positiontag = index;
     DiyHeadCell * positionCell = [self.view viewWithTag:1000];
-    positionCell.rightLabel.text = [[[dataDic arrayForKey:@"position"] objectAtIndex:index] stringForKey:@"name"];
-    [diydetailArray replaceObjectAtIndex:2 withObject:[[dataDic arrayForKey:@"position"] objectAtIndex:index]];
+    positionCell.rightLabel.text = model3.part_name;
 }
 
 -(void)colorClick:(NSInteger)index
 {
-    [diyArray replaceObjectAtIndex:3 withObject:[NSString stringWithFormat:@"%@:%@",[[[dataDic arrayForKey:@"color"] objectAtIndex:index] stringForKey:@"a_name"],[[[dataDic arrayForKey:@"color"] objectAtIndex:index] stringForKey:@"name"]]];
+    threeDataModel*model3 = colorArr[index];
+    [_paramsClothes setObject:model3 forKey:@"color"];
     colortag = index;
     DiyHeadCell * colorCell = [self.view viewWithTag:1002];
-    colorCell.rightLabel.text = [[[dataDic arrayForKey:@"color"] objectAtIndex:index] stringForKey:@"name"];
-    [diydetailArray replaceObjectAtIndex:3 withObject:[[dataDic arrayForKey:@"color"] objectAtIndex:index]];
+    colorCell.rightLabel.text = model3.part_name;
 }
 
 -(void)fontChoose:(NSInteger)index
 {
-    [diyArray replaceObjectAtIndex:4 withObject:[NSString stringWithFormat:@"%@:%@",[[[dataDic arrayForKey:@"font"] objectAtIndex:index] stringForKey:@"a_name"],[[[dataDic arrayForKey:@"font"] objectAtIndex:index] stringForKey:@"name"]]];
-    fonttag = index;
-    DiyHeadCell * fontCell = [self.view viewWithTag:1004];
-    fontCell.rightLabel.text = [[[dataDic arrayForKey:@"font"] objectAtIndex:index] stringForKey:@"name"];
-    if ([[[dataDic arrayForKey:@"font"] objectAtIndex:index] stringForKey:@"is_english"]) {
-        is_english = YES;
-    } else {
-        is_english = NO;
-    }
-    [diydetailArray replaceObjectAtIndex:4 withObject:[[dataDic arrayForKey:@"font"] objectAtIndex:index]];
+    threeDataModel*model3 = fontArr[index];
+    [_paramsClothes setObject:model3 forKey:@"font"];
+    colortag = index;
+    DiyHeadCell * colorCell = [self.view viewWithTag:1004];
+    colorCell.rightLabel.text = model3.part_name;
     
 }
 
 
 
 
-//-(void)nextStep
-//{
-//    if ([diydetailArray count] == 5) {
-//        [diydetailArray addObject:textFildString];
-//
-//    }
-//
-//    if ([textFildString count] == 0) {
-//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请输入文字" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-//
-//        [alert show];
-//    } else {
-//        [diyArray addObject:[NSString stringWithFormat:@"%@:%@", [textFildString stringForKey:@"a_name"], [textFildString stringForKey:@"name"]]];
-//        NSString *contentDiy = [diyArray componentsJoinedByString:@";"];
-//        [_paramsDic setObject:contentDiy forKey:@"diy_content"];
-//
-//
-//        ChooseClothesResultViewController *result = [[ChooseClothesResultViewController alloc] init];
-//        result.paramsClothes = _paramsDic;
-//        result.mianliaoprice = [_price objectForKey:@"price"];
-//        result.goodArray = _goodArray;
-//        result.goodDic = _goodDic;
-//        result.price = _price;
-//        result.diyArray = diyArray;
-//        result.xiuZiDic = _xiuZiDic;
-//        result.diyDetailArray = diydetailArray;
-//        result.dateId = _dateId;
-//        result.dingDate = _dingDate;
-//        result.banxingid = [_banxing stringForKey:@"classify_id"];
-//        result.ifTK = _ifTK;
-//        result.defaultImg = _defaultImg;
-//        [self.navigationController pushViewController:result animated:YES];
-//    }
-//
-//
-//}
 
-//-(void)nextStepNoDiy
-//{
-//    ChooseClothesResultViewController *result = [[ChooseClothesResultViewController alloc] init];
-//    result.paramsClothes = _paramsDic;
-//    result.goodArray = _goodArray;
-//    result.goodDic = _goodDic;
-//    result.price = [_price stringForKey:@"price"];
-//    result.xiuZiDic = _xiuZiDic;
-//    result.dateId = _dateId;
-//    result.dingDate = _dingDate;
-//    result.banMian = _banMain;
-//    result.ifTK = _ifTK;
-//    result.defaultImg = _defaultImg;
-////    result.diyArray = diyArray;
-////    result.diyDetailArray = diydetailArray;
-//    [self.navigationController pushViewController:result animated:YES];
-//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

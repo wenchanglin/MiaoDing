@@ -30,12 +30,5 @@
 @property (nonatomic) NSInteger is_love;
 @property (nonatomic) NSInteger is_collect;
 @property(nonatomic)NSInteger love_num;
-//"": "FC700080",
-//"": "/uploads/img/2017112302201097549852.jpg",
-//"id": 72,
-//"type": 2,
-//"c_time": "",
-//"is_love": 0,
-//"is_collect": 0,
-//"love_num": 1
+
 @end

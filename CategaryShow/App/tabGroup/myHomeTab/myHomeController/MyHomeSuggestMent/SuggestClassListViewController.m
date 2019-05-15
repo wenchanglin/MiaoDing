@@ -41,9 +41,9 @@
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:_classId forKey:@"classify_id"];
-    [getData getData:URL_HelpList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:domain]) {
-            helpList = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"data"]];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MineHelpList_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            helpList = [responseObject[@"data"]mutableCopy];
             [helpTable reloadData];
         }
     }];
@@ -51,7 +51,7 @@
 
 -(void)createHelpTable
 {
-    helpTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-88-74:SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
+    helpTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-88-74:SCREEN_HEIGHT - 64) style:UITableViewStyleGrouped];
     helpTable.delegate = self;
     helpTable.dataSource = self;
     [helpTable registerClass:[UITableViewCell class] forCellReuseIdentifier:@"helpList"];

@@ -61,20 +61,17 @@
     [imgContent setContentMode:UIViewContentModeScaleAspectFill];
     [imgContent .layer setMasksToBounds:YES];
     
-    
     nameContent = [UILabel new];
     [contentView addSubview:nameContent];
     nameContent.sd_layout
     .leftSpaceToView(imgContent, 12)
-    .topSpaceToView(topLine, 20)
+    .topSpaceToView(topLine, 35)
     .rightSpaceToView(contentView, 20)
     .heightIs(15);
     [nameContent setFont:[UIFont systemFontOfSize:12]];
     
-    
     typeLabel = [UILabel new];
     [contentView addSubview:typeLabel];
-    
     typeLabel.sd_layout
     .leftSpaceToView(imgContent, 12)
     .topSpaceToView(nameContent, 5)
@@ -98,7 +95,7 @@
     [contentView addSubview:senderContent];
     senderContent.sd_layout
     .leftSpaceToView(imgContent, 12)
-    .bottomSpaceToView(downLine, 20)
+    .topSpaceToView(nameContent, 5)
     .rightSpaceToView(contentView, 20)
     .heightIs(15);
     [senderContent setFont:[UIFont systemFontOfSize:12]];
@@ -120,18 +117,10 @@
 -(void)setModel:(messageListModel *)model
 {
     _model = model;
-    [imgContent sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.mcImg]]];
-    [titleLabel setText:[NSString stringWithFormat:@"您的订单:%@", model.mcTitle]];
-    
-    NSArray *array = [model.mcContent componentsSeparatedByString:@","];
-    [senderContent setText:[NSString stringWithFormat:@"配送单位:%@", array[2]]];
-    [nameContent setText:array[0]];
-    if ([array[1] isEqualToString:@"1"]) {
-        [typeLabel setText:@"定制款"];
-    } else {
-        [typeLabel setText:array[1]];
-    }
-    
+    [imgContent sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.car_img]]];
+    [titleLabel setText:[NSString stringWithFormat:@"您的订单:%@", model.re_marks]];
+    [senderContent setText:@"配送单位:顺丰快递"];
+    [nameContent setText:[NSString stringWithFormat:@"物流单号:%@",model.express_no]];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

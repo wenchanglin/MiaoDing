@@ -9,13 +9,15 @@
 #import <Foundation/Foundation.h>
 
 @interface AddressModel : NSObject
-@property (nonatomic, retain) NSString *userName;
-@property (nonatomic, retain) NSString *userPhone;
-@property (nonatomic, retain) NSString *userAddress;
-@property (nonatomic, retain) NSString *addressId;
-@property (nonatomic, retain) NSString *addressDefault;
+@property(nonatomic,assign)NSInteger ID;
+@property (nonatomic, retain) NSString *accept_name;
+@property (nonatomic, retain) NSString *phone;
+@property (nonatomic, retain) NSString *address;
+@property (nonatomic, retain) NSString *user_id;
+@property (nonatomic, assign) NSInteger is_default;
 @property (nonatomic, retain) NSString *province;
 @property (nonatomic, retain) NSString *city;
 @property (nonatomic, retain) NSString *area;
-@property (nonatomic, retain) NSString *detaiArea;
+@property (nonatomic, retain) NSString *country;
+@property(nonatomic,strong)NSString*noAddressPic;
 @end

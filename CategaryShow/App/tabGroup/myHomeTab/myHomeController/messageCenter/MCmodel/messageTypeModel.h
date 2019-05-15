@@ -9,10 +9,8 @@
 #import <Foundation/Foundation.h>
 
 @interface messageTypeModel : NSObject
-@property (nonatomic, retain) NSString *messageImage;
-@property (nonatomic, retain) NSString *messageName;
-@property (nonatomic, retain) NSMutableDictionary *messageLastMsg;
-@property (nonatomic, retain) NSString *messageId;
-@property (nonatomic, retain) NSString *messageType;
-@property (nonatomic, retain) NSString *unReadCount;
+@property (nonatomic, retain) NSString *img;
+@property (nonatomic, retain) NSString *name;
+@property (nonatomic, assign) NSInteger type;
+@property (nonatomic, assign) NSInteger unread_message_num;
 @end

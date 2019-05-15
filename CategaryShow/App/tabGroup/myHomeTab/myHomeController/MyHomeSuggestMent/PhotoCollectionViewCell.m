@@ -13,8 +13,8 @@
 //懒加载创建数据
 -(UIImageView *)photoV{
     if (_photoV == nil) {
-        self.photoV = [[UIImageView alloc]initWithFrame:self.bounds];
-        
+        self.photoV = [[UIImageView alloc]initWithFrame:CGRectZero];
+        [self.contentView addSubview:self.photoV];
     }
     return _photoV;
 }
@@ -24,7 +24,21 @@
 
     self = [super initWithFrame:frame];
     if (self) {
-        [self.contentView addSubview:self.photoV];
+        if (iPadDevice) {
+            [self.photoV mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.centerX.equalTo(self.contentView.mas_centerX);
+                make.centerY.equalTo(self.contentView.mas_centerY);
+                make.width.height.mas_equalTo((SCREEN_WIDTH - 60-20) / 5);
+            }];
+        }
+        else
+        {
+            [self.photoV mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.centerX.equalTo(self.contentView.mas_centerX);
+                make.centerY.equalTo(self.contentView.mas_centerY);
+                make.width.height.mas_equalTo((SCREEN_WIDTH - 60 -20) / 5);
+            }];
+        }
     }
     return self;
 }

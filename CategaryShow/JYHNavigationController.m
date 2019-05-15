@@ -22,7 +22,6 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
     }
     return self;
 }
@@ -106,15 +105,14 @@
         negativeSpacer.width = -15;
        UIBarButtonItem* barbtnitem= [self backItemWithimage:[UIImage imageNamed:@"backLeftWhite"] highImage:[UIImage imageNamed:@"backLeftWhite"]  target:self action:@selector(back) title:@"返            回"];
         viewController.navigationItem.leftBarButtonItem = barbtnitem;
-//        viewController.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:negativeSpacer, barbtnitem, nil];
         [super pushViewController:viewController animated:NO];
         return;
     }
     [super pushViewController:viewController animated:YES];
     // 修改tabBra的frame
-    CGRect frame = self.tabBarController.tabBar.frame;
-    frame.origin.y = [UIScreen mainScreen].bounds.size.height - frame.size.height;
-    self.tabBarController.tabBar.frame = frame;
+//    CGRect frame = self.tabBarController.tabBar.frame;
+//    frame.origin.y = [UIScreen mainScreen].bounds.size.height - frame.size.height;
+//    self.tabBarController.tabBar.frame = frame;
 }
 - (void)back{
     [self popViewControllerAnimated:YES];

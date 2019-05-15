@@ -108,24 +108,24 @@
 -(void)setModel:(designerModel *)model
 {
     _model = model;
-    [imageForClothes sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.img]]];
-    imageForClothes.contentMode = UIViewContentModeScaleAspectFill;
-    [imageForClothes.layer setMasksToBounds:YES];
-    [title setText:model.name];
-    if ([model.uname length] > 0) {
-        [name setText:model.uname];
-    }
-    
-    
-    
-    NSMutableAttributedString * attributedString1 = [[NSMutableAttributedString alloc] initWithString:model.p_time];
-    NSMutableParagraphStyle * paragraphStyle1 = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyle1 setLineSpacing:2];
-    [attributedString1 addAttribute:NSParagraphStyleAttributeName value:paragraphStyle1 range:NSMakeRange(0, [model.p_time length])];
-    [descript setAttributedText:attributedString1];
-    [descript sizeToFit];
-    
-    [headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.avatar]]];
+//    [imageForClothes sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.img]]];
+//    imageForClothes.contentMode = UIViewContentModeScaleAspectFill;
+//    [imageForClothes.layer setMasksToBounds:YES];
+//    [title setText:model.name];
+//    if ([model.uname length] > 0) {
+//        [name setText:model.uname];
+//    }
+//    
+//    
+//    
+//    NSMutableAttributedString * attributedString1 = [[NSMutableAttributedString alloc] initWithString:model.p_time];
+//    NSMutableParagraphStyle * paragraphStyle1 = [[NSMutableParagraphStyle alloc] init];
+//    [paragraphStyle1 setLineSpacing:2];
+//    [attributedString1 addAttribute:NSParagraphStyleAttributeName value:paragraphStyle1 range:NSMakeRange(0, [model.p_time length])];
+//    [descript setAttributedText:attributedString1];
+//    [descript sizeToFit];
+//    
+//    [headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.avatar]]];
 }
 
 @end

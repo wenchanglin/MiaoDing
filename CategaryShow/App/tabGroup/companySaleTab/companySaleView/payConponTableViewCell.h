@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface payConponTableViewCell : UITableViewCell
-
+@property(nonatomic,strong)UIImageView*yhquanImageView;
 @property (nonatomic, retain) UILabel *chooseCon;
 @property(nonatomic,strong)UILabel * tikerNumLabel;
 @end

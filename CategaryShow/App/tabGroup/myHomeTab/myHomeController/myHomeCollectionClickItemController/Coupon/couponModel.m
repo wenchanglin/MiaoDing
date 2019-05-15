@@ -1,4 +1,4 @@
-//
+    //
 //  couponModel.m
 //  CategaryShow
 //
@@ -9,5 +9,8 @@
 #import "couponModel.h"
 
 @implementation couponModel
-
++(NSDictionary *)mj_replacedKeyFromPropertyName
+{
+    return @{@"ID":@"id"};
+}
 @end

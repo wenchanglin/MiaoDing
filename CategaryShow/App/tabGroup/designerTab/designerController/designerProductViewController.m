@@ -65,7 +65,7 @@
 
 -(void)createDeisgner
 {
-    desinger = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-88:SCREEN_HEIGHT - 64) style:UITableViewStylePlain];
+    desinger = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-88:SCREEN_HEIGHT - 64) style:UITableViewStylePlain];
     
     desinger.delegate = self;
     desinger.dataSource = self;
@@ -151,7 +151,7 @@
                 [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
                 [shareParams SSDKSetupShareParamsByText:model.sub_name
                                                  images:imageArray
-                                                    url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%zd&type=2&shareout_id=%@", URL_HEADURL,Share_ChengPin, model.goodsListId,[SelfPersonInfo getInstance].personUserKey]]
+                                                    url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?goods_id=%@&type=2&shareout_id=%@", URL_HEADURL,Share_ChengPin, @(model.goodsListId),@([SelfPersonInfo shareInstance].userModel.uid)]]
                                                   title:model.name
                                                    type:SSDKContentTypeWebPage];
                 [ShareCustom shareWithContent:shareParams];
@@ -159,9 +159,9 @@
                 break;
             case 42:
             {
-                [params setObject:@(model.goodsListId) forKey:@"cid"];
+                [params setObject:@(model.goodsListId) forKey:@"rid"];
                 [params setObject:@(2) forKey:@"type"];
-                [shouCangDomain getData:URL_AddSave PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+                [shouCangDomain getData:URL_CollectSave PostParams:params finish:^(BaseDomain *domain, Boolean success) {
                     if ([self checkHttpResponseResultStatus:shouCangDomain]) {
 //                        WCLLog(@"%@",domain.dataRoot);
                         if ([[domain.dataRoot objectForKey:@"code"]integerValue]==1) {

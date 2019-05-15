@@ -11,8 +11,8 @@
 
 @protocol measurePlaceDelegate <NSObject>
 
--(void)placeDetail:(NSString *)detail;
-
+-(void)placeDetail:(NSString *)detail index:(NSInteger)index;
+-(void)endEdit:(NSString*)edit index:(NSInteger)index;
 
 @end
 

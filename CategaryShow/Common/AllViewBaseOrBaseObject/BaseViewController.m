@@ -56,7 +56,7 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
 @implementation BaseViewController
 
 {
-//    AwAlertView *awAlert;
+    //    AwAlertView *awAlert;
 }
 
 
@@ -74,10 +74,12 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     self.viewRootBak = self.view;
     self.details = [BaseDomain getInstance:YES];
     self.automaticallyAdjustsScrollViewInsets = NO;
     UIControl * controlView = [[UIControl alloc] initWithFrame:self.view.frame];
+    controlView.backgroundColor= [UIColor colorWithHexString:@"#EDEDED"];
     timePostData = [BaseDomain getInstance:NO];
     [controlView addTarget:self action:@selector(onSpaceViewClickToCloseKeyboard:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:controlView];
@@ -131,7 +133,7 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
             mcWuLiuViewController *list = [[mcWuLiuViewController alloc] init];
             list.mc_Id = [message stringForKey:@"type"];
             [self.navigationController pushViewController:list animated:YES];
-
+            
         }
             break;
         case 4:
@@ -161,7 +163,7 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
             introduce.designerName = [message stringForKey:@"title"];
             introduce.remark = [message stringForKey:@"content"];
             [self.navigationController pushViewController:introduce animated:YES];
-
+            
         }
             
             
@@ -216,8 +218,7 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
 
 -(Boolean)userHaveLogin
 {
-    userInfoModel *userInfo = [userInfoModel getInstance];
-    if ([userInfo checkUserHaveBeenLogin]) {
+      if ([SelfPersonInfo shareInstance].isLoginStatus) {
         return YES;
     } else return NO;
     
@@ -322,30 +323,23 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
     return [reSizeImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
 }
 
-- (Boolean) checkHttpResponseResultStatus:(BaseDomain*) domain {
+- (Boolean) checkHttpResponseResultStatus:(id) domain {
     
-    if (domain.result == 1) {
+    if ([domain[@"code"]integerValue] == 10000) {
         return YES;
-    } else if(domain.result == 10001) {
+    } else if([domain[@"code"]integerValue] == 10001) {
         EnterViewController *enter = [[EnterViewController alloc] init];
         [self presentViewController:enter animated:YES completion:nil];
         return NO;
-    } else {
-        if (domain.result == -99) {
-            alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"dialog_title_tip", nil) message:domain.resultMessage delegate:self cancelButtonTitle:NSLocalizedString(@"dialog_button_okknow", nil) otherButtonTitles: nil];
-            
-            [alert show];
-        }
-        else if (domain.result==2)
-        {
-            return YES;
-        }
-        else {
-            alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"dialog_title_tip", nil) message:domain.resultMessage delegate:nil cancelButtonTitle:NSLocalizedString(@"dialog_button_okknow", nil) otherButtonTitles: nil];
-            [alert show];
-        }
-        
-        
+    }else if([domain[@"code"]integerValue] == 10005||[domain[@"code"]integerValue]==10007) {
+        alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"dialog_title_tip", nil) message:domain[@"msg"] delegate:nil cancelButtonTitle:NSLocalizedString(@"dialog_button_okknow", nil) otherButtonTitles: nil];
+        [alert show];
+        return NO;
+    }
+    else
+    {
+        alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"dialog_title_tip", nil) message:domain[@"msg"] delegate:self cancelButtonTitle:NSLocalizedString(@"dialog_button_okknow", nil) otherButtonTitles: nil];
+        [alert show];
         return NO;
     }
 }
@@ -358,51 +352,13 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
     }
 }
 
-#pragma mark - MBProgressHUDDelegate methods
 
-#pragma mark - textFieldKeyboard
-
-////开始编辑输入框的时候，软键盘出现，执行此事件
-//-(void)textFieldDidBeginEditing:(UITextField *)textField
-//{
-//    
-//    if (isViewYFisrt) {
-//        initViewY = self.view.frame.origin.y;
-//        isViewYFisrt = NO;
-//    }
-//    
-//    int offset = [self getControlFrameOriginY:textField] + 45 - (self.view.frame.size.height - 216.0);//键盘高度216
-//    
-//    NSTimeInterval animationDuration = 0.30f;
-//    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
-//    [UIView setAnimationDuration:animationDuration];
-//    
-//    //将视图的Y坐标向上移动offset个单位，以使下面腾出地方用于软键盘的显示
-//    if(offset > 0)
-//        self.view.frame = CGRectMake(0.0f, -offset, self.view.frame.size.width, self.view.frame.size.height);
-//    
-//    [UIView commitAnimations];
-//}
-//
-//- (CGFloat) getControlFrameOriginY : (UIView *) curView {
-//    
-//    CGFloat resultY = 0;
-//    
-//    if ([curView superview] != nil && ![[curView superview] isEqual:self.view]) {
-//        resultY = [self getControlFrameOriginY:[curView superview]];
-//    }
-//    
-//    return resultY + curView.frame.origin.y;
-//}
-//
-//
 - (CGFloat) calculateTextHeight:(UIFont *)font givenText:(NSString *)text givenWidth:(CGFloat)width{
     CGFloat delta;
     if ([text isEqualToString:@""]) {
         delta = 0;
     } else {
         CGSize size = [text sizeWithFont:font constrainedToSize:CGSizeMake(width, 9999) lineBreakMode:NSLineBreakByWordWrapping];
-        
         delta = size.height;
     }
     
@@ -410,34 +366,6 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
     return delta;
     
 }
-//
-////当用户按下return键或者按回车键，keyboard消失
-//-(BOOL)textFieldShouldReturn:(UITextField *)textField
-//{
-//    [textField resignFirstResponder];
-//    
-//    return YES;
-//}
-//
-//
-////输入框编辑完成以后，将视图恢复到原始状态
-//-(void)textFieldDidEndEditing:(UITextField *)textField
-//{
-//    CGRect frame = self.view.frame;
-//    
-//    frame.origin.x = 0;
-//    frame.origin.y = initViewY;
-//    
-//    NSTimeInterval animationDuration = 0.30f;
-//    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
-//    [UIView setAnimationDuration:animationDuration];
-//    
-//    [self.view setFrame:frame];
-//    
-//    [UIView commitAnimations];
-////    self.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-//}
-
 
 //指定宽度按比例缩放
 -(UIImage *) imageCompressForWidth:(UIImage *)sourceImage targetWidth:(CGFloat)defineWidth{
@@ -499,7 +427,6 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
 
 - (NSString*)deviceVersion
 {
-    // 需要#import "sys/utsname.h"
     struct utsname systemInfo;
     uname(&systemInfo);
     NSString * deviceString = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
@@ -520,7 +447,6 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
     if([deviceString isEqualToString:@"iPhone10,5"])    return @"8P";
     if([deviceString isEqualToString:@"iPhone10,6"])    return @"X";
     
-    
     return deviceString;
 }
 
@@ -535,40 +461,17 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
     [params setObject:reTime forKey:@"time"];
     [params setObject:view1 forKey:@"module_name"];
     [params setObject:view2 forKey:@"p_module_name"];
-    [timePostData postData:URL_USerActionMain PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:timePostData]) {
-            WCLLog(@"%@", domain.dataRoot);
-        }
-    }];
+    //    [timePostData postData:URL_USerActionMain PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+    //        if ([self checkHttpResponseResultStatus:timePostData]) {
+    //            WCLLog(@"%@", domain.dataRoot);
+    //        }
+    //    }];
     
 }
 
 -(void )getDateBeginHaveReturn:(NSDate *)dateBegin fatherView:(NSString *)view2{
-    
-    
-    NSDate* datfinish = [NSDate dateWithTimeIntervalSinceNow:0];
-    NSTimeInterval a=[datfinish timeIntervalSinceDate:dateBegin];
-    NSInteger time = round(a);
-    NSString *reTime = [NSString stringWithFormat:@"%ld", time];
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:reTime forKey:@"time"];
-    
-    [params setObject:view2 forKey:@"p_module_name"];
-    [timePostData postData:URL_UserActionLogin PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:timePostData]) {
-            WCLLog(@"%@", domain.dataRoot);
-//            NewLoginViewController * new = [[NewLoginViewController alloc]init];
-//            new.loginID = [domain.dataRoot stringForKey:@"id"];
-//            JYHNavigationController * navs = [[JYHNavigationController alloc]initWithRootViewController:new];
-//            [self presentViewController:navs animated:YES completion:nil];
-            EnterViewController *enter = [[EnterViewController alloc] init];
-            enter.loginId = [domain.dataRoot stringForKey:@"id"];
-            [self presentViewController:enter animated:YES completion:nil];
-            
-        }
-    }];
-    
-    
+    EnterViewController *enter = [[EnterViewController alloc] init];
+    [self presentViewController:enter animated:YES completion:nil];
 }
 
 -(void)getDateDingZhi:(NSMutableDictionary *)dic beginDate:(NSDate *)date ifDing:(BOOL)ding
@@ -577,19 +480,19 @@ static NSString * Key_MsgList_Histroy_SearchTime = @"Message_SearchTime";
     NSTimeInterval a=[datfinish timeIntervalSinceDate:date];
     NSInteger time = round(a);
     NSString *reTime = [NSString stringWithFormat:@"%ld", time];
-
+    
     if (ding) {
         [dic setObject:reTime forKey:@"dingzhi_time"];
     } else {
         [dic setObject:reTime forKey:@"goods_time"];
     }
-    [timePostData postData:URL_UserDingAction PostParams:dic finish:^(BaseDomain *domain, Boolean success) {
-       
-//        if ([self checkHttpResponseResultStatus:domain]) {
-//            NSLog( @"%@", domain.dataRoot);
-//        }
-        
-    }];
+    //    [timePostData postData:URL_UserDingAction PostParams:dic finish:^(BaseDomain *domain, Boolean success) {
+    
+    //        if ([self checkHttpResponseResultStatus:domain]) {
+    //            NSLog( @"%@", domain.dataRoot);
+    //        }
+    
+    //    }];
     
     
 }

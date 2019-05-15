@@ -16,7 +16,6 @@
 #import "UserDelegateViewController.h"
 @interface RegisViewController ()
 @property (nonatomic, retain)UITextField *userName;
-@property (nonatomic, retain) BaseDomain *regisClick;
 @property (nonatomic, retain) UITextField *regisWord;
 @property (nonatomic, retain) BaseTextField *firstPassWord;
 @property (nonatomic, retain) BaseTextField *CheckPassWord;
@@ -29,8 +28,6 @@
     [super viewDidLoad];
     [self.view setBackgroundColor:getUIColor(Color_background)];
     self.title = @"注册";
-    self.regisClick = [BaseDomain getInstance:YES];
-    
     [self.navigationController.navigationBar setTitleTextAttributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:19],NSForegroundColorAttributeName:getUIColor(Color_mainColor)}];
     // Do any additional setup after loading the view.
     [self createView];
@@ -137,16 +134,16 @@
     if ([self.userName.text length] == 11) {
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
         [params setObject:self.userName.text forKey:@"account"];
-        [_regisClick postData:@"/buser/accountCheck.do" PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-            NSLog(@"%@", _regisClick.dataRoot);
-            if ([self checkHttpResponseResultStatus:_regisClick]) {
-                
-                NextRegisViewController *next = [[NextRegisViewController alloc] init];
-                next.userNumber = _userName.text;
-                [self.navigationController pushViewController:next animated:YES];
-                
-            }
-        }];
+//        [_regisClick postData:@"/buser/accountCheck.do" PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+//            NSLog(@"%@", _regisClick.dataRoot);
+//            if ([self checkHttpResponseResultStatus:_regisClick]) {
+//                
+//                NextRegisViewController *next = [[NextRegisViewController alloc] init];
+//                next.userNumber = _userName.text;
+//                [self.navigationController pushViewController:next animated:YES];
+//                
+//            }
+//        }];
 
     } else {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"手机格式输入有误" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
@@ -156,44 +153,9 @@
 - (BOOL)isMobileNumber:(NSString *)mobileNum
 {
     
-    /**
-     * 手机号码
-     * 移动：134[0-8],135,136,137,138,139,150,151,157,158,159,182,187,188
-     * 联通：130,131,132,152,155,156,185,186
-     * 电信：133,1349,153,180,189
-     */
-    NSString * MOBILE = @"^1(3[0-9]|5[0-35-9]|8[025-9])\\d{8}$";
-    /**
-     10 * 中国移动：China Mobile
-     11 * 134[0-8],135,136,137,138,139,150,151,157,158,159,182,187,188
-     12 */
-    NSString * CM = @"^1(34[0-8]|(3[5-9]|5[017-9]|8[278])\\d)\\d{7}$";
-    /**
-     15 * 中国联通：China Unicom
-     16 * 130,131,132,152,155,156,185,186
-     17 */
-    NSString * CU = @"^1(3[0-2]|5[256]|8[56])\\d{8}$";
-    /**
-     20 * 中国电信：China Telecom
-     21 * 133,1349,153,180,189
-     22 */
-    NSString * CT = @"^1((33|53|8[09])[0-9]|349)\\d{7}$";
-    /**
-     25 * 大陆地区固话及小灵通
-     26 * 区号：010,020,021,022,023,024,025,027,028,029
-     27 * 号码：七位或八位
-     28 */
-    // NSString * PHS = @"^0(10|2[0-5789]|\\d{3})\\d{7,8}$";
-    
-    NSPredicate *regextestmobile = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", MOBILE];
-    NSPredicate *regextestcm = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", CM];
-    NSPredicate *regextestcu = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", CU];
-    NSPredicate *regextestct = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", CT];
-    
-    if (([regextestmobile evaluateWithObject:mobileNum] == YES)
-        || ([regextestcm evaluateWithObject:mobileNum] == YES)
-        || ([regextestct evaluateWithObject:mobileNum] == YES)
-        || ([regextestcu evaluateWithObject:mobileNum] == YES))
+    NSString *target = @"^(0|86|17951)?(13[0-9]|15[012356789]|16[6]|19[89]]|17[01345678]|18[0-9]|14[579])[0-9]{8}$";
+    NSPredicate *targetPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", target];
+    if ([targetPredicate evaluateWithObject:mobileNum])
     {
         return YES;
     }

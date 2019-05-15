@@ -69,20 +69,20 @@
     .heightIs(20);
      [WXLabel setTextAlignment:NSTextAlignmentCenter];
     [WXLabel setTextColor:[UIColor lightGrayColor]];
-    [WXLabel setText:@"Copyright©2015-2016"];
+    [WXLabel setText:@"Copyright©2016-2019"];
     [WXLabel setFont:[UIFont systemFontOfSize:14]];
     
     CopyRight =[UILabel new];
     [self.view addSubview:CopyRight];
     CopyRight.sd_layout
     .centerXEqualToView(self.view)
-    .topSpaceToView(WXLabel, 0)
+    .topSpaceToView(WXLabel, 2)
     .widthIs(250)
-    .heightIs(40);
+    .heightIs(20);
     [CopyRight setNumberOfLines:2];
     [CopyRight setTextAlignment:NSTextAlignmentCenter];
     [CopyRight setTextColor:[UIColor lightGrayColor]];
-    [CopyRight setText:@"杭州云工场科技有限公司"];
+    [CopyRight setText:@"妙定morder.cn版权所有"];
     [CopyRight setFont:[UIFont systemFontOfSize:14]];
     
     

@@ -9,17 +9,24 @@
 #import <Foundation/Foundation.h>
 
 @interface myBagModel : NSObject
-
-@property (nonatomic, retain) NSString *clothesImg;  //衣服图片
-@property (nonatomic, retain) NSString *clothesName;  //衣服名字
-@property (nonatomic, retain) NSString *clothesPrice; //衣服价格
-@property (nonatomic, retain) NSString *clothesCount; //衣服数量
+@property(nonatomic,strong)NSString*cart_id;
+@property (nonatomic, retain) NSString *category_id;  
+@property (nonatomic, retain) NSString *goods_id;
+@property (nonatomic, retain) NSString *goods_img;
+@property (nonatomic, retain) NSString *goods_name;
+@property (nonatomic, assign) NSInteger goods_num;
 @property (nonatomic, retain) NSString *ifChoose;  //是否选择了
-@property (nonatomic, retain) NSString *bagId;
-@property (nonatomic, retain) NSString *good_type;
-@property (nonatomic, retain) NSString *good_id;
-
-
-@property (nonatomic, assign) NSInteger can_use_card;
-@property (nonatomic, retain) NSString *sizeOrDing;
+@property (nonatomic, retain) NSString *price;
+@property (nonatomic, retain) NSString *re_marks;
+@property(nonatomic,strong)NSString* sizeOrDing;
+@property(nonatomic,strong)NSArray*part;
+@property(nonatomic,strong)NSArray*sku;
+@end
+@interface partModel : NSObject
+@property (nonatomic, retain) NSString *part_name;
+@property (nonatomic, retain) NSString *part_value;
+@end
+@interface skuModel : NSObject
+@property(nonatomic,strong)NSString*type;
+@property(nonatomic,strong)NSString*value;
 @end

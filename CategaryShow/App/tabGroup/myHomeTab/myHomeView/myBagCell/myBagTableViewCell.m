@@ -37,8 +37,8 @@
     noChoose.sd_layout
     .leftSpaceToView(contentView,10)
     .centerYEqualToView(contentView)
-    .heightIs(30)
-    .widthIs(30);
+    .heightIs(16)
+    .widthIs(16);
     [noChoose.layer setCornerRadius:8];
     [noChoose.layer setMasksToBounds:YES];
     
@@ -61,10 +61,12 @@
     .leftSpaceToView(clothesImg,13.5)
     .topSpaceToView(contentView,25)
     .heightIs(15)
-    .widthIs(180);
+    .widthIs(160);
     [clothesName setFont:Font_14];
     
     haveSizeOrDing = [UILabel new];
+    [haveSizeOrDing setTextColor:[UIColor grayColor]];
+    [haveSizeOrDing setFont:[UIFont systemFontOfSize:12]];
     [contentView addSubview:haveSizeOrDing];
     
     haveSizeOrDing.sd_layout
@@ -72,30 +74,34 @@
     .topSpaceToView(clothesName,5)
     .heightIs(15)
     .widthIs(180);
-    [haveSizeOrDing setTextColor:[UIColor grayColor]];
-    [haveSizeOrDing setFont:[UIFont systemFontOfSize:12]];
     
-    
+    _moreLabel =[UILabel new];
+    _moreLabel.text = @"点击查看更多配件信息";
+    [_moreLabel yb_addAttributeTapActionWithStrings:@[_moreLabel.text] delegate:self];
+    [_moreLabel setTextColor:[UIColor grayColor]];
+    [_moreLabel setFont:[UIFont systemFontOfSize:12]];
+    [contentView addSubview:_moreLabel];
+    _moreLabel.sd_layout.topSpaceToView(haveSizeOrDing, 2).leftSpaceToView(clothesImg, 13.5).heightIs(15).widthIs(180);
     
     clothesPrice = [UILabel new];
     [contentView addSubview:clothesPrice];
     clothesPrice.sd_layout
     .leftSpaceToView(clothesImg,13.5)
-    .bottomSpaceToView(contentView,30)
+    .topSpaceToView(_moreLabel,5)
     .widthIs(180)
     .heightIs(15);
     [clothesPrice setFont:Font_12];
     
     clothesCount = [UILabel new];
     [contentView addSubview:clothesCount];
-    
     clothesCount.sd_layout
     .rightSpaceToView(contentView, 29)
-    .bottomSpaceToView(contentView,30)
+    .topSpaceToView(_moreLabel,5)
     .widthIs(40)
     .heightIs(15);
     [clothesCount setFont:[UIFont systemFontOfSize:16]];
     [clothesCount setTextAlignment:NSTextAlignmentRight];
+    
     
     
     _cutCount = [UIButton new];
@@ -103,7 +109,7 @@
     
     _cutCount.sd_layout
     .leftSpaceToView(clothesImg,16)
-    .topSpaceToView(clothesName,33)
+    .topSpaceToView(_moreLabel,4)
     .heightIs(25)
     .widthIs(55);
     [_cutCount setTitle:@"-" forState:UIControlStateNormal];
@@ -120,7 +126,7 @@
     [contentView addSubview:tempClothesCount];
     tempClothesCount.sd_layout
     .leftSpaceToView(_cutCount,0)
-    .topSpaceToView(clothesName, 33)
+    .topSpaceToView(_moreLabel,5)
     .heightIs(25)
     .widthIs(55);
     [tempClothesCount setFont:[UIFont systemFontOfSize:16]];
@@ -132,7 +138,7 @@
     
     _addCount.sd_layout
     .leftSpaceToView(tempClothesCount, 0)
-    .topSpaceToView(clothesName, 33)
+    .topSpaceToView(_moreLabel,4)
     .heightIs(25)
     .widthIs(55);
     [_addCount setTitle:@"+" forState:UIControlStateNormal];
@@ -161,26 +167,27 @@
         [_delegate clickButton:self.tag];
     }
 }
-
+-(void)yb_attributeTapReturnString:(NSString *)string range:(NSRange)range index:(NSInteger)index
+{
+    if ([self.delegate respondsToSelector:@selector(clickMoreLabel:)]) {
+        [self.delegate clickMoreLabel:self.tag-10];
+    }
+}
 -(void)setModel:(myBagModel *)model
 {
     _model = model;
     if ([model.ifChoose isEqualToString:@"yes"]) {
-        [noChoose setImage:[UIImage imageNamed:@"choose"] forState:UIControlStateNormal];
-        
+        [noChoose setBackgroundImage:[UIImage imageNamed:@"choose"] forState:UIControlStateNormal];
     } else {
-        
-        [noChoose setImage:[UIImage imageNamed:@"noChoose"] forState:UIControlStateNormal];
+        [noChoose setBackgroundImage:[UIImage imageNamed:@"noChoose"] forState:UIControlStateNormal];
     }
     [haveSizeOrDing setText:model.sizeOrDing];
+    [clothesImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,model.goods_img]]];
+    [clothesName setText:model.goods_name];
     
-    [clothesImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL,model.clothesImg]]];
-    
-    [clothesName setText:model.clothesName];
-    
-    [clothesPrice setText:[NSString stringWithFormat:@"¥%@",model.clothesPrice]];
-    [clothesCount setText:[NSString stringWithFormat:@"×%@", model.clothesCount]];
-    [tempClothesCount setText:model.clothesCount];
+    [clothesPrice setText:[NSString stringWithFormat:@"¥%@",model.price]];
+    [clothesCount setText:[NSString stringWithFormat:@"×%@", @(model.goods_num)]];
+    [tempClothesCount setText:[NSString stringWithFormat:@"%@",@(model.goods_num)]];
     
 }
 

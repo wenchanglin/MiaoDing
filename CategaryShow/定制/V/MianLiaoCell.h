@@ -14,7 +14,7 @@
 @end
 @interface MianLiaoCell : UITableViewCell<UICollectionViewDelegate,UICollectionViewDataSource>
 @property (nonatomic, weak)id<mianLiaoDelegate>delegate;
-@property (nonatomic, retain) NSMutableArray *mianLiaoArray;
+@property (nonatomic, strong) NSMutableArray *mianLiaoArray;
 
 
 @end

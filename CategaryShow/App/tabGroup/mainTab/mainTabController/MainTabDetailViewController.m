@@ -8,9 +8,7 @@
 
 #import "MainTabDetailViewController.h"
 #import "ToBuyCompanyClothes(SecondPlan)ViewController.h"
-#define URLZIXUAN @"/web/jquery-obj/static/web/html/designer.html"
 
-#define URLShare @"/web/jquery-obj/static/fx/html/designer.html"
 #import <ShareSDK/ShareSDK.h>
 #import <ShareSDKExtension/SSEShareHelper.h>
 #import <ShareSDKUI/ShareSDK+SSUI.h>
@@ -36,7 +34,7 @@
 -(void)viewWillDisappear:(BOOL)animated
 {
     [self.navigationController setNavigationBarHidden:YES animated:animated];
-    [self getDateBegin:datBegin currentView:@"首页" fatherView:_tagName];
+    [self getDateBegin:datBegin currentView:@"首页" fatherView:_titleName];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -52,7 +50,12 @@
     UIButton *buttonLeft = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 25)];
     [buttonLeft setImage:[UIImage imageNamed:@"backLeftWhite"] forState:UIControlStateNormal];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonLeft];
-    [buttonLeft setImageEdgeInsets:UIEdgeInsetsMake(0, -15, 0, 15)];
+    [buttonLeft setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];//colorWithHexString:@"#FFFFFF"
+    [buttonLeft setTitleColor:[UIColor clearColor] forState:UIControlStateHighlighted];
+    [buttonLeft sizeToFit];
+    [buttonLeft setTitle:@"返            回" forState:UIControlStateNormal];
+    buttonLeft.titleEdgeInsets = UIEdgeInsetsMake(0, -5, 0, 5);
+    buttonLeft.imageEdgeInsets = UIEdgeInsetsMake(0, 5, 0, -5);
     [buttonLeft addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
     if (@available(iOS 11.0, *)) {
         web.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
@@ -97,9 +100,9 @@
     NSURLRequest *request;
     web.delegate = self;
     if ([[userd stringForKey:@"token"] length] > 0) {
-        request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@&token=%@&content=1&ios=true&new_ios=1",URL_HEADURL, URLZIXUAN, _webId, [userd stringForKey:@"token"]]]];
+        request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@&token=%@&content=1&ios=true&new_ios=1",URL_HeadForH5, URLZIXUAN, _webId, [userd stringForKey:@"token"]]]];
     } else {
-         request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@&content=1&ios=true&new_ios=1",URL_HEADURL, URLZIXUAN, _webId]]];
+         request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@&content=1&ios=true&new_ios=1",URL_HeadForH5, URLZIXUAN, _webId]]];
     }
     
     
@@ -109,18 +112,15 @@
 
 -(void)shareClick
 {
-    NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-    
     //1、创建分享参数（必要）
     NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
     NSArray* imageArray = @[[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, _imageUrl]]];
     [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
     [shareParams SSDKSetupShareParamsByText:_titleContent
                                       images:imageArray
-                                         url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@&type=1&ios=true",URL_HEADURL, URLShare, _webId]]
+                                         url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@&type=1&ios=true",URL_HeadForH5, URLShare, _webId]]
                                        title:_titleName
                                         type:SSDKContentTypeWebPage];
-    
     [ShareCustom shareWithContent:shareParams];
     
 }
@@ -129,26 +129,15 @@
 
 -(void)loginSuccessAction
 {
-//    NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
-//    NSURLRequest *request;
-//    if ([[userd stringForKey:@"token"] length] > 0) {
-//        request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?type=1&id=%@&token=%@&ios=true", URLZIXUAN, _webId, [userd stringForKey:@"token"]]]];
-//    } else {
-//        request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?type=1&id=%@&ios=true", URLZIXUAN, _webId]]];
-//    }
-//    
-//    [web loadRequest:request];
+
     
     NSUserDefaults *userd = [NSUserDefaults standardUserDefaults];
     NSURLRequest *request;
     if ([[userd stringForKey:@"token"] length] > 0) {
-        request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?type=1&id=%@&token=%@&ios=true&new_ios=1", URLZIXUAN, _webId, [userd stringForKey:@"token"]]]];
+        request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@&token=%@&content=1&ios=true&new_ios=1",URL_HeadForH5, URLZIXUAN, _webId, [userd stringForKey:@"token"]]]];
     } else {
-        request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?type=1&id=%@&ios=true&new_ios=1", URLZIXUAN, _webId]]];
+        request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@&content=1&ios=true&new_ios=1",URL_HeadForH5, URLZIXUAN, _webId]]];
     }
-    
-    [web loadRequest:request];
-
 }
 
 

@@ -10,12 +10,14 @@
 #define customPch_pch
 #ifdef __OBJC__
 #import "Constant.h"
+#import "ShiPeiIphoneXSRMax.h"
 #import "NSObject+LZSwipeCategory.h"
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 #import "Masonry.h"
-#import "BaseDomain.h"
+#import "UIControl+QiEventInterval.h"
+#import "WCLMethodTools.h"
 #import "UrlManager.h"
 #import "userInfoModel.h"
 #import "SelfPersonInfo.h"
@@ -29,7 +31,7 @@
 #import "RDVTabBarController.h"
 #import "EnterViewController.h"
 #import "MyHomeViewController.h"
-#import "QYSDK.h"
+#import "MoreUrlInterface.h"
 #import "getTheIconTitle.h"
 #import "UIView+SDAutoLayout.h"
 #import "UITableView+SDAutoTableViewCellHeight.h"
@@ -40,14 +42,15 @@
 #import "sharePaySuccessViewController.h"
 #import "MBProgressHUD.h"
 #import "ShareCustom.h"
-#import "QYSource.h"
-#import "QYCommodityInfo.h"
-#import "QYCustomUIConfig.h"
+//#import "QYSource.h"
+//#import "QYCommodityInfo.h"
+//#import "QYCustomUIConfig.h"
 #import <MJRefresh.h>
 #import <MJExtension.h>
 #import "wclNetTool.h"
 #import <IQKeyboardManager.h>
 #import <UMMobClick/MobClick.h>
+
 //#import <MLeaksFinder.h>
 // Include any system framework and library headers here that should be included in all compilation units.
 // You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.

@@ -8,13 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "designerModel.h"
+@class designerinfoNewTableViewCell;
+@protocol DesignerMoreBtnsClickDelegate<NSObject>
+-(void)moreBtnClickWithBtnTag:(NSInteger)tag withModel:(designerModel*)model withCell:(designerinfoNewTableViewCell*)cell;
+@end
 @interface designerinfoNewTableViewCell : UITableViewCell
-@property (nonatomic, retain) designerModel *model;
+@property (nonatomic, strong) designerModel *model;
 @property(nonatomic,strong)UIView * desinerView;
 @property(nonatomic,strong)UIButton * zhuanFaBtn;
 @property(nonatomic,strong)UIButton * shouChangBtn;
 @property(nonatomic,strong)UIButton * loveBtn;
 @property(nonatomic,strong)UIButton * commentBtn;
-@property(nonatomic)void(^FourBtns)(UIButton * buttons);
-@property(nonatomic)void(^DesignerInfo)(UITapGestureRecognizer * tap);
+@property(nonatomic,weak)id<DesignerMoreBtnsClickDelegate>delegate;
 @end

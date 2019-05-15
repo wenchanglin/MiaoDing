@@ -15,12 +15,10 @@
 
 @implementation UserDelegateViewController
 {
-    BaseDomain *getData;
     NSString *reageString;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    getData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     // Do any additional setup after loading the view.
     
@@ -47,14 +45,12 @@
 
 -(void)creatData
 {
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@"1" forKey:@"page"];
-    [getData getData:URL_GETPEIZHI PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getData]) {
-            reageString = [[getData.dataRoot objectForKey:@"data"] stringForKey:@"user_manual"];
+
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_UserLoginProtocol_String] parameters:nil finished:^(id responseObject, NSError *error) {
+        if ([responseObject[@"data"]count]>0) {
+            reageString = [[responseObject objectForKey:@"data"] stringForKey:@"user_manual"];
             [self viewCreate];
         }
-        
     }];
 }
 

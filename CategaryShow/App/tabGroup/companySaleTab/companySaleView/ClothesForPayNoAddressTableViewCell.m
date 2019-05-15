@@ -12,6 +12,7 @@
 
 {
     UILabel *worningLabel;
+    UIImageView*noaddressimageView;
 }
 
 
@@ -27,10 +28,13 @@
 -(void)setUp
 {
     UIView *contentView = self.contentView;
+    noaddressimageView =[UIImageView new];
+    [self.contentView addSubview:noaddressimageView];
+    noaddressimageView.sd_layout.leftSpaceToView(contentView, 14).centerYEqualToView(contentView).heightIs(18).widthIs(18);
     worningLabel = [UILabel new];
     [self.contentView addSubview:worningLabel];
     worningLabel.sd_layout
-    .leftSpaceToView(contentView, 12)
+    .leftSpaceToView(noaddressimageView, 10)
     .centerYEqualToView(contentView)
     .rightSpaceToView(contentView,10)
     .heightIs(20);
@@ -41,7 +45,8 @@
 -(void)setModel:(AddressModel *)model
 {
     _model = model;
-    [worningLabel setText:model.userAddress];
+    noaddressimageView.image = [UIImage imageNamed:model.noAddressPic];
+    [worningLabel setText:model.address];
     
 }
 

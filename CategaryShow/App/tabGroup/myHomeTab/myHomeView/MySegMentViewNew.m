@@ -24,6 +24,7 @@
         
         self.segmentView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, frame.size.width, heightView)];
         self.segmentView.tag=50;
+        self.segmentView.backgroundColor= [UIColor blackColor];
         [self addSubview:self.segmentView];
         self.segmentScrollV=[[UIScrollView alloc]initWithFrame:CGRectMake(0, heightView, frame.size.width, frame.size.height -heightView)];
         self.segmentScrollV.contentSize=CGSizeMake(frame.size.width*self.controllers.count, 0);
@@ -45,7 +46,7 @@
         {
             UIButton * btn=[ UIButton buttonWithType:UIButtonTypeCustom];
             //            btn.frame=CGRectMake(i*(frame.size.width/self.controllers.count), 0, frame.size.width/self.controllers.count, 64);
-            btn.frame=CGRectMake((frame.size.width / 2 - ((self.controllers.count * 60 + (self.controllers.count - 1) * lineW)) / 2) + 80 * i,IsiPhoneX?50:22, 60, btnH);
+            btn.frame=CGRectMake((frame.size.width / 2 - ((self.controllers.count * 60 + (self.controllers.count - 1) * lineW)) / 2) + 80 * i,[ShiPeiIphoneXSRMax isIPhoneX]?50:22, 60, btnH);
             btn.tag=i;
             [btn setTitle:self.nameArray[i] forState:(UIControlStateNormal)];
             [btn setTitleColor:[UIColor whiteColor] forState:(UIControlStateNormal)];

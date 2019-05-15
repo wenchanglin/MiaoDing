@@ -21,7 +21,7 @@
         
         self.segmentView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, frame.size.width, 43)];
         self.segmentView.tag=50;
-        self.segmentView.backgroundColor = [UIColor colorWithHexString:@"#EDEDED"];
+        self.segmentView.backgroundColor = [UIColor whiteColor];
         [self addSubview:self.segmentView];
         self.segmentScrollV=[[UIScrollView alloc]initWithFrame:CGRectMake(0, 43, frame.size.width, frame.size.height -43)];
         self.segmentScrollV.contentSize=CGSizeMake(frame.size.width*self.controllers.count, 0);

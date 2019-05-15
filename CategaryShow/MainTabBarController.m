@@ -23,7 +23,7 @@
 #import "DesignerAlsoViewController.h"
 
 #import "DesignerForCollectionViewController.h"
-#import "NewMainParentViewController.h"
+//#import "NewMainParentViewController.h"
 #import "homeNewViewController.h"
 #import "DiyFirstViewController.h"
 #import "DesignerAlsoViewController.h"
@@ -50,7 +50,7 @@
     if (self.navigationItem != nil){
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];
     }
-    UIImageView * mView=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, IsiPhoneX?83:49)];//这是整个tabbar的颜色
+    UIImageView * mView=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [ShiPeiIphoneXSRMax isIPhoneX]?83:49)];//这是整个tabbar的颜色
     [mView setImage:[UIImage imageNamed:@"tabBackImage"]];
     [self.tabBar insertSubview:mView atIndex:1];
     
@@ -67,20 +67,20 @@
 
 - (void)readAppkey
 {
-    QYAppKeyConfig *config = [NSKeyedUnarchiver unarchiveObjectWithFile:[self configFilepath]];
-    if (config)
-    {
-        [[QYDemoConfig sharedConfig] setAppKey:config.appKey];
-        [[QYDemoConfig sharedConfig] setEnvironment:config.useDevEnvironment];
-        NSString *appKey = [[QYDemoConfig sharedConfig] appKey];
-        NSString *appName= [[QYDemoConfig sharedConfig] appName];
-        [[QYSDK sharedSDK] registerAppId:appKey appName:appName];
-    }
-    else {
-        NSString *appKey = [[QYDemoConfig sharedConfig] appKey];
-        NSString *appName= [[QYDemoConfig sharedConfig] appName];
-        [[QYSDK sharedSDK] registerAppId:appKey appName:appName];
-    }
+//    QYAppKeyConfig *config = [NSKeyedUnarchiver unarchiveObjectWithFile:[self configFilepath]];
+//    if (config)
+//    {
+//        [[QYDemoConfig sharedConfig] setAppKey:config.appKey];
+//        [[QYDemoConfig sharedConfig] setEnvironment:config.useDevEnvironment];
+//        NSString *appKey = [[QYDemoConfig sharedConfig] appKey];
+//        NSString *appName= [[QYDemoConfig sharedConfig] appName];
+////        [[QYSDK sharedSDK] registerAppId:appKey appName:appName];
+//    }
+//    else {
+//        NSString *appKey = [[QYDemoConfig sharedConfig] appKey];
+//        NSString *appName= [[QYDemoConfig sharedConfig] appName];
+////        [[QYSDK sharedSDK] registerAppId:appKey appName:appName];
+//    }
 }
 
 -(void)createQyUi
@@ -99,7 +99,7 @@
 //    /**
 //     *  访客头像
 //     */
-    [[QYSDK sharedSDK] customUIConfig].customerHeadImage = [UIImage imageNamed:@"HeadImage"];
+//    [[QYSDK sharedSDK] customUIConfig].customerHeadImage = [UIImage imageNamed:@"HeadImage"];
 //    /**
 //     *  客服头像
 //     */
@@ -173,9 +173,10 @@
  
     UIViewController *main = [[NewMainTabViewController alloc] init];
     UIViewController * custom = [[changeDiyFirstViewController alloc] init];
+    JYHNavigationController*customs = [[JYHNavigationController alloc]initWithRootViewController:custom];
     UIViewController *myHome = [[homeNewViewController alloc] init];
     UIViewController *desig = [[DesignerAlsoViewController alloc] init];//DesignerAndClothesViewController
-    self.viewControllers = [[NSArray alloc] initWithObjects:main,custom,desig,myHome,nil];
+    self.viewControllers = [[NSArray alloc] initWithObjects:main,customs,desig,myHome,nil];
     RDVTabBarItem *aTabBarItem = [self.tabBar.items objectAtIndex:0];
     // Set Title
     aTabBarItem.title = @"首页";
@@ -188,7 +189,7 @@
     
     RDVTabBarItem *cTabBarItem = [self.tabBar.items objectAtIndex:2];
     // Set Title
-    cTabBarItem.title = @"腔调";
+    cTabBarItem.title = @"好物";//腔调
     [cTabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"腔调选中"] withFinishedUnselectedImage:[UIImage imageNamed:@"腔调"]];
     
     RDVTabBarItem *dTabBarItem = [self.tabBar.items objectAtIndex:3];

@@ -46,8 +46,10 @@
     clickNum = 0;
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self settabTitle:@"预约量体"];
-    if ([[SelfPersonInfo getInstance].personYuYue integerValue] == 1) {
+    WCLLog(@"%@",[SelfPersonInfo shareInstance].userModel);
+    if ([[SelfPersonInfo shareInstance].userModel.is_yuyue integerValue] == 1) {
         [self.view setBackgroundColor:getUIColor(Color_background)];
+//        [self getYuYueData];
         [self getYuYueData];
     } else {
         
@@ -158,7 +160,7 @@
     [self.view addSubview:image];
     
     
-    UIButton *BtnYuYue = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 / 2,IsiPhoneX?self.view.frame.size.height-64-84: self.view.frame.size.height -64-50, self.view.frame.size.width / 2, 40)];
+    UIButton *BtnYuYue = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 / 2,[ShiPeiIphoneXSRMax isIPhoneX]?self.view.frame.size.height-64-84: self.view.frame.size.height -64-50, self.view.frame.size.width / 2, 40)];
     [BtnYuYue setBackgroundColor:[UIColor blackColor]];
     [BtnYuYue.layer setCornerRadius:1];
     [BtnYuYue.layer setMasksToBounds:YES];
@@ -172,14 +174,13 @@
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:AddressText.text forKey:@"address"];
-    [postData postData:URL_YuYue PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
-        if ([self checkHttpResponseResultStatus:postData]) {
+   [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_YuYuelt_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
             for (UIView *view in self.view.subviews) {
                 [view removeFromSuperview];
             }
             yuYueStatus = 1;
-            [MobClick endEvent:@"measure" label:[SelfPersonInfo getInstance].cnPersonUserName];
+            [MobClick endEvent:@"measure" label:[SelfPersonInfo shareInstance].userModel.username];
             [self createHadYuYueView];
         }
         
@@ -188,16 +189,9 @@
 
 -(void)getYuYueData
 {
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    
-    [getData getData:URL_YuYueData PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-       
-        if ([self checkHttpResponseResultStatus:domain]) {
-            yuYueStatus = [[getData.dataRoot dictionaryForKey:@"data"] integerForKey:@"status"];
-            time = [[getData.dataRoot dictionaryForKey:@"data"] stringForKey:@"sm_time"];
-            [self createHadYuYueView];
-        }
-        
+    [[wclNetTool sharedTools]request:POST urlString:URL_GetYuYueStatus parameters:@{}.mutableCopy finished:^(id responseObject, NSError *error) {
+        yuYueStatus = [responseObject[@"data"][@"status"] integerValue];
+        [self createHadYuYueView];
     }];
 }
 
@@ -217,7 +211,7 @@
     [success setNumberOfLines:0];
     [self.view addSubview:success];
     [self.view setBackgroundColor:getUIColor(Color_background)];
-    [SelfPersonInfo getInstance].personYuYue = @"1";
+    [SelfPersonInfo shareInstance].userModel.is_yuyue = @"1";
     
     switch (yuYueStatus) {
         case 1:
@@ -252,9 +246,6 @@
     [success setFont:[UIFont systemFontOfSize:14]];
     [success setTextAlignment:NSTextAlignmentCenter];
     [success setNumberOfLines:2];
-
-    
-    
     successButton = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2 - 70, SCREEN_HEIGHT - 100, 140, 35)];
     [successButton setBackgroundColor:getUIColor(Color_buyColor)];
     [successButton setTitle:@"拍照量体" forState:UIControlStateNormal];

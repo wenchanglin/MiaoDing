@@ -154,9 +154,7 @@
         reCell = cell;
         
     }
-//    [reCell useCellFrameCacheWithIndexPath:indexPath tableView:tableView];
     [reCell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    ///////////////////////////////////////////////////////////////////////
     return reCell;
 }
 

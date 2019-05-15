@@ -9,8 +9,13 @@
 #import <Foundation/Foundation.h>
 
 @interface IndexTypeModel : NSObject
-@property(nonatomic)NSInteger ID;
-@property(nonatomic)NSInteger status;
+@property(nonatomic,assign)NSInteger ID;
+@property(nonatomic,assign)NSInteger status;
 @property(nonatomic,strong)NSString * img;
-@property(nonatomic)NSInteger is_type;
+@property(nonatomic,assign)NSInteger is_type;
+@property(nonatomic,assign)NSInteger type;
+@property(nonatomic,strong)NSString *goods_name;
+@property(nonatomic,strong)NSString *img_info;
+@property(nonatomic,strong)NSString *name;
+@property(nonatomic,strong)NSString *sell_price;
 @end

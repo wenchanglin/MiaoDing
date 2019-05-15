@@ -8,6 +8,7 @@
 
 #import "ComoanySaleDDDtailViewCell.h"
 #import "ClothDetailModel.h"
+#import "newDiyAllDataModel.h"
 @implementation ComoanySaleDDDtailViewCell
 
 {
@@ -60,8 +61,7 @@
     
     if (![model.detailName isEqual:[NSNull null]]) {
         [titleLabel setText:[NSString stringWithFormat:@"%@",model.detailName]];
-        [detailLabel setText:model.detailContent];
-
+        [detailLabel setText:model.sonModels.part_name];
     }
     
     

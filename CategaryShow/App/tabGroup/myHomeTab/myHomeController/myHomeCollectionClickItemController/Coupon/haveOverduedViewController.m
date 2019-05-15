@@ -17,79 +17,38 @@
 {
     UITableView *canUse;
     NSMutableArray *modelArray;
-    BaseDomain *getData;
-    BaseDomain *postData;
     UITextField *CouponNumber;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     modelArray = [NSMutableArray array];
-    getData = [BaseDomain getInstance:NO];
-    postData = [BaseDomain getInstance:NO];
-    // Do any additional setup after loading the view.
     [self getDatas];
-    [self.view setBackgroundColor:[UIColor whiteColor]];
     
 }
 
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@"-1" forKey:@"status"];
-    
-    [getData getData:URL_Coupon PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
-        if ([self checkHttpResponseResultStatus:domain]) {
-            NSMutableArray *array = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"data"]];
-            for (NSDictionary *dic in array) {
-                couponModel *model = [[couponModel alloc] init];
-                model.price = [NSString stringWithFormat:@"%.f", [[dic stringForKey:@"money"] floatValue]];
-                model.useType = [dic stringForKey:@"title"];
-                model.typeRemark = [dic stringForKey:@"sub_title"];
-                model.imageName = @"grayJuXIng";
-                model.rightImg = @"haveOverd";
-                model.time = [NSString stringWithFormat:@"有效期:%@至%@",[self dateToString:[dic stringForKey:@"s_time"]], [self dateToString:[dic stringForKey:@"e_time"]]];
-                [modelArray addObject:model];
-            }
-            
+    [params setObject:@"3" forKey:@"status"];
+    [[wclNetTool sharedTools]request:GET urlString:URL_Coupon parameters:params finished:^(id responseObject, NSError *error) {
+        if([self checkHttpResponseResultStatus:responseObject])
+        {
+            modelArray = [couponModel mj_objectArrayWithKeyValuesArray:responseObject[@"tickets"]];
             [self createTable];
         }
-        
     }];
 }
 
 -(void)createTable
 {
-    
-    
-    canUse = [[UITableView alloc] initWithFrame:CGRectMake(12, 0, SCREEN_WIDTH - 24,IsiPhoneX?SCREEN_HEIGHT-74-84:SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
+    canUse = [[UITableView alloc] initWithFrame:CGRectMake(12, 0, SCREEN_WIDTH - 24,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-74-84:SCREEN_HEIGHT - 41 - 64) style:UITableViewStyleGrouped];
     canUse.delegate = self;
     canUse.dataSource = self;
     canUse.showsVerticalScrollIndicator =NO;
-    [canUse setBackgroundColor:[UIColor whiteColor]];
     [canUse setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [canUse registerClass:[couponTableViewCell class] forCellReuseIdentifier:@"haveOver"];
     [self.view addSubview:canUse];
     
-}
-
-
-
--(NSString *)dateToString:(NSString *)dateString
-{
-    
-
-    NSTimeInterval time=[dateString doubleValue]+28800;//因为时差问题要加8小时 == 28800 sec
-    NSDate *detaildate=[NSDate dateWithTimeIntervalSince1970:time];
-    
-    //实例化一个NSDateFormatter对象
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    //设定时间格式,这里可以设置成自己需要的格式
-    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
-    
-    NSString *currentDateStr = [dateFormatter stringFromDate: detaildate];
-    
-    return currentDateStr;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section

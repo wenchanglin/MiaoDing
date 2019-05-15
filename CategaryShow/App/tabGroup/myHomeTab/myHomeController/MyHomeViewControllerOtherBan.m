@@ -91,11 +91,8 @@ static CGFloat const headViewHeight = 240;
     
     [self.rdv_tabBarController.navigationController setNavigationBarHidden:YES animated:animated];
 
-     [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]]];
-    _countentLabel.text = [SelfPersonInfo getInstance].cnPersonUserName;
-   
-    
-    
+     [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].avatar]]];
+    _countentLabel.text = [SelfPersonInfo getInstance].username;
     [self reloadCound];
     
 }
@@ -344,14 +341,14 @@ static CGFloat const headViewHeight = 240;
         imageHead.layer.borderColor =[[UIColor colorWithRed:255/255. green:253/255. blue:253/255. alpha:1.] CGColor];
         imageHead.layer.cornerRadius = 40;
         
-        [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]]];
+        [imageHead sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].avatar]]];
         _countentLabel = [[UILabel alloc] initWithFrame:CGRectMake(40, 155, Main_Screen_Width-80, 30)];
         _countentLabel.font = [UIFont systemFontOfSize:12.];
         _countentLabel.textColor = [UIColor whiteColor];
         _countentLabel.textAlignment = NSTextAlignmentCenter;
         _countentLabel.lineBreakMode = NSLineBreakByWordWrapping;
         _countentLabel.numberOfLines = 0;
-        _countentLabel.text = [SelfPersonInfo getInstance].cnPersonUserName;
+        _countentLabel.text = [SelfPersonInfo getInstance].username;
         [_headImageView addSubview:_countentLabel];
         
 
@@ -517,23 +514,23 @@ static CGFloat const headViewHeight = 240;
             
             case 7:
         {
-            QYSource *source = [[QYSource alloc] init];
-            source.title =  @"17012348908";
-            source.urlString = @"17012348908";
-            QYSessionViewController *vc = [[QYSDK sharedSDK] sessionViewController];
-
-            vc.sessionTitle = @"私人顾问";
-            vc.source = source;
-
-            if (iPadDevice) {
-                UINavigationController* navi = [[UINavigationController alloc]initWithRootViewController:vc];
-                navi.modalPresentationStyle = UIModalPresentationFormSheet;
-                [self presentViewController:navi animated:YES completion:nil];
-            }
-            else{
-                vc.hidesBottomBarWhenPushed = YES;
-                [self.navigationController pushViewController:vc animated:YES];
-            }
+//            QYSource *source = [[QYSource alloc] init];
+//            source.title =  @"17012348908";
+//            source.urlString = @"17012348908";
+//            QYSessionViewController *vc = [[QYSDK sharedSDK] sessionViewController];
+//
+//            vc.sessionTitle = @"私人顾问";
+//            vc.source = source;
+//
+//            if (iPadDevice) {
+//                UINavigationController* navi = [[UINavigationController alloc]initWithRootViewController:vc];
+//                navi.modalPresentationStyle = UIModalPresentationFormSheet;
+//                [self presentViewController:navi animated:YES completion:nil];
+//            }
+//            else{
+//                vc.hidesBottomBarWhenPushed = YES;
+//                [self.navigationController pushViewController:vc animated:YES];
+//            }
 //            [self alertViewShowOfTime:@"客服不在线哦,请拨打电话:4009901213" time:1];
             //
         }

@@ -40,7 +40,7 @@
     NSMutableDictionary * parameter = [NSMutableDictionary dictionary];
     [parameter setObject:@(_model.ID) forKey:@"shop_id"];
     [[wclNetTool sharedTools]request:GET urlString:URL_MenDianInfo parameters:parameter finished:^(id responseObject, NSError *error) {
-        WCLLog(@"%@",responseObject[@"data"]);
+//        WCLLog  (@"%@",responseObject[@"data"]);
         StoresDetailModel * model = [StoresDetailModel mj_objectWithKeyValues:responseObject[@"data"]];
         _is_collect = model.is_collect;
         [_sourceArr addObject:model];
@@ -139,22 +139,22 @@
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"3" forKey:@"type"];
-    [params setObject:@(_model.ID) forKey:@"cid"];
-    [_postData postData:URL_AddSave PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if (domain.result == 1) {
-            [_buttonLike setImage:[UIImage imageNamed:@"收藏选中"] forState:UIControlStateNormal];
-            //   [[NSNotificationCenter defaultCenter] postNotificationName:@"mendiancollect" object:nil];
-            [self requestData];
-        } else if (domain.result == 10001) {
-            [self getDateBeginHaveReturn:_datBegin fatherView:@"收藏店铺"];
-        } else {
-            [_buttonLike setImage:[UIImage imageNamed:@"收藏"] forState:UIControlStateNormal];
-            //             [[NSNotificationCenter defaultCenter] postNotificationName:@"mendiancollect" object:nil];
-            [self requestData];
+    [params setObject:@(_model.ID) forKey:@"rid"];
+    [[wclNetTool sharedTools]request:POST urlString:URL_CollectSave parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            if ([responseObject[@"status"]integerValue]==1) {
+                [_buttonLike setImage:[UIImage imageNamed:@"收藏选中"] forState:UIControlStateNormal];
+                [self requestData];
+
+            }
+            else
+            {
+                [_buttonLike setImage:[UIImage imageNamed:@"收藏"] forState:UIControlStateNormal];
+                [self requestData];
+            }
         }
-        
-        
     }];
+
 }
 -(void)buyBtnClick:(UIButton *)button
 {

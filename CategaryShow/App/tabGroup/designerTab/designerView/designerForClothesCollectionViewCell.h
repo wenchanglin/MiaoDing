@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-#import "designerModel.h"
+#import "designerDetailModel.h"
 
 @interface designerForClothesCollectionViewCell : UICollectionViewCell
 
-@property (nonatomic, retain) designerModel *model;
+@property (nonatomic, retain) designerDetailModel *model;
 
 @property (nonatomic, retain) UIButton *headButn;
 

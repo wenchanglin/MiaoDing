@@ -94,12 +94,10 @@
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"1" forKey:@"id"];
-    [getYingDao getData:URL_GetYingDao PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getYingDao]) {
-            
-            YDImgArray = [NSMutableArray arrayWithArray:[[getYingDao.dataRoot objectForKey:@"data"] arrayForKey:@"img_urls"]];
+    [[wclNetTool sharedTools]request:GET urlString:[MoreUrlInterface URL_GetYinDaoForID_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            YDImgArray = [NSMutableArray arrayWithArray:[[responseObject objectForKey:@"data"] arrayForKey:@"img_urls"]];
             [self createYingDao];
-            
         }
     }];
 }
@@ -497,33 +495,33 @@
 
 -(void)chatClick
 {
-    QYSource *source = [[QYSource alloc] init];
-    source.title =  @"私人顾问";
-    source.urlString = @"https://8.163.com/";
-    
-    QYCommodityInfo *commodityInfo = [[QYCommodityInfo alloc] init];
-    commodityInfo.title = [dataDictionary stringForKey:@"name"];
-    commodityInfo.desc = [dataDictionary stringForKey:@"remark"];
-    commodityInfo.pictureUrlString = [NSString stringWithFormat:@"%@%@", PIC_HEADURL,[dataDictionary stringForKey:@"thumb"] ];
-//    commodityInfo.urlString = _urlString.text;
-//    commodityInfo.note = _note.text;
-//    commodityInfo.show = _show.on;
-    
-    
-    QYSessionViewController *vc = [[QYSDK sharedSDK] sessionViewController];
-    vc.sessionTitle = @"私人顾问";
-    vc.source = source;
-    vc.commodityInfo = commodityInfo;
-
-    if (iPadDevice) {
-        UINavigationController* navi = [[UINavigationController alloc]initWithRootViewController:vc];
-        navi.modalPresentationStyle = UIModalPresentationFormSheet;
-        [self presentViewController:navi animated:YES completion:nil];
-    }
-    else{
-        vc.hidesBottomBarWhenPushed = YES;
-        [self.navigationController pushViewController:vc animated:YES];
-    }
+//    QYSource *source = [[QYSource alloc] init];
+//    source.title =  @"私人顾问";
+//    source.urlString = @"https://8.163.com/";
+//
+//    QYCommodityInfo *commodityInfo = [[QYCommodityInfo alloc] init];
+//    commodityInfo.title = [dataDictionary stringForKey:@"name"];
+//    commodityInfo.desc = [dataDictionary stringForKey:@"remark"];
+//    commodityInfo.pictureUrlString = [NSString stringWithFormat:@"%@%@", PIC_HEADURL,[dataDictionary stringForKey:@"thumb"] ];
+////    commodityInfo.urlString = _urlString.text;
+////    commodityInfo.note = _note.text;
+////    commodityInfo.show = _show.on;
+//
+//
+//    QYSessionViewController *vc = [[QYSDK sharedSDK] sessionViewController];
+//    vc.sessionTitle = @"私人顾问";
+//    vc.source = source;
+//    vc.commodityInfo = commodityInfo;
+//
+//    if (iPadDevice) {
+//        UINavigationController* navi = [[UINavigationController alloc]initWithRootViewController:vc];
+//        navi.modalPresentationStyle = UIModalPresentationFormSheet;
+//        [self presentViewController:navi animated:YES completion:nil];
+//    }
+//    else{
+//        vc.hidesBottomBarWhenPushed = YES;
+//        [self.navigationController pushViewController:vc animated:YES];
+//    }
 //    [self alertViewShowOfTime:@"客服不在线哦,请拨打电话:4009901213" time:1];
 }
 
@@ -710,8 +708,8 @@
 //    [self showAlertWithTitle:@"提示" message:@"分享成功"];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"2" forKey:@"type"];
-    [params setObject:[_goodDic stringForKey:@"id"] forKey:@"cid"];
-    [getData postData:URL_AddSave PostParams:params finish:^(BaseDomain *domain, Boolean success) {
+    [params setObject:[_goodDic stringForKey:@"id"] forKey:@"rid"];
+    [getData postData:URL_CollectSave PostParams:params finish:^(BaseDomain *domain, Boolean success) {
         
 
             if (domain.result == 1) {

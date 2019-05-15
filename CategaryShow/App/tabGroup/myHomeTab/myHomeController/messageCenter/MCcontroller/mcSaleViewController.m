@@ -9,7 +9,9 @@
 #import "mcSaleViewController.h"
 #import "messageListModel.h"
 #import "mcSaleTableViewCell.h"
-#import "MainTabBanerDetailViewController.h"
+#import "DiyClothesDetailViewController.h"
+#import "DesignerClothesDetailViewController.h"
+#import "designerModel.h"
 @interface mcSaleViewController ()<UITableViewDataSource, UITableViewDelegate>
 
 @end
@@ -17,7 +19,6 @@
 @implementation mcSaleViewController
 {
     NSMutableArray *modelArray;
-    BaseDomain *getData;
     UITableView *MCListTable;
     UILabel *labelCount;
 }
@@ -25,7 +26,6 @@
     [super viewDidLoad];
     [self settabTitle:@"活动精选"];
     modelArray = [NSMutableArray array];
-    getData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:getUIColor(Color_background)];
     [self getDatas];
     [self createTable];
@@ -37,33 +37,25 @@
     [labelCount setTextColor:getUIColor(Color_active)];
     labelCount.center = self.view.center;
     [self.view addSubview:labelCount];
-    // Do any additional setup after loading the view.
 }
-
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 
 -(void)getDatas
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:_mc_Id forKey:@"type"];
-    [getData getData:URL_MessageList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:domain]) {
-            NSArray *array = [domain.dataRoot arrayForKey:@"data"];
+    [[wclNetTool sharedTools]request:GET urlString:[MoreUrlInterface URL_NoticationList_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            NSArray*array = [responseObject arrayForKey:@"data"];
             if ([array count] > 0) {
                 [labelCount setHidden:YES];
             } else {
                 [labelCount setHidden:NO];
             }
-            for (NSDictionary *dic in array) {
-                messageListModel *model = [messageListModel new];
-                model.mcTime = [dic stringForKey:@"c_time"];
-                model.mcImg = [dic stringForKey:@"img"];
-                model.mcContent = [dic stringForKey:@"content"];
-                model.mcTitle = [dic stringForKey:@"title"];
-                model.mcRead = [dic stringForKey:@"is_read"];
-                model.link = [dic stringForKey:@"link"];
-                model.shareLink = [dic stringForKey:@"share_link"]; 
-                [modelArray addObject:model];
-            }
+            modelArray = [messageListModel mj_objectArrayWithKeyValuesArray:array];
             [MCListTable reloadData];
         }
     }];
@@ -88,7 +80,7 @@
 {
     messageListModel *model = modelArray[section];
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 35)];
-    [label setText:[self dateToString:model.mcTime]];
+    [label setText:model.create_time];
     [label setTextAlignment:NSTextAlignmentCenter];
     [label setFont:[UIFont systemFontOfSize:12]];
     [label setTextColor:[UIColor lightGrayColor]];
@@ -106,7 +98,7 @@
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 244;
+    return 214;
 }
 
 
@@ -123,7 +115,6 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     messageListModel *model = modelArray[indexPath.section];
-    
     mcSaleTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"mcListSale" forIndexPath:indexPath];
     cell.model = model;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -133,30 +124,33 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     messageListModel *model = modelArray[indexPath.section];
-    MainTabBanerDetailViewController *mainBaner = [[MainTabBanerDetailViewController alloc] init];
+    if ([model.goods_id integerValue]==1) {
+        DiyClothesDetailViewController *toButy = [[DiyClothesDetailViewController alloc] init];
+        NSDictionary*detail = @{@"id":model.goods_id,@"name":model.goods_name};
+        toButy.goodDic = detail.mutableCopy;
+        self.hidesBottomBarWhenPushed=YES;
+        [self.navigationController pushViewController:toButy animated:YES];
+    }
+    else if([model.goods_id integerValue]==2)
+    {
+        designerModel *model2 = [designerModel new];
+        model2.ad_img = model.car_img;
+        model2.name = model.goods_name;
+        model2.content = model.content;
+        model2.ID = [model.goods_id integerValue];
+        DesignerClothesDetailViewController *designerClothes = [[DesignerClothesDetailViewController alloc] init];
+        designerClothes.model = model2;
+        [self.navigationController pushViewController:designerClothes animated:YES];
+    }
+//    MainTabBanerDetailViewController *mainBaner = [[MainTabBanerDetailViewController alloc] init];
     
-    mainBaner.titleContent = model.mcTitle;
-    mainBaner.imageUrl = model.mcImg;
-    mainBaner.webLink = model.link;
-    mainBaner.shareLink = model.shareLink;
-    [self.navigationController pushViewController:mainBaner animated:YES];
+//    mainBaner.titleContent = model.mcTitle;
+//    mainBaner.imageUrl = model.mcImg;
+//    mainBaner.webLink = model.link;
+//    mainBaner.webLink = model.shareLink;
+//    [self.navigationController pushViewController:mainBaner animated:YES];
 }
 
--(NSString *)dateToString:(NSString *)dateString
-{
-
-    NSTimeInterval time=[dateString doubleValue]+28800;//因为时差问题要加8小时 == 28800 sec
-    NSDate *detaildate=[NSDate dateWithTimeIntervalSince1970:time];
-    
-    //实例化一个NSDateFormatter对象
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    //设定时间格式,这里可以设置成自己需要的格式
-    [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
-    
-    NSString *currentDateStr = [dateFormatter stringFromDate: detaildate];
-    
-    return currentDateStr;
-}
 
 
 - (void)didReceiveMemoryWarning {

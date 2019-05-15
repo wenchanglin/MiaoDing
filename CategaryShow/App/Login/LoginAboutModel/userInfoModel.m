@@ -7,62 +7,33 @@
 //
 
 #import "userInfoModel.h"
-static userInfoModel * _userInfo;
 @implementation userInfoModel
 
-+ (instancetype) getInstance {
-    
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        if (_userInfo == nil) {
-            _userInfo = [[userInfoModel alloc] init];
-            
-
-            
-            [_userInfo initUserDefalutsValue];
-        }
-    });
-    
-    return _userInfo;
-}
-
-
-- (void) initUserDefalutsValue {
-    self.userName = [[NSUserDefaults standardUserDefaults] stringForKey:Histroy_UserName];
-    
-    self.userImage = [[NSUserDefaults standardUserDefaults] stringForKey:Histroy_Image];
-
-}
-
-
-- (void) saveLoginData:(NSString *) userName userImg:(NSString*) userImage {
-    
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    [userDefaults setObject:userName forKey:Histroy_UserName];
-    [userDefaults setObject:userImage forKey:Histroy_Image];
-    [userDefaults synchronize];
-    
-    self.userName = userName;
-    self.userImage = userImage;
-}
-
-- (Boolean) checkUserHaveBeenLogin {
-    if (self.userName != nil )
-        return YES;
-    else
-        return NO;
-}
-
--(void) exitLogin
+-(void)encodeWithCoder:(NSCoder *)aCoder
 {
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    
-    [userDefaults removeObjectForKey:Histroy_UserName];
-    
-    [userDefaults removeObjectForKey:Histroy_Image];
-    
-    self.userName = nil;
+    [aCoder encodeObject:self.user_phone forKey:@"user_phone"];
+    [aCoder encodeInteger:self.uid forKey:@"uid"];
+    [aCoder encodeInteger:self.unread_message_num forKey:@"unread_message_num"];
+    [aCoder encodeObject:self.avatar forKey:@"avatar"];
+    [aCoder encodeObject:self.age forKey:@"age"];
+    [aCoder encodeObject:self.birthday forKey:@"birthday"];
+    [aCoder encodeObject:self.is_yuyue forKey:@"is_yuyue"];
+    [aCoder encodeObject:self.username forKey:@"username"];
     
 }
-
+-(instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    if (self==[super init]) {
+        self.user_phone = [aDecoder decodeObjectForKey:@"user_phone"];
+        self.uid = [aDecoder decodeIntegerForKey:@"uid"];
+        self.unread_message_num = [aDecoder decodeIntegerForKey:@"unread_message_num"];
+        self.avatar = [aDecoder decodeObjectForKey:@"avatar"];
+        self.age = [aDecoder decodeObjectForKey:@"age"];
+        self.birthday = [aDecoder decodeObjectForKey:@"birthday"];
+        self.is_yuyue = [aDecoder decodeObjectForKey:@"is_yuyue"];
+        self.username = [aDecoder decodeObjectForKey:@"username"];
+    }
+    return self;
+}
+Description
 @end

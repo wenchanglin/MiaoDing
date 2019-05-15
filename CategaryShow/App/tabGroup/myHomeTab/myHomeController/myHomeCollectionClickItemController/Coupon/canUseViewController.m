@@ -20,17 +20,22 @@
 {
     UITableView *canUse;
     NSMutableArray *modelArray;
-    BaseDomain *getData;
-    BaseDomain *postData;
     UITextField *CouponNumber;
     UITextField * CouponNumber1;
     UIView * bgNoDingView;
 }
+-(void)viewWillAppear:(BOOL)animated
+{
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+}
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     modelArray = [NSMutableArray array];
-    getData = [BaseDomain getInstance:NO];
-    postData = [BaseDomain getInstance:NO];
     [self settabTitle:@"优惠券"];
     UIButton *buttonRight = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
     [buttonRight setImage:[UIImage imageNamed:@"RuleImg"] forState:UIControlStateNormal];
@@ -38,7 +43,7 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRight];
     
     [buttonRight addTarget:self action:@selector(rightClick) forControlEvents:UIControlEventTouchUpInside];
-   
+    
     [self getDatas];
     [self.view setBackgroundColor:[UIColor colorWithHexString:@"#EDEDED"]];
     
@@ -56,11 +61,10 @@
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"1" forKey:@"status"];
-    
-    [getData getData:URL_Coupon PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-       
-        if ([self checkHttpResponseResultStatus:domain]) {
-            if ([[getData.dataRoot arrayForKey:@"data"] count] == 0) {
+    [[wclNetTool sharedTools]request:GET urlString:URL_Coupon parameters:params finished:^(id responseObject, NSError *error) {
+//        WCLLog(@"%@--%@",responseObject,error);
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            if ([[responseObject arrayForKey:@"tickets"]count]==0) {
                 for (UIView *view in [self.view subviews]) {
                     [view removeFromSuperview];
                 }
@@ -68,21 +72,10 @@
             }
             else
             {
-            NSMutableArray *array = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"data"]];
-            for (NSDictionary *dic in array) {
-                couponModel *model = [[couponModel alloc] init];
-                model.price = [NSString stringWithFormat:@"%.f", [[dic stringForKey:@"money"] floatValue]];
-                model.useType = [dic stringForKey:@"title"];
-                model.typeRemark = [dic stringForKey:@"sub_title"];
-                model.imageName = @"优惠券卡片";
-                model.time = [NSString stringWithFormat:@"有效期:%@至%@",[self dateToString:[dic stringForKey:@"s_time"]], [self dateToString:[dic stringForKey:@"e_time"]]];
-                [modelArray addObject:model];
-            }
-            
-            [self createTable];
+                modelArray = [couponModel mj_objectArrayWithKeyValuesArray:responseObject[@"tickets"]];
+                [self createTable];
             }
         }
-        
     }];
 }
 -(void)createViewNoDD    // 创建没有订单界面
@@ -153,7 +146,7 @@
         make.height.mas_equalTo(17);
     }];
     
-   
+    
 }
 -(void)yb_attributeTapReturnString:(NSString *)string range:(NSRange)range index:(NSInteger)index
 {
@@ -161,7 +154,7 @@
     couPonParentViewController * coupon = [[couPonParentViewController alloc]init];
     [self.navigationController pushViewController:coupon animated:YES];
 }
--(void)createTable
+-(void) createTable
 {
     UIView *view = [[UIView alloc] init];
     view.userInteractionEnabled = YES;
@@ -224,18 +217,15 @@
 {
     [CouponNumber resignFirstResponder];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:CouponNumber.text forKey:@"kouling"];
-    [postData postData:URL_GetCoupon PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-       
-        if ([self checkHttpResponseResultStatus:domain]) {
-            //[self reloadData];
+    [params setObject:CouponNumber.text forKey:@"exchange_code"];
+    [[wclNetTool sharedTools]request:POST urlString:URL_ExchangeCoupon parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
             for (UIView *view in [self.view subviews]) {
                 [view removeFromSuperview];
             }
             [self getDatas];
         }
     }];
-    
 }
 
 -(void)reloadData
@@ -243,21 +233,9 @@
     [modelArray removeAllObjects];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params setObject:@"1" forKey:@"status"];
-    
-    [getData getData:URL_Coupon PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
-        if ([self checkHttpResponseResultStatus:domain]) {
-            NSMutableArray *array = [NSMutableArray arrayWithArray:[domain.dataRoot arrayForKey:@"data"]];
-            for (NSDictionary *dic in array) {
-                couponModel *model = [[couponModel alloc] init];
-                model.price = [NSString stringWithFormat:@"%.f", [[dic stringForKey:@"money"] floatValue]];
-                model.useType = [dic stringForKey:@"title"];
-                model.typeRemark = [dic stringForKey:@"sub_title"];
-                model.imageName = @"优惠券卡片";
-                model.time = [NSString stringWithFormat:@"有效期:%@至%@",[self dateToString:[dic stringForKey:@"s_time"]], [self dateToString:[dic stringForKey:@"e_time"]]];
-                [modelArray addObject:model];
-            }
-            
+    [[wclNetTool sharedTools]request:GET urlString:URL_Coupon parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            modelArray = [couponModel mj_objectArrayWithKeyValuesArray:responseObject[@"tickets"]];
             [canUse reloadData];
         }
         
@@ -272,27 +250,13 @@
     return YES;
 }
 
--(NSString *)dateToString:(NSString *)dateString
-{
 
-    NSTimeInterval time=[dateString doubleValue]+28800;//因为时差问题要加8小时 == 28800 sec
-    NSDate *detaildate=[NSDate dateWithTimeIntervalSince1970:time];
-    
-    //实例化一个NSDateFormatter对象
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    //设定时间格式,这里可以设置成自己需要的格式
-    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
-    
-    NSString *currentDateStr = [dateFormatter stringFromDate: detaildate];
-    
-    return currentDateStr;
-}
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-//    if (section == 0) {
-//        return 0.001;
-//    }
+    //    if (section == 0) {
+    //        return 0.001;
+    //    }
     return 10;
     
 }
@@ -329,7 +293,6 @@
 }
 -(void)sf
 {
-//    WCLLog(@"你点击了我");
     couPonParentViewController * enter = [[couPonParentViewController alloc]init];
     [self.navigationController pushViewController:enter animated:YES];
 }
@@ -353,7 +316,6 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.navigationController popToRootViewControllerAnimated:YES];
-    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"LookClothes" object:nil];
 }
 
@@ -363,13 +325,13 @@
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end

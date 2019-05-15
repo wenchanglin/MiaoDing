@@ -6,7 +6,6 @@
 //  Created by 黄梦炜 on 2017/5/8.
 //  Copyright © 2017年 Mr.huang. All rights reserved.
 //
-#define URL_SHARE @"/web/jquery-obj/static/fx/html/yaoqing.html"
 #import <ShareSDK/ShareSDK.h>
 #import <ShareSDKExtension/SSEShareHelper.h>
 #import <ShareSDKUI/ShareSDK+SSUI.h>
@@ -40,14 +39,14 @@
     
     //1、创建分享参数（必要）
     NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-    NSArray* imageArray = @[[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo getInstance].personImageUrl]]];
+    NSArray* imageArray = @[[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [SelfPersonInfo shareInstance].userModel.avatar]]];
     [SSUIShareActionSheetStyle setShareActionSheetStyle:ShareActionSheetStyleSimple];
-    [shareParams SSDKSetupShareParamsByText:[NSString stringWithFormat:@"%@邀请您一起做腔调绅士，来吧，用1000元见面礼定制一套体面的行头",[SelfPersonInfo getInstance].cnPersonUserName]
+    [shareParams SSDKSetupShareParamsByText:[NSString stringWithFormat:@"%@邀请您一起做腔调绅士，来吧，用1000元见面礼定制一套体面的行头",[SelfPersonInfo shareInstance].userModel.username]
                                      images:imageArray
-                                        url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@",URL_HEADURL, URL_SHARE, uId]]
+                                        url:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?id=%@",URL_HeadForH5,URL_YaoQing, @([SelfPersonInfo shareInstance].userModel.uid)]]
                                       title:@"Hi，新朋友，妙定为您准备了1000元见面礼"
                                        type:SSDKContentTypeWebPage];
-    [MobClick endEvent:@"invite_friend" label:[SelfPersonInfo getInstance].cnPersonUserName];
+    [MobClick endEvent:@"invite_friend" label:[SelfPersonInfo shareInstance].userModel.username];
     [ShareCustom shareWithContent:shareParams];
     
     
@@ -82,27 +81,15 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:buttonRight];
     [buttonRight addTarget:self action:@selector(shareClick) forControlEvents:UIControlEventTouchUpInside];
     
-    [self getDatas];
+    [self createView];
+
     
 }
 -(UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;
 }
--(void)getDatas
-{
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@"1" forKey:@"page"];
-    [getData getData:URL_invite PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getData]) {
-            inviteDic = [NSMutableDictionary dictionaryWithDictionary:[domain.dataRoot dictionaryForKey:@"data"]];
-            uId = [inviteDic stringForKey:@"up_uid"];
-            imgRul = [domain.dataRoot stringForKey:@"img"];
-            imgShare = [domain.dataRoot stringForKey:@"share_url"];
-            [self createView];
-        }
-    }];
-}
+
 
 -(void)createView
 {
@@ -111,7 +98,7 @@
         UIScrollView *tempView = (UIScrollView *)[web.subviews objectAtIndex:0];
         tempView.scrollEnabled = NO;
         NSURLRequest *request;
-        request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", URL_HEADURL, imgShare,uId]]];
+        request =[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@?uid=%@", URL_HeadForH5, URL_YaoQingYouLi,@([SelfPersonInfo shareInstance].userModel.uid)]]];
         [web loadRequest:request];
 
     

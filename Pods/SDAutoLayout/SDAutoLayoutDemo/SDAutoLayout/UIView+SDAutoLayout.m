@@ -25,17 +25,6 @@
 
 #import <objc/runtime.h>
 
-Class cellContVClass()
-{
-    // 为了应付SB审核的SB条款 The use of non-public APIs is not permitted on the App Store because it can lead to a poor user experience should these APIs change.
-    static UITableViewCell *tempCell;
-    
-    if (!tempCell) {
-        tempCell = [UITableViewCell new];
-    }
-    return [tempCell.contentView class];
-}
-
 @interface SDAutoLayoutModel ()
 
 @property (nonatomic, strong) SDAutoLayoutModelItem *width;
@@ -94,7 +83,6 @@ Class cellContVClass()
 @synthesize centerXIs = _centerXIs;
 @synthesize centerYIs = _centerYIs;
 @synthesize autoHeightRatio = _autoHeightRatio;
-@synthesize autoWidthRatio = _autoWidthRatio;
 @synthesize spaceToSuperView = _spaceToSuperView;
 @synthesize maxWidthIs = _maxWidthIs;
 @synthesize maxHeightIs = _maxHeightIs;
@@ -265,7 +253,7 @@ Class cellContVClass()
         item.refView = view;
         [weakSelf setValue:item forKey:key];
         weakSelf.lastModelItem = item;
-        if ([view isKindOfClass:cellContVClass()] && ([key isEqualToString:@"equalCenterY"] || [key isEqualToString:@"equalBottom"])) {
+        if ([view isKindOfClass:NSClassFromString(@"UITableViewCellContentView")] && ([key isEqualToString:@"equalCenterY"] || [key isEqualToString:@"equalBottom"])) {
             view.shouldReadjustFrameBeforeStoreCache = YES;
         }
         return weakSelf;
@@ -373,7 +361,7 @@ Class cellContVClass()
     return _centerYIs;
 }
 
-- (AutoHeightWidth)autoHeightRatio
+- (AutoHeight)autoHeightRatio
 {
     __weak typeof(self) weakSelf = self;
     
@@ -384,19 +372,6 @@ Class cellContVClass()
         };
     }
     return _autoHeightRatio;
-}
-
-- (AutoHeightWidth)autoWidthRatio
-{
-    __weak typeof(self) weakSelf = self;
-    
-    if (!_autoWidthRatio) {
-        _autoWidthRatio = ^(CGFloat ratioaValue) {
-            weakSelf.needsAutoResizeView.autoWidthRatioValue = @(ratioaValue);
-            return weakSelf;
-        };
-    }
-    return _autoWidthRatio;
 }
 
 - (SpaceToSuperView)spaceToSuperView
@@ -871,16 +846,6 @@ Class cellContVClass()
     objc_setAssociatedObject(self, @selector(autoHeightRatioValue), autoHeightRatioValue, OBJC_ASSOCIATION_RETAIN);
 }
 
-- (NSNumber *)autoWidthRatioValue
-{
-    return objc_getAssociatedObject(self, _cmd);
-}
-
-- (void)setAutoWidthRatioValue:(NSNumber *)autoWidthRatioValue
-{
-    objc_setAssociatedObject(self, @selector(autoWidthRatioValue), autoWidthRatioValue, OBJC_ASSOCIATION_RETAIN);
-}
-
 - (NSNumber *)sd_maxWidth
 {
     return objc_getAssociatedObject(self, _cmd);
@@ -990,14 +955,14 @@ Class cellContVClass()
     return [self sd_layout];
 }
 
-- (BOOL)sd_isClosingAutoLayout
+- (BOOL)sd_isClosingAotuLayout
 {
-    return self.sd_categoryManager.sd_isClosingAutoLayout;
+    return self.sd_categoryManager.sd_isClosingAotuLayout;
 }
 
-- (void)setSd_closeAutoLayout:(BOOL)sd_closeAutoLayout
+- (void)setSd_closeAotuLayout:(BOOL)sd_closeAotuLayout
 {
-    self.sd_categoryManager.sd_closeAutoLayout = sd_closeAutoLayout;
+    self.sd_categoryManager.sd_closeAotuLayout = sd_closeAotuLayout;
 }
 
 - (void)removeFromSuperviewAndClearAutoLayoutSettings
@@ -1119,7 +1084,7 @@ Class cellContVClass()
         
         NSMutableArray *caches = nil;
         
-        if ([self isKindOfClass:cellContVClass()] && self.sd_tableView) {
+        if ([self isKindOfClass:NSClassFromString(@"UITableViewCellContentView")] && self.sd_tableView) {
             caches = [self.sd_tableView.cellAutoHeightManager subviewFrameCachesWithIndexPath:self.sd_indexPath];
         }
         
@@ -1143,13 +1108,11 @@ Class cellContVClass()
         }];
     }
     
-    if (self.tag == kSDModelCellTag && [self isKindOfClass:cellContVClass()]) {
+    if (self.tag == kSDModelCellTag && [self isKindOfClass:NSClassFromString(@"UITableViewCellContentView")]) {
         UITableViewCell *cell = (UITableViewCell *)(self.superview);
-        
-        while (cell && ![cell isKindOfClass:[UITableViewCell class]]) {
+        if ([cell isKindOfClass:NSClassFromString(@"UITableViewCellScrollView")]) {
             cell = (UITableViewCell *)cell.superview;
         }
-        
         if ([cell isKindOfClass:[UITableViewCell class]]) {
             CGFloat height = 0;
             for (UIView *view in cell.sd_bottomViewsArray) {
@@ -1238,7 +1201,7 @@ Class cellContVClass()
 {
     UIView *view = model.needsAutoResizeView;
     
-    if (!view || view.sd_isClosingAutoLayout) return;
+    if (!view || view.sd_isClosingAotuLayout) return;
     
     if (view.sd_maxWidth && (model.rightSpaceToView || model.rightEqualToView)) { // 靠右布局前提设置
         [self layoutAutoWidthWidthView:view model:model];
@@ -1256,10 +1219,6 @@ Class cellContVClass()
     if (view.autoHeightRatioValue && view.width_sd > 0 && (model.bottomEqualToView || model.bottomSpaceToView)) { // 底部布局前提设置
         [self layoutAutoHeightWidthView:view model:model];
         view.fixedHeight = @(view.height_sd);
-    }
-    
-    if (view.autoWidthRatioValue) {
-        view.fixedWidth = @(view.height_sd * [view.autoWidthRatioValue floatValue]);
     }
     
     

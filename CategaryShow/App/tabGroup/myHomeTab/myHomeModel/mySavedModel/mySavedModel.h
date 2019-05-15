@@ -9,11 +9,11 @@
 #import <Foundation/Foundation.h>
 
 @interface mySavedModel : NSObject
-@property (nonatomic, retain) NSString *clothesImg;
-@property (nonatomic, retain) NSString *clothesName;
-@property (nonatomic, retain) NSString *clothesPrice;
-@property (nonatomic, retain) NSString *subName;
-
-@property (nonatomic, retain) NSString *goodId;
-@property (nonatomic, retain) NSString *type;
+@property (nonatomic, retain) NSString *ad_img;
+@property(nonatomic,strong)NSString*car_img;
+@property (nonatomic, retain) NSString *name;
+@property (nonatomic, retain) NSString *sell_price;
+@property (nonatomic, retain) NSString *content;
+@property (nonatomic, retain) NSString *category_id;
+@property (nonatomic, retain) NSString *ID;
 @end

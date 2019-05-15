@@ -12,5 +12,6 @@
 @interface UIImage (FSAdditions)
 
 - (UIImage *)imageWithTintColor:(UIColor *)color;
++(UIImage*)createImageWithColor:(UIColor*)color;
 
 @end

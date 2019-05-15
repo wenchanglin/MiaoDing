@@ -37,71 +37,56 @@
         [self reloadData];
     }
 }
-
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
+}
 -(void)reloadData
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@"1" forKey:@"type"];
+    [params setObject:@(MyCollectTypeZiXun) forKey:@"type"];
     [params setObject:@(page) forKey:@"page"];
-    [getData getData:URL_SaveList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        
-        if ([self checkHttpResponseResultStatus:getData]) {
-            [mainTabTable.mj_footer endRefreshing];
-            [mainTabTable.mj_header endRefreshing];
-            if ([[getData.dataRoot arrayForKey:@"data"] count] == 0&&page==1) {
-                [mainTabTable removeFromSuperview];
-                [self createNoSave];
-            }
-            else if ([[getData.dataRoot arrayForKey:@"data"] count] == 0&&page!=1)
-            {
-                [mainTabTable.mj_footer endRefreshingWithNoMoreData];
+    [[wclNetTool sharedTools]request:POST urlString:[MoreUrlInterface URL_MyCollect_String] parameters:params finished:^(id responseObject, NSError *error) {
+        [mainTabTable.mj_footer endRefreshing];
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+//            if ([responseObject[@"data"][@"collections"]count]>0&&page>1) {
+                NSMutableArray*arr = [MySaveForZiXunModel mj_objectArrayWithKeyValuesArray:responseObject[@"data"][@"collections"]];
+                [modelArray addObjectsFromArray:arr];
                 [mainTabTable reloadData];
-            }
-            else {
-                for (NSDictionary *dic in [getData.dataRoot objectForKey:@"data"]) {
-                    MySaveForZiXunModel *model  = [MySaveForZiXunModel mj_objectWithKeyValues:dic];
-                    [modelArray addObject:model];
-                }
-                
-                [mainTabTable reloadData];
-                
-            }
-            
+//            }
+//            else
+//            {
+//                [mainTabTable removeFromSuperview];
+//                [self createNoSave];
+//            }
         }
-        
     }];
-    
 }
 
 -(void)createGetData
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params setObject:@"1" forKey:@"type"];
+    [params setObject:@(MyCollectTypeZiXun) forKey:@"type"];
     [params setObject:@"1" forKey:@"page"];
-    [getData getData:URL_SaveList PostParams:params finish:^(BaseDomain *domain, Boolean success) {
-        if ([self checkHttpResponseResultStatus:getData]) {
-            [mainTabTable.mj_header endRefreshing];
-            if ([[getData.dataRoot arrayForKey:@"data"] count] == 0) {
-                [self createNoSave];
-            } else {
-                [modelArray removeAllObjects];
-                for (NSDictionary *dic in [getData.dataRoot objectForKey:@"data"]) {
-                    MySaveForZiXunModel *model  = [MySaveForZiXunModel mj_objectWithKeyValues:dic];
-                    [modelArray addObject:model];
-                }
-                
-                
-                [self createView];
+    [[wclNetTool sharedTools]request:GET urlString:[MoreUrlInterface URL_MyCollect_String] parameters:params finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            if ([responseObject[@"data"][@"collections"]count]>0) {
+            modelArray = [MySaveForZiXunModel mj_objectArrayWithKeyValuesArray:responseObject[@"data"][@"collections"]];
+            [self createView];
             }
-            
+            else
+            {
+                [mainTabTable removeFromSuperview];
+                [self createNoSave];
+            }
         }
-        
     }];
+
 }
 
 -(void)createView
 {
-    mainTabTable = [[UITableView alloc] initWithFrame:CGRectMake(0,NavHeight+3, SCREEN_WIDTH, SCREEN_HEIGHT  - 64 - 43) style:UITableViewStyleGrouped];
+    mainTabTable = [[UITableView alloc] initWithFrame:CGRectMake(0,NavHeight, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT  - 88 - 60:SCREEN_HEIGHT  - 64 - 40) style:UITableViewStyleGrouped];
     if (@available(iOS 11.0, *)) {
         mainTabTable.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     } else {
@@ -113,43 +98,16 @@
     mainTabTable.dataSource = self;
     [self.view addSubview:mainTabTable];
     [mainTabTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-    NSMutableArray *headerImages = [NSMutableArray array];
-    for (int i = 1; i <= 60; i++) {
-        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%d",i]];
-        [headerImages addObject:image];
-    }
-    __weak designerForSaveViewController *weakSelf = self;
-
-    MJRefreshGifHeader * header = [MJRefreshGifHeader headerWithRefreshingBlock:^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [weakSelf createGetData];
-        });
-        
+    [WCLMethodTools footerAutoGifRefreshWithTableView:mainTabTable completion:^{
+        page+=1;
+        [self reloadData];
     }];
-    header.stateLabel.hidden = YES;
-    header.lastUpdatedTimeLabel.hidden = YES;
-    [header setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
-    [header setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
-    mainTabTable.mj_header = header;
-
-    MJRefreshAutoGifFooter * footer = [MJRefreshAutoGifFooter footerWithRefreshingBlock:^{
-        // 模拟延迟加载数据，因此2秒后才调用（真实开发中，可以移除这段gcd代码）
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            page += 1;
-            [weakSelf reloadData];
-            
-        });
-    }];
-    footer.stateLabel.hidden =YES;
-    footer.refreshingTitleHidden = YES;
-    [footer setImages:@[headerImages[0]] forState:MJRefreshStateIdle];
-    [footer setImages:headerImages duration:1 forState:MJRefreshStateRefreshing];
-    mainTabTable.mj_footer = footer;
 
 }
 -(void)createNoSave
 {
     UIView *bgNoDingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+    bgNoDingView.backgroundColor=[UIColor whiteColor];
     [self.view addSubview:bgNoDingView];
     
     UIImageView *NoDD = [UIImageView new];
@@ -166,7 +124,7 @@
     
     clickToLookOther.sd_layout
     .centerXEqualToView(bgNoDingView)
-    .topSpaceToView(NoDD, 20)
+    .topSpaceToView(NoDD, 20)           
     .widthIs(80)
     .heightIs(35);
     [clickToLookOther.layer setCornerRadius:3];
@@ -245,15 +203,8 @@
     cell.lastView.hidden =YES;
     cell.pingLunBtn.hidden = YES;
     cell.model = model;
-    ////// 此步设置用于实现cell的frame缓存，可以让tableview滑动更加流畅 //////
     reCell = cell;
-    
-    
-    
-    
-    //    [reCell useCellFrameCacheWithIndexPath:indexPath tableView:tableView];
     [reCell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    ///////////////////////////////////////////////////////////////////////
     return reCell;
 }
 
@@ -265,7 +216,6 @@
     MainDetail.imageUrl = model.img;
     MainDetail.titleName = model.title;
     MainDetail.tagName = model.sub_title;
-    //    [self getDateBegin:datBegin currentView:model.tagName fatherView:@"首页"];
     [self.navigationController pushViewController:MainDetail animated:YES];
 }
 

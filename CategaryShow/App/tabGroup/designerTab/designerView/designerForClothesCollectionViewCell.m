@@ -142,14 +142,14 @@
     textLayer.string = string;
 }
 
--(void)setModel:(designerModel *)model
+-(void)setModel:(designerDetailModel *)model
 {
     _model = model;
     [backImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, _pictureUrl]]];
-    [headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.avatar]]];
-    [nameLabel setText:model.uname];
-    [descripLabel setText:model.tag];
-      
+//    [headImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, model.avatar]]];
+//    [nameLabel setText:model.uname];
+//    [descripLabel setText:model.tag];
+    
 }
 
 - (CGFloat) calculateTextHeight:(UIFont *)font givenText:(NSString *)text givenWidth:(CGFloat)width{

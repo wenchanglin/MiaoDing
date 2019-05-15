@@ -14,12 +14,10 @@
 
 @implementation couPonRulerViewController
 {
-    BaseDomain *getData;
     NSDictionary *ruleData;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    getData = [BaseDomain getInstance:NO];
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self settabTitle:@"使用规则"];
     [self getDatas];
@@ -28,14 +26,14 @@
 -(void)getDatas
 {
     NSMutableDictionary *parms = [NSMutableDictionary dictionary];
-    [getData getData:URL_CouponRule PostParams:parms finish:^(BaseDomain *domain, Boolean success) {
-       
-        if ([self checkHttpResponseResultStatus:getData]) {
-            ruleData = getData.dataRoot;
-             [self createScrollerView];
+    [[wclNetTool sharedTools]request:GET urlString:[MoreUrlInterface URL_CouponRule_String] parameters:parms finished:^(id responseObject, NSError *error) {
+        if ([self checkHttpResponseResultStatus:responseObject]) {
+            ruleData = responseObject;
+            [self createScrollerView];
+
         }
-        
     }];
+
 }
 -(UIStatusBarStyle)preferredStatusBarStyle
 {
@@ -51,7 +49,7 @@
     
     
     UIImageView *imageDetailDes = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-    [imageDetailDes sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [ruleData stringForKey:@"introduce_img"]]] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+    [imageDetailDes sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", PIC_HEADURL, [ruleData stringForKey:@"rule"]]] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
         
         CGFloat scan =imageDetailDes.image.size.width / imageDetailDes.image.size.height;
         scroller.contentSize=CGSizeMake(SCREEN_WIDTH,SCREEN_WIDTH / scan);

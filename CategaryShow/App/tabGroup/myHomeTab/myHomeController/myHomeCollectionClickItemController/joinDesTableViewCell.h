@@ -18,7 +18,7 @@
 
 @property (nonatomic, retain) UILabel *remarkLabel;
 @property (nonatomic, retain) UICollectionView *collectionV;
-@property (nonatomic, retain) NSMutableArray *photoArrayM;
+@property (nonatomic, strong) NSMutableArray *photoArrayM;
 @property (nonatomic, weak) id<joinDesDelegate>delegate;
 
 @end

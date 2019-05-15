@@ -57,7 +57,7 @@
         make.height.mas_equalTo(20);
     }];
 }
--(void)setModels:(LiangTiModel *)models
+-(void)setModels:(ltArrModel *)models
 {
     _models = models;
     if(models.name.length>0)
@@ -67,7 +67,7 @@
     {
         _nameLabel.text = [NSString stringWithFormat:@"姓名："];
     }
-    _heightLabel.text = [NSString stringWithFormat:@"身高：%@cm",@(models.height)];
-    _weightLabel.text = [NSString stringWithFormat:@"体重：%@kg",@(models.weight)];
+    _heightLabel.text = [NSString stringWithFormat:@"身高：%@ cm",@(models.height)];
+    _weightLabel.text = [NSString stringWithFormat:@"体重：%@ kg",@(models.weight)];
 }
 @end

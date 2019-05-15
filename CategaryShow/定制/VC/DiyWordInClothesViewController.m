@@ -89,8 +89,6 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
     [rightBtn addTarget:self action:@selector(moreDiy:) forControlEvents:UIControlEventTouchUpInside];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeClothes:) name:@"change" object:nil];
-    
-    
     [self getDatas];
 }
 -(void)moreDiy:(UIButton *)button
@@ -206,7 +204,7 @@
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
-    diyTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,IsiPhoneX?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT - 64 - 50) style:UITableViewStyleGrouped];
+    diyTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NavHeight, SCREEN_WIDTH,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT - 64 - 50) style:UITableViewStyleGrouped];
     diyTable.dataSource = self;
     diyTable.delegate = self;
     [diyTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -236,14 +234,13 @@
 //    [self.view addSubview:priceLowView];
     
     
-    UILabel *priceDetail = [[UILabel alloc] initWithFrame:CGRectMake(0,IsiPhoneX?SCREEN_HEIGHT-64-95:SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3-10, 50)];
+    UILabel *priceDetail = [[UILabel alloc] initWithFrame:CGRectMake(0,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-95:SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3-10, 50)];
     priceDetail.tag = 6000;
-    priceDetail.textAlignment = NSTextAlignmentRight;
+    priceDetail.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:priceDetail];
     [priceDetail setText:[NSString stringWithFormat:@"合计:¥%@",[[[dataDic arrayForKey:@"mianliao"]objectAtIndex:0] objectForKey:@"price"]]];
     priceDetail.textColor= [UIColor colorWithHexString:@"#222222"];
     [priceDetail setFont:[UIFont fontWithName:@"SanFranciscoDisplay-Regular" size:16]];
-    
     
 //    UILabel *priceTitle = [UILabel new];
 //    [self.view addSubview:priceTitle];
@@ -258,7 +255,7 @@
     
     
     
-    UIButton *buttonSave = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3,IsiPhoneX?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
+    UIButton *buttonSave = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
     [buttonSave setBackgroundColor:getUIColor(Color_DZClolor)];
     [self.view addSubview:buttonSave];
     [buttonSave addTarget:self action:@selector(saveTheClothes) forControlEvents:UIControlEventTouchUpInside];
@@ -266,7 +263,7 @@
     [buttonSave setTitle:@"加入购物袋" forState:UIControlStateNormal];
     
     
-    UIButton *buttonBuy = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3 * 2,IsiPhoneX?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
+    UIButton *buttonBuy = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 3 * 2,[ShiPeiIphoneXSRMax isIPhoneX]?SCREEN_HEIGHT-64-95: SCREEN_HEIGHT -64- 50, SCREEN_WIDTH / 3 , 50)];
     [buttonBuy setBackgroundColor:getUIColor(Color_TKClolor)];
     [self.view addSubview:buttonBuy];
     [buttonBuy addTarget:self action:@selector(payForClothes) forControlEvents:UIControlEventTouchUpInside];
@@ -307,15 +304,15 @@
         if ([self checkHttpResponseResultStatus:postData]) {
             ClothesFroPay *model = [ClothesFroPay new];
             if ([_paramsClothes stringForKey:@"mian_img"].length > 0) {
-                model.clothesImage = [_paramsClothes stringForKey:@"mian_img"];
+//                model.clothesImage = [_paramsClothes stringForKey:@"mian_img"];
             } else {
-                model.clothesImage = [_paramsClothes stringForKey:@"goods_thumb"];
+//                model.clothesImage = [_paramsClothes stringForKey:@"goods_thumb"];
             }
             
-            model.clothesCount = @"1";
-            model.clothesName = [_goodDic stringForKey:@"name"];
-            model.clothesPrice = [_price objectForKey:@"price"];
-            model.clotheMaxCount = @"100";
+//            model.clothesCount = @"1";
+//            model.clothesName = [_goodDic stringForKey:@"name"];
+//            model.clothesPrice = [_price objectForKey:@"price"];
+//            model.clotheMaxCount = @"100";
             NSMutableArray *array = [NSMutableArray arrayWithObjects:model, nil];
             PayForClothesViewController *clothesPay = [[PayForClothesViewController alloc] init];
             clothesPay.dateId = [_goodDic stringForKey:@"id"];

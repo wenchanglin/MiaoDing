@@ -8,7 +8,7 @@
 
 #ifndef Constant_h
 #define Constant_h
-#define IsiPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
+
 
 #define HitoStatusBarHeight [[UIApplication sharedApplication] statusBarFrame].size.height
 
@@ -27,6 +27,8 @@
 //导航栏+状态栏的高度
 
 #define HitoTopHeight (HitoStatusBarHeight + HitoNavBarHeight)
+#define KWidth_Scale SCREEN_WIDTH/375
+#define AdaptW(value) ceil(value)*KWidth_Scale
 
 #define NavHeight 0
 #define SCREEN_WIDTH    ([UIScreen mainScreen].bounds.size.width)
@@ -50,6 +52,7 @@
 #define iPadDevice (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 //友盟APPkey
 #define UManalyseAppKey @"5acad457f29d9835430000ec"
+#define URL_YINSIZCURL @"http://www.cloudworkshop.cn/web/jquery-obj/static"
 
 #ifdef DEBUG
 #define WCLLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
